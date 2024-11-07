@@ -2,7 +2,7 @@ import React from 'react';
 import Slider from 'react-slick';
 import { assets } from '../assets/assets';
 import HomepageBanner from '../assets/Homepage-Banner.jpg';
-import HomepageBanner3 from '../assets/banner3.png';
+import HomepageBanner3 from '../assets/banner-spe.png';
 import HomepageBanner4 from '../assets/banner6.png';
 import '../index.css';
 
