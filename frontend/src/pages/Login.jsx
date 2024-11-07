@@ -52,19 +52,13 @@ const Login = () => {
         } else {
           // Login successful, set user and navigate
           if (data.user && data.user.token) {
-            setUser(data.user);
-            localStorage.setItem("token", data.user.token);
+            if (data.user.role === "doctor" || data.user.role === "admin") {
+              toast.error("Bạn không thể đăng nhập với quyền này!");
+            } else {
+              setUser(data.user);
+              localStorage.setItem("token", data.user.token);
 
-            switch (data.user.role) {
-              case "user":
-                navigate("/");
-                break;
-              case "doctor":
-              case "admin":
-                navigate("/dashboard");
-                break;
-              default:
-                navigate("/");
+              navigate("/"); // Chuyển hướng đến trang chính cho người dùng bình thường
             }
           } else {
             toast.error("Không tìm thấy thông tin đăng nhập hợp lệ!");
