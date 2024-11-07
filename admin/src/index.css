@@ -1,12 +1,23 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@100..900&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 ::-webkit-scrollbar{
-    @apply hidden
+    @apply hidden;
 }
 
 *{
-    font-family: Outfix;
+    font-family: 'Noto Sans', sans-serif;
+}
+
+
+.modal-content {
+    z-index: 100; /* Đảm bảo rằng modal content luôn ở trên các phần tử khác */
+    pointer-events: auto; /* Đảm bảo modal nhận sự kiện chuột */
+}
+
+/* Ngăn chặn việc chọn văn bản toàn trang khi modal mở */
+.modal-open {
+    user-select: none;  /* Vô hiệu hóa việc chọn văn bản */
 }
