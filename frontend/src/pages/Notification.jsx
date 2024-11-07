@@ -32,7 +32,7 @@ const NotificationPage = () => {
   const token = user?.token;
 
   if (!token) {
-    navigate("/login");
+    navigate("/account");
     return;
   }
 
