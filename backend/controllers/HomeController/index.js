@@ -5,8 +5,50 @@ const RoleUser = require("../../models/User_role"); // Import model RoleUser
 const Role = require("../../models/Role"); // Import model Role
 const validateUser = require("../../requests/validateUser");
 const Schedule = require("../../models/Schedule");
+const validatePatient = require("../../requests/validatePatient");
+const Patient = require("../../models/Patient");
 JWT_SECRET = process.env.JWT_SECRET;
 
+const register = async (req, res) => {
+  try {
+    // Validate dữ liệu từ client
+    const { error } = validatePatient(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
+    }
+
+    // Băm mật khẩu
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
+    const patient = await User.create({
+      ...req.body,
+      password: hashedPassword,
+    });
+
+    if (patient) {
+      const role = await Role.findOne({ name: "patient" });
+
+      if (!role) {
+        return res.status(400).json({ message: "Role 'patient' not found" });
+      }
+
+      const roleUser = await RoleUser.create({ user_id: patient._id, role_id: role._id });
+
+      if (!roleUser) {
+        return res.status(400).json({ message: "User Role create failed" });
+      }
+
+      await Patient.create({
+        user_id: patient._id,
+      });
+
+      // Trả về thông tin người dùng
+      res.status(200).json(patient);
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 
 const login = async (req, res) => {
   try {
@@ -115,4 +157,4 @@ const filter = async (req, res) => {
   }
 };
 
-module.exports = { login, logout, filter };
+module.exports = { register, login, logout, filter };

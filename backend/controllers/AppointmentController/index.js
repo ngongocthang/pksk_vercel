@@ -247,7 +247,8 @@ const getCurrentUserAppointments = async (req, res) => {
       appointments = await Appointment.find({
         doctor_id: doctor._id,
         work_date: { $gte: today },
-        status: { $nin: ["canceled"] }
+        status: "pending",
+        // status: { $nin: ["canceled"] }
       })
         .populate({
           path: "patient_id",
