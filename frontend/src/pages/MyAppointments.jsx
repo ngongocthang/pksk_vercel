@@ -16,7 +16,7 @@ const MyAppointments = () => {
 
       if (!token) {
         setError("User not authenticated. Please log in.");
-        navigate("/login");
+        navigate("/account");
         return;
       }
 
@@ -30,7 +30,7 @@ const MyAppointments = () => {
         if (!response.ok) {
           if (response.status === 401) {
             setError("User not authenticated. Please log in.");
-            navigate("/login");
+            navigate("/account");
           } else {
             throw new Error("Failed to fetch appointments");
           }
@@ -53,7 +53,7 @@ const MyAppointments = () => {
 
       if (!token) {
         setError("User not authenticated. Please log in.");
-        navigate("/login");
+        navigate("/account");
         return;
       }
 

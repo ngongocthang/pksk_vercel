@@ -73,7 +73,7 @@ const Appointment = () => {
   const handleBooking = async () => {
     if (!user) {
       // Điều hướng đến trang đăng nhập nếu người dùng chưa đăng nhập
-      navigate('/login');
+      navigate('/account');
       return; // Thoát sớm khỏi hàm
     }
     
