@@ -1,33 +1,44 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
 export const AppContext = createContext();
 
 const AppContextProvider = (props) => {
-    const [doctors, setDoctors] = useState([]);
-    const [user, setUser] = useState(null); 
-    const [patient, setPatient] = useState(null);
-    const currencySymbol = '$';
+  const [doctors, setDoctors] = useState([]);
+  const [user, setUser] = useState(null); 
+  const [patient, setPatient] = useState(null); 
+  const [unreadCount, setUnreadCount] = useState(0);
+  const currencySymbol = "$";
 
-    const value = {
-        doctors,
-        setDoctors,
-        user, 
-        setUser,
-        patient,  
-        setPatient,  
-        currencySymbol
-    };
+  useEffect(() => {
+    const savedUser = sessionStorage.getItem("user");
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+  }, []);
 
-    return (
-        <AppContext.Provider value={value}>
-            {props.children}
-        </AppContext.Provider>
-    );
+  const value = {
+    doctors,
+    setDoctors,
+    user,
+    setUser,
+    patient,
+    setPatient,
+    unreadCount,
+    setUnreadCount,
+    currencySymbol,
+  };
+
+  return (
+    <AppContext.Provider value={value}>
+      {props.children}
+    </AppContext.Provider>
+  );
 };
 
+// Prop validation
 AppContextProvider.propTypes = {
-    children: PropTypes.node.isRequired,
+  children: PropTypes.node.isRequired,
 };
 
 export default AppContextProvider;

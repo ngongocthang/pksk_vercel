@@ -14,6 +14,10 @@ import { DoctorContext } from './context/DoctorContext';
 import DoctorDashboard from './pages/Doctor/DoctorDashboard';
 import DoctorAppointments from './pages/Doctor/DoctorAppointments';
 import DoctorProfile from './pages/Doctor/DoctorProfile';
+import DoctorWorkSchedule from './pages/Doctor/DoctorWorkSchedule';
+import DoctorCreateSchedule from './pages/Doctor/DoctorCreateSchedule';
+import ConfirmationSchedule from './pages/Doctor/ConfirmationSchedule';
+import EditWorkSchedule from './pages/Doctor/EditWorkSchedule';
 
 const App = () => {
 
@@ -38,6 +42,10 @@ const App = () => {
           <Route path='/doctor-dashboard' element={<DoctorDashboard />} />
           <Route path='/doctor-appointments' element={<DoctorAppointments />} />
           <Route path='/doctor-profile' element={<DoctorProfile />} />
+          <Route path='/doctor-work-schedule' element={<DoctorWorkSchedule />} />
+          <Route path='/doctor-create-schedule' element={<DoctorCreateSchedule />} />
+          <Route path='/confirmation-schedule' element={<ConfirmationSchedule />} />
+          <Route path='/edit-work-schedule' element={<EditWorkSchedule.jsx />} />
         </Routes>
       </div>
     </div>
