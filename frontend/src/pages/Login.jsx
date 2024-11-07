@@ -55,14 +55,16 @@ const Login = () => {
             setUser(data.user);
             localStorage.setItem("token", data.user.token);
 
-            switch (data.user.role) {
-              case "user":
-                navigate("/");
-                break;
-            }
-          } else {
-            toast.error("Không tìm thấy thông tin đăng nhập hợp lệ!");
-          }
+        switch (data.user.role) {
+          case "user":
+            navigate("/");
+            break;
+          case "doctor":
+          case "admin":
+            navigate("/dashboard");
+            break;
+          default:
+            navigate("/");
         }
       } else {
         const errorMessage = data.message || "Đăng nhập thất bại!";
