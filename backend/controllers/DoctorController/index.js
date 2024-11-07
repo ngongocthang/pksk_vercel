@@ -18,8 +18,6 @@ từ đối tượng hoặc mảng và gán chúng vào các biến riêng biệ
  */
 //...req.body: Đây là cú pháp spread operator
 
-
-
 const createDoctor = async (req, res) => {
   try {
     const { error } = validateDoctor(req.body);
@@ -98,7 +96,6 @@ const findDoctor = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-
 
 const updateDoctor = async (req, res) => {
   try {
@@ -192,21 +189,66 @@ const confirmAppointment = async (req, res) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
+    console.log(id, status);
 
-    if (status === "confirmed" || status === "canceled" || status === "finished") {
-      const updatedAppointment = await Appointment.findByIdAndUpdate(
-        id,
-        { status }
-      );
+    let updatedAppointment;
+    let afterUpdateAppointment;
+
+    if (status != "pending") {
+      updatedAppointment = await Appointment.findByIdAndUpdate(id, {
+        status,
+      });
 
       if (!updatedAppointment) {
         return res.status(404).json({ message: "Appointment not found" });
       }
 
-      const afterUpdateAppointment = await Appointment.findById(id);
-      // Gửi phản hồi thành công
+      const formattedDate = new Intl.DateTimeFormat('vi-VN', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      }).format(new Date(updatedAppointment.work_date));
+      
+      const notification = await Notification.create({
+        content: `Lịch hẹn ngày ${formattedDate} của bạn đã được xác nhận.`,
+        patient_id: updatedAppointment.patient_id,
+        doctor_id: updatedAppointment.doctor_id,
+        new_date: updatedAppointment.work_date,
+        new_work_shift: updatedAppointment.work_shift,
+      });
+      
+
+      afterUpdateAppointment = await Appointment.findById(id);
       return res.status(200).json({
-        message: `Appointment ${status}`,
+        message: `Appointment confirm successfully!`,
+        appointment: afterUpdateAppointment,
+      });
+    } else if (status === "canceled") {
+      updatedAppointment = await Appointment.findByIdAndUpdate(id, {
+        status,
+      });
+
+      if (!updatedAppointment) {
+        return res.status(404).json({ message: "Appointment not found" });
+      }
+
+      const formattedDate = new Intl.DateTimeFormat('vi-VN', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      }).format(new Date(updatedAppointment.work_date));
+      
+      const notification = await Notification.create({
+        content: `Lịch hẹn ngày ${formattedDate} của bạn không được xác nhận.`,
+        patient_id: updatedAppointment.patient_id,
+        doctor_id: updatedAppointment.doctor_id,
+        new_date: updatedAppointment.work_date,
+        new_work_shift: updatedAppointment.work_shift,
+      });
+
+      afterUpdateAppointment = await Appointment.findById(id);
+      return res.status(200).json({
+        message: `Appointment confirm successfully!`,
         appointment: afterUpdateAppointment,
       });
     } else {
@@ -219,12 +261,11 @@ const confirmAppointment = async (req, res) => {
   }
 };
 
-
 module.exports = {
   createDoctor,
   findAllDoctor,
   findDoctor,
   updateDoctor,
   deleteDoctor,
-  confirmAppointment
+  confirmAppointment,
 };

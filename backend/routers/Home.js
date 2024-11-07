@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const {
+  register,
   login,
   logout,
   filter
@@ -21,6 +22,7 @@ const { getCurrentUserNotifications } = require("../controllers/NotificationCont
 
 
 // Định nghĩa route
+router.post("/register", register);
 router.post("/login", login);
 router.post("/logout", logout);
 router.post("/create-appointment", userMiddleware, patientCreateAppointment);
