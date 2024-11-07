@@ -50,12 +50,6 @@ const Login = () => {
           case "user":
             navigate("/");
             break;
-          case "doctor":
-          case "admin":
-            navigate("/dashboard");
-            break;
-          default:
-            navigate("/");
         }
       } else {
         const errorMessage = data.message || "Đăng nhập thất bại!";
