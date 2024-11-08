@@ -16,6 +16,7 @@ const Header1 = () => {
         autoplay: true,
         autoplaySpeed: 2000,
     };
+    
 
     return (
         <div className='flex justify-center'>
