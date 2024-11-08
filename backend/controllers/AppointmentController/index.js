@@ -20,11 +20,7 @@ const createAppointment = async (req, res) => {
 
     const appointment = await Appointment.create(req.body);
     await Appointment_history.create({
-      status: appointment.status,
-      appointment_id: appointment._id,
-      date: appointment.createdAt,
-      patient_id: appointment.patient_id,
-      doctor_id: appointment.doctor_id,
+      appointment_id: appointment._id
     });
     if (appointment) {
       return res.status(200).json(appointment);
@@ -85,11 +81,7 @@ const updateAppointment = async (req, res) => {
     await Appointment_history.findOneAndUpdate(
       { appointment_id: appointment._id },
       {
-        status: appointment.status,
-        appointment_id: appointment._id,
-        date: appointment.updatedAt,
-        patient_id: appointment.patient_id,
-        doctor_id: appointment.doctor_id,
+        appointment_id: appointment._id
       },
       { new: true }
     );
@@ -178,11 +170,7 @@ const patientCreateAppointment = async (req, res) => {
       patient_id: patient._id,
     });
     await Appointment_history.create({
-      status: appointment.status,
-      appointment_id: appointment._id,
-      date: appointment.createdAt,
-      patient_id: appointment.patient_id,
-      doctor_id: appointment.doctor_id,
+      appointment_id: appointment._id
     });
      await Notification.create({
       patient_id: appointment.patient_id,

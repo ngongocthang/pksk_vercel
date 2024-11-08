@@ -16,7 +16,7 @@ const MyAppointments = () => {
 
       if (!token) {
         setError("User not authenticated. Please log in.");
-        navigate("/login");
+        navigate("/account");
         return;
       }
 
@@ -30,7 +30,7 @@ const MyAppointments = () => {
         if (!response.ok) {
           if (response.status === 401) {
             setError("User not authenticated. Please log in.");
-            navigate("/login");
+            navigate("/account");
           } else {
             throw new Error("Failed to fetch appointments");
           }
@@ -40,7 +40,7 @@ const MyAppointments = () => {
         }
       } catch (error) {
         console.error("Error fetching appointments:", error);
-        setError("An error occurred while fetching appointments.");
+        // setError("An error occurred while fetching appointments.");
       }
     };
 
@@ -81,7 +81,6 @@ const MyAppointments = () => {
       cancelAppointment();
     };
 
-    // Lấy thông tin ngày và buổi
     const appointment = appointments.find((appt) => appt._id === appointmentId);
     const appointmentDate = new Date(appointment.work_date).toLocaleDateString("vi-VN");
     const appointmentShift = appointment.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều";
@@ -125,66 +124,70 @@ const MyAppointments = () => {
         Lịch hẹn của tôi:
       </p>
       <div>
-        {appointments.map((appointment) => (
-          <div
-            className="grid grid-cols-[1fr_2fr] gap-4 sm:flex sm:gap-6 py-2 border-b"
-            key={appointment._id}
-          >
-            <div>
-              <img className="w-32 bg-indigo-50" src={appointment.doctor_id.user_id.image} alt="Doctor" />
-            </div>
-            <div className="flex-1 text-sm text-zinc-600">
-              <p className="text-lg text-neutral-800 font-semibold">
-                Bệnh nhân: {appointment.patient_id.user_id.name}
-              </p>
-              <p className="text-neutral-800 font-semibold">
-                Bác sĩ: {appointment.doctor_id.user_id.name}
-              </p>
-              <p className="text-xs mt-1">
-                <span className="text-sm text-neutral-700 font-medium">
-                  Ngày khám:
-                </span>{" "}
-                {new Date(appointment.work_date).toLocaleDateString("vi-VN")}
-              </p>
-              <p className="text-xs mt-1">
-                <span className="text-sm text-neutral-700 font-medium">
-                  Ca khám:
-                </span>{" "}
-                {appointment.work_shift === "morning"
-                  ? "Buổi sáng"
-                  : "Buổi chiều"}
-              </p>
-              <p className="text-xs mt-1">
-                <span className="text-sm text-neutral-700 font-medium">Trạng thái:</span>{" "}
-                <span
-                  className={`${appointment.status === "pending"
-                    ? "text-blue-500"
-                    : appointment.status === "confirmed"
-                      ? "text-green-500"
-                      : "text-red-500"
-                    }`}
+        {appointments.length === 0 ? (
+          <p className=" text-center text-gray-500 mt-5">Hiện tại bạn không có lịch hẹn.</p>
+        ) : (
+          appointments.map((appointment) => (
+            <div
+              className="grid grid-cols-[1fr_2fr] gap-4 sm:flex sm:gap-6 py-2 border-b"
+              key={appointment._id}
+            >
+              <div>
+                <img className="w-32 bg-indigo-50" src={appointment.doctor_id.user_id.image} alt="Doctor" />
+              </div>
+              <div className="flex-1 text-sm text-zinc-600">
+                <p className="text-lg text-neutral-800 font-semibold">
+                  Bệnh nhân: {appointment.patient_id.user_id.name}
+                </p>
+                <p className="text-neutral-800 font-semibold">
+                  Bác sĩ: {appointment.doctor_id.user_id.name}
+                </p>
+                <p className="text-xs mt-1">
+                  <span className="text-sm text-neutral-700 font-medium">
+                    Ngày khám:
+                  </span>{" "}
+                  {new Date(appointment.work_date).toLocaleDateString("vi-VN")}
+                </p>
+                <p className="text-xs mt-1">
+                  <span className="text-sm text-neutral-700 font-medium">
+                    Ca khám:
+                  </span>{" "}
+                  {appointment.work_shift === "morning"
+                    ? "Buổi sáng"
+                    : "Buổi chiều"}
+                </p>
+                <p className="text-xs mt-1">
+                  <span className="text-sm text-neutral-700 font-medium">Trạng thái:</span>{" "}
+                  <span
+                    className={`${appointment.status === "pending"
+                      ? "text-blue-500"
+                      : appointment.status === "confirmed"
+                        ? "text-green-500"
+                        : "text-red-500"
+                      }`}
+                  >
+                    {appointment.status === "pending"
+                      ? "Đang chờ"
+                      : appointment.status === "confirmed"
+                        ? "Đã xác nhận"
+                        : "Từ chối"}
+                  </span>
+                </p>
+              </div>
+              <div className="flex flex-col gap-2 justify-end">
+                <button className="text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded hover:bg-primary hover:text-white transition-all duration-300">
+                  Thanh toán trực tuyến
+                </button>
+                <button
+                  className="text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded hover:bg-red-600 hover:text-white transition-all duration-300"
+                  onClick={() => handleCancelAppointment(appointment._id)}
                 >
-                  {appointment.status === "pending"
-                    ? "Đang chờ"
-                    : appointment.status === "confirmed"
-                      ? "Đã xác nhận"
-                      : "Từ chối"}
-                </span>
-              </p>
+                  Hủy cuộc hẹn
+                </button>
+              </div>
             </div>
-            <div className="flex flex-col gap-2 justify-end">
-              <button className="text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded hover:bg-primary hover:text-white transition-all duration-300">
-                Thanh toán trực tuyến
-              </button>
-              <button
-                className="text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded hover:bg-red-600 hover:text-white transition-all duration-300"
-                onClick={() => handleCancelAppointment(appointment._id)}
-              >
-                Hủy cuộc hẹn
-              </button>
-            </div>
-          </div>
-        ))}
+          ))
+        )}
         {error && (
           <div className="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert">
             <span className="font-medium">Lỗi:</span> {error}
