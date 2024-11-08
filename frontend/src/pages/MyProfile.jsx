@@ -189,7 +189,7 @@ const MyProfile = () => {
                     <p className="font-medium">Mật khẩu cũ:</p>
                     <div className="relative flex items-center">
                       <input
-                        className="bg-gray-100 max-w-52 border"
+                        className="bg-gray-100 w-[13rem] border"
                         type="text"
                         value={oldPassword}
                         onChange={(e) => setOldPassword(e.target.value)}
@@ -202,7 +202,7 @@ const MyProfile = () => {
                 <p className="font-medium">Mật khẩu mới:</p>
                 <div className="relative flex items-center">
                   <input
-                    className="bg-gray-100 max-w-52 border"
+                    className="bg-gray-100 w-[13rem] border"
                     type="text"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
