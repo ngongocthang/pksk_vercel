@@ -8,6 +8,7 @@ const MyAppointments = () => {
   const { user, setUser } = useContext(AppContext);
   const [appointments, setAppointments] = useState([]);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true); // Add loading state
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,7 +24,7 @@ const MyAppointments = () => {
       } else {
         setError("User not authenticated. Please log in.");
         navigate("/account");
-        
+        setLoading(false); // Set loading to false when not authenticated
         return;
       }
 
@@ -47,7 +48,8 @@ const MyAppointments = () => {
         }
       } catch (error) {
         console.error("Error fetching appointments:", error);
-        // setError("An error occurred while fetching appointments.");
+      } finally {
+        setLoading(false); // Set loading to false after data fetching is done
       }
     };
 
@@ -131,7 +133,9 @@ const MyAppointments = () => {
         Lịch hẹn của tôi:
       </p>
       <div>
-        {appointments.length === 0 ? (
+        {loading ? (
+          <p className="text-center text-gray-500 mt-5">Đang tải dữ liệu...</p> 
+        ) : appointments.length === 0 ? (
           <p className=" text-center text-gray-500 mt-5">Hiện tại bạn không có lịch hẹn.</p>
         ) : (
           appointments.map((appointment) => (
