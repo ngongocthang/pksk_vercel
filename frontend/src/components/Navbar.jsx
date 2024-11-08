@@ -8,14 +8,18 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { user, setUser } = useContext(AppContext);
   const [showMenu, setShowMenu] = useState(false);
-  const [loading, setLoading] = useState(true);  // Trạng thái loading mới
+  const [loading, setLoading] = useState(true);  
 
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
     if (savedUser) {
-      setUser(JSON.parse(savedUser));  // Cập nhật trạng thái người dùng nếu có dữ liệu
+      const user = JSON.parse(savedUser);
+      console.log("User data:", user);
+      setUser(user);
+    } else {
+      console.log("No user data found in localStorage");
     }
-    setLoading(false);  // Cập nhật trạng thái loading sau khi user được lấy
+    setLoading(false);  
   }, [setUser]);
 
   const handleLogout = () => {
@@ -29,7 +33,7 @@ const Navbar = () => {
     // Hiển thị một spinner hoặc placeholder trong khi đang tải
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="spinner">Đang tải...</div> {/* Bạn có thể thay thế bằng một spinner */}
+        <div className="spinner">Đang tải...</div>
       </div>
     );
   }

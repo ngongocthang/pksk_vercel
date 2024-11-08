@@ -55,10 +55,11 @@ const Login = () => {
             if (data.user.role === "doctor" || data.user.role === "admin") {
               toast.error("Bạn không thể đăng nhập với quyền này!");
             } else {
-              setUser(data.user);
+              setUser(data.user); 
               localStorage.setItem("token", data.user.token);
 
-              navigate("/"); // Chuyển hướng đến trang chính cho người dùng bình thường
+              localStorage.setItem("user", JSON.stringify(data.user));
+              navigate("/"); 
             }
           } else {
             toast.error("Không tìm thấy thông tin đăng nhập hợp lệ!");
