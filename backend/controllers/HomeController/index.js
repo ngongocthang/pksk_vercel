@@ -7,6 +7,9 @@ const validateUser = require("../../requests/validateUser");
 const Schedule = require("../../models/Schedule");
 const validatePatient = require("../../requests/validatePatient");
 const Patient = require("../../models/Patient");
+const Doctor = require("../../models/Doctor");
+const Appointment = require("../../models/Appointment");
+const History_appointment = require("../../models/Appointment_history");
 JWT_SECRET = process.env.JWT_SECRET;
 
 const register = async (req, res) => {
@@ -32,7 +35,10 @@ const register = async (req, res) => {
         return res.status(400).json({ message: "Role 'patient' not found" });
       }
 
-      const roleUser = await RoleUser.create({ user_id: patient._id, role_id: role._id });
+      const roleUser = await RoleUser.create({
+        user_id: patient._id,
+        role_id: role._id,
+      });
 
       if (!roleUser) {
         return res.status(400).json({ message: "User Role create failed" });
@@ -113,43 +119,39 @@ const logout = async (req, res) => {
 
 const filter = async (req, res) => {
   try {
-    const { doctorId, filterType, specialization } = req.query; // Thêm specialization từ query parameters
+    const { doctorId, filterType, specialization } = req.query;
     const now = new Date();
     let startDate, endDate;
 
-    // Xác định khoảng thời gian dựa trên filterType
     switch (filterType) {
       case "today":
-        startDate = new Date(now.setHours(0, 0, 0, 0)); // Bắt đầu từ đầu ngày
-        endDate = new Date(now.setHours(23, 59, 59, 999)); // Kết thúc vào cuối ngày
+        startDate = new Date(now.setHours(0, 0, 0, 0));
+        endDate = new Date(now.setHours(23, 59, 59, 999));
         break;
       case "week":
-        const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay())); // Bắt đầu tuần
+        const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
         startDate = new Date(startOfWeek.setHours(0, 0, 0, 0));
-        endDate = new Date(startOfWeek.setDate(startOfWeek.getDate() + 6)); // Kết thúc tuần
+        endDate = new Date(startOfWeek.setDate(startOfWeek.getDate() + 6));
         endDate = new Date(endDate.setHours(23, 59, 59, 999));
         break;
       case "month":
-        startDate = new Date(now.getFullYear(), now.getMonth(), 1); // Bắt đầu tháng
-        endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0); // Kết thúc tháng
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
         endDate = new Date(endDate.setHours(23, 59, 59, 999));
         break;
       default:
         return res.status(400).json({ message: "Invalid filter type" });
     }
 
-    // Tạo điều kiện truy vấn
     const query = {
-      work_date: { $gte: startDate, $lte: endDate }, // Lọc theo thời gian
+      work_date: { $gte: startDate, $lte: endDate },
     };
 
-    // Nếu có chuyên khoa, thêm điều kiện vào truy vấn
     if (specialization) {
-      query.specialization = specialization; // Giả sử bạn có trường specialization trong Schedule
+      query.specialization = specialization;
     }
 
-    // Truy vấn cơ sở dữ liệu để lấy lịch làm việc của bác sĩ trong khoảng thời gian đã xác định
-    const schedules = await Schedule.find(query).sort({ work_date: 1 }); // Sắp xếp theo thời gian hẹn
+    const schedules = await Schedule.find(query).sort({ work_date: 1 });
 
     return res.status(200).json(schedules);
   } catch (error) {
@@ -157,4 +159,65 @@ const filter = async (req, res) => {
   }
 };
 
-module.exports = { register, login, logout, filter };
+const getHistoryAppointment = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const user = await User.findOne({ _id: id });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const patient = await Patient.findOne({ user_id: user._id });
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    const appointments = await Appointment.find({ patient_id: patient._id });
+    if (appointments.length === 0) {
+      return res.status(404).json({ message: "Appointment not found" });
+    }
+
+    const detailedHistoryAppointments = [];
+    for (const appointment of appointments) {
+      const historyEntries = await History_appointment.find({
+        appointment_id: appointment._id,
+      });
+
+      const doctor = await Doctor.findById(appointment.doctor_id);
+      const nameDoctor = await User.findById({ _id: doctor.user_id }).select("name"); 
+
+      for (const history of historyEntries) {
+        detailedHistoryAppointments.push({
+          history: {
+            id: appointment._id,
+            work_shift: appointment.work_shift,
+            work_date: appointment.work_date,
+            status: appointment.status,
+            doctor_name: nameDoctor ? nameDoctor.name : "Unknown Doctor",
+            createdAt: appointment.createdAt,
+            updatedAt: appointment.updatedAt,
+          },
+        });
+      }
+    }
+
+    if (detailedHistoryAppointments.length === 0) {
+      return res.status(404).json({ message: "History appointment not found!" });
+    }
+
+    // Sort appointments by work_date in descending order
+    detailedHistoryAppointments.sort((a, b) => new Date(b.history.updatedAt) - new Date(a.history.updatedAt));
+
+    return res.status(200).json({
+      historyAppointments: detailedHistoryAppointments,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+
+
+module.exports = { register, login, logout, filter, getHistoryAppointment };

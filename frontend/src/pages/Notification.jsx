@@ -14,7 +14,7 @@ const formatDate = (date) => {
 // Hàm để nhóm thông báo theo ngày
 const groupNotificationsByDate = (notifications) => {
   return notifications.reduce((groups, notification) => {
-    const notificationDate = formatDate(notification.createdAt); // Giả sử `createdAt` là trường ngày của thông báo
+    const notificationDate = formatDate(notification.createdAt); 
     if (!groups[notificationDate]) {
       groups[notificationDate] = [];
     }
@@ -67,7 +67,7 @@ const NotificationPage = () => {
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-semibold mb-4">Thông báo của bạn</h1>
       {notificationDates.length === 0 ? (
-        <p className="text-gray-500">Không có thông báo nào.</p>
+        <p className="text-center text-gray-500">Không có thông báo nào.</p>
       ) : (
         displayedNotifications.map((date) => (
           <div key={date}>

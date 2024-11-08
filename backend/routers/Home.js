@@ -4,7 +4,8 @@ const {
   register,
   login,
   logout,
-  filter
+  filter,
+  getHistoryAppointment
 } = require("../controllers/HomeController/index");
 const {
   patientCreateAppointment, 
@@ -35,5 +36,6 @@ router.get("/get-appointments-status", userMiddleware, getAppointmentByStatus);
 router.get("/get-schedule-doctor/:id", getScheduleByDoctor);
 router.get("/filter/:id", filter);
 router.get("/notification", userMiddleware, getCurrentUserNotifications);
+router.get("/medical-history/:id", userMiddleware, getHistoryAppointment);
 
 module.exports = router;

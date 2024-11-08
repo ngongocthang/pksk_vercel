@@ -23,6 +23,8 @@ const MyAppointments = () => {
       } else {
         setError("User not authenticated. Please log in.");
         navigate("/account");
+        
+        return;
       }
 
       try {

@@ -66,8 +66,7 @@ const Login = () => {
           }
         }
       } else {
-        const errorMessage = data.message || "Đăng nhập thất bại!";
-        toast.error(errorMessage);
+        toast.error("Đăng nhập thất bại!");
       }
     } catch (error) {
       console.error("Error:", error);

@@ -27,15 +27,15 @@ const Login = () => {
                 if (role === 'admin' && state === 'Admin') {
                     localStorage.setItem('aToken', token)
                     setAToKen(token)
-                    toast.success("Admin logged in successfully!")
+                    toast.success("Đăng nhập thành công!")
                     navigate('/admin-dashboard')
                 } else if (role === 'doctor' && state === 'Doctor') {
                     localStorage.setItem('dToken', token)
                     setDToken(token)
-                    toast.success("Doctor logged in successfully!")
+                    toast.success("Đăng nhập bác sĩ thành công!")
                     navigate('/doctor-dashboard')
                 } else {
-                    toast.error("Unauthorized role for selected login type.")
+                    toast.error("Vai trò không phù hợp đối với loại đăng nhập đã chọn.")
                 }
                 window.location.reload() 
             } else {
