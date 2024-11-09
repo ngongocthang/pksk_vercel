@@ -205,7 +205,7 @@ const getCurrentUserAppointments = async (req, res) => {
       appointments = await Appointment.find({
         patient_id: patient._id,
         work_date: { $gte: today },
-        status: { $nin: ["canceled"] }
+        // status: { $nin: ["canceled"] }
       })
         .populate({
           path: "patient_id",
@@ -221,7 +221,7 @@ const getCurrentUserAppointments = async (req, res) => {
             select: "name image",
           },
         })
-        .sort({ updatedAt: -1 }); // Sắp xếp theo updatedAt giảm dần
+        .sort({ updatedAt: -1 });
 
       if (appointments.length > 0) {
         return res.status(200).json(appointments);
@@ -236,7 +236,6 @@ const getCurrentUserAppointments = async (req, res) => {
         doctor_id: doctor._id,
         work_date: { $gte: today },
         status: "pending",
-        // status: { $nin: ["canceled"] }
       })
         .populate({
           path: "patient_id",

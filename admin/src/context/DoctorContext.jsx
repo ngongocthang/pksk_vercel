@@ -21,19 +21,32 @@ const DoctorContextProvider = (props) => {
         headers: { Authorization: `Bearer ${dToken}` },
       });
 
-      console.log(data);
-
       if (Array.isArray(data) && data.length > 0) {
         setAppointments(data);
       } else {
-        toast.error(data.message);
+        return toast.error("Không có lịch hẹn đang chờ xác nhận nào!");
       }
     } catch (error) {
       console.log(error);
     }
   };
 
-  // doctorcontext
+  const getAllAppointments = async () => {
+    try {
+      const { data } = await axios.get(`${backendUrl}/doctor-appointment`, {
+        headers: { Authorization: `Bearer ${dToken}` },
+      });
+
+      if (Array.isArray(data) && data.length > 0) {
+        setAppointments(data);
+      } else {
+        return toast.error("Không có lịch hẹn nào!");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const completeAppointment = async (appointmentId) => {
     try {
       const { data } = await axios.put(
@@ -42,10 +55,16 @@ const DoctorContextProvider = (props) => {
         { headers: { Authorization: `Bearer ${dToken}` } }
       );
       if (data.appointment.status === "confirmed") {
-        toast.success("Đã cập nhật lịch hẹn thành công!");
-        getAppointments(); // Tải lại danh sách cuộc hẹn
+        toast.success("Xác nhận lịch hẹn thành công!");
+
+        // Cập nhật trạng thái trực tiếp trong danh sách appointments
+        setAppointments((prevAppointments) =>
+          prevAppointments.filter(
+            (appointment) => appointment._id !== appointmentId
+          )
+        );
       } else {
-        toast.error("Cập nhật lịch hẹn thất bại!");
+        return toast.error("Xác nhận lịch hẹn thất bại!");
       }
     } catch (error) {
       console.log(error);
@@ -60,16 +79,22 @@ const DoctorContextProvider = (props) => {
         { headers: { Authorization: `Bearer ${dToken}` } }
       );
       if (data.appointment.status === "canceled") {
-        toast.success("Đã huỷ lịch hẹn thành công!");
-        getAppointments(); // Tải lại danh sách cuộc hẹn
+        toast.success("Từ chối lịch hẹn thành công!");
+
+        // Cập nhật trạng thái trực tiếp trong danh sách appointments
+        setAppointments((prevAppointments) =>
+          prevAppointments.filter(
+            (appointment) => appointment._id !== appointmentId
+          )
+        );
       } else {
-        toast.error("Huỷ lịch hẹn thất bại!");
+        toast.error("Từ chối lịch hẹn thất bại!");
       }
     } catch (error) {
       console.log(error);
     }
   };
- 
+
   const getDashData = async () => {
     try {
       const { data } = await axios.get(`${backendUrl}/api/doctor/dashboard`, {
@@ -117,6 +142,7 @@ const DoctorContextProvider = (props) => {
     profileData,
     setProfileData,
     getProfileData,
+    getAllAppointments  
   };
 
   return (

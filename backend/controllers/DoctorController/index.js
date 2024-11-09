@@ -6,6 +6,7 @@ const Doctor = require("../../models/Doctor");
 const cloudinary = require("cloudinary").v2;
 const validateDoctor = require("../../requests/validateDoctor");
 const Appointment = require("../../models/Appointment");
+const Notification = require("../../models/Notification");
 
 //{ key: value } là một đtuong trong js, thường dùng để crud
 /*
@@ -195,28 +196,31 @@ const confirmAppointment = async (req, res) => {
     let afterUpdateAppointment;
 
     if (status != "pending") {
-      updatedAppointment = await Appointment.findByIdAndUpdate(id, {
-        status,
-      });
+      updatedAppointment = await Appointment.findByIdAndUpdate(
+        id,
+        {
+          status,
+        },
+        { new: true }
+      );
 
       if (!updatedAppointment) {
         return res.status(404).json({ message: "Appointment not found" });
       }
 
-      const formattedDate = new Intl.DateTimeFormat('vi-VN', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
+      const formattedDate = new Intl.DateTimeFormat("vi-VN", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
       }).format(new Date(updatedAppointment.work_date));
-      
-      const notification = await Notification.create({
+
+      await Notification.create({
         content: `Lịch hẹn ngày ${formattedDate} của bạn đã được xác nhận.`,
         patient_id: updatedAppointment.patient_id,
         doctor_id: updatedAppointment.doctor_id,
         new_date: updatedAppointment.work_date,
         new_work_shift: updatedAppointment.work_shift,
       });
-      
 
       afterUpdateAppointment = await Appointment.findById(id);
       return res.status(200).json({
@@ -232,13 +236,13 @@ const confirmAppointment = async (req, res) => {
         return res.status(404).json({ message: "Appointment not found" });
       }
 
-      const formattedDate = new Intl.DateTimeFormat('vi-VN', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
+      const formattedDate = new Intl.DateTimeFormat("vi-VN", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
       }).format(new Date(updatedAppointment.work_date));
-      
-      const notification = await Notification.create({
+
+      await Notification.create({
         content: `Lịch hẹn ngày ${formattedDate} của bạn không được xác nhận.`,
         patient_id: updatedAppointment.patient_id,
         doctor_id: updatedAppointment.doctor_id,
@@ -261,6 +265,47 @@ const confirmAppointment = async (req, res) => {
   }
 };
 
+const getDoctorAppointments = async (req, res) => {
+  try {
+    const user_id = req.user?.id;
+    const today = new Date();
+
+    const doctor = await Doctor.findOne({ user_id: user_id });
+    if (!doctor) {
+      return res.status(400).json({ message: "Doctor not found" });
+    }
+
+    const appointments = await Appointment.find({
+      doctor_id: doctor._id,
+      work_date: { $gte: today },
+    })
+      .populate({
+        path: "patient_id",
+        populate: {
+          path: "user_id",
+          select: "name",
+        },
+      })
+      .populate({
+        path: "doctor_id",
+        populate: {
+          path: "user_id",
+          select: "name image",
+        },
+      })
+      .sort({ updatedAt: -1 });
+
+    if (appointments.length > 0) {
+      return res.status(200).json(appointments);
+    }
+
+    return res.status(404).json({ message: "Appointments not found" });
+  } catch (error) {
+    console.error("Error fetching appointments:", error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   createDoctor,
   findAllDoctor,
@@ -268,4 +313,5 @@ module.exports = {
   updateDoctor,
   deleteDoctor,
   confirmAppointment,
+  getDoctorAppointments
 };
