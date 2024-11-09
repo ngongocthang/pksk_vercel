@@ -10,7 +10,6 @@ const Navbar = () => {
   const [loading, setLoading] = useState(true);
   const [hasNewNotifications, setHasNewNotifications] = useState(false);
 
-  // When the page reloads, retrieve user data from localStorage
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
     if (savedUser) {
@@ -23,7 +22,6 @@ const Navbar = () => {
     setLoading(false);
   }, [setUser]);
 
-  // Handle logout
   const handleLogout = () => {
     sessionStorage.removeItem("user");
     localStorage.removeItem("user");
@@ -31,7 +29,6 @@ const Navbar = () => {
     navigate("/account");
   };
 
-  // Fetch new notifications and update state if there are unread ones
   useEffect(() => {
     const fetchNotifications = async () => {
       if (!user) return;
@@ -49,35 +46,28 @@ const Navbar = () => {
         );
         setHasNewNotifications(unreadNotifications);
 
-        // Cập nhật trạng thái thông báo trong localStorage
         localStorage.setItem("hasNewNotifications", unreadNotifications.toString());
       } catch (error) {
         console.error("Lỗi khi lấy thông báo:", error);
       }
     };
 
-    // Nếu trạng thái đã có trong localStorage thì không cần gọi API lại
-    if (localStorage.getItem("hasNewNotifications") === null) {
-      fetchNotifications();  // Fetch thông báo nếu chưa có trong localStorage
-    }
-  }, [user]); // Khi user thay đổi hoặc load lại trang
-
-  const handleNotificationClick = () => {
-    // Khi người dùng nhấp vào thông báo, đánh dấu là đã đọc
-    setHasNewNotifications(false);
-    localStorage.setItem("hasNewNotifications", "false");  // Đặt trạng thái là false trong localStorage
-    navigate("/Notifications"); // Chuyển hướng tới trang thông báo
-  };
+  }, []);
 
   useEffect(() => {
-    // On page reload, check the localStorage state of notifications
     const savedNotificationState = localStorage.getItem("hasNewNotifications");
-    if (savedNotificationState === "false") {
-      setHasNewNotifications(false);
-    } else if (savedNotificationState === "true") {
+    if (savedNotificationState === "true") {
       setHasNewNotifications(true);
+    } else if (savedNotificationState === "false") {
+      setHasNewNotifications(false);
     }
-  }, []);  // Chỉ chạy một lần khi tải trang
+  }, []);  
+
+  const handleNotificationClick = () => {
+    setHasNewNotifications(false);
+    localStorage.setItem("hasNewNotifications", "false"); 
+    navigate("/Notifications"); 
+  };
 
   if (loading) {
     return (
@@ -135,7 +125,6 @@ const Navbar = () => {
           </NavLink>
         )}
 
-        {/* Notification icon with red dot */}
         <div className="relative">
           {hasNewNotifications && (
             <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
