@@ -58,7 +58,7 @@ const Login = () => {
               setUser(data.user);
               localStorage.setItem("token", data.user.token);
 
-              navigate("/"); // Chuyển hướng đến trang chính cho người dùng bình thường
+              navigate("/");
             }
           } else {
             toast.error("Không tìm thấy thông tin đăng nhập hợp lệ!");
