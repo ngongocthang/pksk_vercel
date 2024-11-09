@@ -44,7 +44,7 @@ const Login = () => {
 
         } catch (error) {
             console.error("Login error:", error)
-            toast.error("An error occurred during login. Please try again.")
+            toast.error("Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại.")
         }
     }
 

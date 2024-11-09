@@ -52,7 +52,7 @@ const Sidebar = () => {
 
                     <NavLink className={({ isActive }) => `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${isActive ? 'bg-[#F2F3FF] border-r-4 border-[#0091a1]' : ''}`} to={'/confirmation-schedule'}>
                         <img src={assets.appointment_icon} alt="" />
-                        <p className='hidden md:block'>Lịch đã xác nhận</p>
+                        <p className='hidden md:block'>Lịch hẹn</p>
                     </NavLink>
 
                     <NavLink className={({ isActive }) => `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${isActive ? 'bg-[#F2F3FF] border-r-4 border-[#0091a1]' : ''}`} to={'/doctor-work-schedule'}>
