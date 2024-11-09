@@ -45,7 +45,7 @@ const App = () => {
           <Route path='/doctor-work-schedule' element={<DoctorWorkSchedule />} />
           <Route path='/doctor-create-schedule' element={<DoctorCreateSchedule />} />
           <Route path='/confirmation-schedule' element={<ConfirmationSchedule />} />
-          <Route path='/edit-work-schedule' element={<EditWorkSchedule.jsx />} />
+          <Route path='/edit-work-schedule' element={<EditWorkSchedule />} />
         </Routes>
       </div>
     </div>
