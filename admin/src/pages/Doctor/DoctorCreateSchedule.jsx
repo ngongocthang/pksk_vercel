@@ -27,14 +27,15 @@ const CreateDoctorSchedule = () => {
     const doctorId = doctorInfo ? JSON.parse(doctorInfo).id : null;
 
     if (doctorId && scheduleForm.workDate && scheduleForm.timeSlot) {
-      // Format the date to YYYY-MM-DD
       const formattedDate = new Date(scheduleForm.workDate).toLocaleDateString('en-CA');
       const scheduleData = {
         work_date: formattedDate,
         work_shift: scheduleForm.timeSlot,
       };
       await createSchedule(doctorId, scheduleData);
-      navigate("/doctor-work-schedule");
+
+      // Điều hướng về trang lịch làm việc với thông báo thành công
+      navigate("/doctor-work-schedule", { state: { successMessage: "Tạo lịch làm việc thành công!" } });
     } else {
       toast.error("Vui lòng điền đầy đủ thông tin!");
     }
@@ -60,7 +61,7 @@ const CreateDoctorSchedule = () => {
               selected={scheduleForm.workDate}
               onChange={handleDateChange}
               dateFormat="dd/MM/yyyy"
-              minDate={new Date()} 
+              minDate={new Date()}
               className='w-full p-3 border rounded focus:outline-none focus:border-blue-500'
             />
           </div>

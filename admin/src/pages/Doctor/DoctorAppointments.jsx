@@ -1,6 +1,8 @@
 import React, { useContext, useEffect } from 'react';
 import { DoctorContext } from '../../context/DoctorContext';
 import { assets } from '../../assets/assets';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const DoctorAppointments = () => {
   const { dToken, appointments, getAppointments, completeAppointment, cancelAppointment } = useContext(DoctorContext);
@@ -20,6 +22,13 @@ const DoctorAppointments = () => {
   const pendingAppointments = appointments.filter(
     (appointment) => !appointment.isCompleted && !appointment.cancelled && appointment.status === "pending"
   );
+
+  useEffect(() => {
+    // Kiểm tra nếu có thông báo thành công trong location state
+    if (location.state?.successMessage) {
+      toast.success(location.state.successMessage);
+    }
+  }, [location.state]);
 
   return (
     <div className='w-full max-w-6xl m-5'>
@@ -47,8 +56,8 @@ const DoctorAppointments = () => {
                 {item.work_shift === "afternoon" && "Buổi chiều"}
               </p>
               <div className='flex gap-3 justify-self-end'>
-                <img onClick={() => cancelAppointment(item._id)} className='w-[30px] h-[30px] cursor-pointer'src={assets.cancel_icon}alt="Cancel"/>
-                <img onClick={() => completeAppointment(item._id)} className='w-[30px] h-[30px] cursor-pointer'src={assets.checkmark_icon} alt="Complete"/>
+                <img onClick={() => cancelAppointment(item._id)} className='w-[30px] h-[30px] cursor-pointer' src={assets.cancel_icon} alt="Cancel" />
+                <img onClick={() => completeAppointment(item._id)} className='w-[30px] h-[30px] cursor-pointer' src={assets.checkmark_icon} alt="Complete" />
               </div>
             </div>
           ))
@@ -56,6 +65,7 @@ const DoctorAppointments = () => {
           <p className='text-gray-500 py-3 text-center'>Không có lịch hẹn nào chờ được xác nhận.</p>
         )}
       </div>
+      <ToastContainer />
     </div>
   );
 };
