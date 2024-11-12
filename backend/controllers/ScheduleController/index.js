@@ -84,7 +84,7 @@ const getScheduleByDoctor = async (req, res) => {
   try {
     const { id } = req.params;
     const today = new Date();
-
+    today.setHours(0,0,0,0);
     const doctor = await Doctor.findOne({_id: id});
     if (!doctor) {
       return res.status(400).json({ message: "Doctor not found" }); 
@@ -105,7 +105,7 @@ const getScheduleByDoctorDashboard = async (req, res) => {
   try {
     const { id } = req.params;
     const today = new Date();
-
+    today.setHours(0,0,0,0);
     const doctor = await Doctor.findOne({user_id: id});
     if (!doctor) {
       return res.status(400).json({ message: "Doctor not found" }); 
