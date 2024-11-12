@@ -8,7 +8,9 @@ const {
   deleteDoctor,
   confirmAppointment,
   getDoctorAppointments,
-  getSpecializations
+  getSpecializations,
+  getProfileDoctor,
+  updateProfileDoctor
 } = require("../controllers/DoctorController/index");
 const upload = require('../helpers/multer-config'); // Import multer config
 const {
@@ -35,6 +37,8 @@ router.get("/get-specializations/:id", getSpecializations);
 router.post("/create-schedule/:id", doctorCreateSchedule);
 router.get("/find-schedule/:id", getSchedule);
 router.put("/update-schedule/:id", doctorUpdateSchedule);
+router.get("/profile/:id", getProfileDoctor);
+router.put("/update-profile/:id",upload.single('image'), updateProfileDoctor);
 
 
 module.exports = router;

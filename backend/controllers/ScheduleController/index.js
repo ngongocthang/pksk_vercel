@@ -84,6 +84,7 @@ const getScheduleByDoctor = async (req, res) => {
   try {
     const { id } = req.params;
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
     const doctor = await Doctor.findOne({_id: id});
     if (!doctor) {

@@ -193,6 +193,7 @@ const getCurrentUserAppointments = async (req, res) => {
     const user_id = req.user?.id;
     const user_role = req.user?.role;
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
     let appointments;
 
@@ -205,7 +206,6 @@ const getCurrentUserAppointments = async (req, res) => {
       appointments = await Appointment.find({
         patient_id: patient._id,
         work_date: { $gte: today },
-        // status: { $nin: ["canceled"] }
       })
         .populate({
           path: "patient_id",
