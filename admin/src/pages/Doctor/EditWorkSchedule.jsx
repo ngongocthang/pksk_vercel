@@ -54,7 +54,6 @@ const EditWorkSchedule = () => {
       work_shift: scheduleForm.timeSlot,
     };
     await updateSchedule(id, updatedSchedule);
-    toast.success("Lịch làm việc đã được cập nhật thành công!");
     navigate("/doctor-work-schedule");
   };
 
@@ -62,7 +61,7 @@ const EditWorkSchedule = () => {
 
   return (
     <div className="max-w-2xl mx-auto p-5">
-      <div className="bg-white p-8 rounded-lg shadow-lg">
+      <div className="bg-white p-8 rounded-lg shadow-lg" style={{ width: '480px' }}>
         <h2 className="text-2xl font-semibold mb-5">
           Chỉnh Sửa Lịch Làm Việc của Bác Sĩ
         </h2>
@@ -100,7 +99,7 @@ const EditWorkSchedule = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full py-3 mt-5 bg-blue-500 text-white rounded hover:bg-blue-600 font-semibold"
+            className="w-full py-3 mt-5 bg-[#219B9D] text-white rounded hover:bg-[#0091a1] font-semibold"
           >
             Cập nhật Lịch Làm Việc
           </button>
