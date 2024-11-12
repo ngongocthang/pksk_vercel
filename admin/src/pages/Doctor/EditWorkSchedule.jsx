@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { toast } from "react-toastify";
@@ -8,6 +8,7 @@ import { DoctorContext } from "../../context/DoctorContext";
 
 const EditWorkSchedule = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { getScheduleById, updateSchedule } = useContext(DoctorContext);
   const [schedule, setSchedule] = useState(null);
   const [scheduleForm, setScheduleForm] = useState({
@@ -53,6 +54,8 @@ const EditWorkSchedule = () => {
       work_shift: scheduleForm.timeSlot,
     };
     await updateSchedule(id, updatedSchedule);
+    toast.success("Lịch làm việc đã được cập nhật thành công!");
+    navigate("/doctor-work-schedule");
   };
 
   if (!schedule) return <p>Loading...</p>;
