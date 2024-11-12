@@ -61,6 +61,3 @@ const DoctorAppointments = () => {
 };
 
 export default DoctorAppointments;
-
-
-DoctorAppointments
