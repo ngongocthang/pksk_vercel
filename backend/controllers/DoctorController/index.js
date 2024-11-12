@@ -266,7 +266,7 @@ const getDoctorAppointments = async (req, res) => {
   try {
     const user_id = req.user?.id;
     const today = new Date();
-
+    today.setHours(0,0,0,0);
     const doctor = await Doctor.findOne({ user_id: user_id });
     if (!doctor) {
       return res.status(400).json({ message: "Doctor not found" });

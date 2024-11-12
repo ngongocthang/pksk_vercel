@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { DoctorContext } from "../../context/DoctorContext";
 
@@ -74,7 +73,7 @@ const EditWorkSchedule = () => {
               onChange={handleDateChange}
               dateFormat="dd/MM/yyyy"
               minDate={new Date()}
-              className="w-full p-3 border rounded focus:outline-none focus:border-blue-500"
+              className="w-[415px] p-3 border rounded focus:outline-none focus:border-black"
             />
           </div>
 
@@ -86,7 +85,7 @@ const EditWorkSchedule = () => {
               value={scheduleForm.timeSlot}
               onChange={handleInputChange}
               required
-              className="w-full p-3 border rounded focus:outline-none focus:border-blue-500"
+              className="w-full p-3 border rounded focus:outline-none focus:border-black"
             >
               <option value="" disabled>
                 Chọn ca làm việc

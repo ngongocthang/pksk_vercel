@@ -42,7 +42,7 @@ const Login = () => {
                 } else {
                     toast.error("Vai trò không phù hợp đối với loại đăng nhập đã chọn.")
                 }
-                window.location.reload() 
+                window.location.reload()
             } else {
                 toast.error("Login failed!")
             }
@@ -76,12 +76,14 @@ const Login = () => {
                         type={showPassword ? "text" : "password"}
                         required
                     />
-                    <img
-                        src={showPassword ? EyeIcon : EyeOffIcon}
-                        alt="Toggle Password Visibility"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className='absolute top-1/2 right-3 transform -translate-y-1/2 w-6 h-6 cursor-pointer w-4 h-4 mt-3'
-                    />
+                    {password && (
+                        <img
+                            src={showPassword ? EyeIcon : EyeOffIcon}
+                            alt="Toggle Password Visibility"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className='absolute top-1/2 right-3 transform -translate-y-1/2 w-6 h-6 cursor-pointer w-4 h-4 mt-3'
+                        />
+                    )}
                 </div>
                 <button className='bg-[#0091a1] text-white w-full py-2 rounded-md text-base'>Login</button>
                 {state === 'Admin'

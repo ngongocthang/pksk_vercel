@@ -6,6 +6,8 @@ const DoctorAppointments = () => {
   const { dToken, schedules, getDoctorSchedule, deleteSchedule } = useContext(DoctorContext);
   const [showModal, setShowModal] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1); // Trạng thái trang hiện tại
+  const [schedulesPerPage] = useState(10); // Giới hạn số lịch mỗi trang
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,6 +18,7 @@ const DoctorAppointments = () => {
     }
   }, [dToken]);
 
+  // Định dạng ngày
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-GB");
@@ -29,10 +32,36 @@ const DoctorAppointments = () => {
   const handleConfirmDelete = async () => {
     if (selectedSchedule) {
       await deleteSchedule(selectedSchedule._id);
-      setShowModal(false);
-      setSelectedSchedule(null);
+  
+      const updatedSchedules = schedules.filter(schedule => schedule._id !== selectedSchedule._id);
+  
+      if (updatedSchedules.length <= 10) {
+        setCurrentPage(1);    
+        navigate(`/doctor-work-schedule`, { replace: true }); 
+      } else {
+        setShowModal(false);  
+        setSelectedSchedule(null);  
+      }
     }
+  };  
+
+  useEffect(() => {
+    setShowModal(false);
+    setSelectedSchedule(null);
+  }, [schedules]);
+
+  // Logic phân trang
+  const indexOfLastSchedule = currentPage * schedulesPerPage;
+  const indexOfFirstSchedule = indexOfLastSchedule - schedulesPerPage;
+  const currentSchedules = schedules.slice(indexOfFirstSchedule, indexOfLastSchedule);
+
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    navigate(`/doctor-work-schedule?page=${pageNumber}`);
   };
+
+  // Check if pagination is needed (only show if schedules length > 10)
+  const shouldDisplayPagination = schedules.length > schedulesPerPage;
 
   return (
     <div className="w-full max-w-6xl m-5">
@@ -45,7 +74,7 @@ const DoctorAppointments = () => {
           <svg className="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
             <path d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" />
           </svg>
-          Tạo lịch làm việc
+          Tạo Mới
         </button>
       </div>
       <div className="bg-white border rounded text-sm max-h-[80vh] min-h-[50vh] overflow-y-scroll">
@@ -56,20 +85,25 @@ const DoctorAppointments = () => {
           <p className="font-bold text-[16px]">Hành động</p>
         </div>
 
-        {schedules && schedules.length > 0 ? (
-          schedules.reverse().map((schedule, index) => (
+        {currentSchedules && currentSchedules.length > 0 ? (
+          currentSchedules.map((schedule, index) => (
             <div
               className="flex flex-wrap justify-between max-sm:gap-5 max-sm:text-base sm:grid grid-cols-[0.5fr_2fr_1fr_1fr] gap-1 items-center text-gray-500 py-3 px-6 border-b hover:bg-gray-50"
               key={schedule._id}
             >
               <p className="max-sm:hidden font-bold">{index + 1}</p>
               <p>{formatDate(schedule.work_date)}</p>
-              <p>{schedule.work_shift === "afternoon" ? "Chiều" : "Sáng"}</p>
+              <p
+                className={`p-2 rounded-full text-white text-center max-w-[100px] 
+                ${schedule.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg`}
+              >
+                {schedule.work_shift === "afternoon" ? "Chiều" : "Sáng"}
+              </p>
               <div className="flex gap-3">
-                {/* New Edit (Pencil) Icon */}
+                {/* Edit Icon */}
                 <svg
                   onClick={() => navigate(`/edit-work-schedule/${schedule._id}`)}
-                  className="w-6 h-6 cursor-pointer text-blue-500 hover:text-blue-600"
+                  className="w-8 h-8 cursor-pointer text-blue-500 bg-blue-100 rounded-full p-2 transition-all shadow-lg"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="currentColor"
@@ -82,10 +116,10 @@ const DoctorAppointments = () => {
                   ></path>
                 </svg>
 
-                {/* New Delete (Trash Can) Icon */}
+                {/* Delete Icon */}
                 <svg
                   onClick={() => handleDeleteClick(schedule)}
-                  className="w-6 h-6 cursor-pointer text-red-500 hover:text-red-600"
+                  className="w-8 h-8 cursor-pointer text-red-500 bg-red-100 rounded-full p-2 transition-all shadow-lg"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="currentColor"
@@ -105,7 +139,22 @@ const DoctorAppointments = () => {
         )}
       </div>
 
-      {showModal && selectedSchedule && (
+      {/* Pagination */}
+      {shouldDisplayPagination && (
+        <div className="flex justify-center mt-4">
+          {Array.from({ length: Math.ceil(schedules.length / schedulesPerPage) }, (_, index) => (
+            <button
+              key={index + 1}
+              onClick={() => paginate(index + 1)}
+              className={`px-4 py-2 ${currentPage === index + 1 ? 'bg-[#219c9e] text-white' : 'bg-gray-200'} rounded-md mx-1 hover:bg-[#0091a1]`}
+            >
+              {index + 1}
+            </button>
+          ))}
+        </div>
+      )}
+
+{showModal && selectedSchedule && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-lg p-6 w-96">
             <h2 className="text-xl font-semibold mb-4">Xác nhận xóa</h2>
