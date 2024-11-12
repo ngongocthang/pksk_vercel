@@ -306,15 +306,197 @@ const getDoctorAppointments = async (req, res) => {
 const getSpecializations = async (req, res) => {
   try {
     const { id } = req.params;
-    const doctor = await Doctor.findOne({user_id: id}).populate("specialization_id");
+    const doctor = await Doctor.findOne({ user_id: id }).populate(
+      "specialization_id"
+    );
     if (!doctor) {
       return res.status(400).json({ message: "Doctor not found" });
     }
     return res.status(200).json(doctor);
   } catch (error) {
     return res.status(500).json({ message: error.message });
-  } 
-};  
+  }
+};
+
+const getProfileDoctor = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    const doctor = await Doctor.findOne({ user_id: id }).populate(
+      "specialization_id"
+    );
+    if (!doctor) {
+      return res.status(400).json({ message: "Doctor not found" });
+    }
+
+    const doctorProfile = {
+      ...doctor.toObject(),
+      name: user.name,
+      email: user.email,
+      image: user.image,
+      phone: user.phone,
+      password: user.password,
+    };
+
+    return res.status(200).json({ success: true, doctorProfile });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// const updateProfileDoctor = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+
+//     // Fetch the existing doctor information
+//     const doctor = await Doctor.findOne({ user_id: id }).populate("specialization_id");
+//     if (!doctor) {
+//       return res.status(400).json({ message: "Doctor not found" });
+//     }
+
+//     let hashedPassword = doctor.user_id.password; // Retain old password by default
+//     if (req.body.password) {
+//       hashedPassword = await bcrypt.hash(req.body.password, 10);
+//     }
+
+//     let imageUrl = doctor.user_id.image; // Keep the old image URL by default
+
+//     // Check if a new image file is provided
+//     if (req.file) {
+//       // Generate base64 for the new image to upload
+//       const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
+
+//       // Delete the old image from Cloudinary if it exists
+//       if (imageUrl) {
+//         const publicId = imageUrl.split("/").slice(-1)[0].split(".")[0];
+//         await cloudinary.uploader.destroy(`doctor/${publicId}`);
+//       }
+
+//       // Upload the new image and update `imageUrl` with the new image URL
+//       const result = await cloudinary.uploader.upload(base64Image, {
+//         folder: "doctor",
+//       });
+//       imageUrl = result.secure_url;
+//     }
+
+//     const updatedUser = await User.findOneAndUpdate(
+//       { _id: id },
+//       {
+//         name: req.body.name,
+//         email: req.body.email,
+//         password: hashedPassword,
+//         image: imageUrl, // Retain old or update with new image URL
+//         phone: req.body.phone,
+//       },
+//       { new: true }
+//     );
+//     if (!updatedUser) {
+//       return res.status(400).json({ message: "Update user failed" });
+//     }
+
+//     const updatedDoctor = await Doctor.findOneAndUpdate(
+//       { user_id: id },
+//       {
+//         specialization_id: req.body.specialization_id,
+//         description: req.body.description,
+//       },
+//       { new: true }
+//     );
+//     if (!updatedDoctor) {
+//       return res.status(400).json({ message: "Update doctor failed" });
+//     }
+
+//     return res.status(200).json({ success: true, message: "Update profile success!" });
+//   } catch (error) {
+//     return res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+const updateProfileDoctor = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Fetch the existing doctor information
+    const doctor = await Doctor.findOne({ user_id: id }).populate("specialization_id");
+    if (!doctor) {
+      return res.status(400).json({ message: "Doctor not found" });
+    }
+
+    const user = await User.findOne({ _id: id });
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+    // Kiểm tra mật khẩu cũ
+    if (req.body.oldPassword) {
+      const isMatch = await bcrypt.compare(req.body.oldPassword, user.password);
+      if (!isMatch) {
+        return res.status(400).json({ message: "Mật khẩu cũ không chính xác" });
+      }
+    }
+
+    let hashedPassword = doctor.user_id.password; // Retain old password by default
+    if (req.body.newPassword) {
+      hashedPassword = await bcrypt.hash(req.body.newPassword, 10);
+    }
+
+    let imageUrl = doctor.user_id.image; // Keep the old image URL by default
+
+    // Check if a new image file is provided
+    if (req.file) {
+      // Generate base64 for the new image to upload
+      const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
+
+      // Delete the old image from Cloudinary if it exists
+      if (imageUrl) {
+        const publicId = imageUrl.split("/").slice(-1)[0].split(".")[0];
+        await cloudinary.uploader.destroy(`doctor/${publicId}`);
+      }
+
+      // Upload the new image and update `imageUrl` with the new image URL
+      const result = await cloudinary.uploader.upload(base64Image, {
+        folder: "doctor",
+      });
+      imageUrl = result.secure_url;
+    }
+
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: id },
+      {
+        name: req.body.name,
+        email: req.body.email,
+        password: hashedPassword,
+        image: imageUrl,
+        phone: req.body.phone,
+      },
+      { new: true }
+    );
+    if (!updatedUser) {
+      return res.status(400).json({ message: "Update user failed" });
+    }
+
+    const updatedDoctor = await Doctor.findOneAndUpdate(
+      { user_id: id },
+      {
+        specialization_id: req.body.specialization_id,
+        description: req.body.description,
+      },
+      { new: true }
+    );
+    if (!updatedDoctor) {
+      return res.status(400).json({ message: "Update doctor failed" });
+    }
+
+    return res.status(200).json({ success: true, message: "Update profile success!" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
 
 module.exports = {
   createDoctor,
@@ -324,6 +506,7 @@ module.exports = {
   deleteDoctor,
   confirmAppointment,
   getDoctorAppointments,
-  getSpecializations
-
+  getSpecializations,
+  getProfileDoctor,
+  updateProfileDoctor,
 };

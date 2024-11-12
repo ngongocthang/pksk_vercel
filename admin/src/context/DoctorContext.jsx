@@ -116,12 +116,13 @@ const DoctorContextProvider = (props) => {
 
   const getProfileData = async () => {
     try {
-      const { data } = await axios.get(`${backendUrl}/api/doctor/profile`, {
+      const doctorInfo = JSON.parse(sessionStorage.getItem("doctorInfo")); 
+      const doctorId = doctorInfo ? doctorInfo.id : null; 
+      const { data } = await axios.get(`${backendUrl}/doctor/profile/${doctorId}`, {
         headers: { Authorization: `Bearer ${dToken}` },
       });
       if (data.success) {
-        setProfileData(data.profileData);
-        console.log(data.profileData);
+        setProfileData(data);
       }
     } catch (error) {
       console.log(error);
