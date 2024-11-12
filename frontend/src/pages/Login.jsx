@@ -55,10 +55,10 @@ const Login = () => {
             if (data.user.role === "doctor" || data.user.role === "admin") {
               toast.error("Bạn không thể đăng nhập với quyền này!");
             } else {
-              setUser(data.user); 
+              setUser(data.user);
               localStorage.setItem("token", data.user.token);
               localStorage.setItem("user", JSON.stringify(data.user));
-              navigate("/"); 
+              navigate("/");
             }
           } else {
             toast.error("Không tìm thấy thông tin đăng nhập hợp lệ!");
@@ -131,17 +131,19 @@ const Login = () => {
               value={password}
               required
             />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-transparent border-none cursor-pointer"
-            >
-              <img
-                src={showPassword ? EyeIcon : EyeOffIcon}
-                alt="Chuyển đổi hiển thị mật khẩu"
-                className="w-5 h-5 mt-5"
-              />
-            </button>
+            {password && (
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-transparent border-none cursor-pointer"
+              >
+                <img
+                  src={showPassword ? EyeIcon : EyeOffIcon}
+                  alt="Chuyển đổi hiển thị mật khẩu"
+                  className="w-5 h-5 mt-5"
+                />
+              </button>
+            )}
           </div>
 
           <button

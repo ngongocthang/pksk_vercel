@@ -1,14 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { DoctorContext } from '../../context/DoctorContext';
 import DatePicker from 'react-datepicker';
-import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 
 const CreateDoctorSchedule = () => {
   const { getDoctorSpecialization, createSchedule } = useContext(DoctorContext);
   const [scheduleForm, setScheduleForm] = useState({
-    workDate: null,
+    workDate: new Date(), // Khởi tạo ngày làm việc là ngày hiện tại
     timeSlot: ''
   });
   const navigate = useNavigate();
@@ -62,7 +61,7 @@ const CreateDoctorSchedule = () => {
               onChange={handleDateChange}
               dateFormat="dd/MM/yyyy"
               minDate={new Date()}
-              className='w-full p-3 border rounded focus:outline-none focus:border-blue-500'
+              className='w-[335px] p-3 border rounded focus:outline-none focus:border-black'
             />
           </div>
 
@@ -73,7 +72,7 @@ const CreateDoctorSchedule = () => {
               value={scheduleForm.timeSlot}
               onChange={handleInputChange}
               required
-              className='w-full p-3 border rounded focus:outline-none focus:border-blue-500'
+              className='w-full p-3 border rounded focus:outline-none focus:border-black'
             >
               <option value='' disabled>Chọn ca làm việc</option>
               <option value='morning'>Buổi sáng</option>
@@ -89,7 +88,6 @@ const CreateDoctorSchedule = () => {
           </button>
         </form>
       </div>
-      <ToastContainer />
     </div>
   );
 };

@@ -181,7 +181,7 @@ const DoctorContextProvider = (props) => {
         toast.error("Tạo lịch làm việc thất bại!");
       }
     } catch (error) {
-      console.log(error);
+      console.log("Có lỗi xảy ra khi tạo lịch làm việc!");
     }
   };
 
