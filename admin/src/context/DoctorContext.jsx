@@ -1,4 +1,3 @@
-// doctorcontext
 import { createContext, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -12,6 +11,7 @@ const DoctorContextProvider = (props) => {
     localStorage.getItem("dToken") ? localStorage.getItem("dToken") : ""
   );
   const [appointments, setAppointments] = useState([]);
+  const [appointmentStatus, setAppointmentStatus] = useState([]);
   const [schedules, setSchedules] = useState([]);
   const [specialzations, setSpecialzations] = useState([]);
   const [dashData, setDashData] = useState(false);
@@ -116,11 +116,14 @@ const DoctorContextProvider = (props) => {
 
   const getProfileData = async () => {
     try {
-      const doctorInfo = JSON.parse(sessionStorage.getItem("doctorInfo")); 
-      const doctorId = doctorInfo ? doctorInfo.id : null; 
-      const { data } = await axios.get(`${backendUrl}/doctor/profile/${doctorId}`, {
-        headers: { Authorization: `Bearer ${dToken}` },
-      });
+      const doctorInfo = JSON.parse(sessionStorage.getItem("doctorInfo"));
+      const doctorId = doctorInfo ? doctorInfo.id : null;
+      const { data } = await axios.get(
+        `${backendUrl}/doctor/profile/${doctorId}`,
+        {
+          headers: { Authorization: `Bearer ${dToken}` },
+        }
+      );
       if (data.success) {
         setProfileData(data);
       }
@@ -209,16 +212,16 @@ const DoctorContextProvider = (props) => {
   };
 
   const updateSchedule = async (scheduleId, scheduleData) => {
-    const doctorInfo = JSON.parse(sessionStorage.getItem("doctorInfo")); 
-    const doctorId = doctorInfo ? doctorInfo.id : null; 
-  
+    const doctorInfo = JSON.parse(sessionStorage.getItem("doctorInfo"));
+    const doctorId = doctorInfo ? doctorInfo.id : null;
+
     try {
       const { data } = await axios.put(
         `${backendUrl}/doctor/update-schedule/${scheduleId}`,
         { ...scheduleData, id: doctorId },
         { headers: { Authorization: `Bearer ${dToken}` } }
       );
-  
+
       if (data.success) {
         toast.success("Cập nhật lịch làm việc thành công!");
       } else {
@@ -229,16 +232,19 @@ const DoctorContextProvider = (props) => {
       toast.error("Có lỗi xảy ra khi cập nhật lịch!");
     }
   };
-  
+
   const deleteSchedule = async (scheduleId) => {
     try {
-      const { data } = await axios.delete(`${backendUrl}/schedule/delete/${scheduleId}`, {
-        headers: { Authorization: `Bearer ${dToken}` },
-      });
-  
+      const { data } = await axios.delete(
+        `${backendUrl}/schedule/delete/${scheduleId}`,
+        {
+          headers: { Authorization: `Bearer ${dToken}` },
+        }
+      );
+
       if (data.success) {
         toast.success("Xóa lịch làm việc thành công!");
-        setSchedules((prevSchedules) => 
+        setSchedules((prevSchedules) =>
           prevSchedules.filter((schedule) => schedule._id !== scheduleId)
         );
       } else {
@@ -249,8 +255,38 @@ const DoctorContextProvider = (props) => {
       toast.error("Có lỗi xảy ra khi xóa lịch làm việc!");
     }
   };
+
+  const showUpcomingAppointments = async (userId) => {
+    try {
+      const { data } = await axios.get(
+        `${backendUrl}/show-upcoming-appointments/${userId}`,
+        { headers: { Authorization: `Bearer ${dToken}` } }
+      );
+      setAppointments(data.length > 0 ? data : []);
+      if (data.length === 0) toast.error("Không có lịch hẹn nào!");
+    } catch (error) {
+      console.error("Error fetching appointments:", error);
+      toast.error("Có lỗi xảy ra khi lấy lịch hẹn!");
+    }
+  };
+
+  const getAppointmentsByStatus = async (doctorId) => {
+    try {
+      const { data } = await axios.get(
+        `${backendUrl}/get-appointments-status/${doctorId}`,
+        { headers: { Authorization: `Bearer ${dToken}` } }
+      );
   
-  
+      if (Array.isArray(data) && data.length > 0) {
+        setAppointmentStatus(data);
+      } else {
+        toast.error("Không có lịch hẹn nào!");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Có lỗi xảy ra khi lấy lịch hẹn theo trạng thái!");
+    }
+  };
   
 
   const value = {
@@ -278,7 +314,11 @@ const DoctorContextProvider = (props) => {
     createSchedule,
     getScheduleById,
     updateSchedule,
-    deleteSchedule
+    deleteSchedule,
+    showUpcomingAppointments,
+    appointmentStatus,
+    setAppointmentStatus,
+    getAppointmentsByStatus
   };
 
   return (
