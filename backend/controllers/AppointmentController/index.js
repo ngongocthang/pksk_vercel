@@ -301,7 +301,7 @@ const processPrematureCancellation = async (req, res) => {
 
 const showUpcomingAppointments = async (req, res) => {
   try {
-    const user_id = req.user?.id;
+    const user_id = req.params.id;
 
     const user_role = await User_role.findOne({ user_id: user_id });
     if (!user_role) {
@@ -318,31 +318,50 @@ const showUpcomingAppointments = async (req, res) => {
 
     if (role.name === "admin") {
       upcomingAppointments = await Appointment.find({
-        work_date: { $gte: now }, // Lấy các lịch hẹn có thời gian từ hiện tại trở đi
-      }).sort({ work_date: 1 }); // Sắp xếp theo thời gian hẹn từ sớm đến muộn
+        work_date: { $gte: now },
+      }).sort({ work_date: 1 });
     } else {
       const doctor = await Doctor.findOne({ user_id: user_id });
       if (!doctor) {
         return res.status(403).json({ message: "Doctor not found" });
       }
+
       upcomingAppointments = await Appointment.find({
         doctor_id: doctor._id,
-        work_date: { $gte: now }, // Lấy các lịch hẹn có thời gian từ hiện tại trở đi
-      }).sort({ work_date: 1 }); // Sắp xếp theo thời gian hẹn từ sớm đến muộn
+        work_date: { $gte: now },
+        status: { $nin: ["pending", "canceled"] }
+      }).sort({ work_date: 1 });
     }
 
-    return res.status(200).json(upcomingAppointments);
+    const updatedAppointments = await Promise.all(
+      upcomingAppointments.map(async (appointment) => {
+        const patient = await Patient.findOne({ _id: appointment.patient_id });
+        if (!patient) {
+          throw new Error("Patient not found");
+        }
+        
+        const user = await User.findOne({ _id: patient.user_id });
+        if (!user) {
+          throw new Error("User not found");
+        }
+
+        return {
+          ...appointment.toObject(),
+          patient_name: user.name,
+        };
+      })
+    );
+
+    return res.status(200).json(updatedAppointments);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
+
 const getAppointmentByStatus = async (req, res) => {
   try {
-    const user_id = req.user?.id;
-    if (!user_id) {
-      return res.status(401).json({ message: "User not authenticated" });
-    }
+    const user_id = req.params.id;
 
     const user_role = await User_role.findOne({ user_id: user_id });
     if (!user_role) {
@@ -353,10 +372,11 @@ const getAppointmentByStatus = async (req, res) => {
     if (!role) {
       return res.status(403).json({ message: "Role not found" });
     }
+
     let appointments;
     if (role.name === "admin") {
       appointments = await Appointment.find({
-        status: "confirmed" || "finished",
+        status: { $in: ["confirmed", "completed"] },
       });
     } else {
       const doctor = await Doctor.findOne({ user_id: user_id });
@@ -364,15 +384,54 @@ const getAppointmentByStatus = async (req, res) => {
         return res.status(403).json({ message: "Doctor not found" });
       }
       appointments = await Appointment.find({
-        status: "confirmed" || "finished",
+        status: { $in: ["confirmed", "completed"] },
         doctor_id: doctor._id,
       });
     }
-    return res.status(200).json(appointments);
+
+    const updatedAppointments = await Promise.all(
+      appointments.map(async (appointment) => {
+        const patient = await Patient.findOne({ _id: appointment.patient_id });
+        if (!patient) {
+          throw new Error("Patient not found");
+        }
+
+        const user = await User.findOne({ _id: patient.user_id });
+        if (!user) {
+          throw new Error("User not found");
+        }
+
+        return {
+          ...appointment.toObject(),
+          patient_name: user.name,
+        };
+      })
+    );
+
+    return res.status(200).json(updatedAppointments);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
+
+const countAppointmentByDoctor = async (req, res) => {
+  try{
+    const {id} = req.params;
+    const doctor = await Doctor.findOne({user_id: id});
+    if(!doctor){
+      return res.status(400).json({message: "Doctor not found"});
+    }
+    const count = await Appointment.find({doctor_id: doctor._id}).count();
+    if(count.length <= 0){
+      return res.status(400).json({message: "Count not found"});
+    }
+    return res.status(200).json({count});
+
+  }catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
 
 module.exports = {
   createAppointment,
@@ -385,4 +444,5 @@ module.exports = {
   processPrematureCancellation,
   showUpcomingAppointments,
   getAppointmentByStatus,
+  countAppointmentByDoctor
 };
