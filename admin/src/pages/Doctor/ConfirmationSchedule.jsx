@@ -46,6 +46,13 @@ const ConfirmationSchedule = () => {
   const currentAppointments = pendingAppointments.slice(indexOfFirstAppointment, indexOfLastAppointment);
   const totalPages = Math.ceil(pendingAppointments.length / appointmentsPerPage);
 
+  // Redirect to the main page when exactly 10 pending appointments remain
+  useEffect(() => {
+    if (pendingAppointments.length === 10) {
+      navigate('/confirmation-schedule');
+    }
+  }, [pendingAppointments, navigate]);
+
   // Handle page change and update URL
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -73,9 +80,13 @@ const ConfirmationSchedule = () => {
               <p className='max-sm:hidden text-center font-bold'>{index + 1 + (currentPage - 1) * appointmentsPerPage}</p>
               <p className='text-base text-center'>{item.patient_id.user_id.name}</p>
               <p className='text-base text-center'>{formatDate(item.work_date)}</p>
-              <p className='text-base text-center'>
-                {item.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều"}
-              </p>
+              <div className='flex justify-center items-center'>
+                <p
+                  className={`p-2 rounded-full text-white text-base text-center 
+                  ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg max-w-[100px] w-full`}>
+                  {item.work_shift === "morning" ? "Sáng" : "Chiều"}
+                </p>
+              </div>
               <div className='flex gap-3 justify-self-end'>
                 {/* SVG for Complete */}
                 <svg
