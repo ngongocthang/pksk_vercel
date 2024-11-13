@@ -146,7 +146,7 @@ const DoctorAppointments = () => {
             <button
               key={index + 1}
               onClick={() => paginate(index + 1)}
-              className={`px-4 py-2 ${currentPage === index + 1 ? 'bg-[#219c9e] text-white' : 'bg-gray-200'} rounded-md mx-1 hover:bg-[#0091a1]`}
+              className={`px-4 py-2 ${currentPage === index + 1 ? 'bg-[#219c9e] text-white' : 'bg-gray-200'} rounded-md mx-1 hover:bg-[#0091a1] hover:text-white`}
             >
               {index + 1}
             </button>
