@@ -94,7 +94,6 @@ const DoctorDashboard = () => {
           <img src={assets.list_icon} alt="" />
           <p className="font-semibold">Status Bookings</p>
         </div>
-
         <div className="pt-4 border border-t-0 w-[960px]">
           {appointmentStatus.map((item) => (
             <div
