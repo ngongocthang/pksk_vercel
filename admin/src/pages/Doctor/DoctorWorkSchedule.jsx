@@ -32,18 +32,18 @@ const DoctorAppointments = () => {
   const handleConfirmDelete = async () => {
     if (selectedSchedule) {
       await deleteSchedule(selectedSchedule._id);
-  
+
       const updatedSchedules = schedules.filter(schedule => schedule._id !== selectedSchedule._id);
-  
+
       if (updatedSchedules.length <= 10) {
-        setCurrentPage(1);    
-        navigate(`/doctor-work-schedule`, { replace: true }); 
+        setCurrentPage(1);
+        navigate(`/doctor-work-schedule`, { replace: true });
       } else {
-        setShowModal(false);  
-        setSelectedSchedule(null);  
+        setShowModal(false);
+        setSelectedSchedule(null);
       }
     }
-  };  
+  };
 
   useEffect(() => {
     setShowModal(false);
@@ -154,7 +154,7 @@ const DoctorAppointments = () => {
         </div>
       )}
 
-{showModal && selectedSchedule && (
+      {showModal && selectedSchedule && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-lg p-6 w-96">
             <h2 className="text-xl font-semibold mb-4">Xác nhận xóa</h2>
