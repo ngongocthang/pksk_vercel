@@ -29,91 +29,112 @@ const DoctorDashboard = () => {
   };
 
   return (
-    <div className="m-5">
+    <div className="m-5 w-full shadow-lg">
       {/* Overview Section */}
-      <div className="flex flex-wrap gap-3">
-        <div className="flex items-center gap-2 bg-white p-4 min-w-52 rounded border-2 border-gray-100 cursor-pointer hover:scale-105 transition-all">
-          <img className="w-14" src={assets.earning_icon} alt="" />
-          <div>
+      <div className="flex gap-3 w-full">
+        <div className="flex-1 min-w-0 bg-white p-4 rounded border-2 border-gray-100 cursor-pointer hover:scale-105 transition-all flex items-center justify-center shadow-lg">
+          <div className="text-center">
+            <img className="w-14 mx-auto" src={assets.earning_icon} alt="" />
             <p className="text-xl font-semibold text-gray-600">1.900.000</p>
-            <p className="text-gray-400">Earnings</p>
+            <p className="text-gray-400">Thu nhập</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 bg-white p-4 min-w-52 rounded border-2 border-gray-100 cursor-pointer hover:scale-105 transition-all">
-          <img className="w-10" src={assets.appointment_icon} alt="" />
-          <div>
-            <p className="text-xl font-semibold text-gray-600">
-              {countCompletedAppointments()}
-            </p>
-            <p className="text-gray-400">Lịch hẹn hoàn thành</p>
+        <div className="flex-1 min-w-0 bg-white p-4 rounded border-2 border-gray-100 cursor-pointer hover:scale-105 transition-all flex items-center justify-center shadow-lg">
+          <div className="text-center">
+            <img className="w-10 mx-auto" src={assets.appointment_icon} alt="" />
+            <div>
+              <p className="text-xl font-semibold text-gray-600">
+                {countCompletedAppointments()}
+              </p>
+              <p className="text-gray-400">Lịch hẹn hoàn thành</p>
+            </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 bg-white p-4 min-w-52 rounded border-2 border-gray-100 cursor-pointer hover:scale-105 transition-all">
-          <img className="w-14" src={assets.patients_icon} alt="" />
-          <div>
-            <p className="text-xl font-semibold text-gray-600">{appointments.length}</p>
-            <p className="text-gray-400">Bệnh nhân</p>
+        <div className="flex-1 min-w-0 bg-white p-4 rounded border-2 border-gray-100 cursor-pointer hover:scale-105 transition-all flex items-center justify-center shadow-lg">
+          <div className="text-center">
+            <img className="w-14 mx-auto" src={assets.patients_icon} alt="" />
+            <div>
+              <p className="text-xl font-semibold text-gray-600">{appointments.length}</p>
+              <p className="text-gray-400">Bệnh nhân</p>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Appointment List Section */}
-      <div className="bg-white mt-5">
-        <div className="flex items-center gap-2.5 px-4 py-4 rounded-t border">
-          <img src={assets.list_icon} alt="" />
-          <p className="font-semibold">Latest Bookings</p>
+      <div className="flex gap-4 bg-white mt-5">
+        {/* Latest Bookings */}
+        <div className="flex-1">
+          <div className="flex items-center gap-2.5 px-4 py-4 rounded-t border">
+            <img src={assets.list_icon} alt="" />
+            <p className="font-semibold">Lịch hẹn mới nhất</p>
+          </div>
+
+          <div className="pt-4 border border-t-0">
+            {appointments.map((item) => (
+              <div
+                className="flex items-center px-6 py-3 gap-3 hover:bg-gray-100"
+                key={item._id}
+              >
+                <div className="flex-1 text-sm">
+                  <p className="text-gray-800 font-medium">{item.patient_name}</p>
+                  <p className="text-gray-600">
+                    {new Date(item.work_date).toLocaleDateString()}
+                  </p>
+                </div>
+                <div className='flex justify-center items-center'>
+                  <p
+                    className={`p-2 rounded-full text-white text-base text-center 
+                    ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg max-w-[100px] w-full`}>
+                    {item.work_shift === "morning" ? "Sáng" : "Chiều"}
+                  </p>
+                </div>
+                {item.status === "canceled" ? (
+                  <p className="text-red-400 text-xs font-medium">Đã Từ Chối</p>
+                ) : (
+                  <p className="text-green-500 text-xs font-medium">Đã Xác Nhận</p>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
 
-        <div className="pt-4 border border-t-0 w-[960px]">
-          {appointments.map((item) => (
-            <div
-              className="flex items-center px-6 py-3 gap-3 hover:bg-gray-100"
-              key={item._id}
-            >
-              <div className="flex-1 text-sm">
-                <p className="text-gray-800 font-medium">{item.patient_name}</p>
-                <p className="text-gray-600">
-                  {new Date(item.work_date).toLocaleDateString()}
-                </p>
+        {/* Status Bookings */}
+        <div className="flex-1">
+          <div className="flex items-center gap-2.5 px-4 py-4 rounded-t border">
+            <img src={assets.list_icon} alt="" />
+            <p className="font-semibold">Lịch hẹn đã hoàn thành</p>
+          </div>
+
+          <div className="pt-4 border border-t-0">
+            {appointmentStatus.map((item) => (
+              <div
+                className="flex items-center px-6 py-3 gap-3 hover:bg-gray-100"
+                key={item._id}
+              >
+                <div className="flex-1 text-sm">
+                  <p className="text-gray-800 font-medium">{item.patient_name}</p>
+                  <p className="text-gray-600">
+                    {new Date(item.work_date).toLocaleDateString()}
+                  </p>
+                </div>
+                <div className='flex justify-center items-center'>
+                  <p
+                    className={`p-2 rounded-full text-white text-base text-center 
+                    ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg max-w-[100px] w-full`}>
+                    {item.work_shift === "morning" ? "Sáng" : "Chiều"}
+                  </p>
+                </div>
+                {item.status === "completed" ? (
+                  <p className="text-blue-500 text-xs font-medium">Đã Hoàn Thành</p>
+                ) : (
+                  <p className="text-green-500 text-xs font-medium">Đã Xác nhận</p>
+                )}
               </div>
-              <p>{item.work_shift}</p>
-              {item.status === "canceled" ? (
-                <p className="text-red-400 text-xs font-medium">Cancelled</p>
-              ) : (
-                <p className="text-green-500 text-xs font-medium">Confirmed</p>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-      {/* Appointment Status Section */}
-      <div className="bg-white mt-5">
-        <div className="flex items-center gap-2.5 px-4 py-4 rounded-t border">
-          <img src={assets.list_icon} alt="" />
-          <p className="font-semibold">Status Bookings</p>
-        </div>
-        <div className="pt-4 border border-t-0 w-[960px]">
-          {appointmentStatus.map((item) => (
-            <div
-              className="flex items-center px-6 py-3 gap-3 hover:bg-gray-100"
-              key={item._id}
-            >
-              <div className="flex-1 text-sm">
-                <p className="text-gray-800 font-medium">{item.patient_name}</p>
-                <p className="text-gray-600">
-                  {new Date(item.work_date).toLocaleDateString()}
-                </p>
-              </div>
-              <p>{item.work_shift}</p>
-              {item.status === "completed" ? (
-                <p className="text-blue-500 text-xs font-medium">Hoàn thành</p>
-              ) : (
-                <p className="text-green-500 text-xs font-medium">Xác nhận</p>
-              )}
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </div>

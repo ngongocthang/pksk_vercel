@@ -60,7 +60,7 @@ const ConfirmationSchedule = () => {
   };
 
   return (
-    <div className='w-full max-w-6xl m-5'>
+    <div className='w-full max-w-6xl ml-60 m-5 shadow-lg'>
       <p className='mb-4 text-lg font-medium'>Các lịch hẹn chờ xác nhận:</p>
       <div className='bg-white border rounded text-sm max-h-[80vh] min-h-[50vh] overflow-y-scroll'>
 
@@ -76,7 +76,7 @@ const ConfirmationSchedule = () => {
         {/* Appointment Rows */}
         {currentAppointments.length > 0 ? (
           currentAppointments.map((item, index) => (
-            <div className='grid grid-cols-[0.5fr_2fr_1fr_1fr_2fr_auto] items-center gap-4 py-4 px-6 border-b hover:bg-gray-50' key={item._id}>
+            <div className='grid grid-cols-[0.5fr_2fr_1fr_1fr_2fr_auto] items-center gap-4 py-4 px-6 border-b hover:bg-gray-50 shadow-md' key={item._id}>
               <p className='max-sm:hidden text-center font-bold'>{index + 1 + (currentPage - 1) * appointmentsPerPage}</p>
               <p className='text-base text-center'>{item.patient_id.user_id.name}</p>
               <p className='text-base text-center'>{formatDate(item.work_date)}</p>
