@@ -1,95 +1,124 @@
-import React, { useContext, useEffect } from 'react'
-import { DoctorContext } from '../../context/DoctorContext'
-import { assets } from '../../assets/assets'
-import { AppContext } from '../../context/AppContext'
+// DoctorDashboard
+import React, { useContext, useEffect } from "react";
+import { DoctorContext } from "../../context/DoctorContext";
+import { assets } from "../../assets/assets";
 
 const DoctorDashboard = () => {
-  
-  const { dToken, dashData, setDashData, getDashData, completeAppointment, cancelAppointment } = useContext(DoctorContext)
-  const { currency, slotDateFormat } = useContext(AppContext)
+  const {
+    dToken,
+    showUpcomingAppointments,
+    appointments,
+    getAppointmentsByStatus,
+    appointmentStatus,
+  } = useContext(DoctorContext);
 
   useEffect(() => {
     if (dToken) {
-      getDashData()
+      const doctorInfo = JSON.parse(sessionStorage.getItem("doctorInfo"));
+      const userId = doctorInfo ? doctorInfo.id : null;
+      if (userId) {
+        showUpcomingAppointments(userId);
+        getAppointmentsByStatus(userId);
+      }
     }
-  }, [dToken])
+  }, [dToken]);
 
-  // Hàm hoàn thành cuộc hẹn có cập nhật lại dữ liệu
-  const handleCompleteAppointment = async (appointmentId) => {
-    await completeAppointment(appointmentId)
-    getDashData()  // Gọi lại hàm để cập nhật dữ liệu mới nhất
-  }
+  // Hàm đếm số lượng cuộc hẹn đã hoàn thành
+  const countCompletedAppointments = () => {
+    return appointmentStatus.filter(item => item.status === "completed").length;
+  };
 
-  // Hàm hủy cuộc hẹn có cập nhật lại dữ liệu
-  const handleCancelAppointment = async (appointmentId) => {
-    await cancelAppointment(appointmentId)
-    getDashData()  // Gọi lại hàm để cập nhật dữ liệu mới nhất
-  }
-
-  return dashData && (
-    <div className='m-5'>
-      <div className='flex flex-wrap gap-3'>
-
-        <div className='flex items-center gap-2 bg-white p-4 min-w-52 rounded border-2 border-gray-100 cursor-pointer hover:scale-105 transition-all'>
-          <img className='w-14' src={assets.earning_icon} alt="" />
+  return (
+    <div className="m-5">
+      {/* Overview Section */}
+      <div className="flex flex-wrap gap-3">
+        <div className="flex items-center gap-2 bg-white p-4 min-w-52 rounded border-2 border-gray-100 cursor-pointer hover:scale-105 transition-all">
+          <img className="w-14" src={assets.earning_icon} alt="" />
           <div>
-            <p className='text-xl font-semibold text-gray-600'>{currency} {dashData.earnings}</p>
-            <p className='text-gray-400'>Earnings</p>
+            <p className="text-xl font-semibold text-gray-600">1.900.000</p>
+            <p className="text-gray-400">Earnings</p>
           </div>
         </div>
 
-        <div className='flex items-center gap-2 bg-white p-4 min-w-52 rounded border-2 border-gray-100 cursor-pointer hover:scale-105 transition-all'>
-          <img className='w-10' src={assets.appointment_icon} alt="" />
+        <div className="flex items-center gap-2 bg-white p-4 min-w-52 rounded border-2 border-gray-100 cursor-pointer hover:scale-105 transition-all">
+          <img className="w-10" src={assets.appointment_icon} alt="" />
           <div>
-            <p className='text-xl font-semibold text-gray-600'>{dashData.appointments}</p>
-            <p className='text-gray-400'>Appointments</p>
+            <p className="text-xl font-semibold text-gray-600">
+              {countCompletedAppointments()}
+            </p>
+            <p className="text-gray-400">Lịch hẹn hoàn thành</p>
           </div>
         </div>
 
-        <div className='flex items-center gap-2 bg-white p-4 min-w-52 rounded border-2 border-gray-100 cursor-pointer hover:scale-105 transition-all'>
-          <img className='w-14' src={assets.patients_icon} alt="" />
+        <div className="flex items-center gap-2 bg-white p-4 min-w-52 rounded border-2 border-gray-100 cursor-pointer hover:scale-105 transition-all">
+          <img className="w-14" src={assets.patients_icon} alt="" />
           <div>
-            <p className='text-xl font-semibold text-gray-600'>{dashData.patients}</p>
-            <p className='text-gray-400'>Patients</p>
+            <p className="text-xl font-semibold text-gray-600">{appointments.length}</p>
+            <p className="text-gray-400">Bệnh nhân</p>
           </div>
         </div>
-
       </div>
 
-      <div className='bg-white'>
-
-        <div className='flex items-center gap-2.5 px-4 py-4 mt-10 rounded-t border'>
+      {/* Appointment List Section */}
+      <div className="bg-white mt-5">
+        <div className="flex items-center gap-2.5 px-4 py-4 rounded-t border">
           <img src={assets.list_icon} alt="" />
-          <p className='font-semibold'>Latest Bookings</p>
+          <p className="font-semibold">Latest Bookings</p>
         </div>
 
-        <div className='pt-4 border border-t-0'>
-          {
-            dashData.latestAppointments.map((item, index) => (
-              <div className='flex items-center px-6 py-3 gap-3 hover:bg-gray-100' key={index}>
-                <img className='rounded-full w-10 h-10 object-cover' src={item.userData.image} alt="" />
-                <div className='flex-1 text-sm'>
-                  <p className='text-gray-800 font-medium'>{item.userData.name}</p>
-                  <p className='text-gray-600'>{slotDateFormat(item.slotDate)}</p>
-                </div>
-                {
-                  item.cancelled
-                    ? <p className='text-red-400 text-xs font-medium'>Cancelled</p>
-                    : item.isCompleted
-                      ? <p className='text-green-500 text-xs font-medium'>Completed</p>
-                      : <div className='flex'>
-                        <img onClick={() => handleCancelAppointment(item._id)} className='w-10 cursor-pointer' src={assets.cancel_icon} alt="" />
-                        <img onClick={() => handleCompleteAppointment(item._id)} className='w-10 cursor-pointer' src={assets.tick_icon} alt="" />
-                      </div>
-                }
+        <div className="pt-4 border border-t-0 w-[960px]">
+          {appointments.map((item) => (
+            <div
+              className="flex items-center px-6 py-3 gap-3 hover:bg-gray-100"
+              key={item._id}
+            >
+              <div className="flex-1 text-sm">
+                <p className="text-gray-800 font-medium">{item.patient_name}</p>
+                <p className="text-gray-600">
+                  {new Date(item.work_date).toLocaleDateString()}
+                </p>
               </div>
-            ))
-          }
+              <p>{item.work_shift}</p>
+              {item.status === "canceled" ? (
+                <p className="text-red-400 text-xs font-medium">Cancelled</p>
+              ) : (
+                <p className="text-green-500 text-xs font-medium">Confirmed</p>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+      {/* Appointment Status Section */}
+      <div className="bg-white mt-5">
+        <div className="flex items-center gap-2.5 px-4 py-4 rounded-t border">
+          <img src={assets.list_icon} alt="" />
+          <p className="font-semibold">Status Bookings</p>
         </div>
 
+        <div className="pt-4 border border-t-0 w-[960px]">
+          {appointmentStatus.map((item) => (
+            <div
+              className="flex items-center px-6 py-3 gap-3 hover:bg-gray-100"
+              key={item._id}
+            >
+              <div className="flex-1 text-sm">
+                <p className="text-gray-800 font-medium">{item.patient_name}</p>
+                <p className="text-gray-600">
+                  {new Date(item.work_date).toLocaleDateString()}
+                </p>
+              </div>
+              <p>{item.work_shift}</p>
+              {item.status === "completed" ? (
+                <p className="text-blue-500 text-xs font-medium">Hoàn thành</p>
+              ) : (
+                <p className="text-green-500 text-xs font-medium">Xác nhận</p>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default DoctorDashboard
+export default DoctorDashboard;
