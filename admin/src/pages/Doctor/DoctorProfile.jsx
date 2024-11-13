@@ -1,23 +1,27 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { DoctorContext } from "../../context/DoctorContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 
 const DoctorProfile = () => {
-  const { dToken, profileData, setProfileData, getProfileData, backendUrl } =
+  const { dToken, profileData, getProfileData, backendUrl } =
     useContext(DoctorContext);
   const [isEdit, setIsEdit] = useState(false);
   const [formData, setFormData] = useState({});
   const [selectedImage, setSelectedImage] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [isReadMore, setIsReadMore] = useState(false);
 
   useEffect(() => {
     if (profileData) {
-      setFormData(profileData.doctorProfile); // Initialize form data
+      setFormData(profileData.doctorProfile);
     }
   }, [profileData]);
 
+  // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -26,12 +30,17 @@ const DoctorProfile = () => {
     });
   };
 
+  // Handle image changes
   const handleImageChange = (e) => {
-    setSelectedImage(e.target.files[0]);
+    const file = e.target.files[0];
+    setSelectedImage(file);
+    setPreviewImage(URL.createObjectURL(file));
   };
 
+  // Update profile information
   const updateProfile = async () => {
     try {
+      setLoading(true);
       const doctorInfo = JSON.parse(sessionStorage.getItem("doctorInfo"));
       const doctorId = doctorInfo ? doctorInfo.id : null;
       const updatedData = new FormData();
@@ -40,10 +49,8 @@ const DoctorProfile = () => {
       updatedData.append("phone", formData.phone);
       updatedData.append("description", formData.description);
       if (selectedImage) {
-        updatedData.append("image", selectedImage); // Add the selected image to form data
+        updatedData.append("image", selectedImage);
       }
-
-      // Chỉ thêm mật khẩu cũ và mới nếu mật khẩu mới được nhập
       if (newPassword) {
         updatedData.append("oldPassword", oldPassword);
         updatedData.append("newPassword", newPassword);
@@ -63,15 +70,29 @@ const DoctorProfile = () => {
       if (data.success) {
         toast.success(data.message);
         setIsEdit(false);
-        getProfileData(); // Refresh profile data
+        getProfileData();
       } else {
         toast.error(data.message);
       }
     } catch (error) {
       toast.error(error.message);
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
+
+  // Cancel changes
+  const handleCancel = () => {
+    setIsEdit(false);
+    setSelectedImage(null);
+    setPreviewImage(null);
+    setNewPassword('');
+    setOldPassword('');
+  };
+
+  // Handle Read More / Read Less toggle
+  const handleReadMoreToggle = () => setIsReadMore(!isReadMore);
 
   useEffect(() => {
     if (dToken) {
@@ -81,135 +102,197 @@ const DoctorProfile = () => {
 
   return (
     profileData && (
-      <div>
-        <div className="flex flex-col gap-4 m-5">
-          <div>
-            {isEdit ? (
-              <div>
-                <img
-                  className="bg-primary/80 w-full sm:max-w-64 rounded-lg"
-                  src={
-                    selectedImage
+      <div className="w-full max-w-4xl mx-auto p-5 bg-gray-50 shadow-md rounded-md mt-8">
+        <div className="flex flex-col sm:flex-row gap-5 mb-6">
+          {/* Left section: Image, Name, and Specialization */}
+          <div className="flex flex-col items-center sm:items-start gap-4 sm:w-1/3">
+            <div className="relative ml-6">
+              <img
+                className="bg-primary/80 sm:max-w-64 h-64 rounded-lg object-cover shadow-lg"
+                src={
+                  previewImage
+                    ? previewImage
+                    : selectedImage
                       ? URL.createObjectURL(selectedImage)
                       : profileData.doctorProfile.image
-                  }
-                  alt=""
-                />
-                <input
-                  type="file"
-                  onChange={handleImageChange}
-                  className="mt-2"
-                />
-              </div>
-            ) : (
-              <img
-                className="bg-primary/80 w-full sm:max-w-64 rounded-lg"
-                src={profileData.doctorProfile.image}
-                alt=""
+                }
+                alt="Profile"
               />
-            )}
-          </div>
-          <div className="flex-1 border border-stone-100 rounded-lg p-8 py-7 bg-white">
-            {isEdit ? (
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                className="text-3xl font-medium text-gray-700 w-full bg-gray-100 border p-2 rounded"
-              />
-            ) : (
-              <p className="text-3xl font-medium text-gray-700">
-                {profileData.doctorProfile.name}
-              </p>
-            )}
-            <div className="flex items-center gap-2 mt-1 text-gray-600">
-              <button className="py-0.5 px-2 border text-xs rounded-full">
-                {profileData.doctorProfile.specialization_id.name}
-              </button>
+              {loading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 rounded-lg">
+                  <div className="animate-spin rounded-full border-t-4 border-blue-600 w-16 h-16"></div>
+                </div>
+              )}
+              {isEdit && (
+                <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center opacity-40 transition-opacity duration-300">
+                  <label
+                    htmlFor="file-upload"
+                    className="flex flex-col items-center cursor-pointer text-white"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-8 w-8 mb-2"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 4v16m8-8H4"
+                      />
+                    </svg>
+                    <span className="text-sm">Thay đổi ảnh</span>
+                    <input
+                      id="file-upload"
+                      type="file"
+                      onChange={handleImageChange}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+              )}
             </div>
-            <p>Email:</p>
-            {isEdit ? (
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                className="bg-gray-100 w-full border p-2 rounded"
-              />
-            ) : (
-              <p>{profileData.doctorProfile.email}</p>
-            )}
-            <p>Phone:</p>
-            {isEdit ? (
-              <input
-                type="tel"
-                name="phone"
-                value={formData.phone}
-                onChange={handleInputChange}
-                className="bg-gray-100 w-full border p-2 rounded"
-              />
-            ) : (
-              <p>{profileData.doctorProfile.phone}</p>
-            )}
-            <div>
-              <p>Giới thiệu:</p>
+            <div className="flex flex-col items-center text-center w-full">
+              {isEdit ? (
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  className="text-xl font-semibold text-gray-800 w-full sm:w-auto border border-gray-200 p-2 rounded-md"
+                  placeholder="Name"
+                />
+              ) : (
+                <h2 className="text-2xl font-semibold text-gray-800">
+                  {profileData.doctorProfile.name}
+                </h2>
+              )}
+              <p className="text-gray-500 text-sm mt-2">
+                Khoa: {profileData.doctorProfile.specialization_id.name}
+              </p>
+            </div>
+          </div>
+
+          {/* Right section: Email, Phone, Description */}
+          <div className="sm:w-2/3 bg-white p-6 rounded-md shadow-sm">
+            <div className="mb-6">
+              {isEdit ? (
+                <>
+                  <label className="block text-gray-700 font-bold mb-1">Email:</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className="w-full p-3 border-2 border-gray-300 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
+                    placeholder="Email"
+                  />
+                </>
+              ) : (
+                <p className="text-gray-800 text-lg">
+                  <span className="font-bold">Email:</span> {profileData.doctorProfile.email}
+                </p>
+              )}
+            </div>
+
+            <div className="mb-6">
+              {isEdit ? (
+                <>
+                  <label className="block text-gray-700 font-bold mb-1">Phone:</label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    className="w-full p-3 border-2 border-gray-300 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
+                    placeholder="Phone"
+                  />
+                </>
+              ) : (
+                <p className="text-gray-800 text-lg">
+                  <span className="font-bold">Số điện thoại:</span> {profileData.doctorProfile.phone}
+                </p>
+              )}
+            </div>
+
+            <div className="mb-6">
+              <label className="block text-gray-700 font-bold mb-1">Giới thiệu:</label>
               {isEdit ? (
                 <textarea
                   name="description"
                   value={formData.description}
                   onChange={handleInputChange}
-                  className="bg-gray-100 w-full border p-2 rounded"
+                  className="w-full p-3 border-2 border-gray-300 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
+                  placeholder="Description"
                 />
               ) : (
-                <p className="text-sm text-gray-600 max-w-[700px]">
-                  {profileData.doctorProfile.description}
-                </p>
+                <textarea
+                  name="description"
+                  value={profileData.doctorProfile.description}
+                  onChange={handleInputChange}
+                  readOnly={!isEdit}
+                  className="w-full p-3 border-2 border-gray-300 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
+                  placeholder="Description"
+                />
               )}
             </div>
+
             {isEdit && (
-              <div className="mt-4">
-                <p>Mật khẩu mới:</p>
+              <div className="mb-6">
+                {/* New Password Field */}
+                <label className="block text-gray-700 font-bold mb-1">Mật khẩu mới:</label>
                 <input
-                  type="password"
+                  type="text"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="bg-gray-100 w-full border p-2 rounded mb-2"
-                  placeholder="Nhập mật khẩu mới"
+                  className="w-full p-3 border-2 border-gray-300 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
+                  placeholder="Mật khẩu mới"
                 />
-                {/* Chỉ hiển thị ô nhập mật khẩu cũ nếu mật khẩu mới đã được nhập */}
+
+                {/* Old Password Field */}
                 {newPassword && (
                   <>
-                    <p>Mật khẩu cũ:</p>
+                    <label className="block text-gray-700 font-bold mb-1 mt-4">Mật khẩu cũ:</label>
                     <input
-                      type="password"
+                      type="text"
                       value={oldPassword}
                       onChange={(e) => setOldPassword(e.target.value)}
-                      className="bg-gray-100 w-full border p-2 rounded mb-2"
-                      placeholder="Nhập mật khẩu cũ"
+                      className="w-full p-3 border-2 border-gray-300 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
+                      placeholder="Mật khẩu cũ"
                     />
-                    <small className="text-neutral-500 italic">
-                      Điền mật khẩu cũ và mới để thay đổi mật khẩu.
-                    </small>
                   </>
                 )}
               </div>
             )}
-            {isEdit ? (
-              <button
-                onClick={updateProfile}
-                className="px-4 py-1 border border-primary text-sm rounded-full mt-5 hover:bg-primary hover:text-white transition-all"
-              >
-                Lưu
-              </button>
-            ) : (
-              <button
-                onClick={() => setIsEdit(true)}
-                className="px-4 py-1 border border-primary text-sm rounded-full mt-5 hover:bg-primary hover:text-white transition-all"
-              >
-                Chỉnh sửa
-              </button>
-            )}
+
+            <div className="flex justify-center space-x-2">
+              {isEdit ? (
+                <>
+                  <button
+                    onClick={updateProfile}
+                    className="px-4 py-2 bg-[#219c9e] text-white rounded-md"
+                    disabled={loading}
+                  >
+                    {loading ? "Updating..." : "Cập nhật"}
+                  </button>
+                  <button
+                    onClick={handleCancel}
+                    className="px-4 py-2 bg-gray-300 text-black rounded-md"
+                  >
+                    Hủy
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => setIsEdit(true)}
+                  className="px-4 py-2 bg-[#219c9e] text-white rounded-md"
+                >
+                  Chỉnh sửa
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
