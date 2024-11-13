@@ -21,3 +21,15 @@
 .modal-open {
     user-select: none;  /* Vô hiệu hóa việc chọn văn bản */
 }
+
+/* Lớp spinner của Tailwind */
+.animate-spin {
+    animation: spin 1s linear infinite;
+    opacity: 0.4;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  

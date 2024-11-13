@@ -46,7 +46,6 @@ const App = () => {
           <Route path='/doctor-create-schedule' element={<DoctorCreateSchedule />} />
           <Route path='/confirmation-schedule' element={<ConfirmationSchedule />} />
           <Route path='/edit-work-schedule/:id' element={<EditWorkSchedule />} />
-
         </Routes>
       </div>
     </div>
