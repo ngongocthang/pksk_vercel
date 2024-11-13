@@ -266,7 +266,7 @@ const getDoctorAppointments = async (req, res) => {
   try {
     const user_id = req.user?.id;
     const today = new Date();
-
+    today.setHours(0,0,0,0);
     const doctor = await Doctor.findOne({ user_id: user_id });
     if (!doctor) {
       return res.status(400).json({ message: "Doctor not found" });
@@ -474,7 +474,7 @@ const updateProfileDoctor = async (req, res) => {
       { new: true }
     );
     if (!updatedUser) {
-      return res.status(400).json({ message: "Update user failed" });
+      return res.status(400).json({ message: "Cập nhật hồ sơ không thành công" });
     }
 
     const updatedDoctor = await Doctor.findOneAndUpdate(
@@ -486,10 +486,10 @@ const updateProfileDoctor = async (req, res) => {
       { new: true }
     );
     if (!updatedDoctor) {
-      return res.status(400).json({ message: "Update doctor failed" });
+      return res.status(400).json({ message: "Cập nhật hồ sơ không thành công" });
     }
 
-    return res.status(200).json({ success: true, message: "Update profile success!" });
+    return res.status(200).json({ success: true, message: "Cập nhật hồ sơ thành công!" });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ success: false, message: error.message });

@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { DoctorContext } from "../../context/DoctorContext";
 
 const EditWorkSchedule = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { getScheduleById, updateSchedule } = useContext(DoctorContext);
   const [schedule, setSchedule] = useState(null);
   const [scheduleForm, setScheduleForm] = useState({
@@ -53,13 +53,14 @@ const EditWorkSchedule = () => {
       work_shift: scheduleForm.timeSlot,
     };
     await updateSchedule(id, updatedSchedule);
+    navigate("/doctor-work-schedule");
   };
 
   if (!schedule) return <p>Loading...</p>;
 
   return (
     <div className="max-w-2xl mx-auto p-5">
-      <div className="bg-white p-8 rounded-lg shadow-lg">
+      <div className="bg-white p-8 rounded-lg shadow-lg" style={{ width: '480px' }}>
         <h2 className="text-2xl font-semibold mb-5">
           Chỉnh Sửa Lịch Làm Việc của Bác Sĩ
         </h2>
@@ -72,7 +73,7 @@ const EditWorkSchedule = () => {
               onChange={handleDateChange}
               dateFormat="dd/MM/yyyy"
               minDate={new Date()}
-              className="w-full p-3 border rounded focus:outline-none focus:border-blue-500"
+              className="w-[415px] p-3 border rounded focus:outline-none focus:border-black"
             />
           </div>
 
@@ -84,7 +85,7 @@ const EditWorkSchedule = () => {
               value={scheduleForm.timeSlot}
               onChange={handleInputChange}
               required
-              className="w-full p-3 border rounded focus:outline-none focus:border-blue-500"
+              className="w-full p-3 border rounded focus:outline-none focus:border-black"
             >
               <option value="" disabled>
                 Chọn ca làm việc
@@ -97,7 +98,7 @@ const EditWorkSchedule = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full py-3 mt-5 bg-blue-500 text-white rounded hover:bg-blue-600 font-semibold"
+            className="w-full py-3 mt-5 bg-[#219B9D] text-white rounded hover:bg-[#0091a1] font-semibold"
           >
             Cập nhật Lịch Làm Việc
           </button>
