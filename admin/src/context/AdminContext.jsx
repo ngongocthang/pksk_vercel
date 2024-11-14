@@ -8,6 +8,7 @@ const AdminContextProvider = ({ children }) => {
     const initialToken = localStorage.getItem('aToken') || '';
     const [aToken, setAToken] = useState(initialToken);
     const [doctors, setDoctors] = useState([]);
+    const [spec, setSpecs] = useState([]);
     const [appointments, setAppointments] = useState([]);
     const [dashData, setDashData] = useState(null);
 
@@ -21,12 +22,23 @@ const AdminContextProvider = ({ children }) => {
 
     const getAllDoctors = async () => {
         try {
-            // Remove the headers from the request since they're already set in the api instance
-            const { data } = await api.post('/doctor/find-all', {});
+            const { data } = await api.get('/doctor/find-all', {});
             
             if (data.success) {
                 setDoctors(data.doctors);
-                console.log("Doctors:", data.doctors);
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            toast.error(error.response?.data?.message || error.message);
+        }
+    };
+
+    const getAllSpecialists = async () => {
+        try {
+            const { data } = await api.get('/specialization/find-all', {});
+            if (data.success) {
+                setSpecs(data.specializations);
             } else {
                 toast.error(data.message);
             }
@@ -111,7 +123,9 @@ const AdminContextProvider = ({ children }) => {
         appointments, setAppointments,
         getAllAppointments,
         cancelAppointment,
-        dashData, getDashData
+        dashData, getDashData,
+        spec,setSpecs,
+        getAllSpecialists
     };
 
     return (
