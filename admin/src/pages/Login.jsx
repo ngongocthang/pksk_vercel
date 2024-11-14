@@ -14,7 +14,7 @@ const Login = () => {
     const [password, setPassword] = useState('')
     const [showPassword, setShowPassword] = useState(false)
 
-    const { setAToKen, backendUrl } = useContext(AdminContext)
+    const { setAToken, backendUrl } = useContext(AdminContext)
     const { setDToken } = useContext(DoctorContext)
 
     const navigate = useNavigate()
@@ -30,14 +30,12 @@ const Login = () => {
 
                 if (role === 'admin' && state === 'Admin') {
                     localStorage.setItem('aToken', token)
-                    setAToKen(token)
-                    toast.success("Đăng nhập thành công!")
+                    setAToken(token)
                     navigate('/admin-dashboard')
                 } else if (role === 'doctor' && state === 'Doctor') {
                     localStorage.setItem('dToken', token)
                     setDToken(token)
                     sessionStorage.setItem('doctorInfo', JSON.stringify(userInfo));
-                    toast.success("Đăng nhập bác sĩ thành công!")
                     navigate('/doctor-dashboard')
                 } else {
                     toast.error("Vai trò không phù hợp đối với loại đăng nhập đã chọn.")
