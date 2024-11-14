@@ -57,7 +57,7 @@ const DoctorAppointments = () => {
               <div className='flex justify-center items-center'>
                 <p
                   className={`p-2 rounded-full text-white text-base text-center 
-          ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg max-w-[100px] w-full`}>
+                  ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg max-w-[100px] w-full`}>
                   {item.work_shift === "morning" ? "Sáng" : "Chiều"}
                 </p>
               </div>

@@ -10,7 +10,7 @@ const Login = () => {
   const navigate = useNavigate();
   const { setUser } = useContext(AppContext);
 
-  const [state, setState] = useState("Sign Up");
+  const [state, setState] = useState("Login"); // Set initial state to "Login"
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -46,11 +46,9 @@ const Login = () => {
 
       if (response.ok) {
         if (state === "Sign Up") {
-          // Registration successful, switch to login
           setState("Login");
           toast.success("Đăng ký thành công! Vui lòng đăng nhập.");
         } else {
-          // Login successful, set user and navigate
           if (data.user && data.user.token) {
             if (data.user.role === "doctor" || data.user.role === "admin") {
               toast.error("Bạn không thể đăng nhập với quyền này!");
@@ -79,12 +77,14 @@ const Login = () => {
     <>
       <form className="min-h-[80vh] flex items-center" onSubmit={onSubmitHandler}>
         <div className="flex flex-col gap-3 m-auto items-start p-8 min-w-[340px] sm:min-w-96 border rounded-xl text-zinc-600 text-sm shadow-lg">
-          <p className="text-2xl font-semibold">
-            {state === "Sign Up" ? "Tạo tài khoản" : "Đăng nhập"}
-          </p>
-          <p>
-            Vui lòng {state === "Sign Up" ? "đăng ký" : "đăng nhập"} để đặt lịch hẹn
-          </p>
+          <div className="flex flex-col items-center w-full">
+            <p className="text-2xl font-semibold text-center">
+              {state === "Sign Up" ? "Tạo tài khoản" : "Đăng nhập"}
+            </p>
+            <p className="text-center">
+              Vui lòng {state === "Sign Up" ? "đăng ký" : "đăng nhập"} để đặt lịch hẹn
+            </p>
+          </div>
 
           {state === "Sign Up" && (
             <>
