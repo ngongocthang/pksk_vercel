@@ -64,7 +64,7 @@ const DoctorAppointments = () => {
   const shouldDisplayPagination = schedules.length > schedulesPerPage;
 
   return (
-    <div className="w-full max-w-6xl ml-60 m-5 w-full shadow-lg">
+    <div className="w-full max-w-6xl m-5 w-full shadow-lg">
       <div className="flex justify-between items-center mb-3">
         <p className="text-lg font-medium">Tất cả lịch làm việc</p>
         <button
