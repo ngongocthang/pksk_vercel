@@ -69,7 +69,7 @@ const DoctorDashboard = () => {
         <div className="flex-1">
           <div className="flex items-center gap-2.5 px-4 py-4 rounded-t border">
             <img src={assets.list_icon} alt="" />
-            <p className="font-semibold">Lịch hẹn mới nhất</p>
+            <p className="font-semibold">Lịch hẹn sắp tới</p>
           </div>
 
           <div className="pt-4 border border-t-0">
@@ -105,7 +105,7 @@ const DoctorDashboard = () => {
         <div className="flex-1">
           <div className="flex items-center gap-2.5 px-4 py-4 rounded-t border">
             <img src={assets.list_icon} alt="" />
-            <p className="font-semibold">Lịch hẹn đã hoàn thành</p>
+            <p className="font-semibold">Lịch hẹn đã xác nhận & hoàn thành</p>
           </div>
 
           <div className="pt-4 border border-t-0">

@@ -11,7 +11,6 @@ const MedicalHistory = () => {
     const token = user?.token;
 
     if (!token) {
-      toast.error("User not authenticated. Please log in.");
       navigate("/account");
       return;
     }
