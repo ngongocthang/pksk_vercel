@@ -71,6 +71,9 @@ const DoctorAppointments = () => {
                 {item.status === "canceled" && (
                   <button className='bg-red-500 text-white font-semibold py-1 px-4 rounded-full'>Đã từ chối</button>
                 )}
+                {item.status === "completed" && (
+                  <button className='bg-blue-500 text-white font-semibold py-1 px-4 rounded-full'>Đã hoàn thành</button>
+                )}
               </div>
             </div>
           ))
