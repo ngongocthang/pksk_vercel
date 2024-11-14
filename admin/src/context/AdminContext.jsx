@@ -70,7 +70,6 @@ const AdminContextProvider = ({ children }) => {
 
             if (data.success) {
                 setAppointments(data.appointments);
-                console.log("Appointments:", data.appointments);
             } else {
                 toast.error(data.message);
             }
