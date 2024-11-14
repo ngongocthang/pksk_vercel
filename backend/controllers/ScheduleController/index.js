@@ -104,19 +104,16 @@ const getScheduleByDoctor = async (req, res) => {
 const getScheduleByDoctorDashboard = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log(id);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const doctor = await Doctor.findOne({user_id: id});
     if (!doctor) {
       return res.status(400).json({ message: "Doctor not found" }); 
     }
-    console.log(doctor);
     const schedules = await Schedule.find({
       doctor_id: doctor._id,
       work_date: { $gte: today },
     }).sort({ work_date: 1 });
-    console.log(schedules);
     if (schedules.length <= 0) {
       return res.status(400).json({ message: "Schedule not found" });
     }

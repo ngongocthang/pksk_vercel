@@ -24,11 +24,11 @@ const findAllSpecialization = async (req, res) => {
   try {
     const specializations = await Specialization.find({});
     if (specializations) {
-      return res.status(200).json(specializations);
+      return res.status(200).json({success: true, specializations});
     }
-    return res.status(400).json({ message: "Specialization not found" });
+    return res.status(400).json({success: false, message: "Specialization not found" });
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({success: false, message: error.message });
   }
 };
 

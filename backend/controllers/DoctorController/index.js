@@ -59,10 +59,10 @@ const createDoctor = async (req, res) => {
         description: req.body.description,
       });
 
-      res.status(200).json(doctor);
+      res.status(200).json({success: true, doctor});
     }
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({success: false, message: error.message });
   }
 };
 
@@ -73,12 +73,12 @@ const findAllDoctor = async (req, res) => {
       .populate("specialization_id");
 
     if (doctors) {
-      return res.status(200).json(doctors);
+      return res.status(200).json({success: true, doctors});
     } else {
-      return res.status(404).json({ message: "Doctors not found." });
+      return res.status(404).json({success: false, message: "Doctors not found." });
     }
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({success: false, message: error.message });
   }
 };
 
@@ -164,23 +164,50 @@ const updateDoctor = async (req, res) => {
   }
 };
 
+// const deleteDoctor = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const doctor = await Doctor.findById({user_id: id});
+
+//     if (!doctor) {
+//       return res.status(404).json({ message: "Doctor not found!" });
+//     }
+//     // Xóa bác sĩ
+//     await Doctor.findByIdAndDelete({user_id: id});
+
+//     // Xóa info liên quan
+//     await User.deleteOne({ _id: id });
+//     await UserRole.deleteOne({ user_id: id });
+//     return res.status(200).json({success:true, message: "Delete doctor success!" });
+//   } catch (error) {
+//     res.status(500).json({success:false, message: error.message });
+//   }
+// };
+
 const deleteDoctor = async (req, res) => {
   try {
     const { id } = req.params;
-    const doctor = await Doctor.findById(id);
+    const doctor = await Doctor.findOne({ user_id: id }).populate('user_id'); 
 
     if (!doctor) {
       return res.status(404).json({ message: "Doctor not found!" });
     }
-    // Xóa bác sĩ
-    await Doctor.findByIdAndDelete(id);
 
-    // Xóa info liên quan
-    await User.deleteOne({ _id: doctor.user_id });
-    await UserRole.deleteOne({ user_id: doctor.user_id });
-    return res.status(200).json({ message: "Delete doctor success!" });
+    // Lấy URL của ảnh để xóa
+    const imageUrl = doctor.user_id.image;
+    if (imageUrl) {
+      const publicId = imageUrl.split("/").slice(-1)[0].split(".")[0];
+      await cloudinary.uploader.destroy(`doctor/${publicId}`);
+    }
+
+    // Xóa bác sĩ
+    await Doctor.findByIdAndDelete(doctor._id);
+    await User.deleteOne({ _id: id });
+    await UserRole.deleteOne({ user_id: id });
+
+    return res.status(200).json({ success: true, message: "Delete doctor success!" });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -317,7 +344,6 @@ const getSpecializations = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-
 const getProfileDoctor = async (req, res) => {
   try {
     const { id } = req.params;
@@ -347,74 +373,6 @@ const getProfileDoctor = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
-
-// const updateProfileDoctor = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-
-//     // Fetch the existing doctor information
-//     const doctor = await Doctor.findOne({ user_id: id }).populate("specialization_id");
-//     if (!doctor) {
-//       return res.status(400).json({ message: "Doctor not found" });
-//     }
-
-//     let hashedPassword = doctor.user_id.password; // Retain old password by default
-//     if (req.body.password) {
-//       hashedPassword = await bcrypt.hash(req.body.password, 10);
-//     }
-
-//     let imageUrl = doctor.user_id.image; // Keep the old image URL by default
-
-//     // Check if a new image file is provided
-//     if (req.file) {
-//       // Generate base64 for the new image to upload
-//       const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
-
-//       // Delete the old image from Cloudinary if it exists
-//       if (imageUrl) {
-//         const publicId = imageUrl.split("/").slice(-1)[0].split(".")[0];
-//         await cloudinary.uploader.destroy(`doctor/${publicId}`);
-//       }
-
-//       // Upload the new image and update `imageUrl` with the new image URL
-//       const result = await cloudinary.uploader.upload(base64Image, {
-//         folder: "doctor",
-//       });
-//       imageUrl = result.secure_url;
-//     }
-
-//     const updatedUser = await User.findOneAndUpdate(
-//       { _id: id },
-//       {
-//         name: req.body.name,
-//         email: req.body.email,
-//         password: hashedPassword,
-//         image: imageUrl, // Retain old or update with new image URL
-//         phone: req.body.phone,
-//       },
-//       { new: true }
-//     );
-//     if (!updatedUser) {
-//       return res.status(400).json({ message: "Update user failed" });
-//     }
-
-//     const updatedDoctor = await Doctor.findOneAndUpdate(
-//       { user_id: id },
-//       {
-//         specialization_id: req.body.specialization_id,
-//         description: req.body.description,
-//       },
-//       { new: true }
-//     );
-//     if (!updatedDoctor) {
-//       return res.status(400).json({ message: "Update doctor failed" });
-//     }
-
-//     return res.status(200).json({ success: true, message: "Update profile success!" });
-//   } catch (error) {
-//     return res.status(500).json({ success: false, message: error.message });
-//   }
-// };
 const updateProfileDoctor = async (req, res) => {
   try {
     const { id } = req.params;
@@ -495,8 +453,6 @@ const updateProfileDoctor = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
-
-
 
 module.exports = {
   createDoctor,

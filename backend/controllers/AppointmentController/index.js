@@ -164,7 +164,6 @@ const patientCreateAppointment = async (req, res) => {
     if (!patient) {
       return res.status(400).json({ message: "Patient not found" });
     }
-    console.log(patient._id);
     const appointment = await Appointment.create({
       ...req.body,
       patient_id: patient._id,
@@ -329,7 +328,7 @@ const showUpcomingAppointments = async (req, res) => {
       upcomingAppointments = await Appointment.find({
         doctor_id: doctor._id,
         work_date: { $gte: now },
-        status: { $nin: ["pending", "canceled"] }
+        status: "confirmed" 
       }).sort({ work_date: 1 });
     }
 
@@ -414,24 +413,6 @@ const getAppointmentByStatus = async (req, res) => {
   }
 };
 
-const countAppointmentByDoctor = async (req, res) => {
-  try{
-    const {id} = req.params;
-    const doctor = await Doctor.findOne({user_id: id});
-    if(!doctor){
-      return res.status(400).json({message: "Doctor not found"});
-    }
-    const count = await Appointment.find({doctor_id: doctor._id}).count();
-    if(count.length <= 0){
-      return res.status(400).json({message: "Count not found"});
-    }
-    return res.status(200).json({count});
-
-  }catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
-}
-
 
 module.exports = {
   createAppointment,
@@ -444,5 +425,4 @@ module.exports = {
   processPrematureCancellation,
   showUpcomingAppointments,
   getAppointmentByStatus,
-  countAppointmentByDoctor
 };
