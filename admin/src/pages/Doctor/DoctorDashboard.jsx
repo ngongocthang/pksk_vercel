@@ -1,4 +1,3 @@
-// DoctorDashboard
 import React, { useContext, useEffect } from "react";
 import { DoctorContext } from "../../context/DoctorContext";
 import { assets } from "../../assets/assets";
@@ -75,27 +74,33 @@ const DoctorDashboard = () => {
           <div className="pt-4 border border-t-0">
             {appointments.map((item) => (
               <div
-                className="flex items-center px-6 py-3 gap-3 hover:bg-gray-100"
+                className="flex items-center px-6 py-3 gap-4 hover:bg-gray-100"
                 key={item._id}
               >
                 <div className="flex-1 text-sm">
-                  <p className="text-gray-800 font-medium">{item.patient_name}</p>
+                  <p className="text-gray-800 font-medium text-[16px]">{item.patient_name}</p>
                   <p className="text-gray-600">
                     {new Date(item.work_date).toLocaleDateString()}
                   </p>
                 </div>
-                <div className='flex justify-center items-center'>
+
+                <div className="flex-1 flex justify-center items-center">
                   <p
                     className={`p-2 rounded-full text-white text-base text-center 
-                    ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg max-w-[100px] w-full`}>
+                    ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} 
+                    shadow-lg max-w-[100px] w-full`}
+                  >
                     {item.work_shift === "morning" ? "Sáng" : "Chiều"}
                   </p>
                 </div>
-                {item.status === "canceled" ? (
-                  <p className="text-red-400 text-xs font-medium">Đã Từ Chối</p>
-                ) : (
-                  <p className="text-green-500 text-xs font-medium">Đã Xác Nhận</p>
-                )}
+
+                <div className="flex-1 flex justify-center items-center">
+                  {item.status === "canceled" ? (
+                    <button className='bg-red-500 text-white font-semibold py-1 px-4 rounded-full'>Đã từ chối</button>
+                  ) : (
+                    <button className='bg-green-500 text-white font-semibold py-1 px-4 rounded-full'>Đã xác nhận</button>
+                  )}
+                </div>
               </div>
             ))}
           </div>
@@ -111,27 +116,33 @@ const DoctorDashboard = () => {
           <div className="pt-4 border border-t-0">
             {appointmentStatus.map((item) => (
               <div
-                className="flex items-center px-6 py-3 gap-3 hover:bg-gray-100"
+                className="grid grid-cols-3 gap-4 px-6 py-3 hover:bg-gray-100"
                 key={item._id}
               >
-                <div className="flex-1 text-sm">
-                  <p className="text-gray-800 font-medium">{item.patient_name}</p>
+                <div className="flex flex-col text-sm">
+                  <p className="text-gray-800 font-medium text-[16px]">{item.patient_name}</p>
                   <p className="text-gray-600">
                     {new Date(item.work_date).toLocaleDateString()}
                   </p>
                 </div>
-                <div className='flex justify-center items-center'>
+
+                <div className="flex justify-center items-center">
                   <p
                     className={`p-2 rounded-full text-white text-base text-center 
-                    ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg max-w-[100px] w-full`}>
+                    ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} 
+                    shadow-lg max-w-[100px] w-full`}
+                  >
                     {item.work_shift === "morning" ? "Sáng" : "Chiều"}
                   </p>
                 </div>
-                {item.status === "completed" ? (
-                  <p className="text-blue-500 text-xs font-medium">Đã Hoàn Thành</p>
-                ) : (
-                  <p className="text-green-500 text-xs font-medium">Đã Xác nhận</p>
-                )}
+
+                <div className="flex justify-center items-center">
+                  {item.status === "completed" ? (
+                    <button className='bg-blue-500 text-white font-semibold py-1 px-4 rounded-full'>Đã hoàn thành</button>
+                  ) : (
+                    <button className='bg-green-500 text-white font-semibold py-1 px-4 rounded-full'>Đã xác nhận</button>
+                  )}
+                </div>
               </div>
             ))}
           </div>

@@ -14,9 +14,10 @@ import notification_icon from './notification_icon.svg'
 import info_icon from './info_icon.svg'
 import EyeIcon from "./eye.svg";
 import EyeOffIcon from "./eye_off.svg";
-import upload_icon from './upload_icon.png'
-
-
+import upload_icon from './upload_icon.png';
+import dieuhanh from './NGUYENLEHONGVAN.webp';
+import phattrien from './NGUYENLEHONGVAN.jpg';
+import phantich from './NGUYENLEHONGVAN(2).jpg';
 
 export const assets = {
     group_profiles,
@@ -35,5 +36,8 @@ export const assets = {
     dropdown_icon,
     upload_icon,
     EyeIcon,
-    EyeOffIcon
+    EyeOffIcon,
+    dieuhanh,
+    phattrien,
+    phantich,
 }

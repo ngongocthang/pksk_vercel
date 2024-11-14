@@ -42,9 +42,9 @@ const About = () => {
           ].map((feature, index) => (
             <div
               key={index}
-              className="border border-gray-200 p-6 rounded-lg shadow-lg hover:bg-[#00759c] hover:text-white transition-all duration-300"
+              className="border border-gray-200 p-6 rounded-lg shadow-lg hover:bg-[#00759c] hover:text-white transition-all duration-300 group"
             >
-              <FaRegCheckCircle className="text-[#219c9e] text-3xl mb-4" />
+              <FaRegCheckCircle className="text-[#219c9e] text-3xl mb-4 group-hover:text-white" />
               <h3 className="font-semibold text-lg">{feature.title}</h3>
               <p className="text-sm mt-2">{feature.description}</p>
             </div>
@@ -65,20 +65,25 @@ const About = () => {
         </h2>
         <div className="flex flex-wrap justify-center gap-10">
           {[{
-            name: 'Nguyễn Văn A',
+            name: 'Nguyễn Lê Hồng Vân',
             role: 'Giám đốc điều hành',
-            image: assets.team_member_1
+            image: assets.dieuhanh
           }, {
-            name: 'Trần Bích Ngọc',
+            name: 'Nguyễn Lê Hồng Phog',
             role: 'Trưởng phòng phát triển sản phẩm',
-            image: assets.team_member_2
+            image: assets.phattrien
           }, {
-            name: 'Lê Minh Khoa',
+            name: 'Nguyễn Lê Hồng Vân',
             role: 'Chuyên gia phân tích dữ liệu',
-            image: assets.team_member_3
+            image: assets.phantich
           }].map((member, index) => (
             <div key={index} className="text-center max-w-xs">
-              <img className="w-40 h-40 rounded-full mx-auto mb-4 shadow-lg" src={member.image} alt={member.name} />
+              {/* Ensure the image is contained properly without distortion */}
+              <img
+                className="w-40 h-40 rounded-full mx-auto mb-4 shadow-lg object-cover"
+                src={member.image}
+                alt={member.name}
+              />
               <h3 className="text-lg font-semibold text-gray-800">{member.name}</h3>
               <p className="text-gray-600">{member.role}</p>
             </div>
