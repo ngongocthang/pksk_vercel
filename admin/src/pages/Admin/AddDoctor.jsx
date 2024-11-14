@@ -69,11 +69,15 @@ const AddDoctor = () => {
             <p className='mb-3 text-lg font-medium'>Thêm bác sĩ</p>
             <div className='bg-white px-8 py-8 border rounded w-full max-w-4xl max-h-[80vh] overflow-y-scroll'>
                 <div className='flex items-center gap-4 mb-8 text-gray-500'>
-                    <label htmlFor="doc-img">
-                        <img className='w-16 h-16 object-cover bg-gray-100 rounded-full cursor-pointer' src={docImg ? URL.createObjectURL(docImg) : assets.upload_area} alt="" />
+                    <label htmlFor="doc-img" className="cursor-pointer">
+                        <img
+                            className='w-24 h-24 object-cover bg-gray-100 rounded-full border border-gray-300 shadow-md'
+                            src={docImg ? URL.createObjectURL(docImg) : assets.upload_area}
+                            alt="Doctor's preview"
+                        />
                     </label>
                     <input onChange={(e) => setDocImg(e.target.files[0])} type="file" id="doc-img" hidden />
-                    <p>Tải lên ảnh bác sĩ</p>
+                    {!docImg && <p className="text-base font-medium">Tải lên ảnh bác sĩ</p>}
                 </div>
 
                 <div className='flex flex-col lg:flex-row items-start gap-10 text-gray-500'>
@@ -104,7 +108,7 @@ const AddDoctor = () => {
                         </div>
                         <div className='flex-1 flex flex-col gap-1'>
                             <p>Mật khẩu</p>
-                            <input onChange={(e) => setPassword(e.target.value)} value={password} className='border rounded px-3 py-2' type="password" placeholder='Mật khẩu' required />
+                            <input onChange={(e) => setPassword(e.target.value)} value={password} className='border rounded px-3 py-2' type="text" placeholder='Mật khẩu' required />
                         </div>
                     </div>
                 </div>
