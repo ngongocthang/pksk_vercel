@@ -34,14 +34,35 @@ const createAppointment = async (req, res) => {
 const findAllAppointment = async (req, res) => {
   try {
     const appointments = await Appointment.find({});
-    if (appointments) {
-      return res.status(200).json(appointments);
+    if (!appointments || appointments.length === 0) {
+      return res.status(400).json({ message: "Appointment not found" });
     }
-    return res.status(400).json({ message: "Appointment not found" });
+
+    // Sắp xếp các cuộc hẹn theo createdAt từ mới nhất đến cũ nhất
+    appointments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    const appointmentsWithDetails = await Promise.all(
+      appointments.map(async (appointment) => {
+        const patient = await Patient.findOne({ _id: appointment.patient_id });
+        const patientInfo = await User.findOne({ _id: patient.user_id });
+        const doctor = await Doctor.findOne({ _id: appointment.doctor_id });
+        const doctorInfo = await User.findOne({ _id: doctor.user_id });
+        
+        return {
+          ...appointment.toObject(),
+          patientInfo,
+          doctorInfo
+        };
+      })
+    );
+
+    return res.status(200).json({ success: true, appointments: appointmentsWithDetails });
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
+
+
 
 const findAppointment = async (req, res) => {
   try {
