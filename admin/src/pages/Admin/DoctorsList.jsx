@@ -2,16 +2,30 @@ import React, { useContext, useEffect, useState } from 'react';
 import { AdminContext } from '../../context/AdminContext';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const DoctorsList = () => {
   const { doctors, aToken, getAllDoctors } = useContext(AdminContext);
   const [confirmToastId, setConfirmToastId] = useState(null);
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const doctorsPerPage = 8;
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
   useEffect(() => {
+    // Parse the page query parameter from the URL
+    const queryParams = new URLSearchParams(location.search);
+    const page = queryParams.get('page');
+    if (page) {
+      setCurrentPage(Number(page));
+    }
     if (aToken) {
       getAllDoctors();
     }
-  }, [aToken]);
+  }, [aToken, location.search]);
 
   const deleteDoctor = async (id, name) => {
     if (confirmToastId) {
@@ -25,7 +39,7 @@ const DoctorsList = () => {
           <button
             onClick={() => {
               confirmDeleteDoctor(id);
-              toast.dismiss(newToastId); 
+              toast.dismiss(newToastId);
             }}
             className="bg-red-500 text-white px-3 py-1 rounded"
           >
@@ -61,6 +75,10 @@ const DoctorsList = () => {
       if (response.data.success) {
         toast.success("Đã xóa bác sĩ thành công!");
         getAllDoctors();
+
+        if (currentDoctors.length === 1 && currentPage > 1) {
+          navigate('/doctor-list?page=1');
+        }
       } else {
         toast.error(response.data.message);
       }
@@ -70,11 +88,24 @@ const DoctorsList = () => {
     }
   };
 
+  // Pagination logic
+  const indexOfLastDoctor = currentPage * doctorsPerPage;
+  const indexOfFirstDoctor = indexOfLastDoctor - doctorsPerPage;
+  const currentDoctors = doctors.slice(indexOfFirstDoctor, indexOfLastDoctor);
+
+  // Handle page change and update the URL
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    navigate(`/doctor-list?page=${pageNumber}`);
+  };
+
+  const totalPages = Math.ceil(doctors.length / doctorsPerPage);
+
   return (
     <div className='m-5 max-h-[90vh] overflow-y-scroll'>
       <h1 className='text-lg font-medium'>Tất cả bác sĩ</h1>
       <div className='w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-5'>
-        {doctors.map((item, index) => (
+        {currentDoctors.map((item, index) => (
           <div
             className='border border-indigo-200 rounded-xl overflow-hidden cursor-pointer group relative'
             key={index}
@@ -109,6 +140,19 @@ const DoctorsList = () => {
               <p className='text-zinc-600 text-sm'>Email: {item.user_id.email}</p>
             </div>
           </div>
+        ))}
+      </div>
+
+      {/* Pagination Controls */}
+      <div className="flex justify-center gap-4 mt-4">
+        {Array.from({ length: totalPages }, (_, index) => (
+          <button
+            key={index}
+            onClick={() => paginate(index + 1)}
+            className={`px-4 py-2 rounded-md ${currentPage === index + 1 ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+          >
+            {index + 1}
+          </button>
         ))}
       </div>
     </div>
