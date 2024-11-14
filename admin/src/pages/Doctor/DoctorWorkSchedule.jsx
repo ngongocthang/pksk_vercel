@@ -32,18 +32,18 @@ const DoctorAppointments = () => {
   const handleConfirmDelete = async () => {
     if (selectedSchedule) {
       await deleteSchedule(selectedSchedule._id);
-  
+
       const updatedSchedules = schedules.filter(schedule => schedule._id !== selectedSchedule._id);
-  
+
       if (updatedSchedules.length <= 10) {
-        setCurrentPage(1);    
-        navigate(`/doctor-work-schedule`, { replace: true }); 
+        setCurrentPage(1);
+        navigate(`/doctor-work-schedule`, { replace: true });
       } else {
-        setShowModal(false);  
-        setSelectedSchedule(null);  
+        setShowModal(false);
+        setSelectedSchedule(null);
       }
     }
-  };  
+  };
 
   useEffect(() => {
     setShowModal(false);
@@ -64,7 +64,7 @@ const DoctorAppointments = () => {
   const shouldDisplayPagination = schedules.length > schedulesPerPage;
 
   return (
-    <div className="w-full max-w-6xl m-5">
+    <div className="w-full max-w-6xl ml-60 m-5 w-full shadow-lg">
       <div className="flex justify-between items-center mb-3">
         <p className="text-lg font-medium">Tất cả lịch làm việc</p>
         <button
@@ -77,7 +77,7 @@ const DoctorAppointments = () => {
           Tạo Mới
         </button>
       </div>
-      <div className="bg-white border rounded text-sm max-h-[80vh] min-h-[50vh] overflow-y-scroll">
+      <div className="bg-white border rounded text-sm max-h-[80vh] min-h-[50vh] overflow-y-scroll px-4">
         <div className="max-sm:hidden grid grid-cols-[0.5fr_2fr_1fr_1fr] gap-1 py-3 px-6 border-b">
           <p className="font-bold text-[16px]">#</p>
           <p className="font-bold text-[16px]">Ngày làm việc</p>
@@ -88,7 +88,7 @@ const DoctorAppointments = () => {
         {currentSchedules && currentSchedules.length > 0 ? (
           currentSchedules.map((schedule, index) => (
             <div
-              className="flex flex-wrap justify-between max-sm:gap-5 max-sm:text-base sm:grid grid-cols-[0.5fr_2fr_1fr_1fr] gap-1 items-center text-gray-500 py-3 px-6 border-b hover:bg-gray-50"
+              className="flex flex-wrap justify-between max-sm:gap-5 max-sm:text-base sm:grid grid-cols-[0.5fr_2fr_1fr_1fr] gap-1 items-center text-gray-500 py-3 px-6 border-b hover:bg-gray-50 shadow-md"
               key={schedule._id}
             >
               <p className="max-sm:hidden font-bold">{index + 1}</p>
@@ -154,7 +154,7 @@ const DoctorAppointments = () => {
         </div>
       )}
 
-{showModal && selectedSchedule && (
+      {showModal && selectedSchedule && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-lg p-6 w-96">
             <h2 className="text-xl font-semibold mb-4">Xác nhận xóa</h2>
