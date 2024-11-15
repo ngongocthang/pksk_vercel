@@ -35,7 +35,7 @@ const DoctorAppointments = () => {
   const totalPages = Math.ceil(appointments.length / appointmentsPerPage);
 
   return (
-    <div className='w-full max-w-6xl ml-60 m-5 shadow-lg'>
+    <div className='w-full max-w-6xl m-5 shadow-lg'>
       <p className='mb-4 text-lg font-medium'>Tất cả lịch hẹn:</p>
       <div className='bg-white border rounded text-sm max-h-[80vh] min-h-[50vh] overflow-y-scroll'>
 
@@ -57,7 +57,7 @@ const DoctorAppointments = () => {
               <div className='flex justify-center items-center'>
                 <p
                   className={`p-2 rounded-full text-white text-base text-center 
-          ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg max-w-[100px] w-full`}>
+                  ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg max-w-[100px] w-full`}>
                   {item.work_shift === "morning" ? "Sáng" : "Chiều"}
                 </p>
               </div>
