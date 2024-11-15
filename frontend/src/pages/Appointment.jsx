@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom"; // Nhập useNavigate
+import { useParams, useNavigate } from "react-router-dom"; 
 import { AppContext } from "../context/AppContext";
 import { assets } from "../assets/assets";
 import RelatedDoctors from "../components/RelatedDoctors";
@@ -215,7 +215,7 @@ const Appointment = () => {
                 <div
                   key={dateStr}
                   className={`text-center w-[100px] h-[100px] flex flex-col justify-center items-center rounded-full border cursor-pointer transition-all duration-300
-        ${isSelected ? "bg-[#00759c] text-white border-[#00759c]" : "border-gray-200 text-gray-600 hover:border-gray-300"}`}
+                  ${isSelected ? "bg-[#00759c] text-white border-[#00759c]" : "border-gray-200 text-gray-600 hover:border-gray-300"}`}
                   onClick={() => setSelectedDate(dateStr)}
                 >
                   <p className={`text-sm font-bold ${isSelected ? "text-white" : "text-gray-600"}`}>
