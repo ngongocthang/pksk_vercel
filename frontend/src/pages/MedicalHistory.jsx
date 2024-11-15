@@ -2,8 +2,11 @@ import React, { useEffect, useState, useContext } from "react";
 import { AppContext } from "../context/AppContext";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from "react-router-dom";
+
 
 const MedicalHistory = () => {
+  const navigate = useNavigate();
   const { user } = useContext(AppContext);
   const [medicalRecords, setMedicalRecords] = useState([]);
 
@@ -14,7 +17,6 @@ const MedicalHistory = () => {
       navigate("/account");
       return;
     }
-
     try {
       const response = await fetch(`http://localhost:5000/medical-history/${user.id}`, {
         headers: {

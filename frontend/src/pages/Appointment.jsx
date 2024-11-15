@@ -34,7 +34,6 @@ const Appointment = () => {
   const fetchDoctorSchedule = async () => {
     try {
       const response = await axios.get(`http://localhost:5000/get-schedule-doctor/${docId}`);
-      console.log(response);
       const groupedSchedule = response.data.reduce((acc, schedule) => {
         const dateStr = new Date(schedule.work_date).toISOString().split("T")[0];
         if (!acc[dateStr]) acc[dateStr] = [];

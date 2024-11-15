@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useContext } from "react";
 import { AppContext } from "../context/AppContext";
 import { assets } from "../assets/assets";
+import { useNavigate } from "react-router-dom";
 
 const MyProfile = () => {
+  const navigate = useNavigate();
   const { user, setUser } = useContext(AppContext);
   const [userData, setUserData] = useState({
     name: "",
@@ -26,7 +28,7 @@ const MyProfile = () => {
       const token = localStorage.getItem("token");
       if (!token) {
         setErrorMessage("Bạn chưa đăng nhập. Vui lòng đăng nhập để tiếp tục.");
-        return;
+        return navigate("/account");
       }
 
       try {
