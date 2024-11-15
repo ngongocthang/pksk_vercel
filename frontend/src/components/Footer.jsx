@@ -36,7 +36,7 @@ const Footer = () => {
             {/* ----- Copyright Text ----- */}
             <div>
                 <hr />
-                <p className='py-5 text-sm text-center'>Phòng Khám Sức Khỏe.</p>
+                <p className="py-5 text-center text-gray-400">Phòng Khám Sức Khỏe. © {new Date().getFullYear()}</p>
             </div>
         </div>
     )
