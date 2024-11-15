@@ -9,7 +9,7 @@ const SpecialityMenu = () => {
         const fetchSpecialities = async () => {
             try {
                 const response = await axios.get('http://localhost:5000/specialization/find-all');
-                const data = response.data.map(item => ({
+                const data = response.data.specializations.map(item => ({
                     speciality: item.name,
                     image: item.image || './Dermatologist.svg' 
                 }));
