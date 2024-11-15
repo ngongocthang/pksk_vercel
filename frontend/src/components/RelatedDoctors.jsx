@@ -11,18 +11,29 @@ const RelatedDoctors = ({ speciality, docId }) => {
         const fetchDoctors = async () => {
             try {
                 const response = await axios.get('http://localhost:5000/doctor/find-all');
-                const doctorsData = response.data;
-
-                // Lọc bác sĩ theo chuyên ngành và loại bỏ bác sĩ hiện tại
-                const filteredDocs = doctorsData.filter(doc => 
-                    doc.specialization_id.name === speciality && doc._id !== docId
-                );
-
-                setRelDocs(filteredDocs);
+                console.log("Doctors data:", response.data); // Kiểm tra dữ liệu
+                
+                // Kiểm tra xem dữ liệu có thành công và có mảng doctors không
+                if (response.data.success && Array.isArray(response.data.doctors)) {
+                    const doctorsData = response.data.doctors;
+        
+                    // Lọc bác sĩ theo chuyên ngành và loại bỏ bác sĩ hiện tại
+                    const filteredDocs = doctorsData.filter(doc => 
+                        doc.specialization_id.name === speciality && doc._id !== docId
+                    );
+                    console.log("Filtered related doctors:", filteredDocs); // Kiểm tra bác sĩ liên quan
+        
+                    setRelDocs(filteredDocs);
+                } else {
+                    console.error("Invalid data format for doctors");
+                    setRelDocs([]); // Thiết lập giá trị mặc định
+                }
             } catch (error) {
                 console.error('Error fetching doctors:', error);
             }
         };
+        
+        
 
         fetchDoctors();
     }, [speciality, docId]);
