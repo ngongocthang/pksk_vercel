@@ -22,8 +22,10 @@ const Navbar = () => {
   }, [setUser]);
 
   const handleLogout = () => {
-    // sessionStorage.removeItem("user");
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    localStorage.removeItem("hasNewNotifications");
+    localStorage.removeItem("medicalRecords");
     setUser(null);
     navigate("/account");
   };
