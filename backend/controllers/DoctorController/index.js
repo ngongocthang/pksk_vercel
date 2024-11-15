@@ -164,26 +164,6 @@ const updateDoctor = async (req, res) => {
   }
 };
 
-// const deleteDoctor = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const doctor = await Doctor.findById({user_id: id});
-
-//     if (!doctor) {
-//       return res.status(404).json({ message: "Doctor not found!" });
-//     }
-//     // Xóa bác sĩ
-//     await Doctor.findByIdAndDelete({user_id: id});
-
-//     // Xóa info liên quan
-//     await User.deleteOne({ _id: id });
-//     await UserRole.deleteOne({ user_id: id });
-//     return res.status(200).json({success:true, message: "Delete doctor success!" });
-//   } catch (error) {
-//     res.status(500).json({success:false, message: error.message });
-//   }
-// };
-
 const deleteDoctor = async (req, res) => {
   try {
     const { id } = req.params;
