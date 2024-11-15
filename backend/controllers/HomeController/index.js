@@ -3,7 +3,6 @@ const jwt = require("jsonwebtoken");
 const User = require("../../models/User");
 const RoleUser = require("../../models/User_role"); // Import model RoleUser
 const Role = require("../../models/Role"); // Import model Role
-const validateUser = require("../../requests/validateUser");
 const Schedule = require("../../models/Schedule");
 const validatePatient = require("../../requests/validatePatient");
 const Patient = require("../../models/Patient");
@@ -58,12 +57,6 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    // Validate dữ liệu từ client
-    const { error } = validateUser(req.body);
-    if (error) {
-      return res.status(400).json({ message: error.details[0].message });
-    }
-
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
       return res.status(404).json({ message: "User not found!" });
