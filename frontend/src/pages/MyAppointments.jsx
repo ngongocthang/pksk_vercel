@@ -130,7 +130,7 @@ const MyAppointments = () => {
   };
 
   return (
-    <div>
+    <div className="mb-10">
       <ToastContainer />
       <p className="pb-3 mt-12 font-medium text-zinc-700 border-b text-xl">
         Lịch hẹn của tôi:
