@@ -4,48 +4,47 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const AddPatient = () => {
-    const [patientImg, setPatientImg] = useState(false);
     const [name, setName] = useState("");
     const [phone, setPhone] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [description, setDescription] = useState("");
     const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate(); // Initialize navigate
 
     const onSubmitHandler = async (event) => {
         event.preventDefault();
+        setLoading(true); // Set loading to true during the request
 
         try {
-            setLoading(true); // Set loading to true during the request
-            const formData = new FormData();
-            formData.append("name", name);
-            formData.append("phone", phone);
-            formData.append("email", email);
-            formData.append("password", password);
-            formData.append("description", description);
+            // Tạo đối tượng dữ liệu để gửi
+            const data = {
+                name,
+                phone,
+                email,
+                password,
+            };
 
-            const { data } = await axios.post("YOUR_API_ENDPOINT", formData, {
-                headers: { "Content-Type": "multipart/form-data" },
+            const response = await axios.post("http://localhost:5000/patient/create", data, {
+                headers: { "Content-Type": "application/json" }, // Đặt header cho JSON
             });
 
             setLoading(false); // Set loading to false after the request
 
-            if (data.success) {
+            if (response.data.success) {
                 toast.success("Thêm bệnh nhân thành công!");
-                setPatientImg(false);
+                // Reset các trường
                 setName("");
                 setPhone("");
-                setPassword("");
                 setEmail("");
-                setDescription("");
+                setPassword("");
             } else {
                 toast.error("Thêm bệnh nhân thất bại!");
             }
         } catch (error) {
             setLoading(false); // Set loading to false in case of error
-            toast.error(error.response?.data.message || "Đã xảy ra lỗi.");
+            toast.error("Email đã được sử dụng!" || error.response?.data.message);
+            // toast.error(error.response?.data.message || "Đã xảy ra lỗi.");
             console.log(error.response?.data || error.message);
         }
     };
@@ -61,36 +60,39 @@ const AddPatient = () => {
                 <div className="flex flex-col lg:flex-row items-start gap-10 text-gray-500">
                     <div className="w-full lg:flex-1 flex flex-col gap-4">
                         <div className="flex-1 flex flex-col gap-1">
-                            <p className="font-bold">Tên bệnh nhân</p>
+                            <p className="font-bold">Tên:</p>
                             <input
                                 onChange={(e) => setName(e.target.value)}
                                 value={name}
                                 className="border rounded px-3 py-2"
                                 type="text"
-                                placeholder="Tên"
+                                placeholder="Họ và Tên"
+                                required
                             />
                         </div>
                         <div className="flex-1 flex flex-col gap-1">
-                            <p className="font-bold">Số điện thoại bệnh nhân</p>
+                            <p className="font-bold">Số điện thoại:</p>
                             <input
                                 onChange={(e) => setPhone(e.target.value)}
                                 value={phone}
                                 className="border rounded px-3 py-2"
                                 type="tel"
-                                placeholder="Số điện thoại"
+                                placeholder="(+84) 123 456 789"
+                                required
                             />
                         </div>
                     </div>
 
                     <div className="w-full lg:flex-1 flex flex-col gap-4">
                         <div className="flex-1 flex flex-col gap-1">
-                            <p className="font-bold">Email bệnh nhân</p>
+                            <p className="font-bold">Email:</p>
                             <input
                                 onChange={(e) => setEmail(e.target.value)}
                                 value={email}
                                 className="border rounded px-3 py-2"
                                 type="email"
-                                placeholder="Email"
+                                placeholder="Email bệnh nhân"
+                                required
                             />
                         </div>
                         <div className="flex-1 flex flex-col gap-1">
@@ -99,12 +101,13 @@ const AddPatient = () => {
                                 onChange={(e) => setPassword(e.target.value)}
                                 value={password}
                                 className="border rounded px-3 py-2"
-                                type="text"
-                                placeholder="Mật khẩu"
+                                type="password"
+                                placeholder="Xy6abG"
+                                required
                             />
                         </div>
                     </div>
-                </div>
+                </div>  
 
                 <div className="flex gap-4 mt-4">
                     <button
@@ -117,7 +120,7 @@ const AddPatient = () => {
                                 <div className="w-5 h-5 border-t-2 border-white border-solid rounded-full animate-spin"></div>
                             </div>
                         ) : (
-                            "Thêm bệnh nhân"
+                            "Tạo"
                         )}
                     </button>
                     <button

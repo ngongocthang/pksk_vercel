@@ -1,65 +1,86 @@
 import React, { useState, useContext, useEffect } from "react";
-import { assets } from "../../assets/assets";
 import { AdminContext } from "../../context/AdminContext";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate, useParams } from "react-router-dom";
 
 const EditPatient = () => {
-    const [patientImg, setPatientImg] = useState(false);
     const [name, setName] = useState("");
     const [phone, setPhone] = useState("");
     const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
 
     const { backendUrl, aToken } = useContext(AdminContext);
-    const navigate = useNavigate(); // Initialize navigate
+    const navigate = useNavigate();
+    const { id } = useParams(); // Lấy ID từ URL
 
     useEffect(() => {
-        // Fetch patient data if necessary, for now using placeholders
-        // Example: axios.get(`${backendUrl}/patient/${patientId}`, { headers: { Authorization: `Bearer ${aToken}` }})
-    }, []);
+        const fetchPatientData = async () => {
+            try {
+                const response = await axios.get(`${backendUrl}/patient/get-patient-dashboard/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${aToken}`,
+                    },
+                });
+                const patientData = response.data;
+
+                if (patientData.success && patientData.patient) {
+                    const user = patientData.patient.user_id;
+                    setName(user.name);
+                    setPhone(user.phone);
+                    setEmail(user.email);
+                } else {
+                    throw new Error("Dữ liệu bệnh nhân không hợp lệ.");
+                }
+            } catch (error) {
+                console.error("Lỗi khi lấy thông tin bệnh nhân:", error);
+                toast.error("Có lỗi xảy ra khi lấy thông tin bệnh nhân.");
+            }
+        };
+
+        fetchPatientData();
+    }, [id, backendUrl, aToken]);
 
     const onSubmitHandler = async (event) => {
         event.preventDefault();
+        setLoading(true); // Bắt đầu trạng thái loading
 
         try {
-            const formData = new FormData();
-            formData.append("name", name);
-            formData.append("phone", phone);
-            formData.append("email", email);
-            formData.append("password", password);
+            // Tạo đối tượng dữ liệu để gửi
+            const data = {
+                name,
+                phone,
+                email,
+            };
 
-            const { data } = await axios.put(
-                `${backendUrl}/patient/update`, 
-                formData,
+            console.log("Giá trị gửi lên API:", data);
+
+            const response = await axios.put(
+                `${backendUrl}/patient/update/${id}`, // Thêm ID vào URL
+                data, // Gửi dữ liệu dưới dạng JSON
                 {
                     headers: {
                         Authorization: `Bearer ${aToken}`,
-                        "Content-Type": "multipart/form-data",
+                        "Content-Type": "application/json", // Đảm bảo là application/json
                     },
                 }
             );
-            setLoading(false);
 
-            if (data.success) {
+            if (response.data.success) {
                 toast.success("Chỉnh sửa bệnh nhân thành công!");
-                setName("");
-                setPhone("");
-                setEmail("");
-                setPassword("");
+                navigate("/patient-list"); // Điều hướng về danh sách bệnh nhân
             } else {
                 toast.error("Chỉnh sửa bệnh nhân thất bại!");
             }
         } catch (error) {
-            setLoading(false);
             toast.error(error.response?.data.message || "Có lỗi xảy ra.");
+        } finally {
+            setLoading(false); // Kết thúc trạng thái loading
         }
     };
 
     const onCancelHandler = () => {
-        navigate("/patient-list"); // Navigate to the patient list page
+        navigate("/patient-list"); // Điều hướng về danh sách bệnh nhân
     };
 
     return (
@@ -69,7 +90,7 @@ const EditPatient = () => {
                 <div className="flex flex-col lg:flex-row items-start gap-10 text-gray-500">
                     <div className="w-full lg:flex-1 flex flex-col gap-4">
                         <div className="flex-1 flex flex-col gap-1">
-                            <p className="font-bold">Tên bệnh nhân</p>
+                            <p className="font-bold">Tên:</p>
                             <input
                                 onChange={(e) => setName(e.target.value)}
                                 value={name}
@@ -79,7 +100,7 @@ const EditPatient = () => {
                             />
                         </div>
                         <div className="flex-1 flex flex-col gap-1">
-                            <p className="font-bold">Số điện thoại bệnh nhân</p>
+                            <p className="font-bold">Số điện thoại:</p>
                             <input
                                 onChange={(e) => setPhone(e.target.value)}
                                 value={phone}
@@ -92,23 +113,13 @@ const EditPatient = () => {
 
                     <div className="w-full lg:flex-1 flex flex-col gap-4">
                         <div className="flex-1 flex flex-col gap-1">
-                            <p className="font-bold">Email bệnh nhân</p>
+                            <p className="font-bold">Email:</p>
                             <input
                                 onChange={(e) => setEmail(e.target.value)}
                                 value={email}
                                 className="border rounded px-3 py-2"
                                 type="email"
                                 placeholder="Email"
-                            />
-                        </div>
-                        <div className="flex-1 flex flex-col gap-1">
-                            <p className="font-bold">Mật khẩu</p>
-                            <input
-                                onChange={(e) => setPassword(e.target.value)}
-                                value={password}
-                                className="border rounded px-3 py-2"
-                                type="password"
-                                placeholder="Mật khẩu"
                             />
                         </div>
                     </div>
@@ -125,13 +136,13 @@ const EditPatient = () => {
                                 <div className="w-5 h-5 border-t-2 border-white border-solid rounded-full animate-spin"></div>
                             </div>
                         ) : (
-                            "Cập nhật bệnh nhân"
+                            "Lưu"
                         )}
                     </button>
                     <button
                         type="button"
                         onClick={onCancelHandler}
-                        className="bg-gray-300 px-10 py-3 text-black rounded-full hover:bg-gray-400"
+                        className="bg-gray-300 px-10 py-3 text-black rounded-full"
                     >
                         Hủy
                     </button>

@@ -20,7 +20,7 @@ const createAppointment = async (req, res) => {
 
     const appointment = await Appointment.create(req.body);
     await Appointment_history.create({
-      appointment_id: appointment._id
+      appointment_id: appointment._id,
     });
     if (appointment) {
       return res.status(200).json(appointment);
@@ -47,22 +47,22 @@ const findAllAppointment = async (req, res) => {
         const patientInfo = await User.findOne({ _id: patient.user_id });
         const doctor = await Doctor.findOne({ _id: appointment.doctor_id });
         const doctorInfo = await User.findOne({ _id: doctor.user_id });
-        
+
         return {
           ...appointment.toObject(),
           patientInfo,
-          doctorInfo
+          doctorInfo,
         };
       })
     );
 
-    return res.status(200).json({ success: true, appointments: appointmentsWithDetails });
+    return res
+      .status(200)
+      .json({ success: true, appointments: appointmentsWithDetails });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
-
-
 
 const findAppointment = async (req, res) => {
   try {
@@ -102,7 +102,7 @@ const updateAppointment = async (req, res) => {
     await Appointment_history.findOneAndUpdate(
       { appointment_id: appointment._id },
       {
-        appointment_id: appointment._id
+        appointment_id: appointment._id,
       },
       { new: true }
     );
@@ -126,11 +126,15 @@ const updateAppointment = async (req, res) => {
     }
     const patientInfo = await User.findOne({ _id: patient.user_id });
     if (!patientInfo) {
-      return res.status(404).json({ message: "Information of patient not found" });
+      return res
+        .status(404)
+        .json({ message: "Information of patient not found" });
     }
     const doctorInfo = await User.findOne({ _id: doctor.user_id });
     if (!doctorInfo) {
-      return res.status(404).json({ message: "Information of doctor not found" });
+      return res
+        .status(404)
+        .json({ message: "Information of doctor not found" });
     }
 
     const vietnamTime = moment(appointment.work_date)
@@ -190,12 +194,14 @@ const patientCreateAppointment = async (req, res) => {
       patient_id: patient._id,
     });
     await Appointment_history.create({
-      appointment_id: appointment._id
+      appointment_id: appointment._id,
     });
-     await Notification.create({
+    await Notification.create({
       patient_id: appointment.patient_id,
       doctor_id: appointment.doctor_id,
-      content: `Bạn đã đặt lịch khám vào ngày: ${moment(appointment.work_date).format("DD/MM/YYYY")}, hãy chờ phản hồi từ bác sĩ.`,
+      content: `Bạn đã đặt lịch khám vào ngày: ${moment(
+        appointment.work_date
+      ).format("DD/MM/YYYY")}, hãy chờ phản hồi từ bác sĩ.`,
       new_date: appointment.work_date,
       new_work_shift: appointment.work_shift,
     });
@@ -349,7 +355,7 @@ const showUpcomingAppointments = async (req, res) => {
       upcomingAppointments = await Appointment.find({
         doctor_id: doctor._id,
         work_date: { $gte: now },
-        status: "confirmed" 
+        status: "confirmed",
       }).sort({ work_date: 1 });
     }
 
@@ -359,7 +365,7 @@ const showUpcomingAppointments = async (req, res) => {
         if (!patient) {
           throw new Error("Patient not found");
         }
-        
+
         const user = await User.findOne({ _id: patient.user_id });
         if (!user) {
           throw new Error("User not found");
@@ -377,7 +383,6 @@ const showUpcomingAppointments = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-
 
 const getAppointmentByStatus = async (req, res) => {
   try {
@@ -434,6 +439,50 @@ const getAppointmentByStatus = async (req, res) => {
   }
 };
 
+const countAppointmentDoctorDashboard = async (req, res) => {
+  try {
+    const user_id = req.params.id;
+    const doctor = await Doctor.findOne({ user_id: user_id });
+    if (!doctor) {
+      return res
+        .status(403)
+        .json({ success: false, message: "Doctor not found" });
+    }
+
+    // Đếm số lượng lịch hẹn theo trạng thái và tháng
+    const appointments = await Appointment.aggregate([
+      {
+        $match: {
+          doctor_id: doctor._id,
+        },
+      },
+      {
+        $group: {
+          _id: {
+            month: { $month: "$work_date" }, // Lấy tháng từ trường word_date
+            status: "$status", // Nhóm theo trạng thái
+          },
+          count: { $sum: 1 }, // Đếm số lượng
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          month: "$_id.month",
+          status: "$_id.status",
+          count: 1,
+        },
+      },
+      {
+        $sort: { year: 1, month: 1, status: 1 }, // Sắp xếp theo năm, tháng và trạng thái
+      },
+    ]);
+
+    return res.status(200).json({ success: true, appointments });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
 
 module.exports = {
   createAppointment,
@@ -446,4 +495,5 @@ module.exports = {
   processPrematureCancellation,
   showUpcomingAppointments,
   getAppointmentByStatus,
+  countAppointmentDoctorDashboard
 };

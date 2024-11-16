@@ -21,18 +21,18 @@ const Login = () => {
   const onSubmitHandler = async (event) => {
     event.preventDefault();
     setLoading(true);
-
+  
     const url =
       state === "Sign Up"
         ? "http://localhost:5000/register"
         : "http://localhost:5000/login";
-
+  
     const requestBody = {
       email,
       password,
       ...(state === "Sign Up" && { name, phone }),
     };
-
+  
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -41,9 +41,9 @@ const Login = () => {
         },
         body: JSON.stringify(requestBody),
       });
-
+  
       const data = await response.json();
-
+  
       if (response.ok) {
         if (state === "Sign Up") {
           setState("Login");
@@ -63,16 +63,21 @@ const Login = () => {
           }
         }
       } else {
-        toast.error("Đăng nhập thất bại!");
+        // Kiểm tra trạng thái để hiển thị thông báo phù hợp
+        if (state === "Login") {
+          toast.error("Đăng nhập thất bại!");
+        } else {
+          toast.error(data.message);
+        }
       }
     } catch (error) {
       console.error("Error:", error);
-      toast.error(`Đã xảy ra lỗi: ${error.message || "Vui lòng thử lại sau."}`);
+      toast.error(`Đã xảy ra lỗi! Vui lòng thử lại sau.`);
     } finally {
       setLoading(false);
     }
   };
-
+  
   return (
     <>
       <form className="min-h-[80vh] flex items-center" onSubmit={onSubmitHandler}>

@@ -8,6 +8,7 @@ const AdminContextProvider = ({ children }) => {
     const initialToken = localStorage.getItem('aToken') || '';
     const [aToken, setAToken] = useState(initialToken);
     const [doctors, setDoctors] = useState([]);
+    const [patient, setPatients] = useState([]);
     const [spec, setSpecs] = useState([]);
     const [appointments, setAppointments] = useState([]);
     const [dashData, setDashData] = useState(null);
@@ -79,6 +80,20 @@ const AdminContextProvider = ({ children }) => {
         }
     };
 
+    const getAllPatients = async () => {
+        try {
+            const { data } = await api.get('/patient/find-all');
+            if (data.success) {
+                setPatients(data.data);
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            console.error("Error fetching patients:", error);
+            toast.error(error.response?.data?.message || error.message);
+        }
+    };
+
     const cancelAppointment = async (appointmentId) => {
         try {
             console.log("Cancelling appointment:", appointmentId);
@@ -124,7 +139,9 @@ const AdminContextProvider = ({ children }) => {
         cancelAppointment,
         dashData, getDashData,
         spec,setSpecs,
-        getAllSpecialists
+        getAllSpecialists,
+        patient, setPatients,
+        getAllPatients
     };
 
     return (
