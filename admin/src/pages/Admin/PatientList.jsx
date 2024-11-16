@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AdminContext } from "../../context/AdminContext";
-import axios from 'axios';
+import axios from "axios";
 
 const PatientList = () => {
   const { patient, getAllPatients } = useContext(AdminContext);
@@ -17,7 +17,10 @@ const PatientList = () => {
 
   const indexOfLastPatient = currentPage * patientsPerPage;
   const indexOfFirstPatient = indexOfLastPatient - patientsPerPage;
-  const currentPatients = patient.slice(indexOfFirstPatient, indexOfLastPatient);
+  const currentPatients = patient.slice(
+    indexOfFirstPatient,
+    indexOfLastPatient
+  );
 
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -54,20 +57,38 @@ const PatientList = () => {
         <table className="min-w-full table-auto bg-white border-collapse">
           <thead className="bg-gray-100">
             <tr>
-              <th className="py-2 px-4 border-b text-left text-sm font-bold text-[16px]">#</th>
-              <th className="py-2 px-4 border-b text-center text-sm font-bold text-[16px]">Tên Bệnh Nhân</th>
-              <th className="py-2 px-4 border-b text-center text-sm font-bold text-[16px]">Email</th>
-              <th className="py-2 px-4 border-b text-center text-sm font-bold text-[16px]">Số Điện Thoại</th>
-              <th className="py-2 px-4 border-b text-left text-sm font-bold text-[16px]">Hành Động</th>
+              <th className="py-2 px-4 border-b text-left text-sm font-bold text-[16px]">
+                #
+              </th>
+              <th className="py-2 px-4 border-b text-center text-sm font-bold text-[16px]">
+                Tên Bệnh Nhân
+              </th>
+              <th className="py-2 px-4 border-b text-center text-sm font-bold text-[16px]">
+                Email
+              </th>
+              <th className="py-2 px-4 border-b text-center text-sm font-bold text-[16px]">
+                Số Điện Thoại
+              </th>
+              <th className="py-2 px-4 border-b text-left text-sm font-bold text-[16px]">
+                Hành Động
+              </th>
             </tr>
           </thead>
           <tbody>
             {currentPatients.map((patient, index) => (
               <tr key={patient._id} className="hover:bg-gray-50">
-                <td className="py-2 px-4 border-b text-sm font-bold">{index + 1}</td>
-                <td className="py-2 px-4 border-b text-center">{patient.user_id.name}</td>
-                <td className="py-2 px-4 border-b text-center">{patient.user_id.email}</td>
-                <td className="py-2 px-4 border-b text-center">{patient.user_id.phone}</td>
+                <td className="py-2 px-4 border-b text-sm font-bold">
+                  {index + 1}
+                </td>
+                <td className="py-2 px-4 border-b text-center">
+                  {patient.user_id.name}
+                </td>
+                <td className="py-2 px-4 border-b text-center">
+                  {patient.user_id.email}
+                </td>
+                <td className="py-2 px-4 border-b text-center">
+                  {patient.user_id.phone}
+                </td>
                 <td className="py-2 px-4 border-b text-sm flex gap-2">
                   <svg
                     onClick={() => navigate(`/edit-patient/${patient._id}`)}
@@ -110,7 +131,9 @@ const PatientList = () => {
               key={index}
               onClick={() => paginate(index + 1)}
               className={`px-4 py-2 rounded-md ${
-                currentPage === index + 1 ? "bg-blue-600 text-white" : "bg-gray-200"
+                currentPage === index + 1
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200"
               }`}
             >
               {index + 1}

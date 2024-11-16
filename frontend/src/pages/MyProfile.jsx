@@ -127,7 +127,7 @@ const MyProfile = () => {
   };
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center justify-center mb-16">
       <div className="max-w-lg flex flex-col gap-2 text-sm bg-white shadow-lg rounded-lg p-6">
         <p className="text-lg text-center">Chào mừng, {userData.name}!</p>
         <div className="flex items-center justify-center">
