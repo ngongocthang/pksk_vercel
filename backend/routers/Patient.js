@@ -5,7 +5,8 @@ const {
   findAllPatient,
   findPatient,
   updatePatient,
-  deletePatient
+  deletePatient,
+  getPatientById
 } = require("../controllers/PatientController/index");
 
 // Định nghĩa route
@@ -14,5 +15,6 @@ router.get("/find-all", findAllPatient);
 router.get("/find/:id", findPatient);
 router.put("/update/:id", updatePatient);
 router.delete("/delete/:id", deletePatient);
+router.get("/get-patient-dashboard/:id", getPatientById);
 
 module.exports = router;

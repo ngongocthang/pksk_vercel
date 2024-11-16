@@ -1,6 +1,6 @@
 const Joi = require('joi');
 
-const patientSchema = Joi.object({
+const updatePatientSchema = Joi.object({
   name: Joi.string().min(1).max(50).required().messages({
     "string.base": "Tên bệnh nhân phải là một chuỗi.",
     "string.empty": "Tên bệnh nhân không được để trống.",
@@ -20,16 +20,10 @@ const patientSchema = Joi.object({
     "string.pattern.base": "Số điện thoại phải bắt đầu bằng 0 và có đúng 10 chữ số.",
     "any.required": "Số điện thoại là bắt buộc.",
   }),
-  password: Joi.string().min(6).required().messages({
-    "string.base": "Mật khẩu phải là một chuỗi.",
-    "string.empty": "Mật khẩu không được để trống.",
-    "string.min": "Mật khẩu phải có ít nhất {#limit} ký tự.",
-    "any.required": "Mật khẩu là bắt buộc.",
-  }),
 });
 
-const validatePatient = (data) => {
-  return patientSchema.validate(data);
+const validateUpdatePatient = (data) => {
+  return updatePatientSchema.validate(data);
 };
 
-module.exports = validatePatient;
+module.exports = validateUpdatePatient;

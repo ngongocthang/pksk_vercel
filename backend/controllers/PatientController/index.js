@@ -4,6 +4,7 @@ const User = require("../../models/User");
 const UserRole = require("../../models/User_role");
 const Doctor = require("../../models/Patient");
 const validatePatient = require("../../requests/validatePatient");
+const validateUpdatePatient = require("../../requests/validateUpdatePatientDashboard");
 const Patient = require("../../models/Patient");
 
 //{ key: value } là một đtuong trong js, thường dùng để crud
@@ -49,10 +50,10 @@ const createPatient = async (req, res) => {
       });
 
       // Trả về thông tin người dùng
-      res.status(200).json(patient);
+      res.status(200).json({success: true, data: patient});
     }
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({success: false, message: error.message });
   }
 };
 
@@ -61,12 +62,12 @@ const findAllPatient = async (req, res) => {
     const patient = await Patient.find({}).populate("user_id");
 
     if (patient) {
-      return res.status(200).json(patient);
+      return res.status(200).json({success: true, data: patient});
     } else {
       return res.status(400).json({ message: "Patient not found." });
     }
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({success: true, message: error.message });
   }
 };
 
@@ -93,7 +94,7 @@ const updatePatient = async (req, res) => {
     }
 
     // Validate dữ liệu từ client
-    const { error } = validatePatient(req.body);
+    const { error } = validateUpdatePatient(req.body);
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
     }
@@ -125,10 +126,10 @@ const updatePatient = async (req, res) => {
       );
     }
 
-    return res.status(200).json(patientUpdate);
+    return res.status(200).json({success: true, data: patientUpdate});
   } catch (error) {
     console.error(error); // Ghi lại lỗi
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({success: false, message: error.message });
   }
 };
 
@@ -147,9 +148,9 @@ const deletePatient = async (req, res) => {
     // Xóa info liên quan
     await User.deleteOne({ _id: patient.user_id });
     await UserRole.deleteOne({ user_id: patient.user_id });
-    return res.status(200).json({ message: "Delete patient success!" });
+    return res.status(200).json({success: true, message: "Delete patient success!" });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({success: false, message: error.message });
   }
 };
 
@@ -215,6 +216,20 @@ const updateProfilePatient = async (req, res) => {
   }
 };
 
+const getPatientById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const patient = await Patient.findById(id).populate("user_id");
+    if (patient) {
+      return res.status(200).json({success: true, patient});
+    } else {
+      return res.status(400).json({ message: "Patient not found" });
+    }
+  } catch (error) {
+    return res.status(500).json({success: false, message: error.message });
+  }
+};
+
 module.exports = {
   createPatient,
   findAllPatient,
@@ -223,4 +238,5 @@ module.exports = {
   deletePatient,
   profilePatient,
   updateProfilePatient,
+  getPatientById
 };
