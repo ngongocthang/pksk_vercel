@@ -14,27 +14,27 @@ const Sidebar = () => {
             {
                 aToken && <ul className='text-[#515151] mt-5'>
 
-                    <NavLink className={({ isActive }) => `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${isActive ? 'bg-[#F2F3FF] border-r-4 border-primary' : ''}`} to={'/admin-dashboard'}>
+                    <NavLink className={({ isActive }) => `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${isActive ? 'bg-[#F2F3FF] border-r-4 border-[#0091a1]' : ''}`} to={'/admin-dashboard'}>
                         <img src={assets.home_icon} alt="" />
                         <p className='hidden md:block'>Tổng quát</p>
                     </NavLink>
 
-                    <NavLink className={({ isActive }) => `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${isActive ? 'bg-[#F2F3FF] border-r-4 border-primary' : ''}`} to={'/all-appointments'}>
+                    <NavLink className={({ isActive }) => `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${isActive ? 'bg-[#F2F3FF] border-r-4 border-[#0091a1]' : ''}`} to={'/all-appointments'}>
                         <img src={assets.appointment_icon} alt="" />
                         <p className='hidden md:block'>Cuộc hẹn</p>
                     </NavLink>
 
-                    <NavLink className={({ isActive }) => `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${isActive ? 'bg-[#F2F3FF] border-r-4 border-primary' : ''}`} to={'/add-doctor'}>
+                    <NavLink className={({ isActive }) => `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${isActive ? 'bg-[#F2F3FF] border-r-4 border-[#0091a1]' : ''}`} to={'/add-doctor'}>
                         <img src={assets.add_icon} alt="" />
                         <p className='hidden md:block'>Thêm bác sĩ</p>
                     </NavLink>
 
-                    <NavLink className={({ isActive }) => `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${isActive ? 'bg-[#F2F3FF] border-r-4 border-primary' : ''}`} to={'/doctor-list'}>
+                    <NavLink className={({ isActive }) => `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${isActive ? 'bg-[#F2F3FF] border-r-4 border-[#0091a1]' : ''}`} to={'/doctor-list'}>
                         <img src={assets.people_icon} alt="" />
                         <p className='hidden md:block'>Danh sách bác sĩ</p>
                     </NavLink>
 
-                    <NavLink className={({ isActive }) => `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${isActive ? 'bg-[#F2F3FF] border-r-4 border-primary' : ''}`} to={'/patient-list'}>
+                    <NavLink className={({ isActive }) => `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${isActive ? 'bg-[#F2F3FF] border-r-4 border-[#0091a1]' : ''}`} to={'/patient-list'}>
                         <img src={assets.people_icon} alt="" />
                         <p className='hidden md:block'>Danh sách bệnh nhân</p>
                     </NavLink>

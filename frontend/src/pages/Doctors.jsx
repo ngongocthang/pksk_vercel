@@ -16,12 +16,7 @@ const Doctors = () => {
   const fetchDoctors = async () => {
     try {
       const response = await axios.get("http://localhost:5000/doctor/find-all");
-      if (response.data.success && Array.isArray(response.data.doctors)) {
-        setDoctors(response.data.doctors);
-      } else {
-        console.error("Invalid data format for doctors");
-        setDoctors([]); // Thiết lập giá trị mặc định
-      }
+      setDoctors(response.data.success ? response.data.doctors : []);
     } catch (error) {
       console.error("Error fetching doctors:", error);
     }
@@ -30,24 +25,17 @@ const Doctors = () => {
   const fetchSpecializations = async () => {
     try {
       const response = await axios.get("http://localhost:5000/specialization/find-all");
-      if (response.data.success && Array.isArray(response.data.specializations)) {
-        setSpecializations(response.data.specializations);
-      } else {
-        console.error("Invalid data format for specializations");
-        setSpecializations([]); // Thiết lập giá trị mặc định
-      }
+      setSpecializations(response.data.success ? response.data.specializations : []);
     } catch (error) {
       console.error("Error fetching specializations:", error);
     }
   };
 
   const applyFilter = () => {
-    if (speciality) {
-      const filtered = doctors.filter((doc) => doc.specialization_id.name === speciality);
-      setFilterDoc(filtered);
-    } else {
-      setFilterDoc(doctors);
-    }
+    const filtered = speciality
+      ? doctors.filter((doc) => doc.specialization_id?.name === speciality)
+      : doctors;
+    setFilterDoc(filtered);
   };
 
   useEffect(() => {
@@ -61,21 +49,50 @@ const Doctors = () => {
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
-    const page = queryParams.get("page");
-    setCurrentPage(page ? parseInt(page, 10) : 1);
+    setCurrentPage(Number(queryParams.get("page")) || 1);
   }, [location]);
 
+  const totalDoctors = filterDoc.length;
+  const totalPages = Math.ceil(totalDoctors / doctorsPerPage);
   const indexOfLastDoctor = currentPage * doctorsPerPage;
   const indexOfFirstDoctor = indexOfLastDoctor - doctorsPerPage;
-
-  const currentDoctors = Array.isArray(filterDoc) ? filterDoc.slice(indexOfFirstDoctor, indexOfLastDoctor) : [];
-  const totalPages = Math.ceil(Array.isArray(filterDoc) ? filterDoc.length : 0 / doctorsPerPage);
+  const currentDoctors = filterDoc.slice(indexOfFirstDoctor, indexOfLastDoctor);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
     const queryParams = new URLSearchParams(location.search);
     queryParams.set("page", page);
-    navigate(`/doctors${speciality ? `/${speciality}` : ""}?${queryParams.toString()}`);
+    navigate(`/doctors${speciality ? `/${speciality}` : ""}?${queryParams.toString()}`, { replace: true });
+  };
+
+  const renderPagination = () => {
+    const paginationItems = [];
+    const delta = 2;
+
+    for (let i = 1; i <= totalPages; i++) {
+      if (i === 1 || i === totalPages || (i >= currentPage - delta && i <= currentPage + delta)) {
+        paginationItems.push(
+          <button
+            key={i}
+            onClick={() => handlePageChange(i)}
+            className={`py-1 px-3 border rounded ${i === currentPage ? "bg-indigo-500 text-white" : "text-gray-600"}`}
+          >
+            {i}
+          </button>
+        );
+      } else if (
+        (i === currentPage - delta - 1 && currentPage > delta + 2) ||
+        (i === currentPage + delta + 1 && currentPage < totalPages - delta - 1)
+      ) {
+        paginationItems.push(<span key={i} className="px-2">...</span>);
+      }
+    }
+
+    return (
+      <div className="flex justify-center items-center mt-6 space-x-2">
+        {paginationItems}
+      </div>
+    );
   };
 
   return (
@@ -119,33 +136,9 @@ const Doctors = () => {
           ))}
         </div>
       </div>
-
-      {totalPages > 1 && (
-        <div className="flex justify-center items-center mt-6 space-x-2">
-          {Array.from({ length: totalPages }, (_, index) => {
-            const page = index + 1;
-            const shouldDisplay = page >= currentPage - 2 && page <= currentPage + 2;
-
-            if (shouldDisplay) {
-              return (
-                <button
-                  key={page}
-                  onClick={() => handlePageChange(page)}
-                  className={`py-1 px-3 border rounded ${page === currentPage ? "bg-indigo-500 text-white" : "text-gray-600"}`}
-                >
-                  {page}
-                </button>
-              );
-            }
-            return null;
-          })}
-        </div>
-      )}
+      {totalPages > 1 && renderPagination()}
     </div>
   );
 };
 
 export default Doctors;
-
-
-

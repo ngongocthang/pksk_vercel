@@ -110,32 +110,34 @@ const DoctorsList = () => {
             className='border border-indigo-200 rounded-xl overflow-hidden cursor-pointer group relative'
             key={index}
           >
-            <img
-              className='bg-indigo-50 group-hover:bg-primary transition-all duration-500'
-              src={item.user_id.image}
-              alt=""
-            />
+            <div className='relative'>
+              <img
+                className='bg-indigo-50 group-hover:bg-primary transition-all duration-500'
+                src={item.user_id.image}
+                alt=""
+              />
 
-            {/* Delete icon on the image */}
-            <div
-              className='absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300'
-            >
-              <button
-                className='bg-red-500 text-white p-2 rounded-full transition duration-200 ease-in-out hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300'
-                onClick={() => deleteDoctor(item.user_id._id, item.user_id.name)}
+              <span className='absolute top-2 left-2 bg-indigo-100 text-indigo-800 text-xs font-semibold px-2 py-1 rounded-full'>
+                {item.specialization_id.name}
+              </span>
+
+              {/* Delete icon on the image */}
+              <div
+                className='absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300'
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3h6m2 0a1 1 0 011 1v1H6V4a1 1 0 011-1h10zM4 7h16M10 11v6m4-6v6M5 7h14l-1.68 14.14A2 2 0 0115.33 23H8.67a2 2 0 01-1.99-1.86L5 7z" />
-                </svg>
-              </button>
+                <button
+                  className='bg-red-500 text-white p-2 rounded-full transition duration-200 ease-in-out hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300'
+                  onClick={() => deleteDoctor(item.user_id._id, item.user_id.name)}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3h6m2 0a1 1 0 011 1v1H6V4a1 1 0 011-1h10zM4 7h16M10 11v6m4-6v6M5 7h14l-1.68 14.14A2 2 0 0115.33 23H8.67a2 2 0 01-1.99-1.86L5 7z" />
+                  </svg>
+                </button>
+              </div>
             </div>
 
             <div className='p-4'>
-              <p className='text-neutral-800 text-lg font-medium'>Bs. {item.user_id.name}
-                <span className='ml-2 bg-indigo-100 text-indigo-800 text-xs font-semibold px-2 py-1 rounded-full'>
-                  {item.specialization_id.name}
-                </span>
-              </p>
+              <p className='text-neutral-800 text-lg font-medium'>Bs. {item.user_id.name}</p>
               <p className='text-zinc-600 text-sm'>SĐT: {item.user_id.phone}</p>
               <p className='text-zinc-600 text-sm'>Email: {item.user_id.email}</p>
             </div>
