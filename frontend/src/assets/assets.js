@@ -14,7 +14,13 @@ import notification_icon from './notification_icon.svg'
 import info_icon from './info_icon.svg'
 import EyeIcon from "./eye.svg";
 import EyeOffIcon from "./eye_off.svg";
-import upload_icon from './upload_icon.png';
+import facebook_icon from "./facebook_icon.svg";
+import instagram_icon from "./instagram_icon.svg";
+import twitter_icon from "./twitter_icon.svg";
+import Clock from "./clock_icon.svg";
+import Email from "./email_icon.svg";
+import Phone from "./phone_icon.svg";
+import Address from './address_icon.svg';
 import dieuhanh from './NGUYENLEHONGVAN.webp';
 import phattrien from './NGUYENLEHONGVAN.jpg';
 import phantich from './NGUYENLEHONGVAN(2).jpg';
@@ -34,10 +40,16 @@ export const assets = {
     cross_icon,
     notification_icon,
     dropdown_icon,
-    upload_icon,
     EyeIcon,
     EyeOffIcon,
     dieuhanh,
     phattrien,
     phantich,
+    facebook_icon,
+    instagram_icon,
+    twitter_icon,
+    Address,
+    Phone,
+    Email,
+    Clock,
 }

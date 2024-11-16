@@ -161,7 +161,7 @@ const DoctorProfile = () => {
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="text-xl font-semibold text-gray-800 w-full sm:w-auto border border-gray-200 p-2 rounded-md"
+                  className="text-xl text-center font-semibold text-gray-800 w-full sm:w-auto border border-gray-200 p-2 rounded-md"
                   placeholder="Name"
                 />
               ) : (

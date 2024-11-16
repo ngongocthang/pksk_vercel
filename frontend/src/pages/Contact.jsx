@@ -25,16 +25,7 @@ const Contact = () => {
             <h2 className="font-semibold text-xl text-gray-600">VĂN PHÒNG CỦA CHÚNG TÔI</h2>
             <div className="flex items-center gap-2">
               {/* Location SVG Icon */}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 text-gray-500"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  d="M12 2C8.134 2 5 5.134 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.866-3.134-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"
-                />
-              </svg>
+              <img className='h-5 w-5 text-gray-500' src={assets.Address} alt="Address" />
 
               {/* Address Text */}
               <p className="text-gray-500">70 Nguyễn Huệ, phường Vĩnh Ninh, Thành Phố Huế</p>
@@ -45,27 +36,13 @@ const Contact = () => {
 
             {/* Phone Information */}
             <div className="flex items-center gap-2 text-gray-500">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M3 2.75A.75.75 0 0 1 3.75 2h4.58a.75.75 0 0 1 .738.57l1.15 4.6a.75.75 0 0 1-.216.74L7.71 10.91a11.042 11.042 0 0 0 5.38 5.38l2.995-2.296a.75.75 0 0 1 .739-.216l4.6 1.15a.75.75 0 0 1 .57.738v4.58a.75.75 0 0 1-.75.75A17.25 17.25 0 0 1 2.25 3.5a.75.75 0 0 1 .75-.75z" />
-              </svg>
+              <img className='h-5 w-5 text-gray-500' src={assets.Phone} alt="Phone" />
               <p>SĐT: +84-365-142-649</p>
             </div>
 
             {/* Email Information */}
             <div className="flex items-center gap-2 text-gray-500 mt-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M1.5 4.5A2.25 2.25 0 0 1 3.75 2.25h16.5A2.25 2.25 0 0 1 22.5 4.5v15a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 19.5v-15zm2.648.75 7.55 5.404 7.551-5.404H4.148zM3 18.75V6.234l8.526 6.113a.75.75 0 0 0 .847 0L21 6.234v12.516H3z" />
-              </svg>
+              <img className='h-5 w-5 text-gray-500' src={assets.Email} alt="Email" />
               <p>Email: lequythien1@gmail.com</p>
             </div>
           </div>
@@ -74,25 +51,11 @@ const Contact = () => {
 
             {/* Working Hours with Clock Icon */}
             <div className="flex items-center gap-2 text-gray-500">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M12 1.75a10.25 10.25 0 1 0 0 20.5 10.25 10.25 0 0 0 0-20.5zm0 1.5a8.75 8.75 0 1 1 0 17.5 8.75 8.75 0 0 1 0-17.5zm.75 4a.75.75 0 0 0-1.5 0v5.25c0 .414.336.75.75.75h3a.75.75 0 0 0 0-1.5H12.75V7.25z" />
-              </svg>
+              <img className='h-5 w-5 text-gray-500' src={assets.Clock} alt="Clock" />
               <p>
                 Thứ Hai - Thứ Sáu: 8:00 - 18:00 <br />
                 Thứ Bảy: 8:00 - 12:00
               </p>
-            </div>
-          </div>
-          <div>
-            <div className="flex gap-4">
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-[#4267B2] text-2xl"><i className="fab fa-facebook-f"></i></a>
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-[#1DA1F2] text-2xl"><i className="fab fa-twitter"></i></a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-[#C13584] text-2xl"><i className="fab fa-instagram"></i></a>
             </div>
           </div>
         </div>
