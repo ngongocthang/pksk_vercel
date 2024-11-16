@@ -16,11 +16,11 @@ const patients = [
 ];
 
 const PatientList = () => {
-    const navigate = useNavigate(); 
-    const [currentPage, setCurrentPage] = useState(1); 
-    const [patientsPerPage] = useState(10); 
+    const navigate = useNavigate();
+    const [currentPage, setCurrentPage] = useState(1);
+    const [patientsPerPage] = useState(10);
 
-    const totalPages = Math.ceil(patients.length / patientsPerPage); 
+    const totalPages = Math.ceil(patients.length / patientsPerPage);
 
     const indexOfLastPatient = currentPage * patientsPerPage;
     const indexOfFirstPatient = indexOfLastPatient - patientsPerPage;
@@ -28,7 +28,7 @@ const PatientList = () => {
 
     const paginate = (pageNumber) => {
         setCurrentPage(pageNumber);
-        navigate(`/patient-list?page=${pageNumber}`); 
+        navigate(`/patient-list?page=${pageNumber}`);
     };
 
     return (
@@ -37,12 +37,11 @@ const PatientList = () => {
                 <p className="text-lg font-medium">Tất Cả Bệnh Nhân</p>
                 <button
                     onClick={() => navigate("/add-patient")}
-                    className="flex items-center px-5 py-3 bg-[#219B9D] text-white text-base rounded hover:bg-[#0091a1]"
+                    className="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-[#4CAF50] to-[#219B9D] text-white rounded-full shadow-md hover:from-[#45A049] hover:to-[#009688] transform hover:scale-110 transition-all duration-300"
                 >
-                    <svg className="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" />
                     </svg>
-                    Tạo Mới
                 </button>
             </div>
             <div className="mt-4 overflow-x-auto bg-white p-4 rounded-md shadow-md">
