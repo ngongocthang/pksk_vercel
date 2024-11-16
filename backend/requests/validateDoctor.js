@@ -14,10 +14,10 @@ const doctorSchema = Joi.object({
     "string.email": "Email không hợp lệ.",
     "any.required": "Email là bắt buộc.",
   }),
-  phone: Joi.string().length(10).required().messages({
+  phone: Joi.string().pattern(/^0\d{9}$/).required().messages({
     "string.base": "Số điện thoại phải là một chuỗi.",
     "string.empty": "Số điện thoại không được để trống.",
-    "string.length": "Số điện thoại phải có đúng {#limit} chữ số.",
+    "string.pattern.base": "Số điện thoại phải bắt đầu bằng 0 và có đúng 10 chữ số.",
     "any.required": "Số điện thoại là bắt buộc.",
   }),
   description: Joi.string().required().messages({
