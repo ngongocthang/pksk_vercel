@@ -86,8 +86,10 @@ const AddDoctor = () => {
 
     return (
         <form onSubmit={onSubmitHandler} className="m-5 w-full">
-            <p className='mb-3 text-lg font-medium'>Thêm bác sĩ</p>
-            <div className='bg-white px-8 py-8 border rounded w-full max-w-4xl max-h-[80vh] overflow-y-scroll'>
+            <div className="flex justify-between items-center mb-4">
+                <p className='text-3xl font-bold text-[#0091a1]'>Thêm bác sĩ</p>
+            </div>
+            <div className='overflow-x-auto bg-white p-4 rounded-md shadow-md'>
                 <div className='flex items-center gap-4 mb-8 text-gray-500'>
                     <label htmlFor="doc-img" className="cursor-pointer">
                         <img

@@ -101,7 +101,7 @@ const AddPatient = () => {
                                 onChange={(e) => setPassword(e.target.value)}
                                 value={password}
                                 className="border rounded px-3 py-2"
-                                type="password"
+                                type="text"
                                 placeholder="Xy6abG"
                                 required
                             />
