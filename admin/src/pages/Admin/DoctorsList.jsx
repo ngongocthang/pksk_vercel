@@ -34,7 +34,7 @@ const DoctorsList = () => {
 
     const newToastId = toast(
       <div>
-        <p className="text-center">Bạn có chắc chắn muốn xóa bác sĩ <strong>{name}</strong> này không?</p>
+        <p className="mb-2 font-bold text-lg text-center">Bạn có chắc chắn muốn xóa bác sĩ <strong className="text-red-600">{name}</strong> này không?</p>
         <div className="flex justify-end gap-2 mt-2">
           <button
             onClick={() => {
@@ -54,7 +54,7 @@ const DoctorsList = () => {
         </div>
       </div>,
       {
-        autoClose: false,
+        autoClose: true,
         closeOnClick: false,
         position: "top-center",
         className: "custom-toast"
@@ -103,7 +103,7 @@ const DoctorsList = () => {
 
   return (
     <div className='m-5 max-h-[90vh] overflow-y-scroll'>
-      <h1 className='text-lg font-medium'>Tất cả bác sĩ</h1>
+      <h1 className='text-3xl font-bold text-[#0091a1]'>Tất cả bác sĩ</h1>
       <div className='w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-5'>
         {currentDoctors.map((item, index) => (
           <div
