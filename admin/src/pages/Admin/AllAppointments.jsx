@@ -1,20 +1,18 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate hook
+import { useNavigate } from "react-router-dom";
 import { AdminContext } from "../../context/AdminContext";
 import { AppContext } from "../../context/AppContext";
-import { assets } from "../../assets/assets";
 
 const AllAppointments = () => {
-  const { aToken, appointments, getAllAppointments, cancelAppointment } =
-    useContext(AdminContext);
+  const { aToken, appointments, getAllAppointments } = useContext(AdminContext);
   const { calculateAge, slotDateFormat, currency } = useContext(AppContext);
 
-  const [currentPage, setCurrentPage] = useState(1); // Current page
-  const [appointmentsPerPage] = useState(10); // Appointments per page
+  const [currentPage, setCurrentPage] = useState(1);
+  const [appointmentsPerPage] = useState(10);
 
-  const totalPages = Math.ceil(appointments.length / appointmentsPerPage); // Total pages
+  const totalPages = Math.ceil(appointments.length / appointmentsPerPage);
 
-  const navigate = useNavigate(); // Initialize navigate hook
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (aToken) {
@@ -22,28 +20,28 @@ const AllAppointments = () => {
     }
   }, [aToken]);
 
-  // Function to format date
   const formatDate = (dateString) => {
     const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
     const date = new Date(dateString);
     return date.toLocaleDateString('vi-VN', options);
   };
 
-  // Get the appointments for the current page
   const indexOfLastAppointment = currentPage * appointmentsPerPage;
   const indexOfFirstAppointment = indexOfLastAppointment - appointmentsPerPage;
   const currentAppointments = appointments.slice(indexOfFirstAppointment, indexOfLastAppointment);
 
-  // Function to handle page change
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
-    navigate(`/all-appointments?page=${pageNumber}`); // Change the URL with the new page number
+    navigate(`/all-appointments?page=${pageNumber}`);
   };
 
   return (
-    <div className="w-full max-w-6xl m-5">
-      <p className="mb-3 text-lg font-medium">Tất cả các cuộc hẹn</p>
-      <div className="bg-white border rounded text-sm max-h-[80vh] min-h-[60vh] overflow-y-scroll">
+    <div className="container mx-auto p-6">
+      <div className="flex justify-between items-center mb-4">
+        <p className="text-3xl font-bold text-[#0091a1]">Tất cả các cuộc hẹn</p>
+      </div>
+
+      <div className="overflow-x-auto bg-white p-4 rounded-md shadow-md">
         <div className="hidden sm:grid grid-cols-[0.5fr_2fr_2fr_2fr_2fr] grid-flow-col py-3 px-6 border-b">
           <p className="font-bold text-[16px]">#</p>
           <p className="font-bold text-[16px] text-center">Bệnh nhân</p>
@@ -99,7 +97,6 @@ const AllAppointments = () => {
         )}
       </div>
 
-      {/* Pagination - Only show if there are 10 or more appointments */}
       {appointments.length >= 10 && (
         <div className="flex justify-center gap-4 mt-4">
           {Array.from({ length: totalPages }, (_, index) => (
