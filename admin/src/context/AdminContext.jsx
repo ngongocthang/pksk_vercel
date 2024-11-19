@@ -1,154 +1,171 @@
 import { createContext, useState } from "react";
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import axios from "axios";
+import { toast } from "react-toastify";
 
 export const AdminContext = createContext();
 
 const AdminContextProvider = ({ children }) => {
-    const initialToken = localStorage.getItem('aToken') || '';
-    const [aToken, setAToken] = useState(initialToken);
-    const [doctors, setDoctors] = useState([]);
-    const [patient, setPatients] = useState([]);
-    const [spec, setSpecs] = useState([]);
-    const [appointments, setAppointments] = useState([]);
-    const [dashData, setDashData] = useState(null);
+  const initialToken = localStorage.getItem("aToken") || "";
+  const [aToken, setAToken] = useState(initialToken);
+  const [doctors, setDoctors] = useState([]);
+  const [patient, setPatients] = useState([]);
+  const [spec, setSpecs] = useState([]);
+  const [appointments, setAppointments] = useState([]);
+  const [dashData, setDashData] = useState(null);
+  const [dashUpApData, setDashUpApData] = useState(null);
 
-    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-    // Thiết lập axios với cấu hình chung để không cần khai báo headers nhiều lần
-    const api = axios.create({
-        baseURL: backendUrl,
-        headers: { 'Authorization': `Bearer ${aToken}` }
-    });
+  // Thiết lập axios với cấu hình chung để không cần khai báo headers nhiều lần
+  const api = axios.create({
+    baseURL: backendUrl,
+    headers: { Authorization: `Bearer ${aToken}` },
+  });
 
-    const getAllDoctors = async () => {
-        try {
-            const { data } = await api.get('/doctor/find-all', {});
-            
-            if (data.success) {
-                setDoctors(data.doctors);
-            } else {
-                toast.error(data.message);
-            }
-        } catch (error) {
-            toast.error(error.response?.data?.message || error.message);
-        }
-    };
+  const getAllDoctors = async () => {
+    try {
+      const { data } = await api.get("/doctor/find-all", {});
 
-    const getAllSpecialists = async () => {
-        try {
-            const { data } = await api.get('/specialization/find-all', {});
-            if (data.success) {
-                setSpecs(data.specializations);
-            } else {
-                toast.error(data.message);
-            }
-        } catch (error) {
-            toast.error(error.response?.data?.message || error.message);
-        }
-    };
+      if (data.success) {
+        setDoctors(data.doctors);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message);
+    }
+  };
 
-    const changeAvailability = async (docId) => {
-        try {
-            console.log("Changing availability for doctor:", docId);
-            const { data } = await api.post('/', { docId });
+  const getAllSpecialists = async () => {
+    try {
+      const { data } = await api.get("/specialization/find-all", {});
+      if (data.success) {
+        setSpecs(data.specializations);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message);
+    }
+  };
 
-            if (data.success) {
-                toast.success(data.message);
-                getAllDoctors(); // Cập nhật danh sách bác sĩ sau khi thay đổi
-            } else {
-                toast.error(data.message);
-            }
-        } catch (error) {
-            console.error("Error changing availability:", error);
-            toast.error(error.response?.data?.message || error.message);
-        }
-    };
+  const changeAvailability = async (docId) => {
+    try {
+      console.log("Changing availability for doctor:", docId);
+      const { data } = await api.post("/", { docId });
 
-    const getAllAppointments = async () => {
-        try {
-            const { data } = await api.get('/appointment/find-all');
+      if (data.success) {
+        toast.success(data.message);
+        getAllDoctors(); // Cập nhật danh sách bác sĩ sau khi thay đổi
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error("Error changing availability:", error);
+      toast.error(error.response?.data?.message || error.message);
+    }
+  };
 
-            if (data.success) {
-                setAppointments(data.appointments);
-            } else {
-                toast.error(data.message);
-            }
-        } catch (error) {
-            console.error("Error fetching appointments:", error);
-            toast.error(error.response?.data?.message || error.message);
-        }
-    };
+  const getAllAppointments = async () => {
+    try {
+      const { data } = await api.get("/appointment/find-all");
 
-    const getAllPatients = async () => {
-        try {
-            const { data } = await api.get('/patient/find-all');
-            if (data.success) {
-                setPatients(data.data);
-            } else {
-                toast.error(data.message);
-            }
-        } catch (error) {
-            console.error("Error fetching patients:", error);
-            toast.error(error.response?.data?.message || error.message);
-        }
-    };
+      if (data.success) {
+        setAppointments(data.appointments);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching appointments:", error);
+      toast.error(error.response?.data?.message || error.message);
+    }
+  };
 
-    const cancelAppointment = async (appointmentId) => {
-        try {
-            console.log("Cancelling appointment:", appointmentId);
-            const { data } = await api.post('/doctor/delete', { appointmentId });
+  const getAllPatients = async () => {
+    try {
+      const { data } = await api.get("/patient/find-all");
+      if (data.success) {
+        setPatients(data.data);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching patients:", error);
+      toast.error(error.response?.data?.message || error.message);
+    }
+  };
 
-            if (data.success) {
-                toast.success(data.message);
-                getAllAppointments(); // Cập nhật danh sách sau khi hủy
-            } else {
-                toast.error(data.message);
-            }
-        } catch (error) {
-            console.error("Error cancelling appointment:", error);
-            toast.error(error.response?.data?.message || error.message);
-        }
-    };
+  const cancelAppointment = async (appointmentId) => {
+    try {
+      console.log("Cancelling appointment:", appointmentId);
+      const { data } = await api.post("/doctor/delete", { appointmentId });
 
-    const getDashData = async () => {
-        try {
-            const { data } = await api.get('/doctor/find-all'); // Ensure this is the correct endpoint
-    
-            console.log(data); // Log the entire response
-    
-            if (data.success) {
-                setDashData(data.dashData); // Ensure dashData exists in the response
-                console.log(data.dashData);
-            } else {
-                toast.error(data.message);
-            }
-        } catch (error) {
-            console.error("Error fetching dashboard data:", error);
-            toast.error(error.response?.data?.message || error.message);
-        }
-    };
-    
+      if (data.success) {
+        toast.success(data.message);
+        getAllAppointments(); // Cập nhật danh sách sau khi hủy
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error("Error cancelling appointment:", error);
+      toast.error(error.response?.data?.message || error.message);
+    }
+  };
 
-    const value = {
-        aToken, setAToken,
-        backendUrl, doctors,
-        getAllDoctors, changeAvailability,
-        appointments, setAppointments,
-        getAllAppointments,
-        cancelAppointment,
-        dashData, getDashData,
-        spec,setSpecs,
-        getAllSpecialists,
-        patient, setPatients,
-        getAllPatients
-    };
+  const getDashData = async () => {
+    try {
+      const { data } = await api.get("/doctor/find-all");
+      if (data.success) {
+        setDashData(data.doctors);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+      toast.error(error.response?.data?.message || error.message);
+    }
+  };
+  const getUpcomingApointmentsDashData = async () => {
+    try {
+      const { data } = await api.get("/upcoming-appointments-dashboard-admin");
+      if (data.success) {
+        setDashUpApData(data.data);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+      toast.error(error.response?.data?.message || error.message);
+    }
+  };
 
-    return (
-        <AdminContext.Provider value={value}>
-            {children}
-        </AdminContext.Provider>
-    );
+  const value = {
+    aToken,
+    setAToken,
+    backendUrl,
+    doctors,
+    getAllDoctors,
+    changeAvailability,
+    appointments,
+    setAppointments,
+    getAllAppointments,
+    cancelAppointment,
+    dashData,
+    getDashData,
+    spec,
+    setSpecs,
+    getAllSpecialists,
+    patient,
+    setPatients,
+    getAllPatients,
+    dashUpApData,
+    setDashUpApData,
+    getUpcomingApointmentsDashData,
+  };
+
+  return (
+    <AdminContext.Provider value={value}>{children}</AdminContext.Provider>
+  );
 };
 
 export default AdminContextProvider;
