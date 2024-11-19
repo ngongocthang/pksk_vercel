@@ -56,23 +56,23 @@ const DoctorAppointments = () => {
               <p className='text-base text-center'>{formatDate(item.work_date)}</p>
               <div className='flex justify-center items-center'>
                 <p
-                  className={`p-2 rounded-full text-white text-base text-center 
+                  className={`py-1 px-4 rounded-full text-white text-base text-center font-semibold
                   ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg max-w-[100px] w-full`}>
                   {item.work_shift === "morning" ? "Sáng" : "Chiều"}
                 </p>
               </div>
               <div className='flex gap-3 justify-self-end'>
                 {item.status === "pending" && (
-                  <button className='bg-yellow-400 text-white font-semibold py-1 px-4 rounded-full'>Đang chờ</button>
+                  <button className='bg-yellow-400 text-white text-base font-semibold py-1 px-4 rounded-full shadow-lg w-[180px]'>Đang chờ</button>
                 )}
                 {item.status === "confirmed" && (
-                  <button className='bg-green-500 text-white font-semibold py-1 px-4 rounded-full'>Đã xác nhận</button>
+                  <button className='bg-green-500 text-white text-base font-semibold py-1 px-4 rounded-full shadow-lg w-[180px]'>Đã xác nhận</button>
                 )}
                 {item.status === "canceled" && (
-                  <button className='bg-red-500 text-white font-semibold py-1 px-4 rounded-full'>Đã từ chối</button>
+                  <button className='bg-red-500 text-white text-base font-semibold py-1 px-4 rounded-full shadow-lg w-[180px]'>Đã từ chối</button>
                 )}
                 {item.status === "completed" && (
-                  <button className='bg-blue-500 text-white font-semibold py-1 px-4 rounded-full'>Đã hoàn thành</button>
+                  <button className='bg-blue-500 text-white text-base font-semibold py-1 px-4 rounded-full shadow-lg w-[180px]'>Đã hoàn thành</button>
                 )}
               </div>
             </div>

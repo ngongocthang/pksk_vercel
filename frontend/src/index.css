@@ -24,3 +24,36 @@
     }
 }
 
+.container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .doctor-selection,
+  .calendar-selection,
+  .time-selection {
+    margin-bottom: 20px;
+  }
+  
+  .time-selection ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .time-selection li {
+    cursor: pointer;
+    padding: 10px;
+    background-color: #f0f0f0;
+    margin-bottom: 5px;
+    border-radius: 8px;
+  }
+  
+  .time-selection li:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .appointment-summary {
+    margin-top: 20px;
+  }
+  

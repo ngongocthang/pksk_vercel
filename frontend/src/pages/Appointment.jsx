@@ -234,7 +234,7 @@ const Appointment = () => {
           <div className="flex items-center gap-3 w-full overflow-x-auto mt-4">
             {doctorSchedule[selectedDate].map((schedule) => (
               <p key={schedule._id} onClick={() => setSlotTime(schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều")}
-                className={`text-sm font-medium px-6 py-3 rounded-full cursor-pointer transition-all duration-300 ${slotTime === (schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều")
+                className={`text-sm font-semibold px-6 py-3 rounded-full cursor-pointer transition-all duration-300 ${slotTime === (schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều")
                   ? "bg-[#00759c] text-white"
                   : "text-gray-500 border border-gray-300 hover:border-[#00759c] hover:text-[#00759c]"}`}
               >

@@ -93,7 +93,7 @@ const DoctorAppointments = () => {
               <p className="max-sm:hidden font-bold">{index + 1}</p>
               <p>{formatDate(schedule.work_date)}</p>
               <p
-                className={`p-2 rounded-full text-white text-center max-w-[100px] 
+                className={`py-1 px-4 rounded-full text-white text-base text-center max-w-[100px] font-semibold
                 ${schedule.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg`}
               >
                 {schedule.work_shift === "afternoon" ? "Chiều" : "Sáng"}

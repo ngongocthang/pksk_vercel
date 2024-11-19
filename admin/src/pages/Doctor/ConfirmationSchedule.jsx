@@ -82,7 +82,7 @@ const ConfirmationSchedule = () => {
               <p className='text-base text-center'>{formatDate(item.work_date)}</p>
               <div className='flex justify-center items-center'>
                 <p
-                  className={`p-2 rounded-full text-white text-base text-center 
+                  className={`py-1 px-4 rounded-full text-white text-base text-center font-semibold
                   ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg max-w-[100px] w-full`}>
                   {item.work_shift === "morning" ? "Sáng" : "Chiều"}
                 </p>

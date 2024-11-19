@@ -219,8 +219,10 @@ const DoctorDashboard = () => {
 
       {/* Appointment Statistics Chart */}
       <div className="mt-5 flex justify-center">
-        <div style={{ width: "70%", height: "500px" }}>
-          <Bar data={chartData} options={chartOptions} />
+        <div
+          className="bg-white p-4 rounded-lg border-2 border-gray-100 cursor-pointer transition-all duration-300 hover:shadow-xl flex items-center justify-center shadow-lg w-full h-full"
+        >
+          <Bar data={chartData} options={chartOptions} style={{ width: "70%", height: "500px" }} />
         </div>
       </div>
 
@@ -242,16 +244,16 @@ const DoctorDashboard = () => {
                 </div>
 
                 <div className="flex-1 flex justify-center items-center">
-                  <p className={`p-2 rounded-full text-white text-base text-center ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg max-w-[100px] w-full`}>
+                  <p className={`py-1 px-4 rounded-full text-white text-base text-center font-semibold ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg max-w-[100px] w-full`}>
                     {item.work_shift === "morning" ? "Sáng" : "Chiều"}
                   </p>
                 </div>
 
                 <div className="flex-1 flex justify-center items-center">
                   {item.status === "canceled" ? (
-                    <button className="bg-red-500 text-white font-semibold py-1 px-4 rounded-full">Đã từ chối</button>
+                    <button className="bg-red-500 text-white font-semibold py-1 px-4 rounded-full shadow-lg">Đã từ chối</button>
                   ) : (
-                    <button className="bg-green-500 text-white font-semibold py-1 px-4 rounded-full">Đã xác nhận</button>
+                    <button className="bg-green-500 text-white font-semibold py-1 px-4 rounded-full shadow-lg">Đã xác nhận</button>
                   )}
                 </div>
               </div>
@@ -275,16 +277,16 @@ const DoctorDashboard = () => {
                 </div>
 
                 <div className="flex justify-center items-center">
-                  <p className={`p-2 rounded-full text-white text-base text-center ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg max-w-[100px] w-full`}>
+                  <p className={`py-1 px-4 rounded-full text-white text-base text-center font-semibold ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg max-w-[100px] w-full`}>
                     {item.work_shift === "morning" ? "Sáng" : "Chiều"}
                   </p>
                 </div>
 
                 <div className="flex justify-center items-center">
                   {item.status === "completed" ? (
-                    <button className="bg-blue-500 text-white font-semibold py-1 px-4 rounded-full">Đã hoàn thành</button>
+                    <button className="bg-blue-500 text-white font-semibold py-1 px-4 rounded-full shadow-lg w-[180px]">Đã hoàn thành</button>
                   ) : (
-                    <button className="bg-green-500 text-white font-semibold py-1 px-4 rounded-full">Đã xác nhận</button>
+                    <button className="bg-green-500 text-white font-semibold py-1 px-4 rounded-full shadow-lg w-[180px]">Đã xác nhận</button>
                   )}
                 </div>
               </div>

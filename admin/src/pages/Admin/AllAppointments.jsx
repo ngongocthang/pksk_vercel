@@ -64,7 +64,7 @@ const AllAppointments = () => {
               <p className="flex items-center justify-center gap-2 text-[16px]">
                 {formatDate(item.work_date)}
                 <span
-                  className={`p-2 rounded-full text-white text-base text-center 
+                  className={`py-1 px-4 rounded-full text-white text-base text-center font-semibold 
                   ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg max-w-[100px] w-full`}>
                   {item.work_shift === "morning" ? "Sáng" : "Chiều"}
                 </span>
@@ -74,19 +74,19 @@ const AllAppointments = () => {
                 <p>{item.doctorInfo.name}</p>
               </div>
               {item.status === "canceled" ? (
-                <button className="bg-red-500 text-white text-xs font-medium px-2 py-1 rounded-full shadow-md hover:shadow-lg transition-all duration-300 max-w-[140px] h-10">
+                <button className="bg-red-500 text-white text-xs font-semibold py-1 px-4 rounded-full shadow-md hover:shadow-lg transition-all duration-300 w-[180px] h-10">
                   Đã hủy
                 </button>
               ) : item.status === "confirmed" ? (
-                <button className="bg-blue-500 text-white text-xs font-medium px-2 py-1 rounded-full shadow-md hover:shadow-lg transition-all duration-300 max-w-[140px] h-10">
+                <button className="bg-blue-500 text-white text-xs font-semibold py-1 px-4 rounded-full shadow-md hover:shadow-lg transition-all duration-300 w-[180px] h-10">
                   Đã xác nhận
                 </button>
               ) : item.status === "pending" ? (
-                <button className="bg-yellow-500 text-white text-xs font-medium px-2 py-1 rounded-full shadow-md hover:shadow-lg transition-all duration-300 max-w-[140px] h-10">
+                <button className="bg-yellow-500 text-white text-xs font-semibold py-1 px-4 rounded-full shadow-md hover:shadow-lg transition-all duration-300 w-[180px] h-10">
                   Đang chờ xác nhận
                 </button>
               ) : (
-                <button className="bg-blue-500 text-white text-xs font-medium px-2 py-1 rounded-full shadow-md hover:shadow-lg transition-all duration-300 max-w-[140px] h-10">
+                <button className="bg-blue-500 text-white text-xs font-semibold py-1 px-4 rounded-full shadow-md hover:shadow-lg transition-all duration-300 w-[180px] h-10">
                   Hoàn thành
                 </button>
               )}
