@@ -13,7 +13,8 @@ const {
   processPrematureCancellation,
   showUpcomingAppointments,
   getAppointmentByStatus,
-  countAppointmentDoctorDashboard
+  countAppointmentDoctorDashboard,
+  getUpcomingAppointmentsDashboardAdmin
 } = require("../controllers/AppointmentController/index");
 const {profilePatient, updateProfilePatient} = require("../controllers/PatientController/index");
 const userMiddleware = require("../middlewares/index");
@@ -38,5 +39,7 @@ router.get("/filter/:id", filter);
 router.get("/notification", userMiddleware, getCurrentUserNotifications);
 router.get("/medical-history/:id", userMiddleware, getHistoryAppointment);
 router.get("/get-data-doctor-dashboard/:id", countAppointmentDoctorDashboard);
+router.get("/upcoming-appointments-dashboard-admin", getUpcomingAppointmentsDashboardAdmin);
+
 
 module.exports = router;
