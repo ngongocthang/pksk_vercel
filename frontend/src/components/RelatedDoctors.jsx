@@ -47,7 +47,7 @@ const RelatedDoctors = ({ speciality, docId }) => {
         <div className='flex flex-col items-center gap-4 my-16 text-gray-900 md:mx-10'>
             <h1 className='text-3xl font-medium'>Bác sĩ liên quan</h1>
             <p className='sm:w-1/2 text-center'>Chỉ cần duyệt qua danh sách rộng lớn các bác sĩ đáng tin cậy của chúng tôi.</p>
-            <div className='w-full grid grid-cols-4 gap-4 pt-5 gap-y-6 px-3 sm:px-0'>
+            <div className='w-full grid grid-cols-auto gap-4 pt-5 gap-y-6 px-3 sm:px-0'>
                 {relDoc.slice(0, 5).map((item, index) => (
                     <div onClick={() => { navigate(`/appointment/${item._id}`); scrollTo(0, 0); }}
                         className='border border-blue-200 rounded-xl overflow-hidden cursor-pointer hover:translate-y-[-10px] transition-all duration-500' key={index}>

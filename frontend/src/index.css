@@ -24,36 +24,62 @@
     }
 }
 
-.container {
-    width: 80%;
-    margin: 0 auto;
-    padding: 20px;
+.app-container {
+    display: flex;
+    height: 100vh;
   }
   
-  .doctor-selection,
-  .calendar-selection,
-  .time-selection {
+  .sidebar {
+    width: 250px;
+    background-color: #f4f4f4;
+    padding: 20px;
+    border-right: 1px solid #ddd;
+  }
+  
+  .search-bar {
     margin-bottom: 20px;
   }
   
-  .time-selection ul {
-    list-style-type: none;
-    padding: 0;
+  .search-bar input {
+    width: 100%;
+    padding: 8px;
   }
   
-  .time-selection li {
-    cursor: pointer;
-    padding: 10px;
-    background-color: #f0f0f0;
-    margin-bottom: 5px;
-    border-radius: 8px;
-  }
-  
-  .time-selection li:hover {
-    background-color: #e0e0e0;
-  }
-  
-  .appointment-summary {
+  .filters {
     margin-top: 20px;
+  }
+  
+  .filter-options {
+    margin-top: 10px;
+  }
+  
+  .main-content {
+    flex-grow: 1;
+    padding: 20px;
+  }
+  
+  .calendar-container {
+    margin-bottom: 20px;
+  }
+  
+  .events-section {
+    margin-top: 20px;
+  }
+  
+  .event {
+    margin-bottom: 15px;
+  }
+  
+  .event-time {
+    font-weight: bold;
+  }
+  
+  .event-title {
+    font-size: 1.1rem;
+  }
+  
+  .event-description {
+    font-size: 0.9rem;
+    color: #555;
   }
   

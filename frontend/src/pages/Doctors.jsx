@@ -120,14 +120,15 @@ const Doctors = () => {
                   ? navigate("/doctors")
                   : navigate(`/doctors/${convertToSlug(spec.name)}`)
               }
-              className={`w-[263px] h-[49px] pl-3 pr-16 border border-gray-300 rounded transition-all cursor-pointer flex items-center ${speciality === convertToSlug(spec.name) ? "bg-indigo-100 text-black" : ""
+              className={`w-[94vw] sm:w-40 pl-3 py-1.5 border border-gray-300 rounded transition-all cursor-pointer ${speciality === spec.name ? "bg-indigo-100 text-black" : ""
                 }`}
             >
               <p className="m-0">{spec.name}</p>
             </div>
           ))}
         </div>
-        <div className="w-full grid grid-cols-4 gap-4 gap-y-6">
+
+        <div className="w-full grid grid-cols-auto gap-4 gap-y-6">
           {currentDoctors.map((item, index) => (
             <div
               onClick={() => navigate(`/appointment/${item._id}`)}
