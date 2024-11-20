@@ -12,7 +12,7 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Notifications from './pages/Notification'
 import MedicalHistory from './pages/MedicalHistory'
-// import AllSchedule from './pages/AllSchedule' <Route path='/all-schedule' element={<AllSchedule />} />
+import AllSchedule from './pages/AllSchedule' 
 
 
 const App = () => {
@@ -32,7 +32,7 @@ const App = () => {
           <Route path='/my-appointments' element={<MyAppointments />} />
           <Route path='/appointment/:docId' element={<Appointment />} />
           <Route path='/medical-history' element={<MedicalHistory />} />
-          
+          <Route path='/all-schedule' element={<AllSchedule />} />
         </Routes>
       </div>
       <Footer />
