@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AdminContext } from "../../context/AdminContext";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const AddDoctor = () => {
     const [docImg, setDocImg] = useState(false);
@@ -17,6 +18,8 @@ const AddDoctor = () => {
 
     const { backendUrl, aToken, spec, getAllSpecialists } =
         useContext(AdminContext);
+
+    const navigate = useNavigate(); // Initialize useNavigate
 
     useEffect(() => {
         getAllSpecialists();
@@ -74,6 +77,7 @@ const AddDoctor = () => {
                 setEmail("");
                 setDescription("");
                 setSpecialization_id("");
+                navigate("/doctor-list"); // Điều hướng về danh sách bác sĩ
             } else {
                 toast.error("Thêm bác sĩ thất bại!");
             }
