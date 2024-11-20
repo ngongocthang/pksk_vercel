@@ -4,7 +4,9 @@ const mongoose = require("mongoose");
 const cloudinary = require('cloudinary').v2;
 const upload = require('./helpers/multer-config');
 const session = require('express-session');
-const cors = require('cors'); // Giữ lại khai báo này
+const cors = require('cors');
+const cron = require("node-cron");
+const sendAppointmentReminders = require("./services/index"); 
 
 const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
 const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY;
@@ -34,6 +36,11 @@ const corsOptions = {
 // Sử dụng middleware CORS với các tùy chọn
 app.use(cors(corsOptions));
 app.use(express.json());
+
+// Cron job
+// cron.schedule('* * * * *', () => {
+//   sendAppointmentReminders();
+// });
 
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;

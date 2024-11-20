@@ -115,7 +115,6 @@ const updateAppointment = async (req, res) => {
       new_work_shift: appointment.work_shift,
     });
 
-    // Gửi email cho bệnh nhân
     const patient = await Patient.findById(appointment.patient_id);
     if (!patient) {
       return res.status(404).json({ message: "Patient not found" });
