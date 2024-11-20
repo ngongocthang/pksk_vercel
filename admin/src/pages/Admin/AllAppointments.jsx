@@ -126,7 +126,7 @@ const AllAppointments = () => {
                     <p className="flex items-center justify-center gap-2 text-[16px]">
                       <span
                         className={`py-1 px-4 rounded-full text-white text-base text-center font-semibold 
-                  ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg max-w-[100px] w-full`}>
+                  ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg max-w-[138px] w-full`}>
                         {item.work_shift === "morning" ? "Sáng" : "Chiều"}
                       </span>
                     </p>

@@ -192,7 +192,7 @@ const Dashboard = () => {
                   <td className="py-3 px-4 text-center align-middle">
                     <div className="flex justify-center items-center">
                       <p
-                        className={`py-1 px-4 rounded-full text-white text-base text-center font-semibold ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"
+                        className={`py-1 px-4 rounded-full text-white text-base text-center font-semibold w-[138px] ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"
                           } shadow-lg`}
                       >
                         {item.work_shift === "afternoon" ? "Chiều" : "Sáng"}
@@ -203,7 +203,7 @@ const Dashboard = () => {
                   <td className="py-3 px-4 text-center">
                     <div className="flex justify-center items-center">
                       <p
-                        className={`py-1 px-4 rounded-full text-white text-base text-center font-semibold ${item.status === "confirmed" ? "bg-green-400" : "bg-red-400"
+                        className={`py-1 px-4 rounded-full text-white text-base text-center font-semibold w-[186px] ${item.status === "confirmed" ? "bg-green-400" : "bg-red-400"
                           } shadow-lg`}
                       >
                         {item.status === "confirmed" ? "Đã xác nhận" : "Chưa xác nhận"}

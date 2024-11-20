@@ -86,11 +86,13 @@ const ConfirmationSchedule = () => {
                   <td className="py-3 px-4 text-center font-medium text-[16px]">{item.patient_id.user_id.name}</td>
                   <td className="py-3 px-4 text-center font-medium text-[16px]">{formatDate(item.work_date)}</td>
                   <td className="py-3 px-4 text-center">
-                    <p
-                      className={`py-1 px-4 rounded-full text-white text-base font-semibold ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"}`}
-                    >
-                      {item.work_shift === "morning" ? "Sáng" : "Chiều"}
-                    </p>
+                    <div className="flex items-center justify-center">
+                      <p
+                        className={`py-1 px-4 rounded-full text-white text-base font-semibold w-[138px] ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"}`}
+                      >
+                        {item.work_shift === "morning" ? "Sáng" : "Chiều"}
+                      </p>
+                    </div>
                   </td>
                   <td className="py-3 px-4 text-center">
                     <div className="flex justify-center gap-3">
