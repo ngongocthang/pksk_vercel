@@ -219,8 +219,10 @@ const DoctorDashboard = () => {
 
       {/* Appointment Statistics Chart */}
       <div className="mt-5 flex justify-center">
-        <div style={{ width: "70%", height: "500px" }}>
-          <Bar data={chartData} options={chartOptions} />
+        <div
+          className="bg-white p-4 rounded-lg border-2 border-gray-100 cursor-pointer transition-all duration-300 hover:shadow-xl flex items-center justify-center shadow-lg w-full h-full"
+        >
+          <Bar data={chartData} options={chartOptions} style={{ width: "70%", height: "500px" }} />
         </div>
       </div>
 
@@ -234,28 +236,39 @@ const DoctorDashboard = () => {
           </div>
 
           <div className="pt-4 border border-t-0">
-            {appointments.map((item) => (
-              <div className="flex items-center px-6 py-3 gap-4 hover:bg-gray-100" key={item._id}>
-                <div className="flex-1 text-sm">
-                  <p className="text-gray-800 font-medium text-[16px]">{item.patient_name}</p>
-                  <p className="text-gray-600">{new Date(item.work_date).toLocaleDateString()}</p>
-                </div>
+            <table className="w-full text-sm">
+              {/* Table Header */}
+              <thead>
+                <tr className="bg-gray-200">
+                  <th className="py-2 px-4 text-left">Bệnh nhân</th>
+                  <th className="py-2 px-4 text-center">Ngày khám</th>
+                  <th className="py-2 px-4 text-center">Ca khám</th>
+                  <th className="py-2 px-4 text-center">Trạng thái</th>
+                </tr>
+              </thead>
 
-                <div className="flex-1 flex justify-center items-center">
-                  <p className={`p-2 rounded-full text-white text-base text-center ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg max-w-[100px] w-full`}>
-                    {item.work_shift === "morning" ? "Sáng" : "Chiều"}
-                  </p>
-                </div>
-
-                <div className="flex-1 flex justify-center items-center">
-                  {item.status === "canceled" ? (
-                    <button className="bg-red-500 text-white font-semibold py-1 px-4 rounded-full">Đã từ chối</button>
-                  ) : (
-                    <button className="bg-green-500 text-white font-semibold py-1 px-4 rounded-full">Đã xác nhận</button>
-                  )}
-                </div>
-              </div>
-            ))}
+              {/* Table Body */}
+              <tbody>
+                {appointments.map((item) => (
+                  <tr key={item._id} className="hover:bg-gray-50">
+                    <td className="py-3 px-4 text-left font-medium text-[16px]">{item.patient_name}</td>
+                    <td className="py-3 px-4 text-center">{new Date(item.work_date).toLocaleDateString()}</td>
+                    <td className="py-3 px-4 text-center">
+                      <p className={`py-1 px-4 rounded-full text-white text-base font-semibold ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg`}>
+                        {item.work_shift === "morning" ? "Sáng" : "Chiều"}
+                      </p>
+                    </td>
+                    <td className="py-3 px-4 text-center">
+                      {item.status === "canceled" ? (
+                        <button className="bg-red-500 text-white font-semibold py-1 px-4 rounded-full shadow-lg h-[32px]">Đã từ chối</button>
+                      ) : (
+                        <button className="bg-green-500 text-white font-semibold py-1 px-4 rounded-full shadow-lg h-[32px]">Đã xác nhận</button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -267,28 +280,39 @@ const DoctorDashboard = () => {
           </div>
 
           <div className="pt-4 border border-t-0">
-            {appointmentStatus.map((item) => (
-              <div className="grid grid-cols-3 gap-4 px-6 py-3 hover:bg-gray-100" key={item._id}>
-                <div className="flex flex-col text-sm">
-                  <p className="text-gray-800 font-medium text-[16px]">{item.patient_name}</p>
-                  <p className="text-gray-600">{new Date(item.work_date).toLocaleDateString()}</p>
-                </div>
+            <table className="w-full text-sm">
+              {/* Table Header */}
+              <thead>
+                <tr className="bg-gray-200">
+                  <th className="py-2 px-4 text-left">Bệnh nhân</th>
+                  <th className="py-2 px-4 text-center">Ngày khám</th>
+                  <th className="py-2 px-4 text-center">Ca khám</th>
+                  <th className="py-2 px-4 text-center">Trạng thái</th>
+                </tr>
+              </thead>
 
-                <div className="flex justify-center items-center">
-                  <p className={`p-2 rounded-full text-white text-base text-center ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg max-w-[100px] w-full`}>
-                    {item.work_shift === "morning" ? "Sáng" : "Chiều"}
-                  </p>
-                </div>
-
-                <div className="flex justify-center items-center">
-                  {item.status === "completed" ? (
-                    <button className="bg-blue-500 text-white font-semibold py-1 px-4 rounded-full">Đã hoàn thành</button>
-                  ) : (
-                    <button className="bg-green-500 text-white font-semibold py-1 px-4 rounded-full">Đã xác nhận</button>
-                  )}
-                </div>
-              </div>
-            ))}
+              {/* Table Body */}
+              <tbody>
+                {appointmentStatus.map((item) => (
+                  <tr key={item._id} className="hover:bg-gray-50">
+                    <td className="py-3 px-4 text-left font-medium text-[16px]">{item.patient_name}</td>
+                    <td className="py-3 px-4 text-center">{new Date(item.work_date).toLocaleDateString()}</td>
+                    <td className="py-3 px-4 text-center">
+                      <p className={`py-1 px-4 rounded-full text-white text-base font-semibold ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg`}>
+                        {item.work_shift === "morning" ? "Sáng" : "Chiều"}
+                      </p>
+                    </td>
+                    <td className="py-3 px-4 text-center">
+                      {item.status === "canceled" ? (
+                        <button className="bg-red-500 text-white font-semibold py-1 px-4 rounded-full shadow-lg h-[32px]">Đã từ chối</button>
+                      ) : (
+                        <button className="bg-green-500 text-white font-semibold py-1 px-4 rounded-full shadow-lg h-[32px]">Đã xác nhận</button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
