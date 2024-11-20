@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import axios from "axios";
+import { convertToSlug } from "../utils/stringUtils";
 
 const Doctors = () => {
   const { speciality } = useParams();
@@ -33,7 +34,9 @@ const Doctors = () => {
 
   const applyFilter = () => {
     const filtered = speciality
-      ? doctors.filter((doc) => doc.specialization_id?.name === speciality)
+      ? doctors.filter(
+        (doc) => convertToSlug(doc.specialization_id?.name) === speciality
+      )
       : doctors;
     setFilterDoc(filtered);
   };
@@ -62,7 +65,10 @@ const Doctors = () => {
     setCurrentPage(page);
     const queryParams = new URLSearchParams(location.search);
     queryParams.set("page", page);
-    navigate(`/doctors${speciality ? `/${speciality}` : ""}?${queryParams.toString()}`, { replace: true });
+    navigate(
+      `/doctors${speciality ? `/${speciality}` : ""}?${queryParams.toString()}`,
+      { replace: true }
+    );
   };
 
   const renderPagination = () => {
@@ -109,14 +115,20 @@ const Doctors = () => {
           {specializations.map((spec) => (
             <div
               key={spec._id}
-              onClick={() => speciality === spec.name ? navigate("/doctors") : navigate(`/doctors/${spec.name}`)}
-              className={`w-[263px] h-[49px] pl-3 pr-16 border border-gray-300 rounded transition-all cursor-pointer flex items-center ${speciality === spec.name ? "bg-indigo-100 text-black" : ""}`}
+              onClick={() =>
+                speciality === convertToSlug(spec.name)
+                  ? navigate("/doctors")
+                  : navigate(`/doctors/${convertToSlug(spec.name)}`)
+              }
+              className={`w-[94vw] sm:w-40 pl-3 py-1.5 border border-gray-300 rounded transition-all cursor-pointer ${speciality === spec.name ? "bg-indigo-100 text-black" : ""
+                }`}
             >
               <p className="m-0">{spec.name}</p>
             </div>
           ))}
         </div>
-        <div className="w-full grid grid-cols-4 gap-4 gap-y-6">
+
+        <div className="w-full grid grid-cols-auto gap-4 gap-y-6">
           {currentDoctors.map((item, index) => (
             <div
               onClick={() => navigate(`/appointment/${item._id}`)}

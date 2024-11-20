@@ -6,6 +6,19 @@ const TopDoctors = () => {
     const navigate = useNavigate();
     const { doctors, setDoctors } = useContext(AppContext);
     const [error, setError] = useState(null);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+    // Lắng nghe thay đổi kích thước màn hình để xác định thiết bị
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
 
     useEffect(() => {
         const fetchDoctors = async () => {
@@ -34,12 +47,20 @@ const TopDoctors = () => {
         return <div>Error: {error}</div>;
     }
 
+    // Giới hạn số bác sĩ hiển thị dựa trên kích thước màn hình
+    const visibleDoctors = isMobile ? doctors.slice(0, 5) : doctors.slice(0, 10);
+
     return (
-        <div className='flex flex-col items-center gap-4 my-16 text-gray-900 md:mx-10'>
-            <h1 className='text-3xl font-medium'>Các Bác Sĩ Hàng Đầu Để Đặt Lịch Hẹn</h1>
-            <p className='sm:w-1/2 text-center'>Khám phá danh sách phong phú các bác sĩ uy tín của chúng tôi để dễ dàng lên lịch hẹn.</p>
-            <div className='w-full grid grid-cols-5 gap-4 pt-5 gap-y-6 px-3 sm:px-0'>
-                {Array.isArray(doctors) && doctors.slice(0, 10).map((item, index) => (
+        <div className='flex flex-col items-center gap-4 my-10 text-gray-900 md:mx-10'>
+
+            <h1 className='text-3xl font-medium text-center'>Các Bác Sĩ Hàng Đầu Để Đặt Lịch Hẹn</h1>
+
+            {/* Căn giữa thẻ p và chỉnh sửa chiều rộng cho responsive */}
+            <p className='text-center sm:w-2/3 text-lg'>Khám phá danh sách phong phú các bác sĩ uy tín của chúng tôi để dễ dàng lên lịch hẹn.</p>
+
+            {/* Cấu trúc lưới cho các bác sĩ */}
+            <div className='w-full grid grid-cols-auto gap-4 pt-5 gap-y-6 px-3 sm:px-0'>
+                {Array.isArray(visibleDoctors) && visibleDoctors.map((item, index) => (
                     <div 
                         onClick={() => { navigate(`/appointment/${item._id}`); scrollTo(0, 0); }} 
                         className='border border-blue-200 rounded-xl overflow-hidden cursor-pointer hover:translate-y-[-10px] transition-all duration-500' 

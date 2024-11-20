@@ -4,38 +4,38 @@ import { assets } from '../assets/assets';
 import HomepageBanner from '../assets/Homepage-Banner.jpg';
 import HomepageBanner3 from '../assets/banner.png';
 import HomepageBanner4 from '../assets/banner6.png';
-import '../index.css';
 
 const Header1 = () => {
     const settings = {
-        dots: true,
-        infinite: true,
-        speed: 500,
-        slidesToShow: 1,
-        slidesToScroll: 1,
+        dots: true, // hiển thị dấu chấm dưới thanh trượt
+        infinite: true, // vòng lặp vô hạn
+        speed: 500, // tốc độ chuyển tiếp slide
+        slidesToShow: 1, // hiển thị trang chiếu 1
+        slidesToScroll: 1, //cuộn từng trang chiếu 1
         autoplay: true,
-        autoplaySpeed: 2000,
+        autoplaySpeed: 2000, // tự động thay đổi thời gian sau 2s
     };
-    
 
     return (
         <div className='flex justify-center'>
-            <div className='rounded-lg px-6 md:px-10 lg:px-20' style={{ width: "115%" }}>
+            <div className='rounded-lg.px-6.md\:px-10.lg\:px-20' style={{ width: "95%" }}>
                 <Slider {...settings}>
-                    <div className='relative' style={{ height: "300px" }}>
+
+                    {/* image slider 1 */}
+                    <div className='relative'>
                         <img
                             src={HomepageBanner}
-                            alt="Homepage Banner"
+                            alt="Homepage Banner 1"
                             className='absolute inset-0 w-full h-full object-cover z-0 rounded-lg'
                         />
                         <div className='flex flex-col md:flex-row flex-wrap relative z-10'>
-                            <div className='md:w-1/2 flex flex-col items-start justify-center gap-4 py-10 md:py-[10vw] ml-8'>
-                                <p className='text-3xl md:text-4xl lg:text-5xl text-[#00759c]'>
+                            <div className='md:w-3/4 flex flex-col items-start justify-center gap-4 py-10 md:py-[10vw] ml-5'>
+                                <p className="text-3xl md:text-4xl lg:text-5xl text-[#00759c] line-clamp-2">
                                     Đặt lịch hẹn <br /> Với bác sĩ đáng tin cậy
                                 </p>
                                 <div className='flex flex-col md:flex-row items-start gap-3 text-[#00759c]'>
                                     <img className='w-28 rounded-lg' src={assets.group_profiles} alt="" />
-                                    <p>
+                                    <p className='line-clamp-2'>
                                         Với các bác sĩ đáng tin cậy, <br className='hidden sm:block' /> lên lịch cuộc hẹn của bạn một cách dễ dàng.
                                     </p>
                                 </div>
@@ -45,20 +45,22 @@ const Header1 = () => {
                             </div>
                         </div>
                     </div>
-                    <div className='relative' style={{ height: "200px" }}>
+
+                    {/* image slider 2 */}
+                    <div className='relative'>
                         <img
                             src={HomepageBanner3}
-                            alt="Homepage Banner3"
+                            alt="Homepage Banner 2"
                             className='absolute inset-0 w-full h-full object-cover z-0 rounded-lg'
                         />
                         <div className='flex flex-col md:flex-row flex-wrap relative z-10'>
-                            <div className='md:w-1/2 flex flex-col items-start justify-center gap-4 py-10 md:py-[10vw] ml-8'>
-                                <p className='text-3xl md:text-4xl lg:text-5xl text-[#00759c]'>
-                                    Chăm sóc sức khỏe tốt hơn <br /> với đội ngũ chuyên gia
+                            <div className='md:w-3/4 flex flex-col items-start justify-center gap-4 py-10 md:py-[10vw] ml-5'>
+                                <p className='text-3xl md:text-4xl lg:text-5xl text-[#00759c] line-clamp-2'>
+                                    Chăm sóc sức khỏe <br /> tốt hơn với đội ngũ chuyên gia
                                 </p>
                                 <div className='flex flex-col md:flex-row items-start gap-3 text-[#00759c]'>
                                     <img className='w-28 rounded-lg' src={assets.group_profiles} alt="" />
-                                    <p>
+                                    <p className='line-clamp-2'>
                                         Đặt lịch với các bác sĩ của chúng tôi <br className='hidden sm:block' /> và nhận sự chăm sóc tốt nhất.
                                     </p>
                                 </div>
@@ -68,25 +70,27 @@ const Header1 = () => {
                             </div>
                         </div>
                     </div>
-                    <div className='relative' style={{ height: "200px" }}>
+
+                    {/* image slider 3 */}
+                    <div className='relative'>
                         <img
                             src={HomepageBanner4}
-                            alt="Homepage Banner4"
+                            alt="Homepage Banner 3"
                             className='absolute inset-0 w-full h-full object-cover z-0 rounded-lg'
                         />
                         <div className='flex flex-col md:flex-row flex-wrap relative z-10'>
-                            <div className='md:w-1/2 flex flex-col items-start justify-center gap-4 py-10 md:py-[10vw] ml-8'>
-                                <p className='text-3xl md:text-4xl lg:text-5xl text-[#00759c]'>
-                                    Công nghệ tiên tiến <br /> cho sức khỏe tốt hơn
+                            <div className='md:w-4/5 flex flex-col items-start justify-center gap-4 py-10 md:py-[10vw] ml-5'>
+                                <p className='text-3xl md:text-4xl lg:text-5xl text-[#00759c] line-clamp-2'>
+                                    Đội ngũ bác sĩ chuyên nghiệp <br className='hidden sm:block' /> luôn sẵn sàng hỗ trợ bạn
                                 </p>
                                 <div className='flex flex-col md:flex-row items-start gap-3 text-[#00759c]'>
                                     <img className='w-28 rounded-lg' src={assets.group_profiles} alt="" />
-                                    <p>
-                                        Chúng tôi sử dụng công nghệ hiện đại để <br className='hidden sm:block' /> cung cấp dịch vụ chăm sóc sức khỏe chất lượng cao.
+                                    <p className='line-clamp-2'>
+                                        Dịch vụ chăm sóc sức khỏe toàn diện <br className='hidden sm:block' /> với đội ngũ bác sĩ chuyên môn cao.
                                     </p>
                                 </div>
-                                <a href="#services" className='flex items-center gap-2 bg-white px-8 py-3 rounded-full text-[#00759c] text-sm hover:scale-105 transition-all duration-300'>
-                                    Tìm hiểu thêm <img className='w-3' src={assets.arrow_icon} alt="" />
+                                <a href="#speciality" className='flex items-center gap-2 bg-white px-8 py-3 rounded-full text-[#00759c] text-sm hover:scale-105 transition-all duration-300'>
+                                    Khám phá ngay <img className='w-3' src={assets.arrow_icon} alt="" />
                                 </a>
                             </div>
                         </div>

@@ -39,47 +39,66 @@ const DoctorAppointments = () => {
       <p className='mb-4 text-lg font-medium'>Tất cả lịch hẹn:</p>
       <div className='bg-white border rounded text-sm max-h-[80vh] min-h-[50vh] overflow-y-scroll'>
 
-        {/* Header Row */}
-        <div className='max-sm:hidden grid grid-cols-[0.5fr_2fr_1fr_1fr_2fr_auto] gap-4 py-4 px-6 border-b text-center'>
-          <p className='font-bold text-[16px]'>#</p>
-          <p className='font-bold text-[16px]'>Bệnh nhân</p>
-          <p className='font-bold text-[16px]'>Ngày khám</p>
-          <p className='font-bold text-[16px]'>Ca khám</p>
-          <p className='font-bold text-[16px] justify-self-end'>Trạng thái</p>
-        </div>
-
-        {currentAppointments.length > 0 ? (
-          currentAppointments.reverse().map((item, index) => (
-            <div className='grid grid-cols-[0.5fr_2fr_1fr_1fr_2fr_auto] items-center gap-4 py-4 px-6 border-b hover:bg-gray-50 shadow-md' key={item._id}>
-              <p className='max-sm:hidden text-center font-bold'>{index + 1}</p>
-              <p className='text-base text-center'>{item.patient_id?.user_id?.name || 'Unknown'}</p>
-              <p className='text-base text-center'>{formatDate(item.work_date)}</p>
-              <div className='flex justify-center items-center'>
-                <p
-                  className={`p-2 rounded-full text-white text-base text-center 
-                  ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg max-w-[100px] w-full`}>
-                  {item.work_shift === "morning" ? "Sáng" : "Chiều"}
-                </p>
-              </div>
-              <div className='flex gap-3 justify-self-end'>
-                {item.status === "pending" && (
-                  <button className='bg-yellow-400 text-white font-semibold py-1 px-4 rounded-full'>Đang chờ</button>
-                )}
-                {item.status === "confirmed" && (
-                  <button className='bg-green-500 text-white font-semibold py-1 px-4 rounded-full'>Đã xác nhận</button>
-                )}
-                {item.status === "canceled" && (
-                  <button className='bg-red-500 text-white font-semibold py-1 px-4 rounded-full'>Đã từ chối</button>
-                )}
-                {item.status === "completed" && (
-                  <button className='bg-blue-500 text-white font-semibold py-1 px-4 rounded-full'>Đã hoàn thành</button>
-                )}
-              </div>
-            </div>
-          ))
-        ) : (
-          <p className='text-gray-500 py-3 text-center'>Không có lịch hẹn nào!</p>
-        )}
+        {/* Table Header */}
+        <table className='w-full border-collapse'>
+          <thead>
+            <tr className='bg-gray-200 text-center'>
+              <th className='py-2 px-4 font-bold text-[16px]'>#</th>
+              <th className='py-2 px-4 font-bold text-[16px]'>Bệnh nhân</th>
+              <th className='py-2 px-4 font-bold text-[16px]'>Ngày khám</th>
+              <th className='py-2 px-4 font-bold text-[16px]'>Ca khám</th>
+              <th className='py-2 px-4 font-bold text-[16px]'>Trạng thái</th>
+            </tr>
+          </thead>
+          <tbody>
+            {currentAppointments.length > 0 ? (
+              currentAppointments.reverse().map((item, index) => (
+                <tr key={item._id} className='hover:bg-gray-50'>
+                  <td className='py-3 px-4 text-center font-medium text-[16px]'>{index + 1}</td>
+                  <td className='py-3 px-4 text-center font-medium text-[16px]'>{item.patient_id?.user_id?.name || 'Unknown'}</td>
+                  <td className='py-3 px-4 text-center font-medium text-[16px]'>{formatDate(item.work_date)}</td>
+                  <td className="py-3 px-4 text-center">
+                    <div className="flex items-center justify-center">
+                      <p className={`py-1 px-4 rounded-full text-white text-base font-semibold w-[138px] ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"}`}>
+                        {item.work_shift === "morning" ? "Sáng" : "Chiều"}
+                      </p>
+                    </div>
+                  </td>
+                  <td className='py-3 px-4 text-center'>
+                    <div className='flex justify-center gap-3'>
+                      {item.status === "pending" && (
+                        <button className='bg-yellow-400 text-white text-base font-semibold py-1 px-4 rounded-full shadow-lg w-[186px]'>
+                          Đang chờ
+                        </button>
+                      )}
+                      {item.status === "confirmed" && (
+                        <button className='bg-green-500 text-white text-base font-semibold py-1 px-4 rounded-full shadow-lg w-[186px]'>
+                          Đã xác nhận
+                        </button>
+                      )}
+                      {item.status === "canceled" && (
+                        <button className='bg-red-500 text-white text-base font-semibold py-1 px-4 rounded-full shadow-lg w-[186px]'>
+                          Đã từ chối
+                        </button>
+                      )}
+                      {item.status === "completed" && (
+                        <button className='bg-blue-500 text-white text-base font-semibold py-1 px-4 rounded-full shadow-lg w-[186px]'>
+                          Đã hoàn thành
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="5" className='py-3 text-center text-gray-500'>
+                  Không có lịch hẹn nào!
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
 
       {/* Pagination */}
