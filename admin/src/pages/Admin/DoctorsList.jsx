@@ -73,7 +73,7 @@ const DoctorsList = () => {
       });
 
       if (response.data.success) {
-        toast.success("Đã xóa bác sĩ thành công!");
+        toast.success(`Đã xóa bác sĩ ${name} thành công!`);
         getAllDoctors();
 
         if (currentDoctors.length === 1 && currentPage > 1) {

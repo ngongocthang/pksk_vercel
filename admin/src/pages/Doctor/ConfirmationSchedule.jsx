@@ -60,70 +60,85 @@ const ConfirmationSchedule = () => {
   };
 
   return (
-    <div className='w-full max-w-6xl m-5 shadow-lg'>fdjhgyiu
-      <p className='mb-4 text-lg font-medium'>Các lịch hẹn chờ xác nhận:</p>
-      <div className='bg-white border rounded text-sm max-h-[80vh] min-h-[50vh] overflow-y-scroll'>
+    <div className="w-full max-w-6xl m-5 shadow-lg">
+      <p className="mb-4 text-lg font-medium">Các lịch hẹn chờ xác nhận:</p>
 
-        {/* Header Row */}
-        <div className='max-sm:hidden grid grid-cols-[0.5fr_2fr_1fr_1fr_2fr_auto] gap-4 py-4 px-6 border-b text-center'>
-          <p className='font-bold text-[16px]'>#</p>
-          <p className='font-bold text-[16px]'>Bệnh nhân</p>
-          <p className='font-bold text-[16px]'>Ngày khám</p>
-          <p className='font-bold text-[16px]'>Ca khám</p>
-          <p className='font-bold text-[16px] justify-self-end'>Hành động</p>
-        </div>
+      <div className="bg-white border rounded text-sm max-h-[80vh] min-h-[50vh] overflow-y-scroll">
+        {/* Table Header */}
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="bg-gray-200 text-center">
+              <th className="py-2 px-4 font-bold text-[16px]">#</th>
+              <th className="py-2 px-4 font-bold text-[16px]">Bệnh nhân</th>
+              <th className="py-2 px-4 font-bold text-[16px]">Ngày khám</th>
+              <th className="py-2 px-4 font-bold text-[16px]">Ca khám</th>
+              <th className="py-2 px-4 font-bold text-[16px]">Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            {/* Appointment Rows */}
+            {currentAppointments.length > 0 ? (
+              currentAppointments.map((item, index) => (
+                <tr key={item._id} className="hover:bg-gray-50">
+                  <td className="py-3 px-4 text-center font-medium text-[16px]">
+                    {index + 1 + (currentPage - 1) * appointmentsPerPage}
+                  </td>
+                  <td className="py-3 px-4 text-center font-medium text-[16px]">{item.patient_id.user_id.name}</td>
+                  <td className="py-3 px-4 text-center font-medium text-[16px]">{formatDate(item.work_date)}</td>
+                  <td className="py-3 px-4 text-center">
+                    <div className="flex items-center justify-center">
+                      <p
+                        className={`py-1 px-4 rounded-full text-white text-base font-semibold w-[138px] ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"}`}
+                      >
+                        {item.work_shift === "morning" ? "Sáng" : "Chiều"}
+                      </p>
+                    </div>
+                  </td>
+                  <td className="py-3 px-4 text-center">
+                    <div className="flex justify-center gap-3">
+                      {/* Complete Icon */}
+                      <svg
+                        onClick={() => completeAppointment(item._id)}
+                        className="w-[30px] h-[30px] cursor-pointer bg-green-500 p-2 rounded-full shadow-lg"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="white"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M5 13l4 4L19 7" />
+                      </svg>
 
-        {/* Appointment Rows */}
-        {currentAppointments.length > 0 ? (
-          currentAppointments.map((item, index) => (
-            <div className='grid grid-cols-[0.5fr_2fr_1fr_1fr_2fr_auto] items-center gap-4 py-4 px-6 border-b hover:bg-gray-50 shadow-md' key={item._id}>
-              <p className='max-sm:hidden text-center font-bold'>{index + 1 + (currentPage - 1) * appointmentsPerPage}</p>
-              <p className='text-base text-center'>{item.patient_id.user_id.name}</p>
-              <p className='text-base text-center'>{formatDate(item.work_date)}</p>
-              <div className='flex justify-center items-center'>
-                <p
-                  className={`p-2 rounded-full text-white text-base text-center 
-                  ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg max-w-[100px] w-full`}>
-                  {item.work_shift === "morning" ? "Sáng" : "Chiều"}
-                </p>
-              </div>
-              <div className='flex gap-3 justify-self-end'>
-                {/* SVG for Complete */}
-                <svg
-                  onClick={() => completeAppointment(item._id)}
-                  className='w-[30px] h-[30px] cursor-pointer bg-green-500 p-2 rounded-full shadow-lg'
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="white"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M5 13l4 4L19 7" />
-                </svg>
-
-                {/* SVG for Cancel */}
-                <svg
-                  onClick={() => cancelAppointment(item._id)}
-                  className='w-[30px] h-[30px] cursor-pointer bg-red-500 p-2 rounded-full shadow-lg'
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="white"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M18 6L6 18" />
-                  <path d="M6 6l12 12" />
-                </svg>
-              </div>
-            </div>
-          ))
-        ) : (
-          <p className='text-gray-500 py-3 text-center'>Không có lịch hẹn nào chờ được xác nhận.</p>
-        )}
+                      {/* Cancel Icon */}
+                      <svg
+                        onClick={() => cancelAppointment(item._id)}
+                        className="w-[30px] h-[30px] cursor-pointer bg-red-500 p-2 rounded-full shadow-lg"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="white"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M18 6L6 18" />
+                        <path d="M6 6l12 12" />
+                      </svg>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="5" className="py-3 text-center text-gray-500">
+                  Không có lịch hẹn nào chờ được xác nhận.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
 
       {/* Pagination */}
