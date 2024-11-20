@@ -229,7 +229,7 @@ const DoctorContextProvider = (props) => {
       }
     } catch (error) {
       console.log(error);
-      toast.error("Có lỗi xảy ra khi cập nhật lịch!");
+      toast.error("Không thể cập nhật lịch làm việc trước 24 giờ!");
     }
   };
 
@@ -252,7 +252,7 @@ const DoctorContextProvider = (props) => {
       }
     } catch (error) {
       console.log(error);
-      toast.error("Có lỗi xảy ra khi xóa lịch làm việc!");
+      toast.error("Bạn không thể xoá lịch làm việc trong vòng 24h trước khi diễn ra!");
     }
   };
 

@@ -97,7 +97,6 @@ const AdminContextProvider = ({ children }) => {
 
   const cancelAppointment = async (appointmentId) => {
     try {
-      console.log("Cancelling appointment:", appointmentId);
       const { data } = await api.post("/doctor/delete", { appointmentId });
 
       if (data.success) {
