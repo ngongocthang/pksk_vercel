@@ -57,30 +57,32 @@ const DoctorAppointments = () => {
                   <td className='py-3 px-4 text-center font-medium text-[16px]'>{index + 1}</td>
                   <td className='py-3 px-4 text-center font-medium text-[16px]'>{item.patient_id?.user_id?.name || 'Unknown'}</td>
                   <td className='py-3 px-4 text-center font-medium text-[16px]'>{formatDate(item.work_date)}</td>
-                  <td className='py-3 px-4 text-center'>
-                    <p className={`py-1 px-4 rounded-full text-white text-base font-semibold ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"}`}>
-                      {item.work_shift === "morning" ? "Sáng" : "Chiều"}
-                    </p>
+                  <td className="py-3 px-4 text-center">
+                    <div className="flex items-center justify-center">
+                      <p className={`py-1 px-4 rounded-full text-white text-base font-semibold w-[138px] ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"}`}>
+                        {item.work_shift === "morning" ? "Sáng" : "Chiều"}
+                      </p>
+                    </div>
                   </td>
                   <td className='py-3 px-4 text-center'>
                     <div className='flex justify-center gap-3'>
                       {item.status === "pending" && (
-                        <button className='bg-yellow-400 text-white text-base font-semibold py-1 px-4 rounded-full shadow-lg w-[180px]'>
+                        <button className='bg-yellow-400 text-white text-base font-semibold py-1 px-4 rounded-full shadow-lg w-[186px]'>
                           Đang chờ
                         </button>
                       )}
                       {item.status === "confirmed" && (
-                        <button className='bg-green-500 text-white text-base font-semibold py-1 px-4 rounded-full shadow-lg w-[180px]'>
+                        <button className='bg-green-500 text-white text-base font-semibold py-1 px-4 rounded-full shadow-lg w-[186px]'>
                           Đã xác nhận
                         </button>
                       )}
                       {item.status === "canceled" && (
-                        <button className='bg-red-500 text-white text-base font-semibold py-1 px-4 rounded-full shadow-lg w-[180px]'>
+                        <button className='bg-red-500 text-white text-base font-semibold py-1 px-4 rounded-full shadow-lg w-[186px]'>
                           Đã từ chối
                         </button>
                       )}
                       {item.status === "completed" && (
-                        <button className='bg-blue-500 text-white text-base font-semibold py-1 px-4 rounded-full shadow-lg w-[180px]'>
+                        <button className='bg-blue-500 text-white text-base font-semibold py-1 px-4 rounded-full shadow-lg w-[186px]'>
                           Đã hoàn thành
                         </button>
                       )}
