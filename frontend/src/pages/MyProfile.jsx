@@ -188,6 +188,16 @@ const MyProfile = () => {
 
             {isEdit && (
               <>
+                <p className="font-medium text-gray-800 flex items-center">Mật khẩu mới:</p>
+                <div className="relative flex items-center">
+                  <input
+                    className="bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-[340px]"
+                    type="text"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Nhập mật khẩu mới"
+                  />
+                </div>
                 {newPassword && (
                   <>
                     <p className="font-medium text-gray-800 flex items-center">Mật khẩu cũ:</p>
@@ -202,17 +212,6 @@ const MyProfile = () => {
                     </div>
                   </>
                 )}
-
-                <p className="font-medium text-gray-800 flex items-center">Mật khẩu mới:</p>
-                <div className="relative flex items-center">
-                  <input
-                    className="bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-[340px]"
-                    type="text"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Nhập mật khẩu mới"
-                  />
-                </div>
                 <small className="text-neutral-500 italic">
                   Nhập mật khẩu cũ chỉ khi muốn đổi mật khẩu.
                 </small>
