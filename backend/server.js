@@ -1,12 +1,12 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
-const cloudinary = require('cloudinary').v2;
-const upload = require('./helpers/multer-config');
-const session = require('express-session');
-const cors = require('cors');
+const cloudinary = require("cloudinary").v2;
+const upload = require("./helpers/multer-config");
+const session = require("express-session");
+const cors = require("cors");
 const cron = require("node-cron");
-const sendAppointmentReminders = require("./services/index"); 
+const sendAppointmentReminders = require("./services/index");
 
 const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
 const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY;
@@ -28,8 +28,8 @@ const app = express();
 
 // Cấu hình CORS
 const corsOptions = {
-  origin:['http://localhost:5173', 'http://localhost:5174'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  origin: ["http://localhost:5173", "http://localhost:5174"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 };
 
@@ -38,8 +38,13 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 // Cron job
-// cron.schedule('* * * * *', () => {
-//   sendAppointmentReminders();
+// cron.schedule("* 7 * * *", async () => {
+//   try {
+//     await sendAppointmentReminders();
+//     console.log("Email reminders triggered successfully.");
+//   } catch (error) {
+//     console.error("Error triggering email reminders:", error);
+//   }
 // });
 
 const PORT = process.env.PORT || 5000;
@@ -52,12 +57,14 @@ mongoose
   .catch((e) => console.log(e));
 
 // Session
-app.use(session({
-  secret: SESSION_SECRET,
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false}
-}));
+app.use(
+  session({
+    secret: SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false },
+  })
+);
 
 // User routes
 app.use("/role", userRouterRole);
@@ -82,18 +89,18 @@ cloudinary.config({
 });
 
 // Express route for image upload
-app.post('/upload', upload.single('image'), async (req, res) => {
+app.post("/upload", upload.single("image"), async (req, res) => {
   try {
     // Upload image to Cloudinary
     const result = await cloudinary.uploader.upload(req.file.path, {
-      folder: 'doctor'
+      folder: "doctor",
     });
 
     // Send the Cloudinary URL in the response
     res.json({ imageUrl: result.secure_url });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Error uploading image to Cloudinary' });
+    res.status(500).json({ error: "Error uploading image to Cloudinary" });
   }
 });
 

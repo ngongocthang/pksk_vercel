@@ -6,6 +6,7 @@ const Doctor = require("../../models/Patient");
 const validatePatient = require("../../requests/validatePatient");
 const validateUpdatePatient = require("../../requests/validateUpdatePatientDashboard");
 const Patient = require("../../models/Patient");
+const Appointment = require("../../models/Appointment");
 
 //{ key: value } là một đtuong trong js, thường dùng để crud
 /*
@@ -70,6 +71,29 @@ const findAllPatient = async (req, res) => {
     return res.status(500).json({success: true, message: error.message });
   }
 };
+
+const countPatient = async (req, res) => {
+  try {
+    // Tìm tất cả các lịch hẹn có trạng thái 'completed'
+    const completedAppointments = await Appointment.find({ status: 'completed' })
+      .populate('patient_id'); // Lấy thông tin bệnh nhân từ patient_id
+
+    // Lấy danh sách bệnh nhân từ các lịch hẹn đã hoàn thành
+    const patients = completedAppointments.map(appointment => appointment.patient_id);
+
+    // Loại bỏ các bệnh nhân trùng lặp
+    const uniquePatients = [...new Map(patients.map(patient => [patient._id, patient])).values()];
+
+    if (uniquePatients.length > 0) {
+      return res.status(200).json({ success: true, data: uniquePatients });
+    } else {
+      return res.status(400).json({ message: "No patients with completed appointments found." });
+    }
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 
 const findPatient = async (req, res) => {
   try {
@@ -232,11 +256,12 @@ const getPatientById = async (req, res) => {
 
 module.exports = {
   createPatient,
-  findAllPatient,
+  countPatient,
   findPatient,
   updatePatient,
   deletePatient,
   profilePatient,
   updateProfilePatient,
-  getPatientById
+  getPatientById,
+  findAllPatient
 };
