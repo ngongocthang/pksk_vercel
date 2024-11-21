@@ -3,6 +3,7 @@ import { AdminContext } from '../../context/AdminContext';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { convertToSlug } from "../../utils/stringUtils";
 
 const DoctorsList = () => {
   const { doctors, aToken, getAllDoctors } = useContext(AdminContext);
@@ -18,6 +19,7 @@ const DoctorsList = () => {
   const location = useLocation();
 
   useEffect(() => {
+    // Xử lý lấy tham số page từ URL để giữ trang hiện tại
     const queryParams = new URLSearchParams(location.search);
     const page = queryParams.get('page');
     if (page) {
@@ -112,7 +114,8 @@ const DoctorsList = () => {
 
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
-    navigate(`/doctor-list?page=${pageNumber}`);
+    // Cập nhật URL mà không cần tham số ?page
+    navigate(`/doctor-list${selectedSpecialization ? `/${convertToSlug(selectedSpecialization)}` : ''}`);
   };
 
   return (
@@ -122,8 +125,13 @@ const DoctorsList = () => {
         <div className="flex items-center shadow-lg">
           <select
             value={selectedSpecialization}
-            onChange={(e) => setSelectedSpecialization(e.target.value)}
-            className="px-5 py-3 rounded-lg bg-white text-gray-800 border border-gray-300 transition-all duration-300 shadow-non focus:outline-none hover:border-blue-400">
+            onChange={(e) => {
+              setSelectedSpecialization(e.target.value);
+              // Cập nhật URL khi người dùng chọn chuyên khoa, nhưng không có tham số page
+              navigate(`/doctor-list${e.target.value ? `/${convertToSlug(e.target.value)}` : ''}`);
+            }}
+            className="px-5 py-3 rounded-lg bg-white text-gray-800 border border-gray-300 transition-all duration-300 shadow-non focus:outline-none hover:border-blue-400"
+          >
             <option value="" className="text-gray-500">Chọn chuyên khoa</option>
             {Array.isArray(specializations) && specializations.map(spec => (
               <option key={spec._id} value={spec.name} className="text-gray-700">{spec.name}</option>
@@ -142,7 +150,7 @@ const DoctorsList = () => {
               <img
                 className='bg-indigo-50 group-hover:bg-primary transition-all duration-500'
                 src={item.user_id.image}
-                alt=""
+                alt="Doctor"
               />
 
               <span className='absolute top-2 left-2 bg-indigo-100 text-indigo-800 text-xs font-semibold px-2 py-1 rounded-full'>
