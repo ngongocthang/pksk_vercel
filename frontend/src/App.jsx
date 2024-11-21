@@ -10,7 +10,7 @@ import MyAppointments from './pages/MyAppointments'
 import Appointment from './pages/Appointment'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
-import Notifications from './pages/Notification'
+import Notifications from './pages/Notifications'
 import MedicalHistory from './pages/MedicalHistory'
 import AllSchedule from './pages/AllSchedule' 
 

@@ -6,8 +6,8 @@ const DoctorAppointments = () => {
   const { dToken, schedules, getDoctorSchedule, deleteSchedule } = useContext(DoctorContext);
   const [showModal, setShowModal] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1); // Trạng thái trang hiện tại
-  const [schedulesPerPage] = useState(10); // Giới hạn số lịch mỗi trang
+  const [currentPage, setCurrentPage] = useState(1); 
+  const [schedulesPerPage] = useState(10);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -31,19 +31,22 @@ const DoctorAppointments = () => {
 
   const handleConfirmDelete = async () => {
     if (selectedSchedule) {
-      await deleteSchedule(selectedSchedule._id);
-
+      await deleteSchedule(selectedSchedule._id);  
+  
       const updatedSchedules = schedules.filter(schedule => schedule._id !== selectedSchedule._id);
-
-      if (updatedSchedules.length <= 10) {
-        setCurrentPage(1);
-        navigate(`/doctor-work-schedule`, { replace: true });
-      } else {
-        setShowModal(false);
+  
+      // Đợi 0 giây trước khi đóng modal
+      setTimeout(() => {
+        setShowModal(false);  
         setSelectedSchedule(null);
-      }
+        if (updatedSchedules.length <= 10) {
+          setCurrentPage(1);
+          navigate(`/doctor-work-schedule`, { replace: true });
+        }
+      }, 0); // Thời gian chờ 0 giây
     }
   };
+  
 
   useEffect(() => {
     setShowModal(false);
@@ -170,11 +173,11 @@ const DoctorAppointments = () => {
       {showModal && selectedSchedule && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-lg p-6 w-96">
-            <h2 className="text-xl font-semibold mb-4">Xác nhận xóa</h2>
-            <p className="mb-4">
+            <h2 className="text-xl font-semibold mb-4 text-center">Xác nhận xóa</h2>
+            <p className="mb-4 text-center">
               Bạn có chắc chắn muốn xóa lịch làm việc buổi{" "}
-              {selectedSchedule.work_shift === "afternoon" ? "Chiều" : "Sáng"} ngày{" "}
-              {formatDate(selectedSchedule.work_date)} không?
+              <strong className="text-red-600">{selectedSchedule.work_shift === "afternoon" ? "Chiều" : "Sáng"}</strong> ngày{" "}
+              <strong className="text-red-600">{formatDate(selectedSchedule.work_date)}</strong> không?
             </p>
             <div className="flex justify-end gap-4">
               <button
