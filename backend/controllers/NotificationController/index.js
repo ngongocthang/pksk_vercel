@@ -125,6 +125,15 @@ const getCurrentUserNotifications = async (req, res) => {
   }
 };
 
+const deleteAllNotifications = async (req, res) => {
+  try {
+    await Notification.deleteMany({});
+    return res.status(200).json({ message: "All notifications deleted successfully!" });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 
 module.exports = {
   createNotification,
@@ -133,4 +142,5 @@ module.exports = {
   updateNotification,
   deleteNotification,
   getCurrentUserNotifications,
+  deleteAllNotifications
 };
