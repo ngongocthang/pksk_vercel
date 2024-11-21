@@ -7,6 +7,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 const DoctorsList = () => {
   const { doctors, aToken, getAllDoctors } = useContext(AdminContext);
   const [confirmToastId, setConfirmToastId] = useState(null);
+  const [selectedSpecialization, setSelectedSpecialization] = useState('');
+  const [specializations, setSpecializations] = useState([]);
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -16,7 +18,6 @@ const DoctorsList = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // Parse the page query parameter from the URL
     const queryParams = new URLSearchParams(location.search);
     const page = queryParams.get('page');
     if (page) {
@@ -24,8 +25,22 @@ const DoctorsList = () => {
     }
     if (aToken) {
       getAllDoctors();
+      fetchSpecializations();
     }
   }, [aToken, location.search]);
+
+  const fetchSpecializations = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/specialization/find-all');
+      if (response.data.success && Array.isArray(response.data.specializations)) {
+        setSpecializations(response.data.specializations);
+      } else {
+        toast.error("Dữ liệu chuyên khoa không hợp lệ.");
+      }
+    } catch (error) {
+      toast.error("Đã xảy ra lỗi khi lấy danh sách chuyên khoa.");
+    }
+  };
 
   const deleteDoctor = async (id, name) => {
     if (confirmToastId) {
@@ -73,17 +88,12 @@ const DoctorsList = () => {
       });
 
       if (response.data.success) {
-        toast.success(`Đã xóa bác sĩ ${name} thành công!`);
+        toast.success(`Đã xóa bác sĩ thành công!`);
         getAllDoctors();
-
-        if (currentDoctors.length === 1 && currentPage > 1) {
-          navigate('/doctor-list?page=1');
-        }
       } else {
         toast.error(response.data.message);
       }
     } catch (error) {
-      console.error("Error deleting doctor:", error);
       toast.error("Đã xảy ra lỗi khi xóa bác sĩ.");
     }
   };
@@ -91,24 +101,42 @@ const DoctorsList = () => {
   // Pagination logic
   const indexOfLastDoctor = currentPage * doctorsPerPage;
   const indexOfFirstDoctor = indexOfLastDoctor - doctorsPerPage;
-  const currentDoctors = doctors.slice(indexOfFirstDoctor, indexOfLastDoctor);
 
-  // Handle page change and update the URL
+  // Lọc danh sách bác sĩ theo chuyên khoa đã chọn
+  const filteredDoctors = selectedSpecialization
+    ? doctors.filter(doctor => doctor.specialization_id.name === selectedSpecialization)
+    : doctors;
+
+  const currentDoctors = filteredDoctors.slice(indexOfFirstDoctor, indexOfLastDoctor);
+  const totalPages = Math.ceil(filteredDoctors.length / doctorsPerPage);
+
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
     navigate(`/doctor-list?page=${pageNumber}`);
   };
 
-  const totalPages = Math.ceil(doctors.length / doctorsPerPage);
-
   return (
     <div className='m-5 max-h-[90vh] overflow-y-scroll'>
-      <h1 className='text-3xl font-bold text-[#0091a1]'>Tất cả bác sĩ</h1>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className='text-3xl font-bold text-[#0091a1]'>Tất cả bác sĩ</h1>
+        <div className="flex items-center shadow-lg">
+          <select
+            value={selectedSpecialization}
+            onChange={(e) => setSelectedSpecialization(e.target.value)}
+            className="px-5 py-3 rounded-lg bg-white text-gray-800 border border-gray-300 transition-all duration-300 shadow-non focus:outline-none hover:border-blue-400">
+            <option value="" className="text-gray-500">Chọn chuyên khoa</option>
+            {Array.isArray(specializations) && specializations.map(spec => (
+              <option key={spec._id} value={spec.name} className="text-gray-700">{spec.name}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
       <div className='w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-5'>
-        {currentDoctors.map((item, index) => (
+        {currentDoctors.map((item) => (
           <div
             className='border border-indigo-200 rounded-xl overflow-hidden cursor-pointer group relative'
-            key={index}
+            key={item.user_id._id}
           >
             <div className='relative'>
               <img
@@ -121,10 +149,7 @@ const DoctorsList = () => {
                 {item.specialization_id.name}
               </span>
 
-              {/* Delete icon on the image */}
-              <div
-                className='absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300'
-              >
+              <div className='absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
                 <button
                   className='bg-red-500 text-white p-2 rounded-full transition duration-200 ease-in-out hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300'
                   onClick={() => deleteDoctor(item.user_id._id, item.user_id.name)}
@@ -139,24 +164,26 @@ const DoctorsList = () => {
             <div className='p-4'>
               <p className='text-neutral-800 text-lg font-medium'>Bs. {item.user_id.name}</p>
               <p className='text-zinc-600 text-sm'>SĐT: {item.user_id.phone}</p>
-              <p className='text-zinc-600 text-sm'>Email: {item.user_id.email}</p>
+              <p className='text-zinc-600 text-sm truncate'>Email: {item.user_id.email}</p>
             </div>
           </div>
         ))}
       </div>
 
       {/* Pagination Controls */}
-      <div className="flex justify-center gap-4 mt-4">
-        {Array.from({ length: totalPages }, (_, index) => (
-          <button
-            key={index}
-            onClick={() => paginate(index + 1)}
-            className={`px-4 py-2 rounded-md ${currentPage === index + 1 ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
-          >
-            {index + 1}
-          </button>
-        ))}
-      </div>
+      {filteredDoctors.length > doctorsPerPage && (
+        <div className="flex justify-center gap-4 mt-4">
+          {Array.from({ length: totalPages }, (_, index) => (
+            <button
+              key={index}
+              onClick={() => paginate(index + 1)}
+              className={`px-4 py-2 rounded-md ${currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+            >
+              {index + 1}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

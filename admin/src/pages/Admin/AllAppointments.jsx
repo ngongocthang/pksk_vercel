@@ -40,62 +40,6 @@ const AllAppointments = () => {
       <div className="flex justify-between items-center mb-4">
         <p className="text-3xl font-bold text-[#0091a1]">Tất cả các cuộc hẹn</p>
       </div>
-
-      {/* <div className="overflow-x-auto bg-white p-4 rounded-md shadow-md">
-        <div className="hidden sm:grid grid-cols-[0.5fr_2fr_2fr_2fr_2fr] grid-flow-col py-3 px-6 border-b">
-          <p className="font-bold text-[16px]">#</p>
-          <p className="font-bold text-[16px] text-center">Bệnh nhân</p>
-          <p className="font-bold text-[16px] text-center">Ca</p>
-          <p className="font-bold text-[16px] text-center">Bác sĩ</p>
-          <p className="font-bold text-[16px] ml-7">Trạng thái</p>
-        </div>
-
-        {currentAppointments && currentAppointments.length > 0 ? (
-          currentAppointments.map((item, index) => (
-            <div
-              className="flex flex-wrap justify-between max-sm:gap-2 sm:grid sm:grid-cols-[0.5fr_2fr_2fr_2fr_2fr] items-center text-gray-500 py-3 px-6 border-b hover:bg-gray-50"
-              key={index}
-            >
-              <p className="max-sm:hidden font-bold">{index + 1}</p>
-              <div className="flex flex-col items-center text-sm">
-                <p className="text-gray-800 font-medium text-[16px]">{item.patientInfo.name}</p>
-                <p className="text-gray-600">{new Date(item.work_date).toLocaleDateString()}</p>
-              </div>
-
-              <p className="flex items-center justify-center gap-2 text-[16px]">
-                <span
-                  className={`py-1 px-4 rounded-full text-white text-base text-center font-semibold 
-                  ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg max-w-[100px] w-full`}>
-                  {item.work_shift === "morning" ? "Sáng" : "Chiều"}
-                </span>
-              </p>
-
-              <div className="flex items-center justify-center gap-2 text-[16px]">
-                <p>{item.doctorInfo.name}</p>
-              </div>
-              {item.status === "canceled" ? (
-                <button className="bg-red-500 text-white text-base font-semibold py-1 px-4 rounded-full shadow-md hover:shadow-lg transition-all duration-300 w-[180px] h-[32px]">
-                  Đã hủy
-                </button>
-              ) : item.status === "confirmed" ? (
-                <button className="bg-blue-500 text-white text-base font-semibold py-1 px-4 rounded-full shadow-md hover:shadow-lg transition-all duration-300 w-[180px] h-[32px]">
-                  Đã xác nhận
-                </button>
-              ) : item.status === "pending" ? (
-                <button className="bg-yellow-400 text-white text-base font-semibold py-1 px-4 rounded-full shadow-md hover:shadow-lg transition-all duration-300 w-[180px] h-[32px]">
-                  Đang chờ xác nhận
-                </button>
-              ) : (
-                <button className="bg-blue-500 text-white text-base font-semibold py-1 px-4 rounded-full shadow-md hover:shadow-lg transition-all duration-300 w-[180px] h-[32px]">
-                  Hoàn thành
-                </button>
-              )}
-            </div>
-          ))
-        ) : (
-          <p className="text-gray-500 py-3 px-4">Không tìm thấy cuộc hẹn nào.</p>
-        )}
-      </div> */}
       <div className="overflow-x-auto bg-white p-4 rounded-md shadow-md">
         {/* Bảng hiển thị */}
         <table className="w-full border-collapse">
@@ -103,6 +47,7 @@ const AllAppointments = () => {
             <tr className="bg-gray-200">
               <th className="py-2 px-4">#</th>
               <th className="py-2 px-4">Bệnh nhân</th>
+              <th className="py-2 px-4">Ngày khám</th>
               <th className="py-2 px-4">Ca</th>
               <th className="py-2 px-4">Bác sĩ</th>
               <th className="py-2 px-4">Trạng thái</th>
@@ -118,10 +63,14 @@ const AllAppointments = () => {
                   {/* Cột 2: Bệnh nhân */}
                   <td className="py-3 px-4 text-center">
                     <p className="font-medium">{item.patientInfo.name}</p>
+                  </td>
+
+                  {/* Cột 3: Ngày khám */}
+                  <td className="py-3 px-4 text-center">
                     <p className="text-gray-600">{new Date(item.work_date).toLocaleDateString()}</p>
                   </td>
 
-                  {/* Cột 3: Ca làm việc */}
+                  {/* Cột 4: Ca làm việc */}
                   <td className="py-3 px-4 text-center">
                     <p className="flex items-center justify-center gap-2 text-[16px]">
                       <span
@@ -132,12 +81,12 @@ const AllAppointments = () => {
                     </p>
                   </td>
 
-                  {/* Cột 4: Bác sĩ */}
+                  {/* Cột 5: Bác sĩ */}
                   <td className="py-3 px-4 text-center">
                     <p>{item.doctorInfo.name}</p>
                   </td>
 
-                  {/* Cột 5: Trạng thái */}
+                  {/* Cột 6: Trạng thái */}
                   <td className="py-3 px-4 text-center">
                     {item.status === "canceled" ? (
                       <button className="bg-red-500 text-white text-base font-semibold py-1 px-4 rounded-full shadow-md hover:shadow-lg transition-all duration-300 w-[185px] h-[32px]">

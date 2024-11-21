@@ -62,7 +62,7 @@ const Navbar = () => {
 
   const handleNotificationClick = () => {
     setNotificationsCount(0);
-    navigate("/Notifications");
+    navigate("/notifications");
   };
 
   if (loading) {
