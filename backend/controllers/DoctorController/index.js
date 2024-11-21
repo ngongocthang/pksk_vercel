@@ -7,6 +7,7 @@ const cloudinary = require("cloudinary").v2;
 const validateDoctor = require("../../requests/validateDoctor");
 const Appointment = require("../../models/Appointment");
 const Notification = require("../../models/Notification");
+const validateUpdateDoctor = require("../../requests/validateUpdateProfileDoctor");
 
 //{ key: value } là một đtuong trong js, thường dùng để crud
 /*
@@ -355,9 +356,15 @@ const getProfileDoctor = async (req, res) => {
 };
 const updateProfileDoctor = async (req, res) => {
   try {
+
+     // Validate dữ liệu từ client
+     const { error } = validateUpdateDoctor(req.body);
+     if (error) {
+       return res.status(400).json({ message: error.details[0].message });
+     }
+
     const { id } = req.params;
 
-    // Fetch the existing doctor information
     const doctor = await Doctor.findOne({ user_id: id }).populate("specialization_id");
     if (!doctor) {
       return res.status(400).json({ message: "Doctor not found" });
@@ -434,6 +441,48 @@ const updateProfileDoctor = async (req, res) => {
   }
 };
 
+
+const getTopDoctor = async (req, res) => {
+  try {
+    // Tìm tất cả các bác sĩ
+    const doctors = await Doctor.find({})
+      .populate("user_id")
+      .populate("specialization_id");
+
+    // Lấy danh sách các lịch hẹn với trạng thái 'completed' và nhóm theo doctor_id
+    const appointments = await Appointment.aggregate([
+      {
+        $match: { status: 'completed' } // Lọc các lịch hẹn có trạng thái 'completed'
+      },
+      {
+        $group: {
+          _id: "$doctor_id", // Nhóm theo doctor_id
+          count: { $sum: 1 } // Đếm số lượng lịch hẹn
+        }
+      }
+    ]);
+
+    // Chuyển đổi appointments thành một đối tượng để dễ dàng truy cập
+    const appointmentCount = {};
+    appointments.forEach(app => {
+      appointmentCount[app._id] = app.count;
+    });
+
+    // Thêm số lượng lịch hẹn vào thông tin bác sĩ
+    const doctorsWithCounts = doctors.map(doctor => ({
+      ...doctor.toObject(), // Chuyển đổi Mongoose Document thành Object
+      appointmentCount: appointmentCount[doctor._id] || 0 // Lấy số lượng lịch hẹn hoặc 0 nếu không có
+    }));
+
+    // Sắp xếp bác sĩ theo số lượng lịch hẹn từ cao đến thấp
+    doctorsWithCounts.sort((a, b) => b.appointmentCount - a.appointmentCount);
+
+    return res.status(200).json({ success: true, doctors: doctorsWithCounts });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   createDoctor,
   findAllDoctor,
@@ -445,4 +494,5 @@ module.exports = {
   getSpecializations,
   getProfileDoctor,
   updateProfileDoctor,
+  getTopDoctor
 };

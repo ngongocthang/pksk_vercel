@@ -198,47 +198,50 @@ const profilePatient = async (req, res) => {
   }
 };
 
-
-
 const updateProfilePatient = async (req, res) => {
   try {
-    const user_id = req.user.id;
+    const { error } = validateUpdatePatient(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
+    }
 
-    // Lấy các trường thông tin từ yêu cầu
+    const user_id = req.params.id;
     const { oldPassword, newPassword, name, email, phone } = req.body;
 
-    // Tìm người dùng bằng ID
     const user = await User.findById(user_id);
-
     if (!user) {
       return res.status(404).json({ message: "Người dùng không tồn tại!" });
     }
 
-    // Kiểm tra xem người dùng có muốn thay đổi mật khẩu không
+    // Kiểm tra email chỉ nếu email mới khác với email hiện tại
+    if (email !== user.email) {
+      const checkEmail = await User.findOne({ email: email });
+      if (checkEmail) {
+        return res.status(400).json({ message: "Email đã tồn tại!" });
+      }
+    }
+
     if (newPassword) {
-      // Nếu có mật khẩu mới, yêu cầu người dùng nhập mật khẩu cũ để xác minh
       const isOldPasswordCorrect = await bcrypt.compare(oldPassword, user.password);
       if (!isOldPasswordCorrect) {
         return res.status(400).json({ message: "Mật khẩu cũ không chính xác!" });
       }
-      // Mã hóa mật khẩu mới và cập nhật
       user.password = await bcrypt.hash(newPassword, 10);
     }
 
-    // Cập nhật các thông tin khác của người dùng (không liên quan đến mật khẩu)
+    // Cập nhật thông tin người dùng
     user.name = name;
     user.email = email;
     user.phone = phone;
 
-    // Lưu các thay đổi
     await user.save();
 
-    // Trả về phản hồi thành công
-    return res.status(200).json({ message: "Thông tin đã được cập nhật thành công!", user });
+    return res.status(200).json({ success: true, message: "Thông tin đã được cập nhật thành công!", user });
   } catch (error) {
-    return res.status(500).json({ message: "Đã xảy ra lỗi khi cập nhật: " + error.message });
+    return res.status(500).json({ success: false, message: "Đã xảy ra lỗi khi cập nhật: " + error.message });
   }
 };
+
 
 const getPatientById = async (req, res) => {
   try {
