@@ -102,64 +102,57 @@ const Navbar = () => {
           </button>
         </NavLink>
       </ul>
-      <div className="flex items-center gap-4">
+      <div className='flex items-center gap-4'>
         {user ? (
-          <div className="flex items-center gap-2 cursor-pointer group relative" onClick={() => setShowDropdown(!showDropdown)}>
-            <img className="w-8 rounded-full" src={assets.profile_pic} alt="Avatar" />
-            <p className="font-medium text-gray-700">{getDisplayName(user.name)}</p>
-            <img className="w-2.5" src={assets.dropdown_icon} alt="Dropdown Icon" />
-            {showDropdown && (
-              <div className="absolute top-0 right-0 pt-14 text-base font-medium text-gray-600 z-20">
-                <div className="min-w-48 bg-stone-100 rounded flex flex-col gap-4 p-4">
-                  <p onClick={() => navigate('my-profile')} className="hover:text-black cursor-pointer">Hồ sơ của tôi</p>
-                  <p onClick={() => navigate('my-appointments')} className="hover:text-black cursor-pointer">Lịch hẹn của tôi</p>
-                  <p onClick={() => navigate('medical-history')} className="hover:text-black cursor-pointer">Lịch sử khám bệnh</p>
-                  <p onClick={handleLogout} className="hover:text-black cursor-pointer">Đăng xuất</p>
-                </div>
+          <div className='flex items-center gap-2 cursor-pointer group relative'>
+            <img className='w-8 rounded-full' src={assets.profile_pic} alt="" />
+            <p className='font-medium text-gray-700'>{getDisplayName(user.name)}</p>
+            <img className='w-2.5' src={assets.dropdown_icon} alt="" />
+            <div className='absolute top-0 right-0 pt-14 text-base font-medium text-gray-600 z-20 hidden group-hover:block'>
+              <div className='min-w-48 bg-stone-100 rounded flex flex-col gap-4 p-4'>
+                <p onClick={() => navigate('my-profile')} className='hover:text-black cursor-pointer'>Hồ sơ của tôi</p>
+                <p onClick={() => navigate('my-appointments')} className='hover:text-black cursor-pointer'>Lịch hẹn của tôi</p>
+                <p onClick={() => navigate('medical-history')} className='hover:text-black cursor-pointer'>Lịch sử khám bệnh</p>
+                <p onClick={handleLogout} className='hover:text-black cursor-pointer'>Đăng xuất</p>
               </div>
-            )}
+            </div>
           </div>
         ) : (
-          <NavLink to="/account">
-            <button className="bg-[#00759c] text-white px-8 py-3 rounded-full font-light hidden md:block">
-              Đăng nhập
-            </button>
+          <NavLink to='/login'>
+            <button onClick={() => navigate('/account')} className='bg-[#00759c] text-white px-8 py-3 rounded-full font-light hidden md:block'>Đăng nhập</button>
           </NavLink>
         )}
-
-        {user && (
-          <>
-            <div className="relative">
-              <img
-                onClick={handleNotificationClick}
-                className="w-6 cursor-pointer"
-                src={assets.notification_icon}
-                alt="Thông báo"
-              />
-              {notificationsCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
-                  {notificationsCount}
-                </span>
-              )}
-            </div>
-          </>
-        )}
-
+        {/* Biểu tượng chuông thông báo */}
         <img
-          onClick={toggleMenu}
-          className="w-6 md:hidden"
-          src={assets.menu_icon}
-          alt="Menu"
+          onClick={() => {
+            if (user) {
+              navigate("/notifications");
+            } else {
+              navigate("/account");
+            }
+          }}
+          className="w-6 cursor-pointer"
+          src={assets.notification_icon}
+          alt="Thông báo"
         />
 
-        <div className={`transition-all duration-500 ${showMenu ? "fixed w-full top-0 right-0 bottom-0 z-20 bg-white" : "h-0 w-0 overflow-hidden"}`}>
+        <img
+          onClick={() => setShowMenu(true)}
+          className="w-6 md:hidden"
+          src={assets.menu_icon}
+          alt=""
+        />
+        {/* ----- Mobile Menu ----- */}
+        <div
+          className={`${showMenu ? "fixed w-full" : "h-0 w-0"} md:hidden right-0 top-0 bottom-0 z-20 overflow-hidden bg-white transition-all`}
+        >
           <div className="flex items-center justify-between px-5 py-6">
-            <img className="w-20" src={assets.logo} alt="Logo" />
+            <img className="w-36" src={assets.logo} alt="" />
             <img
-              className={`w-7 transform transition-transform duration-300 ease-in-out ${rotateIcon ? "rotate-180" : ""}`}
-              onClick={toggleMenu}
+              className="w-7"
+              onClick={() => setShowMenu(false)}
               src={assets.cross_icon}
-              alt="Close"
+              alt=""
             />
           </div>
           <ul className="flex flex-col items-center gap-2 mt-5 px-5 text-lg font-medium">
@@ -175,11 +168,6 @@ const Navbar = () => {
             <NavLink onClick={() => setShowMenu(false)} to="/contact">
               <p className="px-4 py-2 rounded inline-block">Liên hệ</p>
             </NavLink>
-            {!user && (
-              <NavLink onClick={() => setShowMenu(false)} to="/account">
-                <p className="bg-[#00759c] text-white px-4 py-2 rounded font-light text-center w-full">Đăng nhập</p>
-              </NavLink>
-            )}
           </ul>
         </div>
       </div>
