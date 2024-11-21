@@ -29,7 +29,7 @@ router.post("/login", login);
 router.post("/logout", logout);
 router.post("/create-appointment", userMiddleware, patientCreateAppointment);
 router.get("/profilePatient", userMiddleware, profilePatient);
-router.post("/updateProfilePatient", userMiddleware, updateProfilePatient);
+router.post("/updateProfilePatient/:id", updateProfilePatient);
 router.get("/user-appointment", userMiddleware, getCurrentUserAppointments);
 router.delete("/cancel-appointment/:id", processPrematureCancellation);
 router.get("/show-upcoming-appointments/:id", showUpcomingAppointments);
