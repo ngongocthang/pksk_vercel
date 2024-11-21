@@ -9,8 +9,10 @@ const AdminContextProvider = ({ children }) => {
   const [aToken, setAToken] = useState(initialToken);
   const [doctors, setDoctors] = useState([]);
   const [patient, setPatients] = useState([]);
+  const [countPatient, setCountPatients] = useState([]);
   const [spec, setSpecs] = useState([]);
   const [appointments, setAppointments] = useState([]);
+  const [countAppointments, setCountAppointments] = useState([]);
   const [dashData, setDashData] = useState(null);
   const [dashUpApData, setDashUpApData] = useState(null);
 
@@ -27,6 +29,7 @@ const AdminContextProvider = ({ children }) => {
       const { data } = await api.get("/doctor/find-all", {});
 
       if (data.success) {
+        toast.error(data.message);
         setDoctors(data.doctors);
       } else {
         toast.error(data.message);
@@ -56,7 +59,7 @@ const AdminContextProvider = ({ children }) => {
 
       if (data.success) {
         toast.success(data.message);
-        getAllDoctors(); // Cập nhật danh sách bác sĩ sau khi thay đổi
+        getAllDoctors();
       } else {
         toast.error(data.message);
       }
@@ -66,6 +69,20 @@ const AdminContextProvider = ({ children }) => {
     }
   };
 
+  const getCountAppointments = async () => {
+    try {
+      const { data } = await api.get("/appointment/get-all-admin");
+
+      if (data.success) {
+        setCountAppointments(data.data);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching appointments:", error);
+      toast.error(error.response?.data?.message || error.message);
+    }
+  };
   const getAllAppointments = async () => {
     try {
       const { data } = await api.get("/appointment/find-all");
@@ -86,6 +103,19 @@ const AdminContextProvider = ({ children }) => {
       const { data } = await api.get("/patient/find-all");
       if (data.success) {
         setPatients(data.data);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching patients:", error);
+      toast.error(error.response?.data?.message || error.message);
+    }
+  };
+  const countPatients = async () => {
+    try {
+      const { data } = await api.get("/patient/count");
+      if (data.success) {
+        setCountPatients(data.data);
       } else {
         toast.error(data.message);
       }
@@ -160,6 +190,12 @@ const AdminContextProvider = ({ children }) => {
     dashUpApData,
     setDashUpApData,
     getUpcomingApointmentsDashData,
+    countAppointments,
+    setCountAppointments,
+    getCountAppointments,
+    countPatient,
+    setCountPatients,
+    countPatients,
   };
 
   return (

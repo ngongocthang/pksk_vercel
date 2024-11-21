@@ -487,33 +487,49 @@ const getUpcomingAppointmentsDashboardAdmin = async (req, res) => {
   try {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     const appointments = await Appointment.find({
       work_date: { $gte: today },
       status: "confirmed",
     })
-    .populate({
-      path: "doctor_id",
-      populate: {
-        path: "user_id",
-        select: "name image",
-      },
-      select: "-specialization_id -description -createdAt -updatedAt -__v" 
-    })
-    .populate({
-      path: "patient_id",
-      populate: {
-        path: "user_id",
-        select: "name",
-      },
-      select: "-__v"
-    })
-    .sort({ work_date: 1 });
+      .populate({
+        path: "doctor_id",
+        populate: {
+          path: "user_id",
+          select: "name image",
+        },
+        select: "-specialization_id -description -createdAt -updatedAt -__v",
+      })
+      .populate({
+        path: "patient_id",
+        populate: {
+          path: "user_id",
+          select: "name",
+        },
+        select: "-__v",
+      })
+      .sort({ work_date: 1 });
 
     if (appointments.length <= 0) {
-      return res.status(200).json({ success: false, message: "Appointment not found" });
+      return res
+        .status(200)
+        .json({ success: false, message: "Appointment not found" });
     }
-    
+
+    return res.status(200).json({ success: true, data: appointments });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+const getAllAppointmentAdmin = async (req, res) => {
+  try {
+    const appointments = await Appointment.find({ status: "completed" });
+    if (appointments.length <= 0) {
+      return res
+        .status(200)
+        .json({ success: false, message: "Appointment not found" });
+    }
     return res.status(200).json({ success: true, data: appointments });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
@@ -533,4 +549,5 @@ module.exports = {
   getAppointmentByStatus,
   countAppointmentDoctorDashboard,
   getUpcomingAppointmentsDashboardAdmin,
+  getAllAppointmentAdmin
 };
