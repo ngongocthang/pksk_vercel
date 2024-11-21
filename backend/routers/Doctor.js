@@ -10,9 +10,10 @@ const {
   getDoctorAppointments,
   getSpecializations,
   getProfileDoctor,
-  updateProfileDoctor
+  updateProfileDoctor,
+  getTopDoctor
 } = require("../controllers/DoctorController/index");
-const upload = require('../helpers/multer-config'); // Import multer config
+const upload = require('../helpers/multer-config');
 const {
   getScheduleByDoctorDashboard,
   doctorCreateSchedule,
@@ -27,6 +28,7 @@ const userMiddleware = require("../middlewares/index");
 // Định nghĩa route
 router.post("/create", upload.single('image'), createDoctor);
 router.get("/find-all", findAllDoctor);
+router.get("/find-top", getTopDoctor);
 router.get("/find/:id", findDoctor);
 router.put("/update/:id", upload.single('image'), updateDoctor);
 router.delete("/delete/:id", deleteDoctor);
