@@ -61,53 +61,62 @@ const Dashboard = () => {
   };
 
   const options = {
-    responsive: true,
-    indexAxis: 'y',  // Đây là phần quan trọng để thay đổi hướng của biểu đồ thành cột ngang
-    scales: {
-      x: {
-        beginAtZero: true,
-        title: {
-          display: true,
+    responsive: true, // Đảm bảo biểu đồ tự động điều chỉnh theo kích thước màn hình
+    maintainAspectRatio: false, // Tắt chế độ duy trì tỷ lệ khung hình
+    plugins: {
+      legend: {
+        display: true, // Hiển thị chú thích
+        position: 'bottom', // Đặt vị trí của chú thích (ví dụ: 'top', 'bottom', 'left', 'right')
+        labels: {
+          color: '#4B5563', // Màu của text trong chú thích
+          font: {
+            size: 10, // Kích thước chữ
+            weight: 'bold', // Độ đậm chữ
+          },
         },
       },
-      y: {
-        title: {
-          display: true,
+      tooltip: {
+        enabled: true, // Bật tooltip
+        backgroundColor: '#1F2937', // Màu nền của tooltip
+        titleFont: {
+          size: 14,
+          weight: 'bold',
+        },
+        bodyFont: {
+          size: 12,
         },
       },
     },
-    plugins: {
-      legend: {
-        display: true,
-        position: 'bottom', // Đặt vị trí legend ở phía dưới
+    scales: {
+      x: {
+        grid: {
+          display: false, // Ẩn đường lưới trên trục X
+        },
+        ticks: {
+          color: '#4B5563', // Màu của các giá trị trên trục X
+          font: {
+            size: 12,
+          },
+        },
       },
-      tooltip: {
-        callbacks: {
-          label: function (context) {
-            // Tùy chỉnh tooltip hiển thị thông tin thêm
-            let label = context.dataset.label || '';
-            if (label) {
-              label += ': ';
-            }
-            label += context.raw.toLocaleString(); // Hiển thị số tiền với định dạng địa phương
-            return label;
+      y: {
+        grid: {
+          color: '#E5E7EB', // Màu của các đường lưới trên trục Y
+          borderDash: [5, 5], // Kiểu gạch đứt cho đường lưới
+        },
+        ticks: {
+          color: '#4B5563', // Màu của các giá trị trên trục Y
+          font: {
+            size: 12,
           },
         },
       },
     },
-    // Thêm phần mô tả phía dưới biểu đồ
-    title: {
-      display: true,
-      text: "Biểu đồ thống kê doanh thu hàng tháng", // Tiêu đề của biểu đồ
-      font: {
-        size: 16,
-        weight: "bold",
-      },
-    },
   };
 
+
   return (
-    <div className="m-5 w-full shadow-lg">
+    <div className="m-5 w-full">
       <div className="flex gap-3 w-full">
         {/* Hiển thị số lượng bác sĩ */}
         <div className="flex-1 min-w-0 bg-white p-4 rounded border-2 border-gray-100 cursor-pointer hover:scale-105 transition-all flex items-center justify-center shadow-lg">
@@ -143,77 +152,73 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Biểu đồ doanh thu */}
-      <div className="pt-4 mt-10">
-        <div className="h-96 flex items-center justify-center">
-          <Bar data={chartData} options={options} />
+      <div className="pt-4 mt-10 flex flex-wrap lg:flex-nowrap gap-3 mb-4">
+        {/* Cột trái: Biểu đồ doanh thu */}
+        <div className="flex-1 bg-white p-4 rounded-lg border-2 border-gray-100 cursor-pointer transition-all duration-300 shadow-lg">
+          <div className="flex items-center justify-center min-h-[350px]">
+            <Bar data={chartData} options={options} />
+          </div>
+          <div className="mt-4 text-center text-gray-600">
+            <p className="text-sm font-bold">
+              Biểu đồ thể hiện doanh thu hàng tháng trong năm.
+            </p>
+          </div>
         </div>
-        {/* Giải thích phía dưới */}
-        <div className="mt-4 text-center text-gray-600">
-          <p className="text-sm font-bold">
-            Biểu đồ thể hiện doanh thu hàng tháng trong năm 2024.
-          </p>
-        </div>
-      </div>
 
-      {/* Hiển thị lịch hẹn sắp tới */}
-      <div className="pt-4">
-        <div className="flex items-center gap-2.5 px-4 py-4 mt-10 rounded-t border">
-          <img src={assets.list_icon} alt="" />
-          <p className="font-semibold">Lịch hẹn sắp tới</p>
-        </div>
-        <table className="w-full border-collapse">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="py-2 px-4">Thông tin bệnh nhân</th>
-              <th className="py-2 px-4">Bác sĩ</th>
-              <th className="py-2 px-4">Ca làm việc</th>
-              <th className="py-2 px-4">Trạng thái</th>
-            </tr>
-          </thead>
-          <tbody>
-            {dashUpApData &&
-              dashUpApData.map((item, index) => (
-                <tr key={index} className="hover:bg-gray-100">
-                  {/* Cột 1: Thông tin bệnh nhân */}
-                  <td className="py-3 px-4 text-center">
-                    <div className="flex flex-col text-sm">
-                      <p className="text-gray-800 font-medium text-[16px]">{item.patient_id.user_id.name}</p>
-                      <p className="text-gray-600">{new Date(item.work_date).toLocaleDateString()}</p>
-                    </div>
-                  </td>
-                  {/* Cột 2: Tên bác sĩ */}
-                  <td className="py-3 px-4 text-center">
-                    <p className="text-gray-800 font-medium text-[16px]">
-                      {item.doctor_id.user_id.name}
-                    </p>
-                  </td>
-                  {/* Cột 3: Ca làm việc */}
-                  <td className="py-3 px-4 text-center align-middle">
-                    <div className="flex justify-center items-center">
-                      <p
-                        className={`py-1 px-4 rounded-full text-white text-base text-center font-semibold w-[138px] ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"
-                          } shadow-lg`}
+        {/* Cột phải: Hiển thị lịch hẹn sắp tới */}
+        <div className="flex-1 bg-white p-4 rounded-lg border-2 border-gray-100 shadow-lg">
+          <div className="flex items-center gap-2.5 px-4 py-4 rounded-t bg-gray-50">
+            <img src={assets.list_icon} alt="icon" />
+            <p className="font-semibold text-gray-800">Lịch hẹn sắp tới</p>
+          </div>
+          <table className="w-full bg-white rounded-lg overflow-hidden shadow-md">
+            <thead className="bg-gray-100 border-b">
+              <tr>
+                <th className="py-3 px-4 text-left text-gray-700 font-semibold">Bệnh nhân, <br /> Ngày khám</th>
+                <th className="py-3 px-4 text-left text-gray-700 font-semibold">Bác sĩ</th>
+                <th className="py-3 px-4 text-left text-gray-700 font-semibold">Ca làm việc</th>
+                <th className="py-3 px-4 text-left text-gray-700 font-semibold">Trạng thái</th>
+              </tr>
+            </thead>
+            <tbody>
+              {dashUpApData &&
+                dashUpApData.map((item, index) => (
+                  <tr
+                    key={index}
+                    className={`hover:bg-gray-50 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"}`}
+                  >
+                    <td className="py-4 px-4">
+                      <div className="text-sm text-center">
+                        <p className="font-medium text-gray-800">{item.patient_id.user_id.name}</p>
+                        <p className="text-gray-500 text-xs">
+                          {new Date(item.work_date).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </td>
+                    <td className="py-4 px-4">
+                      <p className="font-medium text-gray-800 text-sm">{item.doctor_id.user_id.name}</p>
+                    </td>
+                    <td className="py-4 px-4">
+                      <span
+                        className={`py-1 px-4 rounded-full text-sm font-medium text-white shadow-md ${item.work_shift === "afternoon" ? "bg-orange-400" : "bg-blue-400"
+                          }`}
                       >
                         {item.work_shift === "afternoon" ? "Chiều" : "Sáng"}
-                      </p>
-                    </div>
-                  </td>
-                  {/* Cột 4: Trạng thái */}
-                  <td className="py-3 px-4 text-center">
-                    <div className="flex justify-center items-center">
-                      <p
-                        className={`py-1 px-4 rounded-full text-white text-base text-center font-semibold w-[186px] ${item.status === "confirmed" ? "bg-green-400" : "bg-red-400"
-                          } shadow-lg`}
+                      </span>
+                    </td>
+                    <td className="py-4 px-4">
+                      <span
+                        className={`py-1 px-4 rounded-full text-sm font-medium text-white shadow-md ${item.status === "confirmed" ? "bg-green-500" : "bg-red-500"
+                          }`}
                       >
                         {item.status === "confirmed" ? "Đã xác nhận" : "Chưa xác nhận"}
-                      </p>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

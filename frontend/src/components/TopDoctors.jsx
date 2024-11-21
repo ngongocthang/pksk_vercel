@@ -28,7 +28,7 @@ const TopDoctors = () => {
                     throw new Error('Failed to fetch doctors');
                 }
                 const data = await response.json();
-                
+
                 // Giả sử dữ liệu trả về là { success: true, doctors: [...] }
                 if (data.doctors && Array.isArray(data.doctors)) {
                     setDoctors(data.doctors); // Đảm bảo rằng bạn đang lưu trữ mảng bác sĩ
@@ -37,7 +37,7 @@ const TopDoctors = () => {
                 }
             } catch (err) {
                 setError(err.message);
-            } 
+            }
         };
 
         fetchDoctors();
@@ -61,18 +61,23 @@ const TopDoctors = () => {
             {/* Cấu trúc lưới cho các bác sĩ */}
             <div className='w-full grid grid-cols-auto gap-4 pt-5 gap-y-6 px-3 sm:px-0'>
                 {Array.isArray(visibleDoctors) && visibleDoctors.map((item, index) => (
-                    <div 
-                        onClick={() => { navigate(`/appointment/${item._id}`); scrollTo(0, 0); }} 
-                        className='border border-blue-200 rounded-xl overflow-hidden cursor-pointer hover:translate-y-[-10px] transition-all duration-500' 
+                    <div
+                        onClick={() => { navigate(`/appointment/${item._id}`); scrollTo(0, 0); }}
+                        className='border border-blue-200 rounded-xl overflow-hidden cursor-pointer hover:translate-y-[-10px] transition-all duration-500'
                         key={index}
                     >
-                        <img className='bg-blue-50' src={item.user_id.image} alt={item.user_id.name} />
+                        <div className='relative'>
+                            <img className='bg-blue-50' src={item.user_id.image} alt={item.user_id.name} />
+                            <span className='absolute top-2 left-2 bg-indigo-100 text-indigo-800 text-xs font-semibold px-2 py-1 rounded-full'>
+                                {item.specialization_id.name}
+                            </span>
+                        </div>
                         <div className='p-4'>
                             <div className='flex items-center gap-2 text-sm text-center text-green-500 text-[#00759c]'>
                                 <p className='w-2 h-2 bg-[#00759c] rounded-full'></p><p>Đặt lịch</p>
                             </div>
                             <p className='text-gray-900 text-lg font-medium'>{item.user_id.name}</p>
-                            <p className='text-gray-600 text-sm'>{item.specialization_id ? item.specialization_id.name : 'Chưa có chuyên khoa'}</p>
+                            <p className='text-gray-600 text-sm truncate'>{item.description}</p>
                         </div>
                     </div>
                 ))}

@@ -18,7 +18,7 @@ const timeAgo = (date) => {
   return `${seconds} giây trước`;
 };
 
-const NotificationPage = () => {
+const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
   const [showAll, setShowAll] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -105,4 +105,4 @@ const NotificationPage = () => {
   );
 };
 
-export default NotificationPage;
+export default Notifications;
