@@ -2,22 +2,40 @@ import React, { useContext, useEffect, useState } from "react";
 import { AdminContext } from "../../context/AdminContext";
 import { assets } from "../../assets/assets";
 import { Bar } from "react-chartjs-2";
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
 
-// Đăng ký các thành phần của Chart.js
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const Dashboard = () => {
   const {
     aToken,
     getDashData,
-    getAllAppointments,
     getAllPatients,
     getUpcomingApointmentsDashData,
-    appointments,
     patient,
+    doctors,
+    getAllDoctors,
     dashUpApData,
     cancelAppointment,
+    countAppointments,
+    getCountAppointments,
+    countPatient,
+    countPatients
   } = useContext(AdminContext);
 
   // Dữ liệu doanh thu (giả định)
@@ -40,19 +58,21 @@ const Dashboard = () => {
   useEffect(() => {
     if (aToken) {
       getDashData();
-      getAllAppointments();
       getAllPatients();
+      getAllDoctors();
       getUpcomingApointmentsDashData();
+      getCountAppointments();
+      countPatients()
     }
   }, [aToken]);
 
   // Cấu hình biểu đồ
   const chartData = {
-    labels: revenueData.map(item => item.month),  // Các tháng
+    labels: revenueData.map((item) => item.month),
     datasets: [
       {
         label: "Doanh thu (VND)",
-        data: revenueData.map(item => item.revenue),  // Doanh thu của mỗi tháng
+        data: revenueData.map((item) => item.revenue),
         backgroundColor: "rgba(75, 192, 192, 0.2)",
         borderColor: "rgba(75, 192, 192, 1)",
         borderWidth: 1,
@@ -123,7 +143,7 @@ const Dashboard = () => {
           <div className="text-center">
             <img className="w-14 mx-auto" src={assets.doctor_icon} alt="" />
             <p className="text-xl font-semibold text-gray-600">
-              {Array.isArray(dashUpApData) ? dashUpApData.length : 0}
+              {doctors.length}
             </p>
             <p className="text-gray-400">Bác sĩ</p>
           </div>
@@ -132,9 +152,13 @@ const Dashboard = () => {
         {/* Hiển thị số lượng lịch hẹn */}
         <div className="flex-1 min-w-0 bg-white p-4 rounded border-2 border-gray-100 cursor-pointer hover:scale-105 transition-all flex items-center justify-center shadow-lg">
           <div className="text-center">
-            <img className="w-14 mx-auto" src={assets.appointment_icon} alt="" />
+            <img
+              className="w-14 mx-auto"
+              src={assets.appointment_icon}
+              alt=""
+            />
             <p className="text-xl font-semibold text-gray-600">
-              {appointments.length}
+              {countAppointments.length}
             </p>
             <p className="text-gray-400">Lịch hẹn</p>
           </div>
@@ -145,7 +169,7 @@ const Dashboard = () => {
           <div className="text-center">
             <img className="w-14 mx-auto" src={assets.patients_icon} alt="" />
             <p className="text-xl font-semibold text-gray-600">
-              {patient.length}
+              {countPatient.length}
             </p>
             <p className="text-gray-400">Bệnh nhân</p>
           </div>
