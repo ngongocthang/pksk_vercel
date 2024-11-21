@@ -75,8 +75,7 @@ const DoctorProfile = () => {
         toast.error(data.message);
       }
     } catch (error) {
-      toast.error(error.message);
-      console.log(error);
+      toast.error(error.response.data.message);
     } finally {
       setLoading(false);
     }
@@ -99,6 +98,14 @@ const DoctorProfile = () => {
       getProfileData();
     }
   }, [dToken]);
+
+  // Check if the update button should be disabled
+  const isUpdateDisabled = () => {
+    return isEdit && (
+      (newPassword && !oldPassword) || 
+      (!newPassword && (oldPassword || selectedImage))
+    );
+  };
 
   return (
     profileData && (
@@ -272,8 +279,8 @@ const DoctorProfile = () => {
                 <>
                   <button
                     onClick={updateProfile}
-                    className="px-4 py-2 bg-[#219c9e] text-white rounded-md"
-                    disabled={loading}
+                    className={`px-4 py-2 rounded-md ${loading || isUpdateDisabled() ? "bg-gray-300 text-black disabled-button" : "bg-[#219c9e] text-white"}`}
+                    disabled={loading || isUpdateDisabled()}
                   >
                     {loading ? "Updating..." : "Cập nhật"}
                   </button>
@@ -301,3 +308,4 @@ const DoctorProfile = () => {
 };
 
 export default DoctorProfile;
+

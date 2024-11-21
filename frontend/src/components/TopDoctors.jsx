@@ -23,7 +23,7 @@ const TopDoctors = () => {
     useEffect(() => {
         const fetchDoctors = async () => {
             try {
-                const response = await fetch('http://localhost:5000/doctor/find-all');
+                const response = await fetch('http://localhost:5000/doctor/find-top');
                 if (!response.ok) {
                     throw new Error('Failed to fetch doctors');
                 }
