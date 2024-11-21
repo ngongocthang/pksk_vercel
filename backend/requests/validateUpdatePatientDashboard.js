@@ -20,6 +20,13 @@ const updatePatientSchema = Joi.object({
     "string.pattern.base": "Số điện thoại phải bắt đầu bằng 0 và có đúng 10 chữ số.",
     "any.required": "Số điện thoại là bắt buộc.",
   }),
+  newPassword: Joi.string().min(6).messages({
+    "string.base": "Mật khẩu phải là một chuỗi.",
+    "string.min": "Mật khẩu phải có ít nhất {#limit} ký tự.",
+  }),
+  oldPassword: Joi.string().messages({
+    "string.base": "Mật khẩu phải là một chuỗi."
+  }),
 });
 
 const validateUpdatePatient = (data) => {
