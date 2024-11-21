@@ -3,6 +3,8 @@ import { useContext } from "react";
 import { AppContext } from "../context/AppContext";
 import { assets } from "../assets/assets";
 import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const MyProfile = () => {
   const navigate = useNavigate();
@@ -27,7 +29,7 @@ const MyProfile = () => {
     const fetchUserProfile = async () => {
       const token = localStorage.getItem("token");
       if (!token) {
-        setErrorMessage("Bạn chưa đăng nhập. Vui lòng đăng nhập để tiếp tục.");
+        toast.error("Bạn chưa đăng nhập. Vui lòng đăng nhập để tiếp tục.");
         return navigate("/account");
       }
 
@@ -42,7 +44,7 @@ const MyProfile = () => {
 
         if (!response.ok) {
           const errorText = await response.text();
-          setErrorMessage("Có lỗi xảy ra: " + errorText);
+          toast.error("Có lỗi xảy ra: " + errorText);
           return;
         }
 
@@ -62,17 +64,17 @@ const MyProfile = () => {
           ...data.user,
         });
       } catch (error) {
-        setErrorMessage("Có lỗi xảy ra: " + error.message);
+        toast.error("Có lỗi xảy ra: " + error.message);
       }
     };
 
     fetchUserProfile();
-  }, [setUser]);
+  }, [setUser, navigate]);
 
   const handleSave = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
-      setErrorMessage("Bạn chưa đăng nhập. Vui lòng đăng nhập để tiếp tục.");
+      toast.error("Bạn chưa đăng nhập. Vui lòng đăng nhập để tiếp tục.");
       return;
     }
 
@@ -97,7 +99,7 @@ const MyProfile = () => {
 
       if (!response.ok) {
         const errorText = await response.text();
-        setErrorMessage("Có lỗi xảy ra: " + errorText);
+        toast.error("Có lỗi xảy ra: " + errorText);
         return;
       }
 
@@ -107,13 +109,13 @@ const MyProfile = () => {
         name: userData.name, // Cập nhật tên mới trong context
       });
 
-      setSuccessMessage("Thông tin đã được cập nhật thành công!");
+      toast.success("Thông tin đã được cập nhật thành công!");
       setErrorMessage("");
       setIsEdit(false);
       setOldPassword("");
       setNewPassword("");
     } catch (error) {
-      setErrorMessage("Có lỗi xảy ra: " + error.message);
+      toast.error("Có lỗi xảy ra: " + error.message);
     }
   };
 
@@ -154,12 +156,12 @@ const MyProfile = () => {
         <hr className="bg-zinc-400 h-[1px] border-none" />
 
         <div>
-          <p className="text-neutral-500 underline mt-3">THÔNG TIN CHI TIẾT:</p>
+          <p className="text-neutral-500 underline mt-3 text-center">THÔNG TIN CHI TIẾT:</p>
           <div className="grid grid-cols-[1fr_3fr] gap-y-2.5 mt-3 text-neutral-700">
-            <p className="font-medium">Email:</p>
+            <p className="font-medium text-gray-800 flex items-center">Email:</p>
             {isEdit ? (
               <input
-                className="bg-gray-100 max-w-52"
+                className="bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 max-w-[340px]"
                 type="email"
                 value={userData.email}
                 onChange={(e) =>
@@ -167,13 +169,13 @@ const MyProfile = () => {
                 }
               />
             ) : (
-              <p>{userData.email}</p>
+              <p className="text-gray-600">{userData.email}</p>
             )}
 
-            <p className="font-medium mr-4">Số điện thoại:</p>
+            <p className="font-medium mr-4 text-gray-800 flex items-center">Số điện thoại:</p>
             {isEdit ? (
               <input
-                className="bg-gray-100 max-w-52"
+                className="bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 max-w-[340px]"
                 type="tel"
                 value={userData.phone}
                 onChange={(e) =>
@@ -181,17 +183,17 @@ const MyProfile = () => {
                 }
               />
             ) : (
-              <p>{userData.phone}</p>
+              <p className="text-gray-600">{userData.phone}</p>
             )}
 
             {isEdit && (
               <>
                 {newPassword && (
                   <>
-                    <p className="font-medium">Mật khẩu cũ:</p>
+                    <p className="font-medium text-gray-800 flex items-center">Mật khẩu cũ:</p>
                     <div className="relative flex items-center">
                       <input
-                        className="bg-gray-100 w-[13rem] border"
+                        className="bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-[340px]"
                         type="text"
                         value={oldPassword}
                         onChange={(e) => setOldPassword(e.target.value)}
@@ -201,10 +203,10 @@ const MyProfile = () => {
                   </>
                 )}
 
-                <p className="font-medium">Mật khẩu mới:</p>
+                <p className="font-medium text-gray-800 flex items-center">Mật khẩu mới:</p>
                 <div className="relative flex items-center">
                   <input
-                    className="bg-gray-100 w-[13rem] border"
+                    className="bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-[340px]"
                     type="text"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
@@ -217,16 +219,6 @@ const MyProfile = () => {
               </>
             )}
           </div>
-
-          {isEdit && errorMessage && (
-            <p className="text-red-500">{errorMessage}</p>
-          )}
-
-          {successMessage && (
-            <p className="text-green-500 font-bold mt-3 p-2 border border-green-500 rounded bg-green-100">
-              {successMessage}
-            </p>
-          )}
         </div>
 
         <div className="flex justify-center gap-4 mt-4">
@@ -247,17 +239,15 @@ const MyProfile = () => {
             </>
           ) : (
             <button
-              onClick={() => {
-                setOriginalData(userData);
-                setIsEdit(true);
-                setSuccessMessage("");
-              }}
+              onClick={() => setIsEdit(true)}
               className="bg-blue-500 text-white py-2 px-4 rounded"
             >
               Chỉnh sửa
             </button>
           )}
         </div>
+
+        <ToastContainer />
       </div>
     </div>
   );

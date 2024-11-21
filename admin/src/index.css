@@ -3,33 +3,40 @@
 @tailwind components;
 @tailwind utilities;
 
-::-webkit-scrollbar{
+::-webkit-scrollbar {
     @apply hidden;
 }
 
-*{
+* {
     font-family: 'Noto Sans', sans-serif;
 }
 
 
 .modal-content {
-    z-index: 100; /* Đảm bảo rằng modal content luôn ở trên các phần tử khác */
-    pointer-events: auto; /* Đảm bảo modal nhận sự kiện chuột */
+    z-index: 100;
+    /* Đảm bảo rằng modal content luôn ở trên các phần tử khác */
+    pointer-events: auto;
+    /* Đảm bảo modal nhận sự kiện chuột */
 }
 
 /* Ngăn chặn việc chọn văn bản toàn trang khi modal mở */
 .modal-open {
-    user-select: none;  /* Vô hiệu hóa việc chọn văn bản */
+    user-select: none;
+    /* Vô hiệu hóa việc chọn văn bản */
 }
 
 /* Lớp spinner của Tailwind */
 .animate-spin {
     animation: spin 1s linear infinite;
     opacity: 0.4;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-  
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}

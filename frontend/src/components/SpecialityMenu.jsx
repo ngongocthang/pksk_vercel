@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { convertToSlug } from "../utils/stringUtils";
 
 const SpecialityMenu = () => {
     const [specialityData, setSpecialityData] = useState([]);
@@ -18,7 +19,6 @@ const SpecialityMenu = () => {
                 console.error('Error fetching specialities:', error);
             }
         };
-
         fetchSpecialities();
     }, []);
 
@@ -28,7 +28,7 @@ const SpecialityMenu = () => {
             <p className='sm:w-2/3 text-center text-sm'>Khám phá danh sách đa dạng các bác sĩ uy tín, giúp bạn dễ dàng đặt lịch hẹn theo nhu cầu của mình.</p>
             <div className='flex sm:justify-center gap-4 pt-5 w-full overflow-scroll'>
                 {specialityData.map((item, index) => (
-                    <Link onClick={() => scrollTo(0, 0)} className='flex flex-col items-center text-xs cursor-pointer flex-shrink-0 hover:translate-y-[-10px] transition-all duration-500' key={index} to={`/doctors/${item.speciality}`}>
+                    <Link onClick={() => scrollTo(0, 0)} className='flex flex-col items-center text-xs cursor-pointer flex-shrink-0 hover:translate-y-[-10px] transition-all duration-500' key={index} to={`/doctors/${convertToSlug(item.speciality)}`}>
                         <img className='w-16 sm:w-24 mb-2' src={item.image} alt={item.speciality} />
                         <p>{item.speciality}</p>
                     </Link>
