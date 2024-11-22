@@ -305,7 +305,7 @@ const DoctorDashboard = () => {
                     <td className="py-4 px-5 text-center text-gray-600">{new Date(item.work_date).toLocaleDateString()}</td>
                     <td className="py-4 px-5 text-center">
                       <p
-                        className={`py-1 px-4 rounded-full text-white font-semibold ${item.work_shift === "afternoon" ? "bg-orange-400" : "bg-blue-400"} shadow-md`}
+                        className={`py-1 px-4 rounded-full text-white text-base font-semibold ${item.work_shift === "afternoon" ? "bg-orange-400" : "bg-blue-400"} shadow-md`}
                       >
                         {item.work_shift === "morning" ? "Sáng" : "Chiều"}
                       </p>
