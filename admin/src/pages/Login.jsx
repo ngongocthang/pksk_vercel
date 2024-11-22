@@ -38,16 +38,15 @@ const Login = () => {
                     sessionStorage.setItem('doctorInfo', JSON.stringify(userInfo));
                     navigate('/doctor-dashboard')
                 } else {
-                    toast.error("Vai trò không phù hợp đối với loại đăng nhập đã chọn.")
+                    toast.error("Vai trò không phù hợp đối với loại đăng nhập đã chọn.",)
                 }
-                window.location.reload()
             } else {
                 toast.error("Login failed!")
             }
-
         } catch (error) {
             console.error("Login error:", error)
-            toast.error("Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại.")
+            toast.error("Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại.", {
+            });
         }
     }
 
@@ -93,4 +92,4 @@ const Login = () => {
     )
 }
 
-export default Login
+export default Login;

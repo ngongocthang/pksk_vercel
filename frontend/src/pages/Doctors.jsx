@@ -146,7 +146,7 @@ const Doctors = () => {
                   <p>Đặt lịch</p>
                 </div>
                 <p className="text-gray-900 text-lg font-medium">{item.user_id.name}</p>
-                <p className="text-gray-900 text-sm truncate">{item.description}</p>
+                <p className="text-gray-900 text-lg truncate">{item.descriptions}</p>
               </div>
             </div>
           ))}

@@ -18,13 +18,13 @@ const AllSchedule = () => {
                 if (Array.isArray(fetchedData)) {
                     setData(fetchedData);
                 } else {
-                    console.error('Fetched data is not an array:', fetchedData);
-                    setError('Data is not in the expected format.');
+                    console.error('Dữ liệu nhận được không phải là một mảng:', fetchedData);
+                    setError('Dữ liệu không đúng định dạng mong đợi.');
                 }
             })
             .catch((error) => {
-                console.error('Error fetching data:', error);
-                setError('An error occurred while fetching data.');
+                console.error('Lỗi khi tải dữ liệu:', error);
+                setError('Đã xảy ra lỗi khi tải dữ liệu.');
             })
             .finally(() => setIsLoading(false));
     }, []);
