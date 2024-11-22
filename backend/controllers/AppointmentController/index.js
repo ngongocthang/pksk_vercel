@@ -184,34 +184,82 @@ const deleteAppointment = async (req, res) => {
 
 const patientCreateAppointment = async (req, res) => {
   try {
-    const patient = await Patient.findOne({ user_id: req.user.id });
+    const user_id = req.params.id;
+    const today = new Date();
+    
+    // Lấy thông tin bệnh nhân
+    const patient = await Patient.findOne({ user_id: user_id });
     if (!patient) {
       return res.status(400).json({ message: "Patient not found" });
     }
+
+    // Kiểm tra xem lịch hẹn đã tồn tại chưa
+    const checkAppointment = await Appointment.findOne({
+      patient_id: patient._id,
+      work_date: req.body.work_date,
+      work_shift: req.body.work_shift
+    });
+    if (checkAppointment) {
+      return res.status(400).json({ message: "Bạn đã đặt lịch hẹn này rồi!" });
+    }
+
+    // Lấy thời gian từ work_date và chuyển đổi sang giờ Việt Nam
+    const appointmentDate = new Date(req.body.work_date);
+    const appointmentDateVN = new Date(appointmentDate.getTime() + 7 * 60 * 60 * 1000); // Chuyển sang UTC+7
+    
+    // Xác định thời gian cho buổi sáng và buổi chiều
+    const morningTime = new Date(appointmentDateVN);
+    morningTime.setHours(7, 30, 0, 0); // 7h30
+
+    const afternoonTime = new Date(appointmentDateVN);
+    afternoonTime.setHours(13, 30, 0, 0); // 1h30
+
+    // Kiểm tra thời gian hiện tại và chuyển đổi sang giờ Việt Nam
+    const currentTime = new Date();
+    const currentTimeVN = new Date(currentTime.getTime() + 7 * 60 * 60 * 1000); // Chuyển sang UTC+7
+
+    // Kiểm tra nếu là buổi sáng
+    if (appointmentDateVN >= morningTime && appointmentDateVN < afternoonTime) {
+      const minAppointmentTime = new Date(morningTime.getTime() - 30 * 60 * 1000); // 30 phút trước 7h30
+      if (currentTimeVN > minAppointmentTime) {
+        return res.status(400).json({ message: "Bạn chỉ có thể đặt lịch hẹn trước 30 phút cho buổi sáng!" });
+      }
+    }
+
+    // Kiểm tra nếu là buổi chiều
+    if (appointmentDateVN >= afternoonTime) {
+      const minAppointmentTime = new Date(afternoonTime.getTime() - 30 * 60 * 1000); // 30 phút trước 1h30
+      if (currentTimeVN > minAppointmentTime) {
+        return res.status(400).json({ message: "Bạn chỉ có thể đặt lịch hẹn trước 30 phút cho buổi chiều!" });
+      }
+    }
+
+    // Tạo lịch hẹn
     const appointment = await Appointment.create({
       ...req.body,
       patient_id: patient._id,
     });
+    
+    // Lưu vào lịch sử hẹn
     await Appointment_history.create({
       appointment_id: appointment._id,
     });
+    
+    // Tạo thông báo
     await Notification.create({
       patient_id: appointment.patient_id,
       doctor_id: appointment.doctor_id,
-      content: `Bạn đã đặt lịch khám vào ngày: ${moment(
-        appointment.work_date
-      ).format("DD/MM/YYYY")}, hãy chờ phản hồi từ bác sĩ.`,
+      content: `Bạn đã đặt lịch khám vào ngày: ${moment(appointment.work_date).format("DD/MM/YYYY")}, hãy chờ phản hồi từ bác sĩ.`,
       new_date: appointment.work_date,
       new_work_shift: appointment.work_shift,
     });
-    if (appointment) {
-      return res.status(200).json(appointment);
-    }
-    return res.status(400).json({ message: "Appointment not found" });
+
+    return res.status(200).json(appointment);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
+
 
 const getCurrentUserAppointments = async (req, res) => {
   try {

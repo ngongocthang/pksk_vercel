@@ -27,7 +27,7 @@ const { getCurrentUserNotifications } = require("../controllers/NotificationCont
 router.post("/register", register);
 router.post("/login", login);
 router.post("/logout", logout);
-router.post("/create-appointment", userMiddleware, patientCreateAppointment);
+router.post("/create-appointment/:id", patientCreateAppointment);
 router.get("/profilePatient", userMiddleware, profilePatient);
 router.post("/updateProfilePatient/:id", updateProfilePatient);
 router.get("/user-appointment", userMiddleware, getCurrentUserAppointments);

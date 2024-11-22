@@ -3,11 +3,16 @@ const Role = require("../../models/Role");
 const User = require("../../models/User");
 const UserRole = require("../../models/User_role");
 const Doctor = require("../../models/Doctor");
+const Patient = require("../../models/Patient");
 const cloudinary = require("cloudinary").v2;
 const validateDoctor = require("../../requests/validateDoctor");
 const Appointment = require("../../models/Appointment");
 const Notification = require("../../models/Notification");
 const validateUpdateDoctor = require("../../requests/validateUpdateProfileDoctor");
+const transporter = require("../../helpers/mailer-config");
+const moment = require("moment");
+require("moment/locale/vi");
+
 
 //{ key: value } là một đtuong trong js, thường dùng để crud
 /*
@@ -102,46 +107,42 @@ const findDoctor = async (req, res) => {
 const updateDoctor = async (req, res) => {
   try {
     const { id } = req.params;
-    const doctor = await Doctor.findById(id).populate("user_id"); // Load thông tin User
+    const doctor = await Doctor.findById(id).populate("user_id");
 
     if (!doctor) {
       return res.status(404).json({ message: "Doctor not found" });
     }
 
-    // Validate dữ liệu từ client
+    // Validate
     const { error } = validateDoctor(req.body);
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
     }
 
-    let hashedPassword = doctor.user_id.password; // Mặc định giữ mật khẩu cũ
+    let hashedPassword = doctor.user_id.password;
     if (req.body.password) {
       hashedPassword = await bcrypt.hash(req.body.password, 10);
     }
 
-    let imageUrl = doctor.user_id.image; // Giữ URL ảnh cũ nếu không có ảnh mới
+    let imageUrl = doctor.user_id.image;
 
     if (req.file) {
-      // Tạo base64 của ảnh mới để upload
       const base64Image = `data:${
         req.file.mimetype
       };base64,${req.file.buffer.toString("base64")}`;
 
-      // Lấy `public_id` từ URL ảnh cũ nếu có ảnh cũ
       if (imageUrl) {
-        const publicId = imageUrl.split("/").slice(-1)[0].split(".")[0]; // Trích xuất `public_id`
-        await cloudinary.uploader.destroy(`doctor/${publicId}`); // Xóa ảnh cũ
+        const publicId = imageUrl.split("/").slice(-1)[0].split(".")[0];
+        await cloudinary.uploader.destroy(`doctor/${publicId}`);
       }
 
-      // Upload ảnh mới
       const result = await cloudinary.uploader.upload(base64Image, {
         folder: "doctor",
       });
 
-      imageUrl = result.secure_url; // Cập nhật URL ảnh mới
+      imageUrl = result.secure_url;
     }
 
-    // Cập nhật thông tin vào bảng User và Doctor
     await User.findByIdAndUpdate(doctor.user_id._id, {
       name: req.body.name,
       email: req.body.email,
@@ -174,14 +175,12 @@ const deleteDoctor = async (req, res) => {
       return res.status(404).json({ message: "Doctor not found!" });
     }
 
-    // Lấy URL của ảnh để xóa
     const imageUrl = doctor.user_id.image;
     if (imageUrl) {
       const publicId = imageUrl.split("/").slice(-1)[0].split(".")[0];
       await cloudinary.uploader.destroy(`doctor/${publicId}`);
     }
 
-    // Xóa bác sĩ
     await Doctor.findByIdAndDelete(doctor._id);
     await User.deleteOne({ _id: id });
     await UserRole.deleteOne({ user_id: id });
@@ -200,12 +199,10 @@ const confirmAppointment = async (req, res) => {
     let updatedAppointment;
     let afterUpdateAppointment;
 
-    if (status != "pending") {
+    if (status !== "pending") {
       updatedAppointment = await Appointment.findByIdAndUpdate(
         id,
-        {
-          status,
-        },
+        { status },
         { new: true }
       );
 
@@ -213,19 +210,44 @@ const confirmAppointment = async (req, res) => {
         return res.status(404).json({ message: "Appointment not found" });
       }
 
-      const formattedDate = new Intl.DateTimeFormat("vi-VN", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      }).format(new Date(updatedAppointment.work_date));
+      // Định dạng ngày tháng
+      moment.locale('vi');
+      const vietnamTime = moment.utc(updatedAppointment.work_date)
+        .tz("Asia/Ho_Chi_Minh")
+        .format("dddd, DD-MM-YYYY");
+
+      // Chuyển chữ cái đầu tiên của ngày thành chữ in hoa
+      const formattedVietnamTime = vietnamTime.charAt(0).toUpperCase() + vietnamTime.slice(1);
 
       await Notification.create({
-        content: `Lịch hẹn ngày ${formattedDate} của bạn đã được xác nhận.`,
+        content: `Lịch hẹn ngày ${formattedVietnamTime} của bạn đã được xác nhận.`,
         patient_id: updatedAppointment.patient_id,
         doctor_id: updatedAppointment.doctor_id,
         new_date: updatedAppointment.work_date,
         new_work_shift: updatedAppointment.work_shift,
       });
+
+      const patient = await Patient.findOne({ _id: updatedAppointment.patient_id });
+      if (!patient) {
+        return res.status(404).json({ message: "Patient not found" });
+      }
+
+      const InfoPatient = await User.findOne({ _id: patient.user_id });
+      if (!InfoPatient) {
+        return res.status(404).json({ message: "InfoPatient not found" });
+      }
+
+      const changeTypeWorkShift = updatedAppointment.work_shift === "morning" ? "Sáng" : "Chiều";
+
+      const mailOptionsPatient = {
+        from: process.env.EMAIL_USER,
+        to: InfoPatient.email,
+        subject: "Phản hồi: Lịch hẹn bạn đã đặt.",
+        text: `Xin chào ${InfoPatient.name},\n\nLịch hẹn của bạn vào ngày ${formattedVietnamTime} - Ca khám: ${changeTypeWorkShift} đã được bác sĩ xác nhận.\n\nTrân trọng!`,
+      };
+
+      // Gửi email
+      await transporter.sendMail(mailOptionsPatient);
 
       afterUpdateAppointment = await Appointment.findById(id);
       return res.status(200).json({
@@ -233,27 +255,50 @@ const confirmAppointment = async (req, res) => {
         appointment: afterUpdateAppointment,
       });
     } else if (status === "canceled") {
-      updatedAppointment = await Appointment.findByIdAndUpdate(id, {
-        status,
-      });
+      updatedAppointment = await Appointment.findByIdAndUpdate(id, { status });
 
       if (!updatedAppointment) {
         return res.status(404).json({ message: "Appointment not found" });
       }
 
-      const formattedDate = new Intl.DateTimeFormat("vi-VN", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      }).format(new Date(updatedAppointment.work_date));
+      // Định dạng ngày tháng
+      moment.locale('vi');
+      const vietnamTime = moment.utc(updatedAppointment.work_date)
+        .tz("Asia/Ho_Chi_Minh")
+        .format("dddd, DD-MM-YYYY");
+
+      // Chuyển chữ cái đầu tiên của ngày thành chữ in hoa
+      const formattedVietnamTime = vietnamTime.charAt(0).toUpperCase() + vietnamTime.slice(1);
 
       await Notification.create({
-        content: `Lịch hẹn ngày ${formattedDate} của bạn không được xác nhận.`,
+        content: `Lịch hẹn ngày ${formattedVietnamTime} của bạn không được xác nhận.`,
         patient_id: updatedAppointment.patient_id,
         doctor_id: updatedAppointment.doctor_id,
         new_date: updatedAppointment.work_date,
         new_work_shift: updatedAppointment.work_shift,
       });
+
+      const patient = await Patient.findOne({ _id: updatedAppointment.patient_id });
+      if (!patient) {
+        return res.status(404).json({ message: "Patient not found" });
+      }
+
+      const InfoPatient = await User.findOne({ _id: patient.user_id });
+      if (!InfoPatient) {
+        return res.status(404).json({ message: "InfoPatient not found" });
+      }
+
+      const changeTypeWorkShift = updatedAppointment.work_shift === "morning" ? "Sáng" : "Chiều";
+
+      const mailOptionsPatient = {
+        from: process.env.EMAIL_USER,
+        to: InfoPatient.email,
+        subject: "Phản hồi: Lịch hẹn bạn đã đặt.",
+        text: `Xin chào ${InfoPatient.name},\n\nLịch hẹn của bạn vào ngày ${formattedVietnamTime} - Ca khám: ${changeTypeWorkShift} không được xác nhận.\n\nTrân trọng!`,
+      };
+
+      // Gửi email
+      await transporter.sendMail(mailOptionsPatient);
 
       afterUpdateAppointment = await Appointment.findById(id);
       return res.status(200).json({
@@ -266,6 +311,7 @@ const confirmAppointment = async (req, res) => {
       });
     }
   } catch (error) {
+    console.error("Error in confirmAppointment:", error);
     return res.status(500).json({ message: error.message });
   }
 };
@@ -310,7 +356,6 @@ const getDoctorAppointments = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-
 const getSpecializations = async (req, res) => {
   try {
     const { id } = req.params;
@@ -376,31 +421,31 @@ const updateProfileDoctor = async (req, res) => {
     }
     // Kiểm tra mật khẩu cũ
     if (req.body.oldPassword) {
+      const checkNewPassord = await bcrypt.compare(req.body.newPassword, user.password);
+      if (checkNewPassord) {
+        return res.status(400).json({ message: "Mật khẩu mới không được giống mật sách cũ!" });
+      }
       const isMatch = await bcrypt.compare(req.body.oldPassword, user.password);
       if (!isMatch) {
         return res.status(400).json({ message: "Mật khẩu cũ không chính xác" });
       }
     }
 
-    let hashedPassword = doctor.user_id.password; // Retain old password by default
+    let hashedPassword = doctor.user_id.password; 
     if (req.body.newPassword) {
       hashedPassword = await bcrypt.hash(req.body.newPassword, 10);
     }
 
-    let imageUrl = doctor.user_id.image; // Keep the old image URL by default
+    let imageUrl = doctor.user_id.image;
 
-    // Check if a new image file is provided
     if (req.file) {
-      // Generate base64 for the new image to upload
       const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
 
-      // Delete the old image from Cloudinary if it exists
       if (imageUrl) {
         const publicId = imageUrl.split("/").slice(-1)[0].split(".")[0];
         await cloudinary.uploader.destroy(`doctor/${publicId}`);
       }
 
-      // Upload the new image and update `imageUrl` with the new image URL
       const result = await cloudinary.uploader.upload(base64Image, {
         folder: "doctor",
       });
@@ -440,8 +485,6 @@ const updateProfileDoctor = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
-
-
 const getTopDoctor = async (req, res) => {
   try {
     // Tìm tất cả các bác sĩ
