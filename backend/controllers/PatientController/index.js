@@ -222,6 +222,10 @@ const updateProfilePatient = async (req, res) => {
     }
 
     if (newPassword) {
+      const checkNewPassord = await bcrypt.compare(newPassword, user.password);
+      if (checkNewPassord) {
+        return res.status(400).json({ message: "Mật khẩu mới không được trùng với mật khẩu cũ!" });
+      }
       const isOldPasswordCorrect = await bcrypt.compare(oldPassword, user.password);
       if (!isOldPasswordCorrect) {
         return res.status(400).json({ message: "Mật khẩu cũ không chính xác!" });

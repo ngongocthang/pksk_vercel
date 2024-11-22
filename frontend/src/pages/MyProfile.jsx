@@ -112,8 +112,7 @@ const MyProfile = () => {
       const data = await response.json();
   
       if (!response.ok) {
-        const errorText = await response.text();
-        toast.error("Có lỗi xảy ra: " + errorText);
+        toast.error(data.message);
         return;
       }
   
@@ -123,7 +122,6 @@ const MyProfile = () => {
         name: userData.name,
       });
 
-      toast.success("Thông tin đã được cập nhật thành công!");
       setErrorMessage("");
       setIsEdit(false);
       setOldPassword("");
