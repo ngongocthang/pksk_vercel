@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom"; 
+import { useParams, useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import { assets } from "../assets/assets";
 import RelatedDoctors from "../components/RelatedDoctors";
 import axios from "axios";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Appointment = () => {
   const { docId } = useParams();
@@ -33,9 +33,13 @@ const Appointment = () => {
 
   const fetchDoctorSchedule = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/get-schedule-doctor/${docId}`);
+      const response = await axios.get(
+        `http://localhost:5000/get-schedule-doctor/${docId}`
+      );
       const groupedSchedule = response.data.reduce((acc, schedule) => {
-        const dateStr = new Date(schedule.work_date).toISOString().split("T")[0];
+        const dateStr = new Date(schedule.work_date)
+          .toISOString()
+          .split("T")[0];
         if (!acc[dateStr]) acc[dateStr] = [];
         acc[dateStr].push(schedule);
         return acc;
@@ -73,20 +77,20 @@ const Appointment = () => {
   const handleBooking = async () => {
     if (!user) {
       // Điều hướng đến trang đăng nhập nếu người dùng chưa đăng nhập
-      navigate('/account');
+      navigate("/account");
       return; // Thoát sớm khỏi hàm
     }
-  
+
     if (slotTime) {
       const formattedDate = new Date(selectedDate).toLocaleDateString("vi-VN", {
-        day: 'numeric',
-        month: 'numeric',
-        year: 'numeric'
+        day: "numeric",
+        month: "numeric",
+        year: "numeric",
       });
-  
+
       // Dismiss any previous toast before showing the new one
       toast.dismiss();
-  
+
       // Show the confirmation toast
       toast.info(
         <div className="flex flex-col items-center justify-center">
@@ -94,10 +98,16 @@ const Appointment = () => {
             <i className="fas fa-info-circle text-blue-500 text-2xl mr-2"></i>
             <p className="font-bold text-lg">Thông báo</p>
           </div>
-          <p>Bạn có chắc chắn muốn đặt lịch hẹn vào {formattedDate} lúc {slotTime} không?</p>
+          <p>
+            Bạn có chắc chắn muốn đặt lịch hẹn vào {formattedDate} lúc{" "}
+            {slotTime} không?
+          </p>
           <div className="flex mt-2">
             <button
-              onClick={() => { confirmBooking(); toast.dismiss(); }}
+              onClick={() => {
+                confirmBooking();
+                toast.dismiss();
+              }}
               className="bg-[#00759c] text-white px-4 py-2 rounded mr-2"
             >
               Có
@@ -121,12 +131,15 @@ const Appointment = () => {
     } else {
       toast.warn("Vui lòng chọn ca làm việc trước khi đặt lịch hẹn.");
     }
-  };    
+  };
 
   const confirmBooking = async () => {
     try {
       const patientId = user.id;
       const token = user?.token || "";
+      const userIdString = localStorage.getItem("user");
+      const userIdObj = JSON.parse(userIdString);
+      const userId = userIdObj.id;
       const selectedSchedule = doctorSchedule[selectedDate]?.find(
         (schedule) =>
           (schedule.work_shift === "morning" && slotTime === "Buổi sáng") ||
@@ -141,29 +154,38 @@ const Appointment = () => {
           work_date: selectedSchedule.work_date,
         };
 
-        await axios.post("http://localhost:5000/create-appointment", appointmentData, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+
+       const response = await axios.post(
+          `http://localhost:5000/create-appointment/${userId}`,
+          appointmentData,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         toast.success("Đặt lịch hẹn thành công!");
 
         setSelectedDate(null);
         setSlotTime("");
-
       } else {
         toast.error("Không tìm thấy lịch hẹn hoặc thông tin bệnh nhân.");
+        console.error("Không tìm thấy lịch hẹn hoặc thông tin bệnh nhân.");
       }
     } catch (error) {
       console.error("Error creating appointment:", error);
-      toast.error("Có lỗi xảy ra khi đặt lịch hẹn. Vui lòng thử lại.");
+      toast.error(error.response?.data?.message);
     }
   };
 
   // Kiểm tra nếu chưa có thông tin bác sĩ
   if (!docInfo) {
-    return <div className="text-center text-2xl mt-10 text-gray-500">Đang tải thông tin bác sĩ...</div>;
+    return (
+      <div className="text-center text-2xl mt-10 text-gray-500">
+        Đang tải thông tin bác sĩ...
+      </div>
+    );
   }
 
   return (
@@ -180,18 +202,30 @@ const Appointment = () => {
         </div>
 
         <div className="flex-1 border border-gray-400 rounded-lg p-8 py-7 bg-white mx-2 sm:mx-0 mt-[-80px] sm:mt-0">
-          <p className="flex items-center gap-2 text-2xl font-medium text-gray-900" style={{ lineHeight: '2.5' }}>
+          <p
+            className="flex items-center gap-2 text-2xl font-medium text-gray-900"
+            style={{ lineHeight: "2.5" }}
+          >
             {docInfo.user_id.name}
             <img className="w-5" src={assets.verified_icon} alt="" />
           </p>
-          <div className="flex items-center gap-2 text-sm mt-1 text-gray-600" style={{ lineHeight: '2.5' }}>
+          <div
+            className="flex items-center gap-2 text-sm mt-1 text-gray-600"
+            style={{ lineHeight: "2.5" }}
+          >
             <p>Chuyên Khoa: {docInfo.specialization_id.name}</p>
           </div>
           <div>
-            <p className="flex items-center gap-1 text-sm font-medium text-gray-900" style={{ lineHeight: '2.5' }}>
+            <p
+              className="flex items-center gap-1 text-sm font-medium text-gray-900"
+              style={{ lineHeight: "2.5" }}
+            >
               Giới thiệu <img src={assets.info_icon} alt="" />
             </p>
-            <p className="text-sm text-gray-500 max-w-[700px] mt-1" style={{ lineHeight: '1.5' }}>
+            <p
+              className="text-sm text-gray-500 max-w-[700px] mt-1"
+              style={{ lineHeight: "1.5" }}
+            >
               {docInfo.description}
             </p>
           </div>
@@ -207,20 +241,34 @@ const Appointment = () => {
           <div className="flex gap-3 items-center w-full overflow-x-scroll mt-4 py-2">
             {Object.keys(doctorSchedule).map((dateStr) => {
               const date = new Date(dateStr);
-              const dayOfWeek = date.toLocaleDateString("vi-VN", { weekday: "long" });
+              const dayOfWeek = date.toLocaleDateString("vi-VN", {
+                weekday: "long",
+              });
               const isSelected = selectedDate === dateStr;
 
               return (
                 <div
                   key={dateStr}
                   className={`text-center w-[100px] h-[100px] flex flex-col justify-center items-center rounded-full border cursor-pointer transition-all duration-300
-                  ${isSelected ? "bg-[#00759c] text-white border-[#00759c]" : "border-gray-200 text-gray-600 hover:border-gray-300"}`}
+                  ${
+                    isSelected
+                      ? "bg-[#00759c] text-white border-[#00759c]"
+                      : "border-gray-200 text-gray-600 hover:border-gray-300"
+                  }`}
                   onClick={() => setSelectedDate(dateStr)}
                 >
-                  <p className={`text-sm font-bold ${isSelected ? "text-white" : "text-gray-600"}`}>
+                  <p
+                    className={`text-sm font-bold ${
+                      isSelected ? "text-white" : "text-gray-600"
+                    }`}
+                  >
                     {dayOfWeek}
                   </p>
-                  <p className={`text-sm font-semibold ${isSelected ? "text-white" : "text-gray-500"}`}>
+                  <p
+                    className={`text-sm font-semibold ${
+                      isSelected ? "text-white" : "text-gray-500"
+                    }`}
+                  >
                     {`${date.getDate()}/${date.getMonth() + 1}`}
                   </p>
                 </div>
@@ -233,10 +281,23 @@ const Appointment = () => {
         {selectedDate && !errorLoadingSchedule && (
           <div className="flex items-center gap-3 w-full overflow-x-auto mt-4">
             {doctorSchedule[selectedDate].map((schedule) => (
-              <p key={schedule._id} onClick={() => setSlotTime(schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều")}
-                className={`text-sm font-semibold px-6 py-3 rounded-full cursor-pointer transition-all duration-300 ${slotTime === (schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều")
-                  ? "bg-[#00759c] text-white"
-                  : "text-gray-500 border border-gray-300 hover:border-[#00759c] hover:text-[#00759c]"}`}
+              <p
+                key={schedule._id}
+                onClick={() =>
+                  setSlotTime(
+                    schedule.work_shift === "morning"
+                      ? "Buổi sáng"
+                      : "Buổi chiều"
+                  )
+                }
+                className={`text-sm font-semibold px-6 py-3 rounded-full cursor-pointer transition-all duration-300 ${
+                  slotTime ===
+                  (schedule.work_shift === "morning"
+                    ? "Buổi sáng"
+                    : "Buổi chiều")
+                    ? "bg-[#00759c] text-white"
+                    : "text-gray-500 border border-gray-300 hover:border-[#00759c] hover:text-[#00759c]"
+                }`}
               >
                 {schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều"}
               </p>
@@ -251,12 +312,14 @@ const Appointment = () => {
           >
             Đặt lịch hẹn
           </button>
-
         )}
       </div>
 
       {/* ----- Danh sách bác sĩ liên quan ----- */}
-      <RelatedDoctors docId={docId} speciality={docInfo.specialization_id.name} />
+      <RelatedDoctors
+        docId={docId}
+        speciality={docInfo.specialization_id.name}
+      />
     </div>
   );
 };
