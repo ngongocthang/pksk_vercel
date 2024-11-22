@@ -118,7 +118,7 @@ const Navbar = () => {
             </div>
           </div>
         ) : (
-          <NavLink to='/login'>
+          <NavLink to='/account'>
             <button onClick={() => navigate('/account')} className='bg-[#00759c] text-white px-8 py-3 rounded-full font-light hidden md:block'>Đăng nhập</button>
           </NavLink>
         )}

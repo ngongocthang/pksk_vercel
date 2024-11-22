@@ -71,60 +71,6 @@ const MyProfile = () => {
     fetchUserProfile();
   }, [setUser, navigate]);
 
-  // const handleSave = async () => {
-  //   const token = localStorage.getItem("token");
-  //   const userIdString = localStorage.getItem("user");
-  //   const userIdObj = JSON.parse(userIdString);
-  //   const userId = userIdObj.id;
-  //   if (!token) {
-  //     setErrorMessage("Bạn chưa đăng nhập. Vui lòng đăng nhập để tiếp tục.");
-  //     return;
-  //   }
-
-  //   try {
-  //     const response = await fetch(
-  //       `http://localhost:5000/updateProfilePatient/${userId}`,
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //         body: JSON.stringify({
-  //           name: userData.name,
-  //           phone: userData.phone,
-  //           email: userData.email,
-  //           oldPassword,
-  //           newPassword,
-  //         }),
-  //       }
-  //     );
-
-  //     const data = await response.json();
-
-  //     if (!response.ok) {
-  //       toast.error(data.message);
-  //       console.log(data.message);
-  //       return;
-  //     }
-
-  //     toast.success(data.message);
-  //     setUser({
-  //       ...user,
-  //       name: userData.name,
-  //     });
-
-  //     setSuccessMessage("Thông tin đã được cập nhật thành công!");
-  //     setErrorMessage("");
-  //     setIsEdit(false);
-  //     setOldPassword("");
-  //     setNewPassword("");
-  //   } catch (error) {
-  //     toast.error("Có lỗi xảy ra: " + error.message);
-  //     console.log(error.message);
-  //   }
-  // };
-
   const handleSave = async () => {
     const token = localStorage.getItem("token");
     const userIdString = localStorage.getItem("user");
