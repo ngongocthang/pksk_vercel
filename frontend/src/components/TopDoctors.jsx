@@ -59,22 +59,23 @@ const TopDoctors = () => {
             <p className='text-center sm:w-2/3 text-lg'>Khám phá danh sách phong phú các bác sĩ uy tín của chúng tôi để dễ dàng lên lịch hẹn.</p>
 
             {/* Cấu trúc lưới cho các bác sĩ */}
-            <div className='w-full grid grid-cols-auto gap-4 pt-5 gap-y-6 px-3 sm:px-0'>
-                {Array.isArray(visibleDoctors) && visibleDoctors.map((item, index) => (
+            <div className='w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6'>
+                {Array.isArray(visibleDoctors) && visibleDoctors.slice(0, 8).map((item, index) => (
                     <div
                         onClick={() => { navigate(`/appointment/${item._id}`); scrollTo(0, 0); }}
-                        className='border border-blue-200 rounded-xl overflow-hidden cursor-pointer hover:translate-y-[-10px] transition-all duration-500'
+                        className='border border-blue-200 rounded-xl overflow-hidden cursor-pointer hover:-translate-y-2 transition-all duration-500'
                         key={index}
                     >
                         <div className='relative'>
                             <img className='bg-blue-50' src={item.user_id.image} alt={item.user_id.name} />
                             <span className='absolute top-2 left-2 bg-indigo-100 text-indigo-800 text-xs font-semibold px-2 py-1 rounded-full'>
-                                {item.specialization_id.name}
+                                {item.specialization_id ? item.specialization_id.name : "Chưa có chuyên khoa"}
                             </span>
                         </div>
                         <div className='p-4'>
-                            <div className='flex items-center gap-2 text-sm text-center text-green-500 text-[#00759c]'>
-                                <p className='w-2 h-2 bg-[#00759c] rounded-full'></p><p>Đặt lịch</p>
+                            <div className='flex items-center gap-2 text-sm text-center text-[#00759c]'>
+                                <p className='w-2 h-2 bg-[#00759c] rounded-full'></p>
+                                <p>Đặt lịch</p>
                             </div>
                             <p className='text-gray-900 text-lg font-medium'>{item.user_id.name}</p>
                             <p className='text-gray-600 text-sm truncate'>{item.description}</p>
@@ -82,7 +83,10 @@ const TopDoctors = () => {
                     </div>
                 ))}
             </div>
-            <button onClick={() => { navigate('/doctors'); scrollTo(0, 0); }} className='bg-blue-50 text-gray-600 px-12 py-3 rounded-full mt-10'>Tất cả</button>
+
+            <button onClick={() => { navigate('/doctors'); scrollTo(0, 0); }} className='bg-blue-50 text-gray-600 px-12 py-3 rounded-full mt-10'>
+                Xem Tất Cả
+            </button>
         </div>
     );
 };
