@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { convertToSlug } from "../utils/stringUtils";
 
 const Doctors = () => {
@@ -128,15 +128,15 @@ const Doctors = () => {
           ))}
         </div>
 
-        <div className="w-full grid grid-cols-auto gap-4 gap-y-6">
+        <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6">
           {currentDoctors.map((item, index) => (
             <div
               onClick={() => navigate(`/appointment/${item._id}`)}
-              className="border border-blue-200 rounded-xl overflow-hidden cursor-pointer hover:translate-y-[-10px] transition-all duration-500 relative"
+              className="border border-blue-200 rounded-xl overflow-hidden cursor-pointer hover:-translate-y-2 transition-all duration-500 relative"
               key={index}
             >
               <img className="bg-blue-50" src={item.user_id.image} alt="" />
-              <span className='absolute top-2 left-2 bg-indigo-100 text-indigo-800 text-xs font-semibold px-2 py-1 rounded-full'>
+              <span className="absolute top-2 left-2 bg-indigo-100 text-indigo-800 text-xs font-semibold px-2 py-1 rounded-full">
                 {item.specialization_id ? item.specialization_id.name : "Chưa có chuyên khoa"}
               </span>
               <div className="p-4">
@@ -145,7 +145,7 @@ const Doctors = () => {
                   <p>Đặt lịch</p>
                 </div>
                 <p className="text-gray-900 text-lg font-medium">{item.user_id.name}</p>
-                <p className="text-gray-900 text-lg truncate">{item.descriptions}</p>
+                <p className="text-gray-900 text-sm truncate">{item.description}</p>
               </div>
             </div>
           ))}

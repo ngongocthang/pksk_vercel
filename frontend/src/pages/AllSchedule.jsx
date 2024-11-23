@@ -1,19 +1,29 @@
-import React, { useState, useEffect } from 'react';
 import { Scheduler } from "@bitnoi.se/react-scheduler";
+import React, { useEffect, useState } from 'react';
 
-const AllSchedule = () => {
+const AllSchedule = ({ doctorId }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [data, setData] = useState([]);
-    const [error, setError] = useState(null); 
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        setIsLoading(true);
-        setError(null); 
+        if (!doctorId) {
+            setError('Không tìm thấy ID của bác sĩ.');
+            return;
+        }
 
-        const apiUrl = 'your-api-url';
+        setIsLoading(true);
+        setError(null);
+
+        const apiUrl = `http://localhost:5000/get-schedule-doctor/${doctorId}`;
 
         fetch(apiUrl)
-            .then((response) => response.json())
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then((fetchedData) => {
                 if (Array.isArray(fetchedData)) {
                     setData(fetchedData);
@@ -27,7 +37,7 @@ const AllSchedule = () => {
                 setError('Đã xảy ra lỗi khi tải dữ liệu.');
             })
             .finally(() => setIsLoading(false));
-    }, []);
+    }, [doctorId]);
 
     return (
         <div className="container mx-auto p-4">
@@ -49,13 +59,13 @@ const AllSchedule = () => {
                         data={data}
                         isLoading={isLoading}
                         onItemClick={(clickedItem) => console.log(clickedItem)}
-                        onFilterData={() => { }}
-                        onClearFilterData={() => { }}
+                        onFilterData={() => {}}
+                        onClearFilterData={() => {}}
                         config={{
                             filterButtonState: 0,
                             zoom: 0,
                             lang: "vi",
-                            timeZone: "Asia/Ho_Chi_Minh", // Múi giờ Việt Nam
+                            timeZone: "Asia/Ho_Chi_Minh",
                             maxRecordsPerPage: 20,
                         }}
                         style={{
