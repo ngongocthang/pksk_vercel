@@ -243,7 +243,14 @@ const confirmAppointment = async (req, res) => {
         from: process.env.EMAIL_USER,
         to: InfoPatient.email,
         subject: "Phản hồi: Lịch hẹn bạn đã đặt.",
-        text: `Xin chào ${InfoPatient.name},\n\nLịch hẹn của bạn vào ngày ${formattedVietnamTime} - Ca khám: ${changeTypeWorkShift} đã được bác sĩ xác nhận.\n\nTrân trọng!`,
+        text: `Kính gửi ${InfoPatient.name},
+        \n\n Chúng tôi xin xác nhận lịch hẹn khám của bạn như sau:
+        \n\nNgày: ${formattedVietnamTime}
+        \n\n Ca khám: ${changeTypeWorkShift} 
+        \n\nLịch hẹn của bạn đã được bác sĩ xác nhận. Vui lòng có mặt đúng giờ để đảm bảo quá trình khám diễn ra thuận lợi.
+        \n\nNếu cần hỗ trợ hoặc thay đổi lịch hẹn, bạn có thể liên hệ với chúng tôi qua email hoặc số điện thoại.
+        \n\nTrân trọng!
+        \n\n[Đội ngũ hỗ trợ khách hàng].`
       };
 
       // Gửi email
@@ -294,7 +301,14 @@ const confirmAppointment = async (req, res) => {
         from: process.env.EMAIL_USER,
         to: InfoPatient.email,
         subject: "Phản hồi: Lịch hẹn bạn đã đặt.",
-        text: `Xin chào ${InfoPatient.name},\n\nLịch hẹn của bạn vào ngày ${formattedVietnamTime} - Ca khám: ${changeTypeWorkShift} không được xác nhận.\n\nTrân trọng!`,
+        text: `Kính gửi ${InfoPatient.name},
+        \n\n Chúng tôi xin xác nhận lịch hẹn khám của bạn như sau:
+        \n\nNgày: ${formattedVietnamTime}
+        \n\n Ca khám: ${changeTypeWorkShift} 
+        \n\nLịch hẹn của bạn đã được bác sĩ xác nhận. Vui lòng có mặt đúng giờ để đảm bảo quá trình khám diễn ra thuận lợi.
+        \n\nNếu cần hỗ trợ hoặc thay đổi lịch hẹn, bạn có thể liên hệ với chúng tôi qua email hoặc số điện thoại.
+        \n\nTrân trọng!
+        \n\n[Đội ngũ hỗ trợ khách hàng].`
       };
 
       // Gửi email
