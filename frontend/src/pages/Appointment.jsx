@@ -19,7 +19,7 @@ const Appointment = () => {
   const [errorLoadingSchedule, setErrorLoadingSchedule] = useState(false);
 
   useEffect(() => {
-    if (!user) {
+    if (!user && !localStorage.getItem("user")) {
       navigate("/account");
     }
   }, [user, navigate]);
@@ -72,7 +72,7 @@ const Appointment = () => {
   }, [selectedDate]);
 
   const handleBooking = () => {
-    if (!user) {
+    if (!user && !localStorage.getItem("user")) {
       navigate("/account");
       return;
     }
@@ -198,39 +198,23 @@ const Appointment = () => {
         </div>
 
         <div className="flex-1 border border-gray-400 rounded-lg p-8 py-7 bg-white mx-2 sm:mx-0 mt-[-80px] sm:mt-0">
-          <p className="flex items-center gap-2 text-2xl font-medium text-gray-900"
-            style={{ lineHeight: "2.5" }}>
+          <p className="flex items-center gap-2 text-2xl font-medium text-gray-900" style={{ lineHeight: "2.5" }}>
             {docInfo.user_id.name}
-            <p
-              className="flex items-center gap-2 text-2xl font-medium text-gray-900"
-              style={{ lineHeight: "2.5" }}
-            >
+            <p className="flex items-center gap-2 text-2xl font-medium text-gray-900" style={{ lineHeight: "2.5" }}>
               <img className="w-5" src={assets.verified_icon} alt="" />
             </p>
           </p>
-          <div
-            className="flex items-center gap-2 text-sm mt-1 text-gray-600"
-            style={{ lineHeight: "2.5" }}
-          >
+          <div className="flex items-center gap-2 text-sm mt-1 text-gray-600" style={{ lineHeight: "2.5" }}>
             <p>Kinh nghiệm: {docInfo.specialization_id.name}</p>
           </div>
-          <div
-            className="flex items-center gap-2 text-sm mt-1 text-gray-600"
-            style={{ lineHeight: "2.5" }}
-          >
+          <div className="flex items-center gap-2 text-sm mt-1 text-gray-600" style={{ lineHeight: "2.5" }}>
             <p>Chuyên Khoa: {docInfo.specialization_id.name}</p>
           </div>
           <div>
-            <p
-              className="flex items-center gap-1 text-sm font-medium text-gray-900"
-              style={{ lineHeight: "2.5" }}
-            >
+            <p className="flex items-center gap-1 text-sm font-medium text-gray-900" style={{ lineHeight: "2.5" }}>
               Giới thiệu <img src={assets.info_icon} alt="" />
             </p>
-            <p
-              className="text-sm text-gray-500 max-w-[700px] mt-1"
-              style={{ lineHeight: "1.5" }}
-            >
+            <p className="text-sm text-gray-500 mt-1 max-w-full sm:max-w-[12000px]" style={{ lineHeight: "1.5", textAlign: "justify" }}>
               {docInfo.description}
             </p>
           </div>
@@ -255,20 +239,11 @@ const Appointment = () => {
                 <div
                   key={dateStr}
                   className={`text-center w-[100px] h-[100px] flex flex-col justify-center items-center rounded-full border cursor-pointer transition-all duration-300
-                   ${isSelected
-                      ? "bg-[#00759c] text-white border-[#00759c]"
-                      : "border-gray-200 text-gray-600 hover:border-gray-300"
-                    }`}
+                   ${isSelected ? "bg-[#00759c] text-white border-[#00759c]" : "border-gray-200 text-gray-600 hover:border-gray-300"}`}
                   onClick={() => setSelectedDate(dateStr)}
                 >
-                  <p
-                    className={`text-sm font-bold ${isSelected ? "text-white" : "text-gray-600"}`}
-                  >
-                    {dayOfWeek}
-                  </p>
-                  <p
-                    className={`text-sm font-semibold ${isSelected ? "text-white" : "text-gray-500"}`}
-                  >
+                  <p className={`text-sm font-bold ${isSelected ? "text-white" : "text-gray-600"}`}>{dayOfWeek}</p>
+                  <p className={`text-sm font-semibold ${isSelected ? "text-white" : "text-gray-500"}`}>
                     {`${date.getDate()}/${date.getMonth() + 1}`}
                   </p>
                 </div>
@@ -276,25 +251,18 @@ const Appointment = () => {
             })}
           </div>
         )}
-
         {/* Hiển thị các buổi sáng và chiều theo ngày */}
         {selectedDate && !errorLoadingSchedule && (
           <div className="flex items-center gap-3 w-full overflow-x-auto mt-4">
             {doctorSchedule[selectedDate].map((schedule) => (
               <p
                 key={schedule._id}
-                onClick={() =>
-                  setSlotTime(
-                    schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều"
-                  )
-                }
-                className={`text-sm font-semibold px-6 py-3 rounded-full cursor-pointer transition-all duration-300 ${slotTime ===
-                  (schedule.work_shift === "morning"
-                    ? "Buổi sáng"
-                    : "Buổi chiều")
-                  ? "bg-[#00759c] text-white"
-                  : "text-gray-500 border border-gray-300 hover:border-[#00759c] hover:text-[#00759c]"}`
-                }
+                onClick={() => setSlotTime(schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều")}
+                className={`text-sm font-semibold px-6 py-3 rounded-full cursor-pointer transition-all duration-300 ${
+                  slotTime === (schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều")
+                    ? "bg-[#00759c] text-white"
+                    : "text-gray-500 border border-gray-300 hover:border-[#00759c] hover:text-[#00759c]"
+                }`}
               >
                 {schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều"}
               </p>
@@ -312,11 +280,8 @@ const Appointment = () => {
         )}
       </div>
 
-      {/* ----- Danh sách bác sĩ liên quan ----- */}
-      <RelatedDoctors
-        docId={docId}
-        speciality={docInfo.specialization_id.name}
-      />
+      {/* ----- Related Doctors ----- */}
+      <RelatedDoctors docId={docId} speciality={docInfo.specialization_id.name} />
     </div>
   );
 };

@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useContext } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { useNavigate, useParams } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import { DoctorContext } from "../../context/DoctorContext";
+import "../../index.css";
 
 const EditWorkSchedule = () => {
   const { id } = useParams();
@@ -14,6 +15,7 @@ const EditWorkSchedule = () => {
     workDate: null,
     timeSlot: "",
   });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchSchedule = async () => {
@@ -48,12 +50,17 @@ const EditWorkSchedule = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const updatedSchedule = {
-      work_date: scheduleForm.workDate.toISOString().split("T")[0],
-      work_shift: scheduleForm.timeSlot,
-    };
-    await updateSchedule(id, updatedSchedule);
-    navigate("/doctor-work-schedule");
+    setLoading(true);
+    try {
+      const updatedSchedule = {
+        work_date: scheduleForm.workDate.toISOString().split("T")[0],
+        work_shift: scheduleForm.timeSlot,
+      };
+      await updateSchedule(id, updatedSchedule);
+      navigate("/doctor-work-schedule");
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!schedule) return <p>Loading...</p>;
@@ -98,9 +105,19 @@ const EditWorkSchedule = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full py-3 mt-5 bg-[#219B9D] text-white rounded hover:bg-[#0091a1] font-semibold"
+            className={`w-full py-3 mt-5 text-white rounded font-semibold flex items-center justify-center ${
+              loading ? "bg-gray-400 cursor-not-allowed" : "bg-[#219B9D] hover:bg-[#0091a1]"
+            }`}
+            disabled={loading}
           >
-            Cập nhật Lịch Làm Việc
+            {loading ? (
+              <>
+                <div className="loader border-t-4 border-white w-4 h-4 rounded-full animate-spin mr-2"></div>
+                Đang cập nhật...
+              </>
+            ) : (
+              "Cập nhật Lịch Làm Việc"
+            )}
           </button>
         </form>
       </div>
