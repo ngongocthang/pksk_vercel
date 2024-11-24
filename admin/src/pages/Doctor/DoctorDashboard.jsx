@@ -1,16 +1,16 @@
-import React, { useContext, useEffect, useState } from "react";
-import { DoctorContext } from "../../context/DoctorContext";
-import { assets } from "../../assets/assets";
-import { Bar } from "react-chartjs-2";
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
   BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
   Title,
   Tooltip,
-  Legend,
 } from "chart.js";
+import React, { useContext, useEffect, useState } from "react";
+import { Bar } from "react-chartjs-2";
+import { assets } from "../../assets/assets";
+import { DoctorContext } from "../../context/DoctorContext";
 
 // Register chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -188,30 +188,44 @@ const DoctorDashboard = () => {
     <div className="m-5 w-full shadow-lg">
       {/* Overview Section */}
       <div className="flex gap-3 w-full">
-        <div className="flex-1 min-w-0 bg-white p-4 rounded border-2 border-gray-100 cursor-pointer hover:scale-105 transition-all flex items-center justify-center shadow-lg">
-          <div className="text-center">
+        {/* Hiển thị thu nhập */}
+        <div className="relative flex-1 min-w-0 bg-[#4fc2f7] p-4 rounded border-2 cursor-pointer hover:scale-105 transition-all flex items-center justify-center shadow-lg overflow-hidden">
+          {/* Bong bóng */}
+          <div className="absolute top-[-20px] right-[-20px] w-24 h-24 bg-white opacity-50 rounded-full z-10"></div>
+          <div className="absolute top-[60px] right-[-40px] w-16 h-16 bg-white opacity-30 rounded-full z-10"></div>
+
+          <div className="text-center relative z-20">
             <img className="w-14 mx-auto" src={assets.earning_icon} alt="" />
-            <p className="text-xl font-semibold text-gray-600">1.900.000</p>
-            <p className="text-gray-400">Thu nhập</p>
+            <p className="text-xl font-semibold text-white">1.900.000</p>
+            <p className="text-white text-xl font-semibold">Thu nhập</p>
           </div>
         </div>
 
-        <div className="flex-1 min-w-0 bg-white p-4 rounded border-2 border-gray-100 cursor-pointer hover:scale-105 transition-all flex items-center justify-center shadow-lg">
-          <div className="text-center">
-            <img className="w-10 mx-auto" src={assets.appointment_icon} alt="" />
+        {/* Hiển thị lịch hẹn hoàn thành */}
+        <div className="relative flex-1 min-w-0 bg-[#32db9d] p-4 rounded border-2 cursor-pointer hover:scale-105 transition-all flex items-center justify-center shadow-lg overflow-hidden">
+          {/* Bong bóng */}
+          <div className="absolute top-[-20px] right-[-20px] w-24 h-24 bg-white opacity-50 rounded-full z-10"></div>
+          <div className="absolute top-[60px] right-[-40px] w-16 h-16 bg-white opacity-30 rounded-full z-10"></div>
+
+          <div className="text-center relative z-20">
+            <img className="w-14 mx-auto" src={assets.appointments_icon3} alt="" />
             <div>
-              <p className="text-xl font-semibold text-gray-600">{countCompletedAppointments()}</p>
-              <p className="text-gray-400">Lịch hẹn hoàn thành</p>
+              <p className="text-xl font-semibold text-white">{countCompletedAppointments()}</p>
+              <p className="text-white text-xl font-semibold">Lịch hẹn hoàn thành</p>
             </div>
           </div>
         </div>
 
-        <div className="flex-1 min-w-0 bg-white p-4 rounded border-2 border-gray-100 cursor-pointer hover:scale-105 transition-all flex items-center justify-center shadow-lg">
-          <div className="text-center">
+        <div className="relative flex-1 min-w-0 bg-[#ff8a66] p-4 rounded border-2 cursor-pointer hover:scale-105 transition-all flex items-center justify-center shadow-lg overflow-hidden">
+          {/* Bong bóng */}
+          <div className="absolute top-[-20px] right-[-20px] w-24 h-24 bg-white opacity-50 rounded-full z-10"></div>
+          <div className="absolute top-[60px] right-[-40px] w-16 h-16 bg-white opacity-30 rounded-full z-10"></div>
+
+          <div className="text-center relative z-20">
             <img className="w-14 mx-auto" src={assets.patients_icon} alt="" />
             <div>
-              <p className="text-xl font-semibold text-gray-600">{appointments.length}</p>
-              <p className="text-gray-400">Bệnh nhân</p>
+              <p className="text-xl font-semibold text-white">{appointments.length}</p>
+              <p className="text-white text-xl font-semibold">Bệnh nhân</p>
             </div>
           </div>
         </div>
