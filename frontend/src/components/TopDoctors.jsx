@@ -31,7 +31,7 @@ const TopDoctors = () => {
 
                 // Giả sử dữ liệu trả về là { success: true, doctors: [...] }
                 if (data.doctors && Array.isArray(data.doctors)) {
-                    setDoctors(data.doctors); // Đảm bảo rằng bạn đang lưu trữ mảng bác sĩ
+                    setDoctors(data.doctors);
                 } else {
                     throw new Error('Invalid data format');
                 }
@@ -52,20 +52,14 @@ const TopDoctors = () => {
 
     return (
         <div className='flex flex-col items-center gap-4 my-10 text-gray-900 md:mx-10'>
-
             <h1 className='text-3xl font-medium text-center'>Các Bác Sĩ Hàng Đầu Để Đặt Lịch Hẹn</h1>
-
-            {/* Căn giữa thẻ p và chỉnh sửa chiều rộng cho responsive */}
             <p className='text-center sm:w-2/3 text-lg'>Khám phá danh sách phong phú các bác sĩ uy tín của chúng tôi để dễ dàng lên lịch hẹn.</p>
-
-            {/* Cấu trúc lưới cho các bác sĩ */}
-            <div className='w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6'>
-                {Array.isArray(visibleDoctors) && visibleDoctors.slice(0, 8).map((item, index) => (
+            <div className='w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 gap-y-6'>
+                {Array.isArray(visibleDoctors) && visibleDoctors.slice(0, 10).map((item, index) => (
                     <div
                         onClick={() => { navigate(`/appointment/${item._id}`); scrollTo(0, 0); }}
                         className='border border-blue-200 rounded-xl overflow-hidden cursor-pointer hover:-translate-y-2 transition-all duration-500'
-                        key={index}
-                    >
+                        key={index}>
                         <div className='relative'>
                             <img className='bg-blue-50' src={item.user_id.image} alt={item.user_id.name} />
                             <span className='absolute top-2 left-2 bg-indigo-100 text-indigo-800 text-xs font-semibold px-2 py-1 rounded-full'>

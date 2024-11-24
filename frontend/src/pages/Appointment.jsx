@@ -1,11 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { AppContext } from "../context/AppContext";
-import { assets } from "../assets/assets";
-import RelatedDoctors from "../components/RelatedDoctors";
 import axios from "axios";
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { assets } from "../assets/assets";
+import RelatedDoctors from "../components/RelatedDoctors";
+import { AppContext } from "../context/AppContext";
 
 const Appointment = () => {
   const { docId } = useParams();
@@ -198,13 +198,22 @@ const Appointment = () => {
         </div>
 
         <div className="flex-1 border border-gray-400 rounded-lg p-8 py-7 bg-white mx-2 sm:mx-0 mt-[-80px] sm:mt-0">
-          <p
-            className="flex items-center gap-2 text-2xl font-medium text-gray-900"
+          <p className="flex items-center gap-2 text-2xl font-medium text-gray-900"
+            style={{ lineHeight: "2.5" }}>
+            {docInfo.user_id.name}
+            <p
+              className="flex items-center gap-2 text-2xl font-medium text-gray-900"
+              style={{ lineHeight: "2.5" }}
+            >
+              <img className="w-5" src={assets.verified_icon} alt="" />
+            </p>
+          </p>
+          <div
+            className="flex items-center gap-2 text-sm mt-1 text-gray-600"
             style={{ lineHeight: "2.5" }}
           >
-            {docInfo.user_id.name}
-            <img className="w-5" src={assets.verified_icon} alt="" />
-          </p>
+            <p>Kinh nghiệm: {docInfo.specialization_id.name}</p>
+          </div>
           <div
             className="flex items-center gap-2 text-sm mt-1 text-gray-600"
             style={{ lineHeight: "2.5" }}
@@ -230,9 +239,9 @@ const Appointment = () => {
 
       {/* ----- Booking slots ----- */}
       <div className="sm:ml-72 sm:pl-4 mt-4 font-medium text-gray-700">
-        <p>Lịch làm việc:</p>
+        <p>Đặt khám nhanh:</p>
         {errorLoadingSchedule ? (
-          <p className="text-red-500"></p>
+          <p className="text-red-500">Không thể tải lịch bác sĩ. Vui lòng thử lại sau.</p>
         ) : (
           <div className="flex gap-3 items-center w-full overflow-x-scroll mt-4 py-2">
             {Object.keys(doctorSchedule).map((dateStr) => {
@@ -246,21 +255,19 @@ const Appointment = () => {
                 <div
                   key={dateStr}
                   className={`text-center w-[100px] h-[100px] flex flex-col justify-center items-center rounded-full border cursor-pointer transition-all duration-300
-                  ${isSelected
+                   ${isSelected
                       ? "bg-[#00759c] text-white border-[#00759c]"
                       : "border-gray-200 text-gray-600 hover:border-gray-300"
                     }`}
                   onClick={() => setSelectedDate(dateStr)}
                 >
                   <p
-                    className={`text-sm font-bold ${isSelected ? "text-white" : "text-gray-600"
-                      }`}
+                    className={`text-sm font-bold ${isSelected ? "text-white" : "text-gray-600"}`}
                   >
                     {dayOfWeek}
                   </p>
                   <p
-                    className={`text-sm font-semibold ${isSelected ? "text-white" : "text-gray-500"
-                      }`}
+                    className={`text-sm font-semibold ${isSelected ? "text-white" : "text-gray-500"}`}
                   >
                     {`${date.getDate()}/${date.getMonth() + 1}`}
                   </p>
@@ -278,18 +285,16 @@ const Appointment = () => {
                 key={schedule._id}
                 onClick={() =>
                   setSlotTime(
-                    schedule.work_shift === "morning"
-                      ? "Buổi sáng"
-                      : "Buổi chiều"
+                    schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều"
                   )
                 }
                 className={`text-sm font-semibold px-6 py-3 rounded-full cursor-pointer transition-all duration-300 ${slotTime ===
-                    (schedule.work_shift === "morning"
-                      ? "Buổi sáng"
-                      : "Buổi chiều")
-                    ? "bg-[#00759c] text-white"
-                    : "text-gray-500 border border-gray-300 hover:border-[#00759c] hover:text-[#00759c]"
-                  }`}
+                  (schedule.work_shift === "morning"
+                    ? "Buổi sáng"
+                    : "Buổi chiều")
+                  ? "bg-[#00759c] text-white"
+                  : "text-gray-500 border border-gray-300 hover:border-[#00759c] hover:text-[#00759c]"}`
+                }
               >
                 {schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều"}
               </p>

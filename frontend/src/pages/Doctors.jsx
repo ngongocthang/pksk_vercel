@@ -103,26 +103,17 @@ const Doctors = () => {
 
   return (
     <div>
-      <p className="text-gray-600">Duyệt qua các bác sĩ chuyên khoa.</p>
+      <p className="text-gray-600 text-[20px]">Duyệt qua các bác sĩ chuyên khoa.</p>
       <div className="flex flex-col sm:flex-row items-start gap-5 mt-5">
-        <button
-          className={`py-1 px-3 border rounded text-sm transition-all sm:hidden ${showFilter ? "bg-primary text-white" : ""}`}
-          onClick={() => setShowFilter((prev) => !prev)}
-        >
+        <button className={`py-1 px-3 border rounded text-sm transition-all sm:hidden ${showFilter ? "bg-primary text-white" : ""}`} onClick={() => setShowFilter((prev) => !prev)}>
           Filters
         </button>
         <div className={`flex-col gap-4 text-[18px] text-gray-600 ${showFilter ? "flex" : "hidden sm:flex"}`}>
           {specializations.map((spec) => (
-            <div
-              key={spec._id}
-              onClick={() =>
-                speciality === convertToSlug(spec.name)
-                  ? navigate("/doctors")
-                  : navigate(`/doctors/${convertToSlug(spec.name)}`)
-              }
-              className={`w-[94vw] sm:w-40 pl-3 py-1.5 border border-gray-300 rounded transition-all cursor-pointer ${speciality === spec.name ? "bg-indigo-100 text-black" : ""
-                }`}
-            >
+            <div key={spec._id} onClick={() => speciality === convertToSlug(spec.name)
+              ? navigate("/doctors")
+              : navigate(`/doctors/${convertToSlug(spec.name)}`)}
+              className={`w-[94vw] sm:w-40 pl-3 py-1.5 border border-gray-300 rounded transition-all cursor-pointer ${speciality === convertToSlug(spec.name) ? "bg-indigo-100 text-black-500" : ""}`}>
               <p className="m-0">{spec.name}</p>
             </div>
           ))}
@@ -132,7 +123,7 @@ const Doctors = () => {
           {currentDoctors.map((item, index) => (
             <div
               onClick={() => navigate(`/appointment/${item._id}`)}
-              className="border border-blue-200 rounded-xl overflow-hidden cursor-pointer hover:-translate-y-2 transition-all duration-500 relative"
+              className="border border-blue-200 rounded-xl overflow-hidden cursor-pointer hover:translate-y-[-10px] transition-all duration-500 relative"
               key={index}
             >
               <img className="bg-blue-50" src={item.user_id.image} alt="" />
