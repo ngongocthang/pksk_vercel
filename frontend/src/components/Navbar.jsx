@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useContext } from "react";
-import { AppContext } from "../context/AppContext";
-import { assets } from "../assets/assets";
+import React, { useContext, useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { assets } from "../assets/assets";
+import { AppContext } from "../context/AppContext";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ const Navbar = () => {
         try {
           const response = await fetch("http://localhost:5000/notification/find-all", {
             headers: {
-              Authorization: `Bearer ${user.token}`, // Gửi token xác thực
+              Authorization: `Bearer ${user.token}`,
             },
           });
 
@@ -66,17 +66,21 @@ const Navbar = () => {
         style={{ width: "80px", height: "80px", objectFit: "contain" }}
       />
       <ul className="hidden md:flex items-start gap-5 font-medium">
-        <NavLink to="/">
+        <NavLink to="/" activeClassName="underline">
           <li className="py-1 text-base">Trang chủ</li>
+          <hr className='border-none outline-none h-0.5 bg-[#00759c] w-3/5 m-auto hidden' />
         </NavLink>
-        <NavLink to="/doctors">
+        <NavLink to="/doctors" activeClassName="underline">
           <li className="py-1 text-base">Tất cả bác sĩ</li>
+          <hr className='border-none outline-none h-0.5 bg-[#00759c] w-3/5 m-auto hidden' />
         </NavLink>
-        <NavLink to="/about">
+        <NavLink to="/abouts" activeClassName="underline">
           <li className="py-1 text-base">Về chúng tôi</li>
+          <hr className='border-none outline-none h-0.5 bg-[#00759c] w-3/5 m-auto hidden' />
         </NavLink>
-        <NavLink to="/contact">
+        <NavLink to="/contact" activeClassName="underline">
           <li className="py-1 text-base">Liên hệ</li>
+          <hr className='border-none outline-none h-0.5 bg-[#00759c] w-3/5 m-auto hidden' />
         </NavLink>
         <NavLink to="/all-schedule">
           <button className="bg-[#00759c] text-white px-6 py-2 rounded-full font-light hidden md:block">
@@ -84,6 +88,8 @@ const Navbar = () => {
           </button>
         </NavLink>
       </ul>
+
+
 
       <div className="flex items-center gap-4">
         {user ? (

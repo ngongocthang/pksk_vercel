@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { useContext } from "react";
-import { AppContext } from "../context/AppContext";
-import { assets } from "../assets/assets";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { assets } from "../assets/assets";
+import { AppContext } from "../context/AppContext";
 
 const MyProfile = () => {
   const navigate = useNavigate();
@@ -20,7 +19,6 @@ const MyProfile = () => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
 
   // State lưu trữ thông tin ban đầu khi bắt đầu chỉnh sửa
   const [originalData, setOriginalData] = useState({});
@@ -45,6 +43,10 @@ const MyProfile = () => {
         if (!response.ok) {
           const errorText = await response.text();
           toast.error("Có lỗi xảy ra: " + errorText);
+          if (response.status === 401) {  // token hết hạn hoặc không hợp lệ
+            toast.error("Token không hợp lệ, vui lòng đăng nhập lại.");
+            navigate("/account"); // Chuyển hướng đến trang đăng nhập
+          }
           return;
         }
 
@@ -60,9 +62,7 @@ const MyProfile = () => {
           email: data.user.email,
           phone: data.user.phone,
         });
-        setUser({
-          ...data.user,
-        });
+        setUser({ ...data.user });
       } catch (error) {
         toast.error("Có lỗi xảy ra: " + error.message);
       }
@@ -76,18 +76,18 @@ const MyProfile = () => {
     const userIdString = localStorage.getItem("user");
     const userIdObj = JSON.parse(userIdString);
     const userId = userIdObj.id;
-  
+
     if (!token) {
       toast.error("Bạn chưa đăng nhập. Vui lòng đăng nhập để tiếp tục.");
       return;
     }
-  
+
     const bodyData = {
       name: userData.name,
       phone: userData.phone,
       email: userData.email,
     };
-  
+
     // Chỉ thêm mật khẩu nếu có giá trị
     if (oldPassword) {
       bodyData.oldPassword = oldPassword;
@@ -95,7 +95,7 @@ const MyProfile = () => {
     if (newPassword) {
       bodyData.newPassword = newPassword;
     }
-  
+
     try {
       const response = await fetch(
         `http://localhost:5000/updateProfilePatient/${userId}`,
@@ -108,14 +108,14 @@ const MyProfile = () => {
           body: JSON.stringify(bodyData),
         }
       );
-  
+
       const data = await response.json();
-  
+
       if (!response.ok) {
         toast.error(data.message);
         return;
       }
-  
+
       toast.success(data.message);
       setUser({
         ...user,
@@ -131,7 +131,7 @@ const MyProfile = () => {
       console.log(error.message);
     }
   };
-  
+
 
   const handleCancel = () => {
     // Khôi phục lại giá trị ban đầu và thoát khỏi chế độ chỉnh sửa
@@ -244,9 +244,8 @@ const MyProfile = () => {
             <>
               <button
                 onClick={handleSave}
-                className={`bg-blue-500 text-white py-2 px-4 rounded ${
-                  isSaveDisabled() ? "bg-gray-300 disabled-button" : ""
-                }`}
+                className={`bg-blue-500 text-white py-2 px-4 rounded ${isSaveDisabled() ? "bg-gray-300 disabled-button" : ""
+                  }`}
                 disabled={isSaveDisabled()}
               >
                 Lưu
