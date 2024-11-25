@@ -18,10 +18,10 @@ const Footer = () => {
         <div>
           <h3 className="text-lg font-semibold mb-4">PHÒNG KHÁM</h3>
           <ul className="space-y-2 text-sm">
-            <li><a href="/" className="hover:text-blue-500">Trang chủ</a></li>
-            <li><a href="/about" className="hover:text-blue-500">Về chúng tôi</a></li>
-            <li><a href="/contact" className="hover:text-blue-500">Liên hệ</a></li>
-            <li><a href="/privacy-policy" className="hover:text-blue-500">Chính sách bảo mật</a></li>
+            <li><a href="/" className="hover:text-[#00759c]">Trang chủ</a></li>
+            <li><a href="/about" className="hover:text-[#00759c]">Về chúng tôi</a></li>
+            <li><a href="/contact" className="hover:text-[#00759c]">Liên hệ</a></li>
+            <li><a href="/privacy-policy" className="hover:text-[#00759c]">Chính sách bảo mật</a></li>
           </ul>
         </div>
         
@@ -29,8 +29,8 @@ const Footer = () => {
         <div>
           <h3 className="text-lg font-semibold mb-4">LIÊN HỆ</h3>
           <ul className="space-y-2 text-sm">
-            <li><span className="font-medium">Điện thoại:</span> <a href="tel:+84365142649" className="hover:text-blue-500">+84-365-142-649</a></li>
-            <li><span className="font-medium">Email:</span> <a href="mailto:lequythien1@gmail.com" className="hover:text-blue-500">lequythien1@gmail.com</a></li>
+            <li><span className="font-medium">Điện thoại:</span> <a href="tel:+84365142649" className="hover:text-[#00759c]">+84-365-142-649</a></li>
+            <li><span className="font-medium">Email:</span> <a href="mailto:tripletcare@gmail.com" className="hover:text-[#00759c]">tripletcare@gmail.com</a></li>
             <li><span className="font-medium">Địa chỉ:</span> 123 Đường ABC, Thành phố XYZ, Việt Nam</li>
           </ul>
         </div>
@@ -38,7 +38,7 @@ const Footer = () => {
         {/* ----- Right Section: Social Media ----- */}
         <div>
           <h3 className="text-lg font-semibold mb-4">THEO DÕI CHÚNG TÔI</h3>
-          <div className="flex justify-start space-x-4 ml-12">
+          <div className="flex justify-start item-center space-x-4 ml-12">
             <a href="https://facebook.com" aria-label="Facebook">
               <img src={assets.facebook_icon} alt="Facebook Icon" className="w-6 h-6 hover:scale-110 transition-transform" />
             </a>

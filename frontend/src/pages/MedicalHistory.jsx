@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useContext } from "react";
-import { AppContext } from "../context/AppContext";
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useNavigate } from "react-router-dom";
+import { AppContext } from "../context/AppContext";
 
 
 const MedicalHistory = () => {
@@ -17,15 +17,29 @@ const MedicalHistory = () => {
       navigate("/account");
       return;
     }
+
     try {
       const response = await fetch(`http://localhost:5000/medical-history/${user.id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+
+      // Kiểm tra trạng thái HTTP của phản hồi
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const data = await response.json();
-      setMedicalRecords(data.historyAppointments);
-      localStorage.setItem("medicalRecords", JSON.stringify(data.historyAppointments));
+
+      // Kiểm tra cấu trúc dữ liệu trả về
+      if (data.historyAppointments && Array.isArray(data.historyAppointments)) {
+        setMedicalRecords(data.historyAppointments);
+        localStorage.setItem("medicalRecords", JSON.stringify(data.historyAppointments));
+      } else {
+        console.error("API returned invalid data structure:", data);
+        toast.error("Dữ liệu từ server không hợp lệ.");
+      }
     } catch (error) {
       console.error("Error fetching medical history:", error);
       toast.error("Có lỗi xảy ra khi tải lịch sử lịch hẹn. Vui lòng thử lại.");
@@ -33,48 +47,77 @@ const MedicalHistory = () => {
   };
 
   useEffect(() => {
-    // Kiểm tra xem dữ liệu có trong localStorage chưa
     const storedRecords = localStorage.getItem("medicalRecords");
+    console.log("Stored records in localStorage:", storedRecords);
+
     if (storedRecords) {
-      setMedicalRecords(JSON.parse(storedRecords));
+      try {
+        const parsedRecords = JSON.parse(storedRecords);
+        console.log("Parsed records:", parsedRecords);
+        setMedicalRecords(parsedRecords);
+      } catch (error) {
+        console.error("Error parsing stored records:", error);
+        localStorage.removeItem("medicalRecords");
+        fetchMedicalHistory();
+      }
     } else {
       fetchMedicalHistory();
     }
   }, [user]);
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto px-6 py-8">
       <ToastContainer />
-      <h1 className="text-2xl font-bold mb-4">Lịch sử lịch hẹn:</h1>
+      <div className="text-center mb-6">
+        <h1 className="text-3xl font-bold text-black">Lịch sử hẹn</h1>
+        <p className="text-gray-500 mt-2">Xem lại thông tin các lần khám của bạn</p>
+      </div>
+  
       {medicalRecords.length === 0 ? (
-        <p className="text-center text-gray-500">Chưa có lịch sử lịch hẹn nào.</p>
+        <div className="flex flex-col items-center justify-center mt-16">
+          <img
+            src="https://via.placeholder.com/150" // Bạn có thể thay bằng icon phù hợp
+            alt="No Data"
+            className="mb-4"
+          />
+          <p className="text-gray-500 text-lg">Chưa có lịch sử lịch hẹn nào.</p>
+        </div>
       ) : (
-        <table className="min-w-full bg-white border border-gray-300">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="py-2 px-4 border-b">Bác sĩ</th>
-              <th className="py-2 px-4 border-b">Ngày khám</th>
-              <th className="py-2 px-4 border-b">Ca khám</th>
-            </tr>
-          </thead>
-          <tbody>
-            {medicalRecords.map((record) => (
-              <tr key={record.history.id} className="hover:bg-gray-100">
-                <td className="py-2 px-4 border-b text-center">{record.history.doctor_name}</td>
-                <td className="py-2 px-4 border-b text-center">
-                  {new Date(record.history.work_date).toLocaleDateString("vi-VN")}
-                </td>
-                <td className="py-2 px-4 border-b text-center">
-                  {record.history.work_shift === "morning" && "Buổi sáng"}
-                  {record.history.work_shift === "afternoon" && "Buổi chiều"}
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full bg-white shadow-md rounded-lg border border-gray-200">
+            <thead>
+              <tr className="bg-blue-100 text-black text-left">
+                <th className="py-4 px-6 font-semibold">Bác sĩ</th>
+                <th className="py-4 px-6 font-semibold">Ngày khám</th>
+                <th className="py-4 px-6 font-semibold">Ca khám</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {medicalRecords.map((record, index) => (
+                <tr
+                  key={record.history.id}
+                  className={`hover:bg-blue-50 ${
+                    index % 2 === 0 ? "bg-gray-50" : "bg-white"
+                  }`}
+                >
+                  <td className="py-4 px-6 border-t border-gray-200 text-gray-700">
+                    {record.history.doctor_name}
+                  </td>
+                  <td className="py-4 px-6 border-t border-gray-200 text-gray-700">
+                    {new Date(record.history.work_date).toLocaleDateString("vi-VN")}
+                  </td>
+                  <td className="py-4 px-6 border-t border-gray-200 text-gray-700">
+                    {record.history.work_shift === "morning" && "Buổi sáng"}
+                    {record.history.work_shift === "afternoon" && "Buổi chiều"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
-  );
+  );  
 };
 
 export default MedicalHistory;

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { convertToSlug } from "../utils/stringUtils";
 
 const Doctors = () => {
@@ -103,13 +103,9 @@ const Doctors = () => {
 
   return (
     <div>
-      here
-      <p className="text-gray-600">Duyệt qua các bác sĩ chuyên khoa.</p>
+      <p className="text-gray-600 text-[20px]">Duyệt qua các bác sĩ chuyên khoa.</p>
       <div className="flex flex-col sm:flex-row items-start gap-5 mt-5">
-        <button
-          className={`py-1 px-3 border rounded text-sm transition-all sm:hidden ${showFilter ? "bg-primary text-white" : ""}`}
-          onClick={() => setShowFilter((prev) => !prev)}
-        >
+        <button className={`py-1 px-3 border rounded text-sm transition-all sm:hidden ${showFilter ? "bg-primary text-white" : ""}`} onClick={() => setShowFilter((prev) => !prev)}>
           Filters
         </button>
         <div className={`flex-col gap-4 text-[18px] text-gray-600 ${showFilter ? "flex" : "hidden sm:flex"}`}>
@@ -121,15 +117,16 @@ const Doctors = () => {
                   ? navigate("/doctors")
                   : navigate(`/doctors/${convertToSlug(spec.name)}`)
               }
-              className={`w-[94vw] sm:w-40 pl-3 py-1.5 border border-gray-300 rounded transition-all cursor-pointer ${speciality === spec.name ? "bg-indigo-100 text-black" : ""
-                }`}
-            >
+              className={`w-[94vw] sm:w-40 pl-3 py-1.5 border border-gray-300 rounded transition-all cursor-pointer ${speciality === convertToSlug(spec.name)
+                  ? "bg-[#e0f4fb] text-[#00759c]"
+                  : ""
+                }`}>
               <p className="m-0">{spec.name}</p>
             </div>
           ))}
         </div>
 
-        <div className="w-full grid grid-cols-auto gap-4 gap-y-6">
+        <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6">
           {currentDoctors.map((item, index) => (
             <div
               onClick={() => navigate(`/appointment/${item._id}`)}
@@ -137,7 +134,7 @@ const Doctors = () => {
               key={index}
             >
               <img className="bg-blue-50" src={item.user_id.image} alt="" />
-              <span className='absolute top-2 left-2 bg-indigo-100 text-indigo-800 text-xs font-semibold px-2 py-1 rounded-full'>
+              <span className="absolute top-2 left-2 bg-indigo-100 text-indigo-800 text-xs font-semibold px-2 py-1 rounded-full">
                 {item.specialization_id ? item.specialization_id.name : "Chưa có chuyên khoa"}
               </span>
               <div className="p-4">
@@ -146,7 +143,7 @@ const Doctors = () => {
                   <p>Đặt lịch</p>
                 </div>
                 <p className="text-gray-900 text-lg font-medium">{item.user_id.name}</p>
-                <p className="text-gray-900 text-lg truncate">{item.descriptions}</p>
+                <p className="text-gray-900 text-sm truncate">{item.description}</p>
               </div>
             </div>
           ))}
