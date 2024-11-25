@@ -16,14 +16,19 @@ const NotificationSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    new_date: {
-      type: Date,
-      required: false,
+    appointment_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Appointment",
+      required: true,
     },
-    new_work_shift: {
+    isRead: {
+      type: Boolean,
+      default: false,
+    },
+    recipientType: {
       type: String,
-      enum: ['morning', 'afternoon'],
-      required: false,
+      enum: ['patient', 'doctor'],
+      required: true,
     },
   },
   {

@@ -112,8 +112,8 @@ const updateAppointment = async (req, res) => {
       patient_id: appointment.patient_id,
       doctor_id: appointment.doctor_id,
       content: `Your appointment has been changed.`,
-      new_date: appointment.work_date,
-      new_work_shift: appointment.work_shift,
+      appointment_id: appointment._id,
+      recipientType: "patient",
     });
 
     const patient = await Patient.findById(appointment.patient_id);
@@ -263,8 +263,16 @@ const patientCreateAppointment = async (req, res) => {
       patient_id: appointment.patient_id,
       doctor_id: appointment.doctor_id,
       content: `Bạn đã đặt lịch hẹn vào ngày: ${formattedDate}, hãy chờ phản hồi từ bác sĩ.`,
-      new_date: appointment.work_date,
-      new_work_shift: appointment.work_shift,
+      appointment_id: appointment._id,
+      recipientType: "patient",
+    });
+
+    await Notification.create({
+      patient_id: appointment.patient_id,
+      doctor_id: appointment.doctor_id,
+      content: `Bạn có lịch hẹn đang chờ xác nhận vào ngày: ${formattedDate}.`,
+      appointment_id: appointment._id,
+      recipientType: "doctor",
     });
 
     return res.status(200).json(appointment);
