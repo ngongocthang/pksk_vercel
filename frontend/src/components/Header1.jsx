@@ -1,19 +1,19 @@
 import React from 'react';
 import Slider from 'react-slick';
 import { assets } from '../assets/assets';
-import HomepageBanner from '../assets/Homepage-Banner.jpg';
 import HomepageBanner3 from '../assets/banner.png';
 import HomepageBanner4 from '../assets/banner6.png';
+import HomepageBanner from '../assets/Homepage-Banner.jpg';
 
 const Header1 = () => {
     const settings = {
-        dots: true, // hiển thị dấu chấm dưới thanh trượt
-        infinite: true, // vòng lặp vô hạn
-        speed: 500, // tốc độ chuyển tiếp slide
-        slidesToShow: 1, // hiển thị trang chiếu 1
-        slidesToScroll: 1, //cuộn từng trang chiếu 1
+        dots: true,
+        infinite: true, 
+        speed: 500,
+        slidesToShow: 1, 
+        slidesToScroll: 1,
         autoplay: true,
-        autoplaySpeed: 2000, // tự động thay đổi thời gian sau 2s
+        autoplaySpeed: 2000
     };
 
     return (
