@@ -82,10 +82,9 @@ const Navbar = () => {
           <li className="py-1 text-base">Liên hệ</li>
           <hr className='border-none outline-none h-0.5 bg-[#00759c] w-3/5 m-auto hidden' />
         </NavLink>
-        <NavLink to="/all-schedule">
-          <button className="bg-[#00759c] text-white px-6 py-2 rounded-full font-light hidden md:block">
-            Đặt lịch hẹn
-          </button>
+        <NavLink to="/all-schedule" activeClassName="underline">
+          <li className="py-1 text-base">Đặt lịch hẹn</li>
+          <hr className='border-none outline-none h-0.5 bg-[#00759c] w-3/5 m-auto hidden' />
         </NavLink>
       </ul>
 

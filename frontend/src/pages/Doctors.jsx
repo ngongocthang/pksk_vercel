@@ -110,10 +110,17 @@ const Doctors = () => {
         </button>
         <div className={`flex-col gap-4 text-[18px] text-gray-600 ${showFilter ? "flex" : "hidden sm:flex"}`}>
           {specializations.map((spec) => (
-            <div key={spec._id} onClick={() => speciality === convertToSlug(spec.name)
-              ? navigate("/doctors")
-              : navigate(`/doctors/${convertToSlug(spec.name)}`)}
-              className={`w-[94vw] sm:w-40 pl-3 py-1.5 border border-gray-300 rounded transition-all cursor-pointer ${speciality === convertToSlug(spec.name) ? "bg-indigo-100 text-black-500" : ""}`}>
+            <div
+              key={spec._id}
+              onClick={() =>
+                speciality === convertToSlug(spec.name)
+                  ? navigate("/doctors")
+                  : navigate(`/doctors/${convertToSlug(spec.name)}`)
+              }
+              className={`w-[94vw] sm:w-40 pl-3 py-1.5 border border-gray-300 rounded transition-all cursor-pointer ${speciality === convertToSlug(spec.name)
+                  ? "bg-[#e0f4fb] text-[#00759c]"
+                  : ""
+                }`}>
               <p className="m-0">{spec.name}</p>
             </div>
           ))}
