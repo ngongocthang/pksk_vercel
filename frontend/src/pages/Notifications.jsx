@@ -40,7 +40,7 @@ const Notifications = () => {
       const fetchNotifications = async () => {
         try {
           setLoading(true);
-          const response = await fetch("http://localhost:5000/notification/find-all", {
+          const response = await fetch("http://localhost:5000/notification", {
             headers: { Authorization: `Bearer ${token}` },
           });
           if (!response.ok) throw new Error("Failed to fetch notifications");
@@ -83,7 +83,7 @@ const Notifications = () => {
             <div className="flex-1">
               <p className="font-medium">{notification.content}</p>
               <p className="text-xs text-gray-400">
-                Ca khám: {notification.new_work_shift === "morning" ? "buổi sáng" : "buổi chiều"}
+                Ca khám: {notification.work_shift === "morning" ? "buổi sáng" : "buổi chiều"}
               </p>
               <p className="text-xs text-gray-400">{timeAgo(notification.createdAt)}</p>
             </div>

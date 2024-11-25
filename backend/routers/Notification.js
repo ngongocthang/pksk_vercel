@@ -6,7 +6,9 @@ const {
   findNotification,
   updateNotification,
   deleteNotification,
-  deleteAllNotifications
+  deleteAllNotifications,
+  readNotification,
+  getNotificationByDoctorDahsboard
 } = require("../controllers/NotificationController/index");
 
 // Định nghĩa route
@@ -16,5 +18,7 @@ router.get("/find/:id", findNotification);
 router.put("/update/:id", updateNotification);
 router.delete("/delete/:id", deleteNotification);
 router.delete('/notification-delete', deleteAllNotifications);
+router.get("/read/:id", readNotification);
+router.get("/get-notification-doctor/:id", getNotificationByDoctorDahsboard);
 
 module.exports = router;

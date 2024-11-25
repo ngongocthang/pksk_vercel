@@ -196,139 +196,91 @@ const confirmAppointment = async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
 
-    let updatedAppointment;
-    let afterUpdateAppointment;
-
-    if (status !== "pending") {
-      updatedAppointment = await Appointment.findByIdAndUpdate(
-        id,
-        { status },
-        { new: true }
-      );
-
-      if (!updatedAppointment) {
-        return res.status(404).json({ message: "Appointment not found" });
-      }
-
-      // Định dạng ngày tháng
-      moment.locale('vi');
-      const vietnamTime = moment.utc(updatedAppointment.work_date)
-        .tz("Asia/Ho_Chi_Minh")
-        .format("dddd, DD-MM-YYYY");
-
-      // Chuyển chữ cái đầu tiên của ngày thành chữ in hoa
-      const formattedVietnamTime = vietnamTime.charAt(0).toUpperCase() + vietnamTime.slice(1);
-
-      await Notification.create({
-        content: `Lịch hẹn ngày ${formattedVietnamTime} của bạn đã được xác nhận.`,
-        patient_id: updatedAppointment.patient_id,
-        doctor_id: updatedAppointment.doctor_id,
-        new_date: updatedAppointment.work_date,
-        new_work_shift: updatedAppointment.work_shift,
-      });
-
-      const patient = await Patient.findOne({ _id: updatedAppointment.patient_id });
-      if (!patient) {
-        return res.status(404).json({ message: "Patient not found" });
-      }
-
-      const InfoPatient = await User.findOne({ _id: patient.user_id });
-      if (!InfoPatient) {
-        return res.status(404).json({ message: "InfoPatient not found" });
-      }
-
-      const changeTypeWorkShift = updatedAppointment.work_shift === "morning" ? "Sáng" : "Chiều";
-
-      const mailOptionsPatient = {
-        from: process.env.EMAIL_USER,
-        to: InfoPatient.email,
-        subject: "Phản hồi: Lịch hẹn bạn đã đặt.",
-        text: `Kính gửi ${InfoPatient.name},
-        \n\n Chúng tôi xin xác nhận lịch hẹn khám của bạn như sau:
-        \n\nNgày: ${formattedVietnamTime}
-        \n\n Ca khám: ${changeTypeWorkShift} 
-        \n\nLịch hẹn của bạn đã được bác sĩ xác nhận. Vui lòng có mặt đúng giờ để đảm bảo quá trình khám diễn ra thuận lợi.
-        \n\nNếu cần hỗ trợ hoặc thay đổi lịch hẹn, bạn có thể liên hệ với chúng tôi qua email hoặc số điện thoại.
-        \n\nTrân trọng!
-        \n\n[Đội ngũ hỗ trợ khách hàng].`
-      };
-
-      // Gửi email
-      await transporter.sendMail(mailOptionsPatient);
-
-      afterUpdateAppointment = await Appointment.findById(id);
-      return res.status(200).json({
-        message: `Appointment confirm successfully!`,
-        appointment: afterUpdateAppointment,
-      });
-    } else if (status === "canceled") {
-      updatedAppointment = await Appointment.findByIdAndUpdate(id, { status });
-
-      if (!updatedAppointment) {
-        return res.status(404).json({ message: "Appointment not found" });
-      }
-
-      // Định dạng ngày tháng
-      moment.locale('vi');
-      const vietnamTime = moment.utc(updatedAppointment.work_date)
-        .tz("Asia/Ho_Chi_Minh")
-        .format("dddd, DD-MM-YYYY");
-
-      // Chuyển chữ cái đầu tiên của ngày thành chữ in hoa
-      const formattedVietnamTime = vietnamTime.charAt(0).toUpperCase() + vietnamTime.slice(1);
-
-      await Notification.create({
-        content: `Lịch hẹn ngày ${formattedVietnamTime} của bạn không được xác nhận.`,
-        patient_id: updatedAppointment.patient_id,
-        doctor_id: updatedAppointment.doctor_id,
-        new_date: updatedAppointment.work_date,
-        new_work_shift: updatedAppointment.work_shift,
-      });
-
-      const patient = await Patient.findOne({ _id: updatedAppointment.patient_id });
-      if (!patient) {
-        return res.status(404).json({ message: "Patient not found" });
-      }
-
-      const InfoPatient = await User.findOne({ _id: patient.user_id });
-      if (!InfoPatient) {
-        return res.status(404).json({ message: "InfoPatient not found" });
-      }
-
-      const changeTypeWorkShift = updatedAppointment.work_shift === "morning" ? "Sáng" : "Chiều";
-
-      const mailOptionsPatient = {
-        from: process.env.EMAIL_USER,
-        to: InfoPatient.email,
-        subject: "Phản hồi: Lịch hẹn bạn đã đặt.",
-        text: `Kính gửi ${InfoPatient.name},
-        \n\n Chúng tôi xin xác nhận lịch hẹn khám của bạn như sau:
-        \n\nNgày: ${formattedVietnamTime}
-        \n\n Ca khám: ${changeTypeWorkShift} 
-        \n\nLịch hẹn của bạn đã được bác sĩ xác nhận. Vui lòng có mặt đúng giờ để đảm bảo quá trình khám diễn ra thuận lợi.
-        \n\nNếu cần hỗ trợ hoặc thay đổi lịch hẹn, bạn có thể liên hệ với chúng tôi qua email hoặc số điện thoại.
-        \n\nTrân trọng!
-        \n\n[Đội ngũ hỗ trợ khách hàng].`
-      };
-
-      // Gửi email
-      await transporter.sendMail(mailOptionsPatient);
-
-      afterUpdateAppointment = await Appointment.findById(id);
-      return res.status(200).json({
-        message: `Appointment confirm successfully!`,
-        appointment: afterUpdateAppointment,
-      });
-    } else {
+    if (!["confirmed", "canceled"].includes(status)) {
       return res.status(400).json({
-        message: "Invalid status. Status must be 'confirmed' or 'canceled'",
+        message: "Invalid status. Status must be 'confirmed' or 'canceled'.",
       });
     }
+
+    // Cập nhật trạng thái cuộc hẹn
+    const updatedAppointment = await Appointment.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true }
+    );
+
+    if (!updatedAppointment) {
+      return res.status(404).json({ message: "Appointment not found" });
+    }
+
+    // Định dạng ngày tháng
+    moment.locale("vi");
+    const vietnamTime = moment.utc(updatedAppointment.work_date)
+      .tz("Asia/Ho_Chi_Minh")
+      .format("dddd, DD-MM-YYYY");
+
+    const formattedVietnamTime =
+      vietnamTime.charAt(0).toUpperCase() + vietnamTime.slice(1);
+
+    const shiftType =
+      updatedAppointment.work_shift === "morning" ? "Sáng" : "Chiều";
+
+    // Tạo thông báo
+    const notificationContent =
+      status === "confirmed"
+        ? `Lịch hẹn ngày ${formattedVietnamTime} của bạn đã được xác nhận.`
+        : `Lịch hẹn ngày ${formattedVietnamTime} của bạn đã bị từ chối.`;
+
+    await Notification.create({
+      content: notificationContent,
+      patient_id: updatedAppointment.patient_id,
+      doctor_id: updatedAppointment.doctor_id,
+      appointment_id: updatedAppointment._id,
+      recipientType: "patient",
+    });
+
+    // Tìm thông tin bệnh nhân
+    const patient = await Patient.findById(updatedAppointment.patient_id);
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    const userInfo = await User.findById(patient.user_id);
+    if (!userInfo) {
+      return res.status(404).json({ message: "User info not found" });
+    }
+
+    // Nội dung email
+    const emailSubject =
+      status === "confirmed"
+        ? "Phản hồi: Lịch hẹn của bạn đã được xác nhận."
+        : "Phản hồi: Lịch hẹn của bạn đã bị hủy.";
+
+    const emailText =
+      status === "confirmed"
+        ? `Kính gửi ${userInfo.name},\n\nLịch hẹn của bạn đã được xác nhận như sau:\n\nNgày: ${formattedVietnamTime}\nCa khám: ${shiftType}\n\nVui lòng có mặt đúng giờ để đảm bảo quá trình khám diễn ra thuận lợi.\n\nNếu cần hỗ trợ, vui lòng liên hệ chúng tôi qua email hoặc số điện thoại.\n\nTrân trọng!\n[Đội ngũ hỗ trợ khách hàng].`
+        : `Kính gửi ${userInfo.name},\n\nLịch hẹn của bạn vào ngày ${formattedVietnamTime} - Ca khám: ${shiftType} đã bị hủy.\n\nNếu có bất kỳ thắc mắc nào, vui lòng liên hệ chúng tôi qua email hoặc số điện thoại.\n\nTrân trọng!\n[Đội ngũ hỗ trợ khách hàng].`;
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: userInfo.email,
+      subject: emailSubject,
+      text: emailText,
+    };
+
+    // Gửi email
+    await transporter.sendMail(mailOptions);
+
+    return res.status(200).json({
+      message: `Appointment ${status} successfully!`,
+      appointment: updatedAppointment,
+    });
   } catch (error) {
     console.error("Error in confirmAppointment:", error);
     return res.status(500).json({ message: error.message });
   }
 };
+
 
 const getDoctorAppointments = async (req, res) => {
   try {

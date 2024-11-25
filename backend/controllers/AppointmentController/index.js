@@ -6,7 +6,8 @@ const Doctor = require("../../models/Doctor");
 const Notification = require("../../models/Notification");
 const transporter = require("../../helpers/mailer-config");
 const User = require("../../models/User");
-const moment = require("moment-timezone");
+const moment = require('moment-timezone');
+require("moment/locale/vi");
 const User_role = require("../../models/User_role");
 const Role = require("../../models/Role");
 
@@ -111,8 +112,8 @@ const updateAppointment = async (req, res) => {
       patient_id: appointment.patient_id,
       doctor_id: appointment.doctor_id,
       content: `Your appointment has been changed.`,
-      new_date: appointment.work_date,
-      new_work_shift: appointment.work_shift,
+      appointment_id: appointment._id,
+      recipientType: "patient",
     });
 
     const patient = await Patient.findById(appointment.patient_id);
@@ -182,6 +183,16 @@ const deleteAppointment = async (req, res) => {
   }
 };
 
+const formatVietnameseDate = (date) => {
+  moment.locale("vi");
+  const formattedDate = moment
+    .utc(date)
+    .tz("Asia/Ho_Chi_Minh")
+    .format("dddd, DD-MM-YYYY");
+  return formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+};
+
+
 const patientCreateAppointment = async (req, res) => {
   try {
     const user_id = req.params.id;
@@ -205,7 +216,7 @@ const patientCreateAppointment = async (req, res) => {
 
     // Lấy thời gian từ work_date và chuyển đổi sang giờ Việt Nam
     const appointmentDate = new Date(req.body.work_date);
-    const appointmentDateVN = new Date(appointmentDate.getTime() + 7 * 60 * 60 * 1000); // Chuyển sang UTC+7
+    const appointmentDateVN = new Date(appointmentDate.getTime() + 7 * 60 * 60 * 1000);
     
     // Xác định thời gian cho buổi sáng và buổi chiều
     const morningTime = new Date(appointmentDateVN);
@@ -216,11 +227,11 @@ const patientCreateAppointment = async (req, res) => {
 
     // Kiểm tra thời gian hiện tại và chuyển đổi sang giờ Việt Nam
     const currentTime = new Date();
-    const currentTimeVN = new Date(currentTime.getTime() + 7 * 60 * 60 * 1000); // Chuyển sang UTC+7
+    const currentTimeVN = new Date(currentTime.getTime() + 7 * 60 * 60 * 1000);
 
     // Kiểm tra nếu là buổi sáng
     if (appointmentDateVN >= morningTime && appointmentDateVN < afternoonTime) {
-      const minAppointmentTime = new Date(morningTime.getTime() - 30 * 60 * 1000); // 30 phút trước 7h30
+      const minAppointmentTime = new Date(morningTime.getTime() - 30 * 60 * 1000);
       if (currentTimeVN > minAppointmentTime) {
         return res.status(400).json({ message: "Bạn chỉ có thể đặt lịch hẹn trước 30 phút cho buổi sáng!" });
       }
@@ -228,7 +239,7 @@ const patientCreateAppointment = async (req, res) => {
 
     // Kiểm tra nếu là buổi chiều
     if (appointmentDateVN >= afternoonTime) {
-      const minAppointmentTime = new Date(afternoonTime.getTime() - 30 * 60 * 1000); // 30 phút trước 1h30
+      const minAppointmentTime = new Date(afternoonTime.getTime() - 30 * 60 * 1000);
       if (currentTimeVN > minAppointmentTime) {
         return res.status(400).json({ message: "Bạn chỉ có thể đặt lịch hẹn trước 30 phút cho buổi chiều!" });
       }
@@ -244,14 +255,24 @@ const patientCreateAppointment = async (req, res) => {
     await Appointment_history.create({
       appointment_id: appointment._id,
     });
+
+    const formattedDate = formatVietnameseDate(appointment.work_date);
     
     // Tạo thông báo
     await Notification.create({
       patient_id: appointment.patient_id,
       doctor_id: appointment.doctor_id,
-      content: `Bạn đã đặt lịch khám vào ngày: ${moment(appointment.work_date).format("DD/MM/YYYY")}, hãy chờ phản hồi từ bác sĩ.`,
-      new_date: appointment.work_date,
-      new_work_shift: appointment.work_shift,
+      content: `Bạn đã đặt lịch hẹn vào ngày: ${formattedDate}, hãy chờ phản hồi từ bác sĩ.`,
+      appointment_id: appointment._id,
+      recipientType: "patient",
+    });
+
+    await Notification.create({
+      patient_id: appointment.patient_id,
+      doctor_id: appointment.doctor_id,
+      content: `Bạn có lịch hẹn đang chờ xác nhận vào ngày: ${formattedDate}.`,
+      appointment_id: appointment._id,
+      recipientType: "doctor",
     });
 
     return res.status(200).json(appointment);
