@@ -235,8 +235,8 @@ const confirmAppointment = async (req, res) => {
       content: notificationContent,
       patient_id: updatedAppointment.patient_id,
       doctor_id: updatedAppointment.doctor_id,
-      new_date: updatedAppointment.work_date,
-      new_work_shift: updatedAppointment.work_shift,
+      appointment_id: updatedAppointment._id,
+      recipientType: "patient",
     });
 
     // Tìm thông tin bệnh nhân
