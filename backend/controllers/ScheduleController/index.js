@@ -94,13 +94,11 @@ const deleteSchedule = async (req, res) => {
         .json({ success: true, message: "Delete schedule success!" });
     }
 
-    return res
-      .status(400)
-      .json({
-        success: false,
-        message:
-          "Cannot delete schedule less than 24 hours before the appointment!",
-      });
+    return res.status(400).json({
+      success: false,
+      message:
+        "Cannot delete schedule less than 24 hours before the appointment!",
+    });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
@@ -155,6 +153,13 @@ const doctorCreateSchedule = async (req, res) => {
     const doctor = await Doctor.findOne({ user_id: id });
     if (!doctor) {
       return res.status(400).json({ message: "Doctor not found" });
+    }
+    const checkSchedule = await Schedule.findOne({
+      work_date: req.body.work_date,
+      doctor_id: doctor._id,
+    });
+    if (checkSchedule) {
+      return res.status(400).json({ message: "Schedule already exists" });
     }
     const schedule = await Schedule.create({
       ...req.body,
@@ -273,8 +278,7 @@ const doctorUpdateSchedule = async (req, res) => {
 
       const formattedOldDate = formatVietnameseDate(findSchedule.work_date);
       const formattedNewDate = formatVietnameseDate(updatedSchedule.work_date);
-      const oldShift =
-        findSchedule.work_shift === "morning" ? "Sáng" : "Chiều";
+      const oldShift = findSchedule.work_shift === "morning" ? "Sáng" : "Chiều";
       const newShift =
         updatedSchedule.work_shift === "morning" ? "Sáng" : "Chiều";
 
@@ -308,7 +312,6 @@ const formatVietnameseDate = (date) => {
     .format("dddd, DD-MM-YYYY");
   return formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
 };
-
 
 module.exports = {
   createSchedule,
