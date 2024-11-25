@@ -4,7 +4,7 @@ import { assets } from '../assets/assets';
 const Footer = () => {
   return (
     <footer className="bg-[#ffffff] pt-10 pb-6 text-gray-700">
-      <div className="container mx-auto px-4 grid gap-10 sm:grid-cols-3 lg:grid-cols-4">
+      <div className="container mx-auto px-4 grid gap-6 sm:grid-cols-3 lg:grid-cols-4"> {/* Chỉnh gap ở đây */}
         
         {/* ----- Left Section: Clinic Info ----- */}
         <div className="flex flex-col">
@@ -38,7 +38,7 @@ const Footer = () => {
         {/* ----- Right Section: Social Media ----- */}
         <div>
           <h3 className="text-lg font-semibold mb-4">THEO DÕI CHÚNG TÔI</h3>
-          <div className="flex justify-start item-center space-x-4 ml-12">
+          <div className="flex justify-start items-center space-x-4 ml-12">
             <a href="https://facebook.com" aria-label="Facebook">
               <img src={assets.facebook_icon} alt="Facebook Icon" className="w-6 h-6 hover:scale-110 transition-transform" />
             </a>
@@ -56,7 +56,7 @@ const Footer = () => {
       <div className="mt-8 border-t border-gray-300 pt-6 text-center text-sm text-gray-500">
         <p>Phòng Khám Sức Khỏe © {new Date().getFullYear()}. All rights reserved.</p>
       </div>
-    </footer>
+    </footer> 
   );
 };
 
