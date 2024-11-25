@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
-import { AppContext } from "../context/AppContext";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { AppContext } from "../context/AppContext";
 
 const MyAppointments = () => {
   const { user, setUser } = useContext(AppContext);
@@ -10,7 +10,7 @@ const MyAppointments = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const toastId = React.useRef(null); 
+  const toastId = React.useRef(null);
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -95,7 +95,7 @@ const MyAppointments = () => {
     const appointmentDate = new Date(appointment.work_date).toLocaleDateString("vi-VN");
     const appointmentShift = appointment.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều";
 
-    if (!toast.isActive(toastId.current)) { 
+    if (!toast.isActive(toastId.current)) {
       toastId.current = toast.warn(
         <div className="p-4">
           <p className="text-lg font-semibold text-center mb-3">
@@ -137,7 +137,7 @@ const MyAppointments = () => {
       </p>
       <div>
         {loading ? (
-          <p className="text-center text-gray-500 mt-5">Đang tải dữ liệu...</p> 
+          <p className="text-center text-gray-500 mt-5">Đang tải dữ liệu...</p>
         ) : appointments.length === 0 ? (
           <p className=" text-center text-gray-500 mt-5">Hiện tại bạn không có lịch hẹn.</p>
         ) : (
