@@ -19,7 +19,7 @@ const Navbar = () => {
     if (user) {
       const fetchNotifications = async () => {
         try {
-          const response = await fetch("http://localhost:5000/notification/find-all", {
+          const response = await fetch("http://localhost:5000/notification", {
             headers: {
               Authorization: `Bearer ${user.token}`,
             },
