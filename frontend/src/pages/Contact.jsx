@@ -1,11 +1,11 @@
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 import React, { useEffect } from 'react';
 import { assets } from '../assets/assets';
-import AOS from 'aos';
-import 'aos/dist/aos.css'; // Import AOS styles
 
 const Contact = () => {
   useEffect(() => {
-    AOS.init({ duration: 1000, once: true }); // Initialize AOS with 1s duration and animate once
+    AOS.init({ duration: 1000, once: true }); 
   }, []);
 
   return (
@@ -27,7 +27,7 @@ const Contact = () => {
           className="w-full md:max-w-md rounded-lg shadow-lg" 
           src={assets.contact_image} 
           alt="Contact Us" 
-          data-aos="fade-right" // Image slides in from the right
+          data-aos="fade-right"
         />
 
         {/* Contact Information */}

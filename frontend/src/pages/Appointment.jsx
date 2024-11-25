@@ -1,32 +1,30 @@
-import React, { useContext, useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { AppContext } from "../context/AppContext";
-import { assets } from "../assets/assets";
-import RelatedDoctors from "../components/RelatedDoctors";
 import axios from "axios";
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { assets } from "../assets/assets";
+import RelatedDoctors from "../components/RelatedDoctors";
+import { AppContext } from "../context/AppContext";
 
 const Appointment = () => {
   const { docId } = useParams();
   const { doctors, user } = useContext(AppContext);
-  const navigate = useNavigate(); // Tạo hàm navigate
+  const navigate = useNavigate();
 
-  // Khai báo state
   const [docInfo, setDocInfo] = useState(null);
   const [slotTime, setSlotTime] = useState("");
   const [doctorSchedule, setDoctorSchedule] = useState({});
   const [selectedDate, setSelectedDate] = useState(null);
-  const [errorLoadingSchedule, setErrorLoadingSchedule] = useState(false); // Thêm state để theo dõi lỗi
+  const [errorLoadingSchedule, setErrorLoadingSchedule] = useState(false);
 
-  // Kiểm tra người dùng đã đăng nhập
   useEffect(() => {
-    if (!user) {
-      return;
+    if (!user && !localStorage.getItem("user")) {
+      navigate("/account");
     }
-  }, [user]);
+  }, [user, navigate]);
 
-  const fetchDocInfo = async () => {
+  const fetchDocInfo = () => {
     const docInfo = doctors.find((doc) => doc._id === docId);
     setDocInfo(docInfo);
   };
@@ -52,11 +50,10 @@ const Appointment = () => {
     }
   };
 
-  // Đặt lại trạng thái đặt lịch khi một bác sĩ mới được chọn
   useEffect(() => {
     setSelectedDate(null);
     setSlotTime("");
-  }, [docId, doctors]);
+  }, [docId]);
 
   useEffect(() => {
     if (doctors.length > 0) {
@@ -74,112 +71,111 @@ const Appointment = () => {
     setSlotTime("");
   }, [selectedDate]);
 
-  const handleBooking = async () => {
-    if (!user) {
-      // Điều hướng đến trang đăng nhập nếu người dùng chưa đăng nhập
+  const handleBooking = () => {
+    if (!user && !localStorage.getItem("user")) {
       navigate("/account");
-      return; // Thoát sớm khỏi hàm
+      return;
     }
 
-    if (slotTime) {
-      const formattedDate = new Date(selectedDate).toLocaleDateString("vi-VN", {
-        day: "numeric",
-        month: "numeric",
-        year: "numeric",
-      });
-
-      // Dismiss any previous toast before showing the new one
-      toast.dismiss();
-
-      // Show the confirmation toast
-      toast.info(
-        <div className="flex flex-col items-center justify-center">
-          <div className="flex items-center mb-2">
-            <i className="fas fa-info-circle text-blue-500 text-2xl mr-2"></i>
-            <p className="font-bold text-lg">Thông báo</p>
-          </div>
-          <p>
-            Bạn có chắc chắn muốn đặt lịch hẹn vào {formattedDate} lúc{" "}
-            {slotTime} không?
-          </p>
-          <div className="flex mt-2">
-            <button
-              onClick={() => {
-                confirmBooking();
-                toast.dismiss();
-              }}
-              className="bg-[#00759c] text-white px-4 py-2 rounded mr-2"
-            >
-              Có
-            </button>
-            <button
-              onClick={() => toast.dismiss()}
-              className="bg-red-500 text-white px-4 py-2 rounded"
-            >
-              Không
-            </button>
-          </div>
-        </div>,
-        {
-          position: "top-center",
-          autoClose: false,
-          closeOnClick: false,
-          draggable: false,
-          progress: undefined,
-        }
-      );
-    } else {
-      toast.warn("Vui lòng chọn ca làm việc trước khi đặt lịch hẹn.");
+    if (!selectedDate || !slotTime) {
+      toast.warn("Vui lòng chọn ngày và ca làm việc.");
+      return;
     }
+
+    const formattedDate = new Date(selectedDate).toLocaleDateString("vi-VN", {
+      day: "numeric",
+      month: "numeric",
+      year: "numeric",
+    });
+
+    toast.dismiss();
+    toast.info(
+      <div className="flex flex-col items-center justify-center">
+        <div className="flex items-center mb-2">
+          <i className="fas fa-info-circle text-blue-500 text-2xl mr-2"></i>
+          <p className="font-bold text-lg">Thông báo</p>
+        </div>
+        <p>
+          Bạn có chắc chắn muốn đặt lịch hẹn vào {formattedDate} lúc{" "}
+          {slotTime} không?
+        </p>
+        <div className="flex mt-2">
+          <button
+            onClick={() => {
+              confirmBooking();
+              toast.dismiss();
+            }}
+            className="bg-[#00759c] text-white px-4 py-2 rounded mr-2"
+          >
+            Có
+          </button>
+          <button
+            onClick={() => toast.dismiss()}
+            className="bg-red-500 text-white px-4 py-2 rounded"
+          >
+            Không
+          </button>
+        </div>
+      </div>,
+      {
+        position: "top-center",
+        autoClose: false,
+        closeOnClick: false,
+        draggable: false,
+        progress: undefined,
+      }
+    );
   };
 
   const confirmBooking = async () => {
     try {
-      const patientId = user.id;
-      const token = user?.token || "";
-      const userIdString = localStorage.getItem("user");
-      const userIdObj = JSON.parse(userIdString);
-      const userId = userIdObj.id;
+      const patientId = user?.id || JSON.parse(localStorage.getItem("user"))?.id;
+      if (!patientId) {
+        console.error("Không tìm thấy thông tin bệnh nhân.");
+        toast.error("Thông tin bệnh nhân không hợp lệ.");
+        return;
+      }
+
       const selectedSchedule = doctorSchedule[selectedDate]?.find(
         (schedule) =>
           (schedule.work_shift === "morning" && slotTime === "Buổi sáng") ||
           (schedule.work_shift === "afternoon" && slotTime === "Buổi chiều")
       );
 
-      if (selectedSchedule && patientId) {
-        const appointmentData = {
-          patient_id: patientId,
-          doctor_id: docId,
-          work_shift: selectedSchedule.work_shift,
-          work_date: selectedSchedule.work_date,
-        };
-
-
-       const response = await axios.post(
-          `http://localhost:5000/create-appointment/${userId}`,
-          appointmentData,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        toast.success("Đặt lịch hẹn thành công!");
-
-        setSelectedDate(null);
-        setSlotTime("");
-      } else {
-        toast.error("Không tìm thấy lịch hẹn hoặc thông tin bệnh nhân.");
-        console.error("Không tìm thấy lịch hẹn hoặc thông tin bệnh nhân.");
+      if (!selectedSchedule) {
+        console.error("Không tìm thấy ca làm việc đã chọn.");
+        toast.error("Không tìm thấy lịch hẹn cho ngày và giờ đã chọn.");
+        return;
       }
+
+      const appointmentData = {
+        patient_id: patientId,
+        doctor_id: docId,
+        work_shift: selectedSchedule.work_shift,
+        work_date: selectedSchedule.work_date,
+      };
+
+      const token = user?.token || "";
+      const response = await axios.post(
+        `http://localhost:5000/create-appointment/${patientId}`,
+        appointmentData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      toast.success("Đặt lịch hẹn thành công!");
+      setSelectedDate(null);
+      setSlotTime("");
     } catch (error) {
       console.error("Error creating appointment:", error);
-      toast.error(error.response?.data?.message);
+      toast.error(error.response?.data?.message || "Lỗi không xác định.");
     }
   };
 
-  // Kiểm tra nếu chưa có thông tin bác sĩ
   if (!docInfo) {
     return (
       <div className="text-center text-2xl mt-10 text-gray-500">
@@ -202,30 +198,23 @@ const Appointment = () => {
         </div>
 
         <div className="flex-1 border border-gray-400 rounded-lg p-8 py-7 bg-white mx-2 sm:mx-0 mt-[-80px] sm:mt-0">
-          <p
-            className="flex items-center gap-2 text-2xl font-medium text-gray-900"
-            style={{ lineHeight: "2.5" }}
-          >
+          <p className="flex items-center gap-2 text-2xl font-medium text-gray-900" style={{ lineHeight: "2.5" }}>
             {docInfo.user_id.name}
-            <img className="w-5" src={assets.verified_icon} alt="" />
+            <p className="flex items-center gap-2 text-2xl font-medium text-gray-900" style={{ lineHeight: "2.5" }}>
+              <img className="w-5" src={assets.verified_icon} alt="" />
+            </p>
           </p>
-          <div
-            className="flex items-center gap-2 text-sm mt-1 text-gray-600"
-            style={{ lineHeight: "2.5" }}
-          >
+          <div className="flex items-center gap-2 text-sm mt-1 text-gray-600" style={{ lineHeight: "2.5" }}>
+            <p>Kinh nghiệm: {docInfo.specialization_id.name}</p>
+          </div>
+          <div className="flex items-center gap-2 text-sm mt-1 text-gray-600" style={{ lineHeight: "2.5" }}>
             <p>Chuyên Khoa: {docInfo.specialization_id.name}</p>
           </div>
           <div>
-            <p
-              className="flex items-center gap-1 text-sm font-medium text-gray-900"
-              style={{ lineHeight: "2.5" }}
-            >
+            <p className="flex items-center gap-1 text-sm font-medium text-gray-900" style={{ lineHeight: "2.5" }}>
               Giới thiệu <img src={assets.info_icon} alt="" />
             </p>
-            <p
-              className="text-sm text-gray-500 max-w-[700px] mt-1"
-              style={{ lineHeight: "1.5" }}
-            >
+            <p className="text-sm text-gray-500 mt-1 max-w-full sm:max-w-[12000px]" style={{ lineHeight: "1.5", textAlign: "justify" }}>
               {docInfo.description}
             </p>
           </div>
@@ -234,9 +223,9 @@ const Appointment = () => {
 
       {/* ----- Booking slots ----- */}
       <div className="sm:ml-72 sm:pl-4 mt-4 font-medium text-gray-700">
-        <p>Lịch làm việc:</p>
+        <p>Đặt khám nhanh:</p>
         {errorLoadingSchedule ? (
-          <p className="text-red-500"></p>
+          <p className="text-red-500">Không thể tải lịch bác sĩ. Vui lòng thử lại sau.</p>
         ) : (
           <div className="flex gap-3 items-center w-full overflow-x-scroll mt-4 py-2">
             {Object.keys(doctorSchedule).map((dateStr) => {
@@ -250,25 +239,11 @@ const Appointment = () => {
                 <div
                   key={dateStr}
                   className={`text-center w-[100px] h-[100px] flex flex-col justify-center items-center rounded-full border cursor-pointer transition-all duration-300
-                  ${
-                    isSelected
-                      ? "bg-[#00759c] text-white border-[#00759c]"
-                      : "border-gray-200 text-gray-600 hover:border-gray-300"
-                  }`}
+                   ${isSelected ? "bg-[#00759c] text-white border-[#00759c]" : "border-gray-200 text-gray-600 hover:border-gray-300"}`}
                   onClick={() => setSelectedDate(dateStr)}
                 >
-                  <p
-                    className={`text-sm font-bold ${
-                      isSelected ? "text-white" : "text-gray-600"
-                    }`}
-                  >
-                    {dayOfWeek}
-                  </p>
-                  <p
-                    className={`text-sm font-semibold ${
-                      isSelected ? "text-white" : "text-gray-500"
-                    }`}
-                  >
+                  <p className={`text-sm font-bold ${isSelected ? "text-white" : "text-gray-600"}`}>{dayOfWeek}</p>
+                  <p className={`text-sm font-semibold ${isSelected ? "text-white" : "text-gray-500"}`}>
                     {`${date.getDate()}/${date.getMonth() + 1}`}
                   </p>
                 </div>
@@ -276,25 +251,15 @@ const Appointment = () => {
             })}
           </div>
         )}
-
         {/* Hiển thị các buổi sáng và chiều theo ngày */}
         {selectedDate && !errorLoadingSchedule && (
           <div className="flex items-center gap-3 w-full overflow-x-auto mt-4">
             {doctorSchedule[selectedDate].map((schedule) => (
               <p
                 key={schedule._id}
-                onClick={() =>
-                  setSlotTime(
-                    schedule.work_shift === "morning"
-                      ? "Buổi sáng"
-                      : "Buổi chiều"
-                  )
-                }
+                onClick={() => setSlotTime(schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều")}
                 className={`text-sm font-semibold px-6 py-3 rounded-full cursor-pointer transition-all duration-300 ${
-                  slotTime ===
-                  (schedule.work_shift === "morning"
-                    ? "Buổi sáng"
-                    : "Buổi chiều")
+                  slotTime === (schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều")
                     ? "bg-[#00759c] text-white"
                     : "text-gray-500 border border-gray-300 hover:border-[#00759c] hover:text-[#00759c]"
                 }`}
@@ -315,11 +280,8 @@ const Appointment = () => {
         )}
       </div>
 
-      {/* ----- Danh sách bác sĩ liên quan ----- */}
-      <RelatedDoctors
-        docId={docId}
-        speciality={docInfo.specialization_id.name}
-      />
+      {/* ----- Related Doctors ----- */}
+      <RelatedDoctors docId={docId} speciality={docInfo.specialization_id.name} />
     </div>
   );
 };
