@@ -42,7 +42,7 @@ const DoctorContextProvider = (props) => {
       if (Array.isArray(data) && data.length > 0) {
         setAppointments(data);
       } else {
-        return toast.error("Không có lịch hẹn nào!");
+        return console.log("Không có lịch hẹn nào!");
       }
     } catch (error) {
       console.log(error);
@@ -265,7 +265,7 @@ const DoctorContextProvider = (props) => {
         { headers: { Authorization: `Bearer ${dToken}` } }
       );
       setAppointments(data.length > 0 ? data : []);
-      if (data.length === 0) toast.error("Không có lịch hẹn nào!");
+      if (data.length === 0) console.log("Không có lịch hẹn nào!");
     } catch (error) {
       console.error("Error fetching appointments:", error);
       toast.error("Có lỗi xảy ra khi lấy lịch hẹn!");
@@ -282,7 +282,7 @@ const DoctorContextProvider = (props) => {
       if (Array.isArray(data) && data.length > 0) {
         setAppointmentStatus(data);
       } else {
-        toast.error("Không có lịch hẹn nào!");
+        toast.error("Không có lịch hẹn sắp tới nào!");
       }
     } catch (error) {
       console.log(error);
