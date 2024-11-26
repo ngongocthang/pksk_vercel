@@ -31,7 +31,7 @@ router.post("/create-appointment/:id", patientCreateAppointment);
 router.get("/profilePatient", userMiddleware, profilePatient);
 router.post("/updateProfilePatient/:id", updateProfilePatient);
 router.get("/user-appointment", userMiddleware, getCurrentUserAppointments);
-router.delete("/cancel-appointment/:id", processPrematureCancellation);
+router.put("/cancel-appointment/:id", processPrematureCancellation);
 router.get("/show-upcoming-appointments/:id", showUpcomingAppointments);
 router.get("/get-appointments-status/:id", getAppointmentByStatus);
 router.get("/get-schedule-doctor/:id", getScheduleByDoctor);
