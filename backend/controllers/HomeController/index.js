@@ -154,7 +154,7 @@ const filter = async (req, res) => {
 
 const getHistoryAppointment = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params;// id user
 
     const user = await User.findOne({ _id: id });
     if (!user) {
@@ -183,13 +183,12 @@ const getHistoryAppointment = async (req, res) => {
       for (const history of historyEntries) {
         detailedHistoryAppointments.push({
           history: {
-            id: appointment._id,
             work_shift: appointment.work_shift,
             work_date: appointment.work_date,
             status: appointment.status,
             doctor_name: nameDoctor ? nameDoctor.name : "Unknown Doctor",
-            createdAt: appointment.createdAt,
-            updatedAt: appointment.updatedAt,
+            createdAt: history.createdAt,
+            updatedAt: history.updatedAt,
           },
         });
       }
