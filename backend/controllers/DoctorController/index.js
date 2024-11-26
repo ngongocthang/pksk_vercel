@@ -196,9 +196,10 @@ const confirmAppointment = async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
 
-    if (!["confirmed", "canceled"].includes(status)) {
+    // Thêm "completed" vào danh sách trạng thái hợp lệ
+    if (!["confirmed", "canceled", "completed"].includes(status)) {
       return res.status(400).json({
-        message: "Invalid status. Status must be 'confirmed' or 'canceled'.",
+        message: "Invalid status. Status must be 'confirmed', 'canceled', or 'completed'.",
       });
     }
 
@@ -226,10 +227,14 @@ const confirmAppointment = async (req, res) => {
       updatedAppointment.work_shift === "morning" ? "Sáng" : "Chiều";
 
     // Tạo thông báo
-    const notificationContent =
-      status === "confirmed"
-        ? `Lịch hẹn ngày ${formattedVietnamTime} của bạn đã được xác nhận.`
-        : `Lịch hẹn ngày ${formattedVietnamTime} của bạn đã bị từ chối.`;
+    let notificationContent;
+    if (status === "confirmed") {
+      notificationContent = `Lịch hẹn ngày ${formattedVietnamTime} của bạn đã được xác nhận.`;
+    } else if (status === "canceled") {
+      notificationContent = `Lịch hẹn ngày ${formattedVietnamTime} của bạn đã bị hủy.`;
+    } else if (status === "completed") {
+      notificationContent = `Lịch hẹn ngày ${formattedVietnamTime} của bạn đã hoàn thành. Cảm ơn bạn đã đến!`;
+    }
 
     await Notification.create({
       content: notificationContent,
@@ -251,15 +256,19 @@ const confirmAppointment = async (req, res) => {
     }
 
     // Nội dung email
-    const emailSubject =
-      status === "confirmed"
-        ? "Phản hồi: Lịch hẹn của bạn đã được xác nhận."
-        : "Phản hồi: Lịch hẹn của bạn đã bị hủy.";
+    let emailSubject;
+    let emailText;
 
-    const emailText =
-      status === "confirmed"
-        ? `Kính gửi ${userInfo.name},\n\nLịch hẹn của bạn đã được xác nhận như sau:\n\nNgày: ${formattedVietnamTime}\nCa khám: ${shiftType}\n\nVui lòng có mặt đúng giờ để đảm bảo quá trình khám diễn ra thuận lợi.\n\nNếu cần hỗ trợ, vui lòng liên hệ chúng tôi qua email hoặc số điện thoại.\n\nTrân trọng!\n[Đội ngũ hỗ trợ khách hàng].`
-        : `Kính gửi ${userInfo.name},\n\nLịch hẹn của bạn vào ngày ${formattedVietnamTime} - Ca khám: ${shiftType} đã bị hủy.\n\nNếu có bất kỳ thắc mắc nào, vui lòng liên hệ chúng tôi qua email hoặc số điện thoại.\n\nTrân trọng!\n[Đội ngũ hỗ trợ khách hàng].`;
+    if (status === "confirmed") {
+      emailSubject = "Phản hồi: Lịch hẹn của bạn đã được xác nhận.";
+      emailText = `Kính gửi ${userInfo.name},\n\nLịch hẹn của bạn đã được xác nhận như sau:\n\nNgày: ${formattedVietnamTime}\nCa khám: ${shiftType}\n\nVui lòng có mặt đúng giờ để đảm bảo quá trình khám diễn ra thuận lợi.\n\nNếu cần hỗ trợ, vui lòng liên hệ chúng tôi qua email hoặc số điện thoại.\n\nTrân trọng!\n[Đội ngũ hỗ trợ khách hàng].`;
+    } else if (status === "canceled") {
+      emailSubject = "Phản hồi: Lịch hẹn của bạn đã bị hủy.";
+      emailText = `Kính gửi ${userInfo.name},\n\nLịch hẹn của bạn vào ngày ${formattedVietnamTime} - Ca khám: ${shiftType} đã bị hủy.\n\nNếu có bất kỳ thắc mắc nào, vui lòng liên hệ chúng tôi qua email hoặc số điện thoại.\n\nTrân trọng!\n[Đội ngũ hỗ trợ khách hàng].`;
+    } else if (status === "completed") {
+      emailSubject = "Phản hồi: Lịch hẹn của bạn đã hoàn thành.";
+      emailText = `Kính gửi ${userInfo.name},\n\nLịch hẹn của bạn vào ngày ${formattedVietnamTime} - Ca khám: ${shiftType} đã hoàn thành. Cảm ơn bạn đã đến!\n\nNếu cần hỗ trợ, vui lòng liên hệ chúng tôi qua email hoặc số điện thoại.\n\nTrân trọng!\n[Đội ngũ hỗ trợ khách hàng].`;
+    }
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
@@ -280,7 +289,6 @@ const confirmAppointment = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-
 
 const getDoctorAppointments = async (req, res) => {
   try {
