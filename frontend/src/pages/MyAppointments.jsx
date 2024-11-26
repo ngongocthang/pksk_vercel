@@ -97,8 +97,12 @@ const MyAppointments = () => {
 
     if (!toast.isActive(toastId.current)) {
       toastId.current = toast.warn(
-        <div className="p-4">
-          <p className="text-lg font-semibold text-center mb-3">
+        <div className="flex flex-col items-center justify-center">
+          <div className="flex items-center mb-2">
+            <i className="fas fa-info-circle text-blue-500 text-2xl mr-2"></i>
+            <p className="font-bold text-lg">Thông báo</p>
+          </div>
+          <p>
             Bạn có chắc chắn muốn hủy cuộc hẹn ngày {appointmentDate} vào {appointmentShift} này không?
           </p>
           <div className="flex justify-center gap-4">
@@ -107,14 +111,12 @@ const MyAppointments = () => {
                 toast.dismiss(toastId.current);
                 confirmDelete();
               }}
-              className="bg-red-600 text-white px-4 py-2 rounded transition duration-300 hover:bg-red-700"
-            >
+              className="bg-red-600 text-white px-4 py-2 rounded transition duration-300 hover:bg-red-700">
               Có
             </button>
             <button
               onClick={() => toast.dismiss(toastId.current)}
-              className="bg-gray-300 text-black px-4 py-2 rounded transition duration-300 hover:bg-gray-400"
-            >
+              className="bg-gray-300 text-black px-4 py-2 rounded transition duration-300 hover:bg-gray-400">
               Không
             </button>
           </div>

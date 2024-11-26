@@ -99,19 +99,19 @@ const Appointment = () => {
           Bạn có chắc chắn muốn đặt lịch hẹn vào {formattedDate} lúc{" "}
           {slotTime} không?
         </p>
-        <div className="flex mt-2">
+        <div className="flex justify-center gap-4">
           <button
             onClick={() => {
               confirmBooking();
               toast.dismiss();
             }}
-            className="bg-[#00759c] text-white px-4 py-2 rounded mr-2"
+            className="bg-red-600 text-white px-4 py-2 rounded transition duration-300 hover:bg-red-700"
           >
             Có
           </button>
           <button
             onClick={() => toast.dismiss()}
-            className="bg-red-500 text-white px-4 py-2 rounded"
+            className="bg-gray-300 text-black px-4 py-2 rounded transition duration-300 hover:bg-gray-400"
           >
             Không
           </button>
