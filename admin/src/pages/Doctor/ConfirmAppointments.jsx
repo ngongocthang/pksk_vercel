@@ -63,12 +63,19 @@ const ConfirmAppointments = () => {
 
     return (
         <div className="w-full max-w-6xl m-5 shadow-lg">
-            <div className="flex justify-between items-center mb-3 space-x-4">
+            <div className="flex justify-between items-center mb-3">
                 <p className="text-lg font-medium text-gray-700">Xác nhận khám bệnh</p>
+                <div className="space-x-4">
+                    <input
+                        type="text"
+                        placeholder="Tìm kiếm bệnh nhân..."
+                        className="p-2 rounded-lg border-2 border-[#0091a1] bg-blue-50 shadow-md text-sm font-semibold text-gray-800"
+                    />
 
-                <span className="p-2 rounded-lg border-2 border-[#0091a1] bg-blue-50 shadow-md text-sm font-semibold text-gray-800">
-                    {new Date().toLocaleDateString()}
-                </span>
+                    <span className="p-2 rounded-lg border-2 border-[#0091a1] bg-blue-50 shadow-md text-sm font-semibold text-gray-800">
+                        {new Date().toLocaleDateString()}
+                    </span>
+                </div>
             </div>
 
             <div className="bg-white border rounded text-sm max-h-[80vh] min-h-[50vh] overflow-y-scroll">

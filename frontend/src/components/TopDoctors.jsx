@@ -62,9 +62,6 @@ const TopDoctors = () => {
                         key={index}>
                         <div className='relative'>
                             <img className='bg-blue-50' src={item.user_id.image} alt={item.user_id.name} />
-                            <span className='absolute top-2 left-2 bg-indigo-100 text-indigo-800 text-xs font-semibold px-2 py-1 rounded-full'>
-                                {item.specialization_id ? item.specialization_id.name : "Chưa có chuyên khoa"}
-                            </span>
                         </div>
                         <div className='p-4'>
                             <div className='flex items-center gap-2 text-sm text-center text-[#00759c]'>
