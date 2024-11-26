@@ -38,15 +38,6 @@ const DoctorAppointments = () => {
     <div className='w-full max-w-6xl m-5 shadow-lg'>
       <div className="flex justify-between items-center mb-3">
         <p className='mb-4 text-lg font-medium'>Tất cả lịch hẹn</p>
-        <button
-          onClick={() => navigate("/confirm-appointments")}
-          className="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-[#4CAF50] to-[#219B9D] text-white rounded-full shadow-md hover:from-[#45A049] hover:to-[#009688] transform hover:scale-110 transition-all duration-300"
-        >
-          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-            {/* Dấu tích SVG */}
-            <path d="M16.293 5.293a1 1 0 011.414 1.414L9 14.414 5.293 10.707a1 1 0 111.414-1.414L9 11.586l7.293-7.293z" />
-          </svg>
-        </button>
       </div>
 
       <div className='bg-white border rounded text-sm max-h-[80vh] min-h-[50vh] overflow-y-scroll'>
