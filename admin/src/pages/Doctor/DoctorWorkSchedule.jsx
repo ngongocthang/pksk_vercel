@@ -2,11 +2,11 @@ import React, { useContext, useEffect, useState } from "react";
 import { DoctorContext } from "../../context/DoctorContext";
 import { useNavigate } from "react-router-dom";
 
-const DoctorAppointments = () => {
+const DoctorWorkSchedule = () => {
   const { dToken, schedules, getDoctorSchedule, deleteSchedule } = useContext(DoctorContext);
   const [showModal, setShowModal] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1); 
+  const [currentPage, setCurrentPage] = useState(1);
   const [schedulesPerPage] = useState(10);
   const navigate = useNavigate();
 
@@ -31,13 +31,13 @@ const DoctorAppointments = () => {
 
   const handleConfirmDelete = async () => {
     if (selectedSchedule) {
-      await deleteSchedule(selectedSchedule._id);  
-  
+      await deleteSchedule(selectedSchedule._id);
+
       const updatedSchedules = schedules.filter(schedule => schedule._id !== selectedSchedule._id);
-  
+
       // Đợi 0 giây trước khi đóng modal
       setTimeout(() => {
-        setShowModal(false);  
+        setShowModal(false);
         setSelectedSchedule(null);
         if (updatedSchedules.length <= 10) {
           setCurrentPage(1);
@@ -46,7 +46,7 @@ const DoctorAppointments = () => {
       }, 0); // Thời gian chờ 0 giây
     }
   };
-  
+
 
   useEffect(() => {
     setShowModal(false);
@@ -99,7 +99,10 @@ const DoctorAppointments = () => {
                   <td className="py-3 px-4 text-center font-medium text-[16px]">
                     {index + 1 + (currentPage - 1) * schedulesPerPage}
                   </td>
-                  <td className="py-3 px-4 text-center font-medium text-[16px]">
+                  <td
+                    className="py-3 px-4 text-center font-medium text-[16px] cursor-pointer"
+                    onClick={() => navigate(`/confirm-appointments?date=${schedule.work_date}`)}
+                  >
                     {formatDate(schedule.work_date)}
                   </td>
                   <td className="py-3 px-4 text-center w-[170px]">
@@ -200,4 +203,4 @@ const DoctorAppointments = () => {
   );
 };
 
-export default DoctorAppointments;
+export default DoctorWorkSchedule;
