@@ -1,12 +1,11 @@
+// Notifications.js
 import React, { useState, useEffect, useContext } from "react";
 import { AppContext } from "../context/AppContext";
 import { useNavigate } from "react-router-dom";
 
-// Function to calculate time elapsed
 const timeAgo = (date) => {
   const now = new Date();
   const diffInSeconds = Math.floor((now - new Date(date)) / 1000);
-
   const seconds = diffInSeconds;
   const minutes = Math.floor(diffInSeconds / 60);
   const hours = Math.floor(diffInSeconds / 3600);
@@ -22,16 +21,15 @@ const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
   const [showAll, setShowAll] = useState(false);
   const [loading, setLoading] = useState(true);
-  const { user, setUser } = useContext(AppContext);
+  const { user, setUser, notificationsCount, setNotificationsCount } = useContext(AppContext);
   const navigate = useNavigate();
 
   const token = user?.token || localStorage.getItem("token");
 
   useEffect(() => {
-    // Load user data from localStorage if not already in AppContext
     if (!user && token) {
       const storedUser = JSON.parse(localStorage.getItem("user"));
-      if (storedUser) setUser(storedUser); // Update AppContext
+      if (storedUser) setUser(storedUser);
     }
 
     if (!token) {
@@ -56,6 +54,31 @@ const Notifications = () => {
     }
   }, [token, navigate, setUser, user]);
 
+  const handleNotificationClick = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:5000/notification/read/${id}`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) throw new Error("Failed to mark notification as read");
+
+      // Cập nhật trạng thái của thông báo đã đọc trong state
+      const updatedNotifications = notifications.map((notification) =>
+        notification._id === id ? { ...notification, isRead: true } : notification
+      );
+      setNotifications(updatedNotifications);
+
+      // Cập nhật lại số lượng thông báo chưa đọc
+      const unreadCount = updatedNotifications.filter((notification) => !notification.isRead).length;
+      setNotificationsCount(unreadCount);  // Cập nhật trong context
+
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+    }
+  };
+
   const sortedNotifications = notifications.sort(
     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
   );
@@ -76,9 +99,9 @@ const Notifications = () => {
         displayedNotifications.map((notification) => (
           <div
             key={notification._id}
-            className={`flex items-start border-b border-gray-300 py-2 ${
-              !notification.read ? "bg-transparent" : ""
-            }`}
+            className={`flex items-start border-b border-gray-300 py-2 ${!notification.isRead ? "bg-gray-100" : ""
+              }`}
+            onClick={() => handleNotificationClick(notification._id)}
           >
             <div className="flex-1">
               <p className="font-medium">{notification.content}</p>

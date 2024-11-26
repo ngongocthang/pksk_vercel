@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { DoctorContext } from "../context/DoctorContext";
 import "../index.css";
 import { BellIcon } from "@heroicons/react/24/outline";
+import { formatDistanceToNow } from 'date-fns'; // Sử dụng date-fns để hiển thị thời gian
+import { vi } from 'date-fns/locale'; // Import tiếng Việt từ date-fns
 
 const Navbar = () => {
   const { aToken, setAToken } = useContext(AdminContext);
@@ -15,11 +17,11 @@ const Navbar = () => {
   // Trạng thái modal (hiển thị thông báo)
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showAllNotifications, setShowAllNotifications] = useState(false);
-  const [notifications, setNotifications] = useState([]); // Trạng thái để lưu thông báo
+  const [notifications, setNotifications] = useState([]);
 
   // Hàm đăng xuất
   const logout = () => {
-    navigate("/");
+    navigate("/"); // Điều hướng về trang chủ
     aToken && setAToken("");
     aToken && localStorage.removeItem("aToken");
     dToken && setDToken("");
@@ -44,10 +46,28 @@ const Navbar = () => {
       const response = await axios.get(
         `http://localhost:5000/notification/get-notification-doctor/${doctorId}`
       );
-      setNotifications(response.data); // Cập nhật dữ liệu từ API
+      setNotifications(response.data);
       console.log(response.data);
     } catch (error) {
       console.error("Lỗi khi lấy thông báo:", error);
+    }
+  };
+
+  // Cập nhật trạng thái thông báo là đã đọc
+  const markAsRead = async (notificationId) => {
+    try {
+      // Cập nhật thông báo là đã đọc
+      await axios.put(`http://localhost:5000/notification/read/${notificationId}`);
+
+      // Cập nhật trạng thái trong state
+      const updatedNotifications = notifications.map((notification) =>
+        notification._id === notificationId
+          ? { ...notification, isRead: true }
+          : notification
+      );
+      setNotifications(updatedNotifications);
+    } catch (error) {
+      console.error("Lỗi khi cập nhật thông báo:", error);
     }
   };
 
@@ -55,53 +75,58 @@ const Navbar = () => {
     fetchNotifications();
   }, []);
 
-  // Nhóm thông báo theo ngày
-  const groupedNotifications = notifications.reduce((acc, notification) => {
-    const date = notification.work_date; // Lấy ngày từ thông báo
-    if (!acc[date]) {
-      acc[date] = [];
-    }
-    acc[date].push(notification);
-    return acc;
-  }, {});
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (dToken) {
+        fetchNotifications();
+      }
+    }, 0); 
+
+    return () => clearInterval(interval);
+  }, [dToken]); 
+
+  // Nhóm thông báo theo ngày và sắp xếp từ mới nhất đến cũ nhất
+  const groupedNotifications = notifications
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // Sắp xếp theo thời gian từ mới nhất đến cũ nhất
+    .reduce((acc, notification) => {
+      const time = notification.createdAt;
+      if (!acc[time]) {
+        acc[time] = [];
+      }
+      acc[time].push(notification);
+      return acc;
+    }, {});
 
   // Tính số lượng thông báo chưa đọc
   const unreadNotifications = notifications.filter(
-    (notification) => !notification.isRead // Sửa từ notification.read thành notification.isRead
+    (notification) => !notification.isRead
   ).length;
 
-  // Hàm chuyển đổi định dạng ngày
-  const formatDate = (dateStr) => {
+  // Hàm chuyển đổi thời gian (sử dụng date-fns để tính toán thời gian từ hiện tại)
+  const formatTime = (dateStr) => {
     const date = new Date(dateStr);
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
+    return formatDistanceToNow(date, { addSuffix: true, locale: vi }); // Cấu hình ngôn ngữ tiếng Việt
   };
 
   useEffect(() => {
     if (isModalOpen) {
-      document.body.style.pointerEvents = "none"; // Vô hiệu hóa tương tác với background
-      document.body.style.overflow = "hidden"; // Vô hiệu hóa cuộn trang
+      document.body.style.pointerEvents = "none";
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.pointerEvents = "auto"; // Kích hoạt lại tương tác với background
-      document.body.style.overflow = "auto"; // Kích hoạt lại cuộn trang
+      document.body.style.pointerEvents = "auto";
+      document.body.style.overflow = "auto";
     }
 
     return () => {
-      document.body.style.pointerEvents = "auto"; // Dọn dẹp khi component bị unmount
-      document.body.style.overflow = "auto"; // Dọn dẹp khi component bị unmount
+      document.body.style.pointerEvents = "auto";
+      document.body.style.overflow = "auto";
     };
   }, [isModalOpen]);
 
   return (
     <div className="flex justify-between items-center px-4 sm:px-10 py-3 border-b bg-white">
       <a
-        href={
-          aToken
-            ? "http://localhost:5174/admin-dashboard"
-            : "http://localhost:5174/doctor-dashboard"
-        }
+        href={aToken ? "http://localhost:5174/admin-dashboard" : "http://localhost:5174/doctor-dashboard"}
       >
         <div className="flex items-center gap-2 text-xs">
           <img
@@ -116,19 +141,21 @@ const Navbar = () => {
       </a>
 
       <div className="flex items-center gap-4">
-        {/* Icon thông báo */}
-        <div className="relative">
-          <BellIcon
-            className="w-6 h-6 text-gray-600 cursor-pointer"
-            onClick={toggleModal}
-          />
-          {/* Hiển thị số lượng thông báo chưa đọc */}
-          {unreadNotifications > 0 && (
-            <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-              {unreadNotifications}
-            </span>
-          )}
-        </div>
+        {/* Icon thông báo chỉ hiển thị với bác sĩ */}
+        {!aToken && (
+          <div className="relative">
+            <BellIcon
+              className="w-6 h-6 text-gray-600 cursor-pointer"
+              onClick={toggleModal}
+            />
+            {/* Hiển thị số lượng thông báo chưa đọc */}
+            {unreadNotifications > 0 && (
+              <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                {unreadNotifications}
+              </span>
+            )}
+          </div>
+        )}
 
         {/* Nút Đăng xuất */}
         <button
@@ -140,7 +167,7 @@ const Navbar = () => {
       </div>
 
       {/* Modal thông báo */}
-      {isModalOpen && (
+      {isModalOpen && !aToken && (
         <div className="fixed inset-0 flex justify-center items-center z-50 bg-gray-500 bg-opacity-50">
           <div className="bg-white p-8 rounded-lg w-3/4 max-w-5xl modal-content">
             <div className="flex justify-between items-center">
@@ -152,21 +179,21 @@ const Navbar = () => {
             <div className="mt-6">
               {Object.keys(groupedNotifications).length > 0 ? (
                 <div className="h-80 overflow-y-auto">
-                  {Object.keys(groupedNotifications).map((date) => (
-                    <div key={date}>
+                  {Object.keys(groupedNotifications).map((time) => (
+                    <div key={time}>
                       <h4 className="font-semibold text-gray-600 mt-4">
-                        {formatDate(date)}
+                        {/* Hiển thị thời gian thay vì ngày */}
+                        {formatTime(time)}
                       </h4>
                       <ul className="space-y-4">
-                        {groupedNotifications[date].map((notification) => (
+                        {groupedNotifications[time].map((notification) => (
                           <li
-                            key={notification._id} // Sử dụng _id thay vì id
-                            className="py-3 px-4 border-b border-gray-200 flex items-start gap-2"
+                            key={notification._id}
+                            className={`py-3 px-4 border-b border-black-200 flex items-start gap-2 cursor-pointer ${!notification.isRead ? "bg-blue-100" : ""}`}
+                            onClick={() => markAsRead(notification._id)}
                           >
                             <BellIcon className="w-5 h-5 text-black" />
-                            <p className="text-lg text-gray-800">
-                              {notification.content} {/* Sử dụng content thay vì message */}
-                            </p>
+                            <p className="text-lg text-gray-800">{notification.content}</p>
                           </li>
                         ))}
                       </ul>

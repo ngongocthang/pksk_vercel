@@ -204,53 +204,55 @@ const Dashboard = () => {
             <img src={assets.list_icon} alt="icon" />
             <p className="font-semibold text-gray-800">Lịch hẹn sắp tới</p>
           </div>
-          <table className="w-full bg-white rounded-lg overflow-hidden shadow-md">
-            <thead className="bg-gray-100 border-b">
-              <tr>
-                <th className="py-3 px-4 text-left text-gray-700 font-semibold text-center">Bệnh nhân</th>
-                <th className="py-3 px-4 text-left text-gray-700 font-semibold">Bác sĩ</th>
-                <th className="py-3 px-4 text-left text-gray-700 font-semibold">Ca làm việc</th>
-                <th className="py-3 px-4 text-left text-gray-700 font-semibold">Trạng thái</th>
-              </tr>
-            </thead>
-            <tbody>
-              {dashUpApData &&
-                dashUpApData.map((item, index) => (
-                  <tr
-                    key={index}
-                    className={`hover:bg-gray-50 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"}`}
-                  >
-                    <td className="py-4 px-4">
-                      <div className="text-sm text-center">
-                        <p className="font-medium text-gray-800">{item.patient_id.user_id.name}</p>
-                        <p className="text-gray-500 text-xs">
-                        Ngày khám: {new Date(item.work_date).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </td>
-                    <td className="py-4 px-4">
-                      <p className="font-medium text-gray-800 text-sm">{item.doctor_id.user_id.name}</p>
-                    </td>
-                    <td className="py-4 px-4">
-                      <span
-                        className={`py-1 px-4 rounded-full text-sm font-medium text-white shadow-md ${item.work_shift === "afternoon" ? "bg-orange-400" : "bg-blue-400"
-                          }`}
-                      >
-                        {item.work_shift === "afternoon" ? "Chiều" : "Sáng"}
-                      </span>
-                    </td>
-                    <td className="py-4 px-4">
-                      <span
-                        className={`py-1 px-4 rounded-full text-sm font-medium text-white shadow-md ${item.status === "confirmed" ? "bg-green-500" : "bg-red-500"
-                          }`}
-                      >
-                        {item.status === "confirmed" ? "Đã xác nhận" : "Chưa xác nhận"}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
+          <div className="overflow-x-auto">
+            <table className="w-full bg-white rounded-lg overflow-hidden shadow-md">
+              <thead className="bg-gray-100 border-b">
+                <tr>
+                  <th className="py-3 px-4 text-left text-gray-700 font-semibold text-center">Bệnh nhân</th>
+                  <th className="py-3 px-4 text-left text-gray-700 font-semibold">Bác sĩ</th>
+                  <th className="py-3 px-4 text-left text-gray-700 font-semibold">Ca làm việc</th>
+                  <th className="py-3 px-4 text-left text-gray-700 font-semibold">Trạng thái</th>
+                </tr>
+              </thead>
+              <tbody>
+                {dashUpApData &&
+                  dashUpApData.map((item, index) => (
+                    <tr
+                      key={index}
+                      className={`hover:bg-gray-50 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"}`}
+                    >
+                      <td className="py-4 px-4">
+                        <div className="text-sm text-center">
+                          <p className="font-medium text-gray-800">{item.patient_id.user_id.name}</p>
+                          <p className="text-gray-500 text-xs">
+                            Ngày khám: {new Date(item.work_date).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </td>
+                      <td className="py-4 px-4">
+                        <p className="font-medium text-gray-800 text-sm">{item.doctor_id.user_id.name}</p>
+                      </td>
+                      <td className="py-4 px-4">
+                        <span
+                          className={`py-1 px-4 rounded-full text-sm font-medium text-white shadow-md ${item.work_shift === "afternoon" ? "bg-orange-400" : "bg-blue-400"
+                            }`}
+                        >
+                          {item.work_shift === "afternoon" ? "Chiều" : "Sáng"}
+                        </span>
+                      </td>
+                      <td className="py-4 px-4">
+                        <span
+                          className={`py-1 px-4 rounded-full text-sm font-medium text-white shadow-md ${item.status === "confirmed" ? "bg-green-500" : "bg-red-500"
+                            }`}
+                        >
+                          {item.status === "confirmed" ? "Đã xác nhận" : "Chưa xác nhận"}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
