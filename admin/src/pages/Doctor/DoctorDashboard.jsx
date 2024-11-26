@@ -249,7 +249,7 @@ const DoctorDashboard = () => {
             <p className="font-semibold">Lịch hẹn sắp tới</p>
           </div>
 
-          <div className="pt-4">
+          <div className="pt-4 shadow-lg">
             <table className="w-full text-sm bg-white shadow-md rounded-lg overflow-hidden">
               {/* Table Header */}
               <thead className="bg-gray-100">
@@ -260,35 +260,38 @@ const DoctorDashboard = () => {
                   <th className="py-3 px-5 text-center text-gray-700 font-semibold">Trạng thái</th>
                 </tr>
               </thead>
-
-              {/* Table Body */}
-              <tbody>
-                {appointments.map((item) => (
-                  <tr key={item._id} className="hover:bg-gray-50 transition-all duration-200">
-                    <td className="py-4 px-5 text-left font-medium text-gray-800">{item.patient_name}</td>
-                    <td className="py-4 px-5 text-center text-gray-600">{new Date(item.work_date).toLocaleDateString()}</td>
-                    <td className="py-4 px-5 text-center">
-                      <p
-                        className={`py-1 px-4 rounded-full text-white text-base font-semibold ${item.work_shift === "afternoon" ? "bg-orange-400" : "bg-blue-400"} shadow-md`}
-                      >
-                        {item.work_shift === "morning" ? "Sáng" : "Chiều"}
-                      </p>
-                    </td>
-                    <td className="py-4 px-5 text-center">
-                      {item.status === "canceled" ? (
-                        <button className="bg-red-500 text-white font-semibold py-1 px-4 rounded-full shadow-lg w-[120px] h-[32px]">
-                          Đã từ chối
-                        </button>
-                      ) : (
-                        <button className="bg-green-500 text-white font-semibold py-1 px-4 rounded-full shadow-lg w-[120px] h-[32px]">
-                          Đã xác nhận
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
             </table>
+            <div className="max-h-65 overflow-y-auto">
+              {/* Table Body */}
+              <table className="w-full text-sm bg-white">
+                <tbody>
+                  {appointments.slice(0, 5).map((item) => (
+                    <tr key={item._id} className="hover:bg-gray-50 transition-all duration-200">
+                      <td className="py-4 px-5 text-left font-medium text-gray-800">{item.patient_name}</td>
+                      <td className="py-4 px-5 text-center text-gray-600">{new Date(item.work_date).toLocaleDateString()}</td>
+                      <td className="py-4 px-5 text-center">
+                        <p
+                          className={`py-1 px-4 rounded-full text-white text-base font-semibold ${item.work_shift === "afternoon" ? "bg-orange-400" : "bg-blue-400"} shadow-md`}
+                        >
+                          {item.work_shift === "morning" ? "Sáng" : "Chiều"}
+                        </p>
+                      </td>
+                      <td className="py-4 px-5 text-center">
+                        {item.status === "canceled" ? (
+                          <button className="bg-red-500 text-white font-semibold py-1 px-4 rounded-full shadow-lg w-[120px] h-[32px]">
+                            Đã từ chối
+                          </button>
+                        ) : (
+                          <button className="bg-green-500 text-white font-semibold py-1 px-4 rounded-full shadow-lg w-[120px] h-[32px]">
+                            Đã xác nhận
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
 
@@ -299,46 +302,52 @@ const DoctorDashboard = () => {
             <p className="font-semibold">Lịch hẹn đã xác nhận & hoàn thành</p>
           </div>
 
-          <div className="pt-4">
-            <table className="w-full text-sm bg-white shadow-lg rounded-lg overflow-hidden">
+          <div className="pt-4 shadow-lg">
+            <table className="w-full text-sm bg-white shadow-md rounded-lg overflow-hidden">
               {/* Table Header */}
-              <thead className="bg-gray-100 text-gray-800">
+              <thead className="bg-gray-100">
                 <tr>
-                  <th className="py-3 px-5 text-left font-semibold">Bệnh nhân</th>
-                  <th className="py-3 px-5 text-center font-semibold">Ngày khám</th>
-                  <th className="py-3 px-5 text-center font-semibold">Ca khám</th>
-                  <th className="py-3 px-5 text-center font-semibold">Trạng thái</th>
+                  <th className="py-3 px-5 text-left text-gray-700 font-semibold">Bệnh nhân</th>
+                  <th className="py-3 px-5 text-center text-gray-700 font-semibold">Ngày khám</th>
+                  <th className="py-3 px-5 text-center text-gray-700 font-semibold">Ca khám</th>
+                  <th className="py-3 px-5 text-center text-gray-700 font-semibold">Trạng thái</th>
                 </tr>
               </thead>
-
-              {/* Table Body */}
-              <tbody>
-                {appointmentStatus.map((item) => (
-                  <tr key={item._id} className="hover:bg-gray-50 transition-all duration-200">
-                    <td className="py-4 px-5 text-left text-gray-800 font-medium">{item.patient_name}</td>
-                    <td className="py-4 px-5 text-center text-gray-600">{new Date(item.work_date).toLocaleDateString()}</td>
-                    <td className="py-4 px-5 text-center">
-                      <p
-                        className={`py-1 px-4 rounded-full text-white text-base font-semibold ${item.work_shift === "afternoon" ? "bg-orange-400" : "bg-blue-400"} shadow-md`}
-                      >
-                        {item.work_shift === "morning" ? "Sáng" : "Chiều"}
-                      </p>
-                    </td>
-                    <td className="py-4 px-5 text-center">
-                      {item.status === "canceled" ? (
-                        <button className="bg-red-500 text-white font-semibold py-1 px-4 rounded-full shadow-lg w-[130px] h-[32px]">
-                          Đã từ chối
-                        </button>
-                      ) : (
-                        <button className="bg-green-500 text-white font-semibold py-1 px-4 rounded-full shadow-lg w-[130px] h-[32px]">
-                          Đã xác nhận
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
             </table>
+            <div className="max-h-65 overflow-y-auto">
+              {/* Table Body */}
+              <table className="w-full text-sm bg-white">
+                <tbody>
+                  {appointmentStatus.slice(0, 5).map((item) => (
+                    <tr key={item._id} className="hover:bg-gray-50 transition-all duration-200">
+                      <td className="py-4 px-5 text-left font-medium text-gray-800">{item.patient_name}</td>
+                      <td className="py-4 px-5 text-center text-gray-600">
+                        {new Date(item.work_date).toLocaleDateString()}
+                      </td>
+                      <td className="py-4 px-5 text-center">
+                        <p
+                          className={`py-1 px-4 rounded-full text-white text-base font-semibold ${item.work_shift === "afternoon" ? "bg-orange-400" : "bg-blue-400"
+                            } shadow-md`}
+                        >
+                          {item.work_shift === "morning" ? "Sáng" : "Chiều"}
+                        </p>
+                      </td>
+                      <td className="py-4 px-5 text-center">
+                        {item.status === "canceled" ? (
+                          <button className="bg-red-500 text-white font-semibold py-1 px-4 rounded-full shadow-lg w-[120px] h-[32px]">
+                            Đã từ chối
+                          </button>
+                        ) : (
+                          <button className="bg-green-500 text-white font-semibold py-1 px-4 rounded-full shadow-lg w-[120px] h-[32px]">
+                            Đã xác nhận
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
