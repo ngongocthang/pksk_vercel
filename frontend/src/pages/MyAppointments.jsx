@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { AppContext } from "../context/AppContext";
 
 const MyAppointments = () => {
@@ -12,48 +12,48 @@ const MyAppointments = () => {
   const navigate = useNavigate();
   const toastId = React.useRef(null);
 
-  useEffect(() => {
-    const fetchAppointments = async () => {
-      const token = localStorage.getItem("token");
+  const fetchAppointments = async () => {
+    const token = localStorage.getItem("token");
 
-      if (token) {
-        setUser({ token });
-        const userData = JSON.parse(localStorage.getItem("user"));
-        if (userData) {
-          setUser(userData);
+    if (token) {
+      setUser({ token });
+      const userData = JSON.parse(localStorage.getItem("user"));
+      if (userData) {
+        setUser(userData);
+      }
+    } else {
+      setError("User not authenticated. Please log in.");
+      navigate("/account");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:5000/user-appointment", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          setError("User not authenticated. Please log in.");
+          navigate("/account");
+        } else {
+          throw new Error("Failed to fetch appointments");
         }
       } else {
-        setError("User not authenticated. Please log in.");
-        navigate("/account");
-        setLoading(false);
-        return;
+        const data = await response.json();
+        setAppointments(data);
       }
+    } catch (error) {
+      console.error("Error fetching appointments:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      try {
-        const response = await fetch("http://localhost:5000/user-appointment", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          if (response.status === 401) {
-            setError("User not authenticated. Please log in.");
-            navigate("/account");
-          } else {
-            throw new Error("Failed to fetch appointments");
-          }
-        } else {
-          const data = await response.json();
-          setAppointments(data);
-        }
-      } catch (error) {
-        console.error("Error fetching appointments:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
+  useEffect(() => {
     fetchAppointments();
   }, [setUser, navigate, user?.token]);
 
@@ -70,7 +70,7 @@ const MyAppointments = () => {
       const cancelAppointment = async () => {
         try {
           const response = await fetch(`http://localhost:5000/cancel-appointment/${appointmentId}`, {
-            method: "DELETE",
+            method: "PUT",
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -80,7 +80,8 @@ const MyAppointments = () => {
             throw new Error("Failed to cancel appointment");
           }
 
-          setAppointments((prev) => prev.filter((appointment) => appointment._id !== appointmentId));
+          // Fetch updated list of appointments
+          await fetchAppointments();
           toast.success("Cuộc hẹn đã được hủy thành công!");
         } catch (error) {
           console.error("Error canceling appointment:", error);
@@ -139,7 +140,7 @@ const MyAppointments = () => {
         {loading ? (
           <p className="text-center text-gray-500 mt-5">Đang tải dữ liệu...</p>
         ) : appointments.length === 0 ? (
-          <p className=" text-center text-gray-500 mt-5">Hiện tại bạn không có lịch hẹn.</p>
+          <p className="text-center text-gray-500 mt-5">Hiện tại bạn không có lịch hẹn.</p>
         ) : (
           appointments.map((appointment) => (
             <div
@@ -147,7 +148,11 @@ const MyAppointments = () => {
               key={appointment._id}
             >
               <div>
-                <img className="w-32 bg-indigo-50" src={appointment.doctor_id.user_id.image} alt="Doctor" />
+                <img
+                  className="w-32 bg-indigo-50"
+                  src={appointment.doctor_id.user_id.image}
+                  alt="Doctor"
+                />
               </div>
               <div className="flex-1 text-sm text-zinc-600">
                 <p className="text-lg text-neutral-800 font-semibold">
@@ -157,34 +162,29 @@ const MyAppointments = () => {
                   Bác sĩ: {appointment.doctor_id.user_id.name}
                 </p>
                 <p className="text-xs mt-1">
-                  <span className="text-sm text-neutral-700 font-medium">
-                    Ngày khám:
-                  </span>{" "}
+                  <span className="text-sm text-neutral-700 font-medium">Ngày khám:</span>{" "}
                   {new Date(appointment.work_date).toLocaleDateString("vi-VN")}
                 </p>
                 <p className="text-xs mt-1">
-                  <span className="text-sm text-neutral-700 font-medium">
-                    Ca khám:
-                  </span>{" "}
-                  {appointment.work_shift === "morning"
-                    ? "Buổi sáng"
-                    : "Buổi chiều"}
+                  <span className="text-sm text-neutral-700 font-medium">Ca khám:</span>{" "}
+                  {appointment.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều"}
                 </p>
                 <p className="text-xs mt-1">
                   <span className="text-sm text-neutral-700 font-medium">Trạng thái:</span>{" "}
                   <span
-                    className={`${appointment.status === "pending"
-                      ? "text-blue-500"
-                      : appointment.status === "confirmed"
+                    className={`${
+                      appointment.status === "pending"
+                        ? "text-blue-500"
+                        : appointment.status === "confirmed"
                         ? "text-green-500"
                         : "text-red-500"
-                      }`}
+                    }`}
                   >
                     {appointment.status === "pending"
                       ? "Đang chờ"
                       : appointment.status === "confirmed"
-                        ? "Đã xác nhận"
-                        : "Từ chối"}
+                      ? "Đã xác nhận"
+                      : "Đã hủy"}
                   </span>
                 </p>
               </div>
@@ -192,18 +192,23 @@ const MyAppointments = () => {
                 <button className="text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded hover:bg-primary hover:text-white transition-all duration-300">
                   Thanh toán trực tuyến
                 </button>
-                <button
-                  className="text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded hover:bg-red-600 hover:text-white transition-all duration-300"
-                  onClick={() => handleCancelAppointment(appointment._id)}
-                >
-                  Hủy cuộc hẹn
-                </button>
+                {appointment.status !== "canceled" && (
+                  <button
+                    className="text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded hover:bg-red-600 hover:text-white transition-all duration-300"
+                    onClick={() => handleCancelAppointment(appointment._id)}
+                  >
+                    Hủy cuộc hẹn
+                  </button>
+                )}
               </div>
             </div>
           ))
         )}
         {error && (
-          <div className="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert">
+          <div
+            className="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg"
+            role="alert"
+          >
             <span className="font-medium">Lỗi:</span> {error}
           </div>
         )}

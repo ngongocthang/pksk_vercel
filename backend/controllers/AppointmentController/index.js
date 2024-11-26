@@ -20,9 +20,6 @@ const createAppointment = async (req, res) => {
     }
 
     const appointment = await Appointment.create(req.body);
-    await Appointment_history.create({
-      appointment_id: appointment._id,
-    });
     if (appointment) {
       return res.status(200).json(appointment);
     }
@@ -100,14 +97,6 @@ const updateAppointment = async (req, res) => {
       return res.status(400).json({ message: "Appointment not found" });
     }
 
-    await Appointment_history.findOneAndUpdate(
-      { appointment_id: appointment._id },
-      {
-        appointment_id: appointment._id,
-      },
-      { new: true }
-    );
-
     await Notification.create({
       patient_id: appointment.patient_id,
       doctor_id: appointment.doctor_id,
@@ -174,9 +163,6 @@ const deleteAppointment = async (req, res) => {
       return res.status(400).json({ message: "Appointment not found" });
     }
     await Appointment.findByIdAndDelete(id);
-    await Appointment_history.findOneAndDelete({
-      appointment_id: appointment._id,
-    });
     return res.status(200).json({ message: "Delete appointment success!" });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -208,10 +194,23 @@ const patientCreateAppointment = async (req, res) => {
     const checkAppointment = await Appointment.findOne({
       patient_id: patient._id,
       work_date: req.body.work_date,
-      work_shift: req.body.work_shift
+      work_shift: req.body.work_shift,
+      status: { $nin: ["canceled"] }
     });
     if (checkAppointment) {
       return res.status(400).json({ message: "Bạn đã đặt lịch hẹn này rồi!" });
+    }
+
+    //check neu dat qua 2 lan va huy
+    const canceledCount = await Appointment.countDocuments({
+      patient_id: patient._id,
+      work_date: req.body.work_date,
+      work_shift: req.body.work_shift,
+      status: "canceled"
+    });
+    
+    if (canceledCount >= 2) {
+      return res.status(400).json({ message: "Bạn đã hủy lịch hẹn này hai lần, không thể đặt lại!" });
     }
 
     // Lấy thời gian từ work_date và chuyển đổi sang giờ Việt Nam
@@ -254,6 +253,8 @@ const patientCreateAppointment = async (req, res) => {
     // Lưu vào lịch sử hẹn
     await Appointment_history.create({
       appointment_id: appointment._id,
+      patient_id: patient._id,
+      doctor_id: appointment.doctor_id
     });
 
     const formattedDate = formatVietnameseDate(appointment.work_date);
@@ -382,10 +383,7 @@ const processPrematureCancellation = async (req, res) => {
     }
 
     // Xóa lịch hẹn và lịch sử
-    await Appointment.findByIdAndDelete(id);
-    await Appointment_history.findOneAndDelete({
-      appointment_id: appointment._id,
-    });
+    await Appointment.findByIdAndUpdate( id , {$set: {status: "canceled"}});
 
     return res.status(200).json({ message: "Delete appointment success!" });
   } catch (error) {
