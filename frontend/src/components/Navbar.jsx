@@ -5,40 +5,43 @@ import { AppContext } from "../context/AppContext";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { user, setUser, unreadCount, setUnreadCount } = useContext(AppContext); // Thêm setUnreadCount từ context
+  const { user, setUser, unreadCount, setUnreadCount } = useContext(AppContext);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (user) {
+      setLoading(false);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user?.token) {
+      const fetchUnreadNotifications = async () => {
+        try {
+          const response = await fetch("http://localhost:5000/notification", {
+            headers: { Authorization: `Bearer ${user.token}` },
+          });
+          const data = await response.json();
+
+          // Lọc thông báo chưa đọc
+          const unreadNotifications = data.filter(notification => !notification.isRead);
+          const unreadCount = unreadNotifications.length;
+
+          setUnreadCount(unreadCount);
+          localStorage.setItem("unreadCount", unreadCount);
+        } catch (error) {
+          console.error("Lỗi khi lấy thông báo chưa đọc:", error);
+        }
+      };
+
+      fetchUnreadNotifications();
+    }
+  }, [user, setUnreadCount]);
 
   const getDisplayName = (fullName) => {
     const nameParts = fullName.split(" ");
     return nameParts.slice(-2).join(" ");
   };
-
-  useEffect(() => {
-    const fetchUnreadCount = async () => {
-      const token = localStorage.getItem("token");
-      if (user && token) {
-        try {
-          const response = await fetch("http://localhost:5000/notifications/unread-count", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-
-          if (response.ok) {
-            const { unreadCount } = await response.json();
-            setUnreadCount(unreadCount);
-          } else {
-            console.error("Failed to fetch unread notifications count.");
-          }
-        } catch (error) {
-          console.error("Error fetching unread notifications count:", error);
-        }
-      }
-    };
-
-    fetchUnreadCount();
-    setLoading(false);
-  }, [user, setUnreadCount]); // Chạy lại khi user thay đổi
 
   const handleLogout = () => {
     localStorage.removeItem("user");

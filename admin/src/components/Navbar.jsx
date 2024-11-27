@@ -1,7 +1,7 @@
 import { BellIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
-import { formatDistanceToNow } from 'date-fns'; // Sử dụng date-fns để hiển thị thời gian
-import { vi } from 'date-fns/locale'; // Import tiếng Việt từ date-fns
+import { formatDistanceToNow } from 'date-fns'; 
+import { vi } from 'date-fns/locale'; 
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets";
