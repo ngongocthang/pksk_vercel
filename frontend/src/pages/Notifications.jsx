@@ -40,11 +40,16 @@ const Notifications = () => {
           const response = await fetch("http://localhost:5000/notification", {
             headers: { Authorization: `Bearer ${token}` },
           });
+
           if (!response.ok) throw new Error("Failed to fetch notifications");
+
           const data = await response.json();
           setNotifications(data);
-          const unreadCount = data.filter(notification => !notification.isRead).length; // Tính số lượng chưa đọc
-          setUnreadCount(unreadCount); // Cập nhật trong context
+
+          // Cập nhật số lượng thông báo chưa đọc vào Context
+          const unreadCount = data.filter(notification => !notification.isRead).length;
+          setUnreadCount(unreadCount); // Cập nhật ở đây
+          localStorage.setItem("unreadCount", unreadCount);
         } catch (error) {
           console.error("Error fetching notifications:", error);
         } finally {
@@ -58,11 +63,12 @@ const Notifications = () => {
   const handleNotificationClick = async (id) => {
     try {
       const response = await fetch(`http://localhost:5000/notification/read/${id}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+
       if (!response.ok) throw new Error("Failed to mark notification as read");
 
       const updatedNotifications = notifications.map((notification) =>
@@ -70,9 +76,12 @@ const Notifications = () => {
       );
       setNotifications(updatedNotifications);
 
-      const unreadCount = updatedNotifications.filter((notification) => !notification.isRead).length;
-      setUnreadCount(unreadCount); // Cập nhật số lượng chưa đọc trong context
-
+      // Giảm số lượng thông báo chưa đọc
+      setUnreadCount((prevCount) => {
+        const updatedCount = prevCount - 1;
+        localStorage.setItem("unreadCount", updatedCount);
+        return updatedCount;
+      });
     } catch (error) {
       console.error("Error marking notification as read:", error);
     }
