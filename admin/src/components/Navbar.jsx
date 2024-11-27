@@ -1,7 +1,7 @@
 import { BellIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
-import { formatDistanceToNow } from 'date-fns'; 
-import { vi } from 'date-fns/locale'; 
+import { formatDistanceToNow } from 'date-fns';
+import { vi } from 'date-fns/locale';
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets";
@@ -52,6 +52,12 @@ const Navbar = () => {
       console.error("Lỗi khi lấy thông báo:", error);
     }
   };
+
+  useEffect(() => {
+    if (dToken) {
+      fetchNotifications();
+    }
+  }, [dToken]);
 
   // Cập nhật trạng thái thông báo là đã đọc
   const markAsRead = async (notificationId) => {
