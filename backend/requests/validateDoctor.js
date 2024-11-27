@@ -36,12 +36,16 @@ const doctorSchema = Joi.object({
     }
     return value;
   }),
-
   password: Joi.string().min(6).required().messages({
     "string.base": "Mật khẩu phải là một chuỗi.",
     "string.empty": "Mật khẩu không được để trống.",
     "string.min": "Mật khẩu phải có ít nhất {#limit} ký tự.",
     "any.required": "Mật khẩu là bắt buộc.",
+  }),
+  price: Joi.number().min(0).required().messages({
+    "number.base": "Giá khám phải là một số.",
+    "number.min": "Giá khám không được nhỏ hơn 0.",
+    "any.required": "Giá khám là bắt buộc.",
   }),
   specialization_id: Joi.string().required().messages({
     "string.base": "ID chuyên khoa phải là một chuỗi.",
