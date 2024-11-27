@@ -151,7 +151,7 @@ const DoctorsList = () => {
             className='border border-indigo-200 rounded-xl overflow-hidden cursor-pointer group relative'
             key={item.user_id._id}
           >
-            <div className='relative'>
+            <div className='relative h-[360px]'>
               <img
                 className='bg-indigo-50 group-hover:bg-primary transition-all duration-500'
                 src={item.user_id.image}
