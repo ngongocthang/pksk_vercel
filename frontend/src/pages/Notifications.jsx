@@ -1,7 +1,6 @@
-// Notifications.js
-import React, { useState, useEffect, useContext } from "react";
-import { AppContext } from "../context/AppContext";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AppContext } from "../context/AppContext";
 
 const timeAgo = (date) => {
   const now = new Date();
@@ -21,7 +20,7 @@ const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
   const [showAll, setShowAll] = useState(false);
   const [loading, setLoading] = useState(true);
-  const { user, setUser, notificationsCount, setNotificationsCount } = useContext(AppContext);
+  const { user, setUser, setUnreadCount } = useContext(AppContext);
   const navigate = useNavigate();
 
   const token = user?.token || localStorage.getItem("token");
@@ -41,9 +40,16 @@ const Notifications = () => {
           const response = await fetch("http://localhost:5000/notification", {
             headers: { Authorization: `Bearer ${token}` },
           });
+
           if (!response.ok) throw new Error("Failed to fetch notifications");
+
           const data = await response.json();
           setNotifications(data);
+
+          // Cập nhật số lượng thông báo chưa đọc vào Context
+          const unreadCount = data.filter(notification => !notification.isRead).length;
+          setUnreadCount(unreadCount); // Cập nhật ở đây
+          localStorage.setItem("unreadCount", unreadCount);
         } catch (error) {
           console.error("Error fetching notifications:", error);
         } finally {
@@ -52,28 +58,30 @@ const Notifications = () => {
       };
       fetchNotifications();
     }
-  }, [token, navigate, setUser, user]);
+  }, [token, navigate, setUser, user, setUnreadCount]);
 
   const handleNotificationClick = async (id) => {
     try {
       const response = await fetch(`http://localhost:5000/notification/read/${id}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+
       if (!response.ok) throw new Error("Failed to mark notification as read");
 
-      // Cập nhật trạng thái của thông báo đã đọc trong state
       const updatedNotifications = notifications.map((notification) =>
         notification._id === id ? { ...notification, isRead: true } : notification
       );
       setNotifications(updatedNotifications);
 
-      // Cập nhật lại số lượng thông báo chưa đọc
-      const unreadCount = updatedNotifications.filter((notification) => !notification.isRead).length;
-      setNotificationsCount(unreadCount);  // Cập nhật trong context
-
+      // Giảm số lượng thông báo chưa đọc
+      setUnreadCount((prevCount) => {
+        const updatedCount = prevCount - 1;
+        localStorage.setItem("unreadCount", updatedCount);
+        return updatedCount;
+      });
     } catch (error) {
       console.error("Error marking notification as read:", error);
     }

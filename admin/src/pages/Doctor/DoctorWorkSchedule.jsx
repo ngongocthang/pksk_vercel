@@ -19,10 +19,11 @@ const DoctorWorkSchedule = () => {
     }
   }, [dToken]);
 
-  // Định dạng ngày
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-GB");
+  // Hàm định dạng ngày
+  const formatDate = (date) => {
+    const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+    const formattedDate = new Date(date).toLocaleDateString('vi-VN', options);
+    return formattedDate;
   };
 
   const handleDeleteClick = (schedule) => {
@@ -46,7 +47,7 @@ const DoctorWorkSchedule = () => {
           setCurrentPage(1);
           navigate(`/doctor-work-schedule`, { replace: true });
         }
-      }, 0); // Thời gian chờ 0 giây
+      }, 0); 
     }
   };
 

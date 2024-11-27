@@ -5,42 +5,43 @@ import { AppContext } from "../context/AppContext";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { user, setUser } = useContext(AppContext);
+  const { user, setUser, unreadCount, setUnreadCount } = useContext(AppContext);
   const [loading, setLoading] = useState(true);
-  const [notificationsCount, setNotificationsCount] = useState(0);
+
+  useEffect(() => {
+    if (user) {
+      setLoading(false);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user?.token) {
+      const fetchUnreadNotifications = async () => {
+        try {
+          const response = await fetch("http://localhost:5000/notification", {
+            headers: { Authorization: `Bearer ${user.token}` },
+          });
+          const data = await response.json();
+
+          // Lọc thông báo chưa đọc
+          const unreadNotifications = data.filter(notification => !notification.isRead);
+          const unreadCount = unreadNotifications.length;
+
+          setUnreadCount(unreadCount);
+          localStorage.setItem("unreadCount", unreadCount);
+        } catch (error) {
+          console.error("Lỗi khi lấy thông báo chưa đọc:", error);
+        }
+      };
+
+      fetchUnreadNotifications();
+    }
+  }, [user, setUnreadCount]);
 
   const getDisplayName = (fullName) => {
     const nameParts = fullName.split(" ");
     return nameParts.slice(-2).join(" ");
   };
-
-  useEffect(() => {
-    // Kiểm tra token và lấy thông báo nếu có người dùng
-    if (user) {
-      const fetchNotifications = async () => {
-        try {
-          const response = await fetch("http://localhost:5000/notification", {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-          });
-
-          if (response.ok) {
-            const notifications = await response.json();
-            const unreadCount = notifications.filter((notification) => !notification.read).length;
-            setNotificationsCount(unreadCount);
-          } else {
-            console.error("Không tìm nạp được thông báo");
-          }
-        } catch (error) {
-          console.error("Lỗi tìm nạp thông báo:", error);
-        }
-      };
-
-      fetchNotifications();
-    }
-    setLoading(false);
-  }, [user]);
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -68,27 +69,20 @@ const Navbar = () => {
       <ul className="hidden md:flex items-start gap-5 font-medium">
         <NavLink to="/" activeClassName="underline">
           <li className="py-1 text-base">Trang chủ</li>
-          <hr className='border-none outline-none h-0.5 bg-[#00759c] w-3/5 m-auto hidden' />
         </NavLink>
         <NavLink to="/doctors" activeClassName="underline">
           <li className="py-1 text-base">Tất cả bác sĩ</li>
-          <hr className='border-none outline-none h-0.5 bg-[#00759c] w-3/5 m-auto hidden' />
         </NavLink>
         <NavLink to="/abouts" activeClassName="underline">
           <li className="py-1 text-base">Về chúng tôi</li>
-          <hr className='border-none outline-none h-0.5 bg-[#00759c] w-3/5 m-auto hidden' />
         </NavLink>
         <NavLink to="/contact" activeClassName="underline">
           <li className="py-1 text-base">Liên hệ</li>
-          <hr className='border-none outline-none h-0.5 bg-[#00759c] w-3/5 m-auto hidden' />
         </NavLink>
         <NavLink to="/all-schedule" activeClassName="underline">
           <li className="py-1 text-base">Đặt lịch hẹn</li>
-          <hr className='border-none outline-none h-0.5 bg-[#00759c] w-3/5 m-auto hidden' />
         </NavLink>
       </ul>
-
-
 
       <div className="flex items-center gap-4">
         {user ? (
@@ -111,18 +105,25 @@ const Navbar = () => {
           </NavLink>
         )}
 
-        <img
-          onClick={() => {
-            if (user) {
-              navigate("/notifications");
-            } else {
-              navigate("/account");
-            }
-          }}
-          className="w-6 cursor-pointer"
-          src={assets.notification_icon}
-          alt="Thông báo"
-        />
+        <div className="relative">
+          <img
+            onClick={() => {
+              if (user) {
+                navigate("/notifications");
+              } else {
+                navigate("/account");
+              }
+            }}
+            className="w-6 cursor-pointer"
+            src={assets.notification_icon}
+            alt="Thông báo"
+          />
+          {unreadCount > 0 && (
+            <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-1 text-xs">
+              {unreadCount}
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );
