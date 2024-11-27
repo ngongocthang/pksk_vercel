@@ -35,6 +35,7 @@ const ConfirmationSchedule = () => {
     setLoadingId(id);
     try {
       await cancelAppointment(id);
+      toast.success('Lịch hẹn đã được hủy.');
     } catch (error) {
       toast.error('Có lỗi xảy ra khi hủy lịch hẹn.');
     } finally {
@@ -51,6 +52,18 @@ const ConfirmationSchedule = () => {
     const page = parseInt(params.get('page')) || 1;
     setCurrentPage(page);
   }, [location.search]);
+
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      await getAppointments(); // Gọi lại danh sách lịch hẹn
+    };
+
+    fetchAppointments(); // Lần đầu tiên khi component mount
+
+    const interval = setInterval(fetchAppointments, 10000); // Lấy lịch hẹn mỗi 30 giây
+
+    return () => clearInterval(interval); // Dọn dẹp interval khi component bị hủy
+  }, [getAppointments]);
 
   const indexOfLastAppointment = currentPage * appointmentsPerPage;
   const indexOfFirstAppointment = indexOfLastAppointment - appointmentsPerPage;

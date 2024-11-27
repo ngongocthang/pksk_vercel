@@ -46,7 +46,7 @@ const Sidebar = () => {
                         <p className='hidden md:block'>Bảng điều khiển</p>
                     </NavLink>
 
-                    <NavLink className={({ isActive }) => `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${isActive ? 'bg-[#F2F3FF] border-r-4 border-[#0091a1]' : ''}`} to={'/confirmation-schedule'}>
+                    <NavLink className={({ isActive }) => `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${isActive ? 'bg-[#F2F3FF] border-r-4 border-[#0091a1]' : ''}`} to={'/confirmation-appointments'}>
                         <img src={assets.appointments_icon1} alt="" width="24" height="23" className="w-6 h-[23px]" />
                         <p className='hidden md:block'>Lịch chờ xác nhận</p>
                     </NavLink>
