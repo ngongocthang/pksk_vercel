@@ -50,7 +50,7 @@ const createDoctor = async (req, res) => {
     const doctor = await User.create({
       ...req.body,
       password: hashedPassword,
-      image: imageUrl, // Gán URL của ảnh đã upload
+      image: imageUrl,
     });
 
     if (doctor) {
@@ -63,12 +63,13 @@ const createDoctor = async (req, res) => {
         user_id: doctor._id,
         specialization_id: req.body.specialization_id,
         description: req.body.description,
+        price: req.body.price,
       });
 
-      res.status(200).json({success: true, doctor});
+      res.status(200).json({ success: true, doctor });
     }
   } catch (error) {
-    return res.status(500).json({success: false, message: error.message });
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -79,12 +80,14 @@ const findAllDoctor = async (req, res) => {
       .populate("specialization_id");
 
     if (doctors) {
-      return res.status(200).json({success: true, doctors});
+      return res.status(200).json({ success: true, doctors });
     } else {
-      return res.status(404).json({success: false, message: "Doctors not found." });
+      return res
+        .status(404)
+        .json({ success: false, message: "Doctors not found." });
     }
   } catch (error) {
-    return res.status(500).json({success: false, message: error.message });
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -169,7 +172,7 @@ const updateDoctor = async (req, res) => {
 const deleteDoctor = async (req, res) => {
   try {
     const { id } = req.params;
-    const doctor = await Doctor.findOne({ user_id: id }).populate('user_id'); 
+    const doctor = await Doctor.findOne({ user_id: id }).populate("user_id");
 
     if (!doctor) {
       return res.status(404).json({ message: "Doctor not found!" });
@@ -185,7 +188,9 @@ const deleteDoctor = async (req, res) => {
     await User.deleteOne({ _id: id });
     await UserRole.deleteOne({ user_id: id });
 
-    return res.status(200).json({ success: true, message: "Delete doctor success!" });
+    return res
+      .status(200)
+      .json({ success: true, message: "Delete doctor success!" });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -199,7 +204,8 @@ const confirmAppointment = async (req, res) => {
     // Thêm "completed" vào danh sách trạng thái hợp lệ
     if (!["confirmed", "canceled", "completed"].includes(status)) {
       return res.status(400).json({
-        message: "Invalid status. Status must be 'confirmed', 'canceled', or 'completed'.",
+        message:
+          "Invalid status. Status must be 'confirmed', 'canceled', or 'completed'.",
       });
     }
 
@@ -216,7 +222,8 @@ const confirmAppointment = async (req, res) => {
 
     // Định dạng ngày tháng
     moment.locale("vi");
-    const vietnamTime = moment.utc(updatedAppointment.work_date)
+    const vietnamTime = moment
+      .utc(updatedAppointment.work_date)
       .tz("Asia/Ho_Chi_Minh")
       .format("dddd, DD-MM-YYYY");
 
@@ -294,7 +301,7 @@ const getDoctorAppointments = async (req, res) => {
   try {
     const user_id = req.user?.id;
     const today = new Date();
-    today.setHours(0,0,0,0);
+    today.setHours(0, 0, 0, 0);
     const doctor = await Doctor.findOne({ user_id: user_id });
     if (!doctor) {
       return res.status(400).json({ message: "Doctor not found" });
@@ -375,16 +382,17 @@ const getProfileDoctor = async (req, res) => {
 };
 const updateProfileDoctor = async (req, res) => {
   try {
-
-     // Validate dữ liệu từ client
-     const { error } = validateUpdateDoctor(req.body);
-     if (error) {
-       return res.status(400).json({ message: error.details[0].message });
-     }
+    // Validate dữ liệu từ client
+    const { error } = validateUpdateDoctor(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
+    }
 
     const { id } = req.params;
 
-    const doctor = await Doctor.findOne({ user_id: id }).populate("specialization_id");
+    const doctor = await Doctor.findOne({ user_id: id }).populate(
+      "specialization_id"
+    );
     if (!doctor) {
       return res.status(400).json({ message: "Doctor not found" });
     }
@@ -395,9 +403,14 @@ const updateProfileDoctor = async (req, res) => {
     }
     // Kiểm tra mật khẩu cũ
     if (req.body.oldPassword) {
-      const checkNewPassord = await bcrypt.compare(req.body.newPassword, user.password);
+      const checkNewPassord = await bcrypt.compare(
+        req.body.newPassword,
+        user.password
+      );
       if (checkNewPassord) {
-        return res.status(400).json({ message: "Mật khẩu mới không được giống mật sách cũ!" });
+        return res
+          .status(400)
+          .json({ message: "Mật khẩu mới không được giống mật sách cũ!" });
       }
       const isMatch = await bcrypt.compare(req.body.oldPassword, user.password);
       if (!isMatch) {
@@ -405,7 +418,7 @@ const updateProfileDoctor = async (req, res) => {
       }
     }
 
-    let hashedPassword = doctor.user_id.password; 
+    let hashedPassword = doctor.user_id.password;
     if (req.body.newPassword) {
       hashedPassword = await bcrypt.hash(req.body.newPassword, 10);
     }
@@ -413,7 +426,9 @@ const updateProfileDoctor = async (req, res) => {
     let imageUrl = doctor.user_id.image;
 
     if (req.file) {
-      const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
+      const base64Image = `data:${
+        req.file.mimetype
+      };base64,${req.file.buffer.toString("base64")}`;
 
       if (imageUrl) {
         const publicId = imageUrl.split("/").slice(-1)[0].split(".")[0];
@@ -438,7 +453,9 @@ const updateProfileDoctor = async (req, res) => {
       { new: true }
     );
     if (!updatedUser) {
-      return res.status(400).json({ message: "Cập nhật hồ sơ không thành công" });
+      return res
+        .status(400)
+        .json({ message: "Cập nhật hồ sơ không thành công" });
     }
 
     const updatedDoctor = await Doctor.findOneAndUpdate(
@@ -450,10 +467,14 @@ const updateProfileDoctor = async (req, res) => {
       { new: true }
     );
     if (!updatedDoctor) {
-      return res.status(400).json({ message: "Cập nhật hồ sơ không thành công" });
+      return res
+        .status(400)
+        .json({ message: "Cập nhật hồ sơ không thành công" });
     }
 
-    return res.status(200).json({ success: true, message: "Cập nhật hồ sơ thành công!" });
+    return res
+      .status(200)
+      .json({ success: true, message: "Cập nhật hồ sơ thành công!" });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ success: false, message: error.message });
@@ -469,26 +490,26 @@ const getTopDoctor = async (req, res) => {
     // Lấy danh sách các lịch hẹn với trạng thái 'completed' và nhóm theo doctor_id
     const appointments = await Appointment.aggregate([
       {
-        $match: { status: 'completed' } // Lọc các lịch hẹn có trạng thái 'completed'
+        $match: { status: "completed" }, // Lọc các lịch hẹn có trạng thái 'completed'
       },
       {
         $group: {
           _id: "$doctor_id", // Nhóm theo doctor_id
-          count: { $sum: 1 } // Đếm số lượng lịch hẹn
-        }
-      }
+          count: { $sum: 1 }, // Đếm số lượng lịch hẹn
+        },
+      },
     ]);
 
     // Chuyển đổi appointments thành một đối tượng để dễ dàng truy cập
     const appointmentCount = {};
-    appointments.forEach(app => {
+    appointments.forEach((app) => {
       appointmentCount[app._id] = app.count;
     });
 
     // Thêm số lượng lịch hẹn vào thông tin bác sĩ
-    const doctorsWithCounts = doctors.map(doctor => ({
+    const doctorsWithCounts = doctors.map((doctor) => ({
       ...doctor.toObject(), // Chuyển đổi Mongoose Document thành Object
-      appointmentCount: appointmentCount[doctor._id] || 0 // Lấy số lượng lịch hẹn hoặc 0 nếu không có
+      appointmentCount: appointmentCount[doctor._id] || 0, // Lấy số lượng lịch hẹn hoặc 0 nếu không có
     }));
 
     // Sắp xếp bác sĩ theo số lượng lịch hẹn từ cao đến thấp
@@ -499,6 +520,109 @@ const getTopDoctor = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
+
+const getAppointmentConfirmByDoctor = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const doctor = await Doctor.findOne({ user_id: id });
+    if (!doctor) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Doctor not found" });
+    }
+    const appointments = await Appointment.find({
+      doctor_id: doctor._id,
+      status: "confirmed",
+      work_date: req.body.work_date,
+      work_shift: req.body.work_shift,
+    }).populate({
+      path: "patient_id",
+      populate: { path: "user_id", select: "name" },
+    });
+    if (!appointments) {
+      return res
+        .status(404)
+        .json({ success: false, message: "No appointments found" });
+    }
+    return res.status(200).json({ success: true, data: appointments });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+const formatVietnameseDate = (date) => {
+  moment.locale("vi");
+  const formattedDate = moment
+    .utc(date)
+    .tz("Asia/Ho_Chi_Minh")
+    .format("dddd, DD-MM-YYYY");
+  return formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+};
+
+const completeApointment = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const appointment = await Appointment.findById(id);
+    if (!appointment) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Appointment not found" });
+    }
+    const updatedAppointment = await Appointment.findOneAndUpdate(
+      { _id: appointment._id },
+      { status: "completed" },
+      { new: true }
+    );
+    if (!updatedAppointment) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Appointment not found" });
+    }
+
+    const formattedDate = formatVietnameseDate(updatedAppointment.work_date);
+
+    await Notification.create({
+      patient_id: updatedAppointment.patient_id,
+      doctor_id: updatedAppointment.doctor_id,
+      content: `Lịch hẹn vào ngày: ${formattedDate} của bạn đã hoàn thành. \n\n Trân trọng. `,
+      appointment_id: updatedAppointment._id,
+      recipientType: "patient",
+    });
+
+    return res.status(200).json({ success: true, data: updatedAppointment });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+//search
+const searchPatient = async (req, res) => {
+  const { query } = req.query;
+  try {
+    const results = await Appointment.find()
+      .populate({
+        path: 'patient_id',
+        populate: {
+          path: 'user_id',
+          match: { name: { $regex: query, $options: 'i' } },
+          select: 'name'
+        }
+      })
+      .exec();
+
+    // Lọc kết quả để chỉ lấy những bệnh nhân có tên phù hợp
+    const filteredResults = results.filter(appointment => appointment.patient_id && appointment.patient_id.user_id);
+
+    if (filteredResults.length <= 0) {
+      return res.status(404).json({ success: false, message: "Patient not found" });
+    }
+
+    res.json({ success: true, data: filteredResults });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 
 module.exports = {
   createDoctor,
@@ -511,5 +635,8 @@ module.exports = {
   getSpecializations,
   getProfileDoctor,
   updateProfileDoctor,
-  getTopDoctor
+  getTopDoctor,
+  getAppointmentConfirmByDoctor,
+  completeApointment,
+  searchPatient,
 };

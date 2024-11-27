@@ -20,15 +20,15 @@ const ConfirmationSchedule = () => {
   }, [dToken]);
 
   // Kiểm tra lịch hẹn mới mỗi 10 giây
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (dToken) {
-        getAppointments(); // Fetch the latest appointments
-      }
-    },0); // Poll every 10 seconds
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     if (dToken) {
+  //       getAppointments(); // Fetch the latest appointments
+  //     }
+  //   },0); // Poll every 10 seconds
 
-    return () => clearInterval(interval); // Cleanup interval on component unmount
-  }, [dToken, getAppointments]);
+  //   return () => clearInterval(interval); // Cleanup interval on component unmount
+  // }, [dToken, getAppointments]);
 
   // Định dạng ngày
   const formatDate = (dateString) => {
