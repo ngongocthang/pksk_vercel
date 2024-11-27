@@ -75,15 +75,15 @@ const Navbar = () => {
     fetchNotifications();
   }, []);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (dToken) {
-        fetchNotifications();
-      }
-    }, 0); 
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     if (dToken) {
+  //       fetchNotifications();
+  //     }
+  //   }, 0); 
 
-    return () => clearInterval(interval);
-  }, [dToken]); 
+  //   return () => clearInterval(interval);
+  // }, [dToken]); 
 
   // Nhóm thông báo theo ngày và sắp xếp từ mới nhất đến cũ nhất
   const groupedNotifications = notifications
