@@ -12,24 +12,6 @@ const ConfirmationSchedule = () => {
   const [loadingId, setLoadingId] = useState(null); // State to track loading
   const appointmentsPerPage = 10;
 
-  // Lấy danh sách lịch hẹn khi component được tải
-  // useEffect(() => {
-  //   if (dToken) {
-  //     getAppointments();
-  //   }
-  // }, [dToken]);
-
-  // // Kiểm tra lịch hẹn mới mỗi 10 giây
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     if (dToken) {
-  //       getAppointments(); // Fetch the latest appointments
-  //     }
-  //   },0); // Poll every 10 seconds
-
-  //   return () => clearInterval(interval); // Cleanup interval on component unmount
-  // }, [dToken, getAppointments]);
-
   // Định dạng ngày
   const formatDate = (dateString) => {
     const date = new Date(dateString);

@@ -3,7 +3,8 @@ import { DoctorContext } from "../../context/DoctorContext";
 import { useNavigate } from "react-router-dom";
 
 const DoctorWorkSchedule = () => {
-  const { dToken, schedules, getDoctorSchedule, deleteSchedule } = useContext(DoctorContext);
+  const { dToken, schedules, getDoctorSchedule, deleteSchedule } =
+    useContext(DoctorContext);
   const [showModal, setShowModal] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -34,7 +35,9 @@ const DoctorWorkSchedule = () => {
     if (selectedSchedule) {
       await deleteSchedule(selectedSchedule._id);
 
-      const updatedSchedules = schedules.filter(schedule => schedule._id !== selectedSchedule._id);
+      const updatedSchedules = schedules.filter(
+        (schedule) => schedule._id !== selectedSchedule._id
+      );
 
       // Đợi 0 giây trước khi đóng modal
       setTimeout(() => {
@@ -48,7 +51,6 @@ const DoctorWorkSchedule = () => {
     }
   };
 
-
   useEffect(() => {
     setShowModal(false);
     setSelectedSchedule(null);
@@ -57,7 +59,10 @@ const DoctorWorkSchedule = () => {
   // Logic phân trang
   const indexOfLastSchedule = currentPage * schedulesPerPage;
   const indexOfFirstSchedule = indexOfLastSchedule - schedulesPerPage;
-  const currentSchedules = schedules.slice(indexOfFirstSchedule, indexOfLastSchedule);
+  const currentSchedules = schedules.slice(
+    indexOfFirstSchedule,
+    indexOfLastSchedule
+  );
 
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -70,7 +75,6 @@ const DoctorWorkSchedule = () => {
   return (
     <div className="w-full max-w-6xl m-5 shadow-lg">
       <div className="flex justify-between items-center mb-3">
-
         <p className="mb-4 text-lg font-medium">Tất cả lịch làm việc</p>
         <button
           onClick={() => navigate("/doctor-create-schedule")}
@@ -107,7 +111,13 @@ const DoctorWorkSchedule = () => {
                     {formatDate(schedule.work_date)}
                   </td>
                   <td className="py-3 px-4 text-center w-[170px]">
-                    <p className={`py-1 px-4 rounded-full text-white text-base font-semibold ${schedule.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"}`}>
+                    <p
+                      className={`py-1 px-4 rounded-full text-white text-base font-semibold ${
+                        schedule.work_shift === "afternoon"
+                          ? "bg-orange-300"
+                          : "bg-blue-300"
+                      }`}
+                    >
                       {schedule.work_shift === "morning" ? "Sáng" : "Chiều"}
                     </p>
                   </td>
@@ -115,7 +125,9 @@ const DoctorWorkSchedule = () => {
                     <div className="flex gap-3">
                       {/* Edit Icon */}
                       <svg
-                        onClick={() => navigate(`/edit-work-schedule/${schedule._id}`)}
+                        onClick={() =>
+                          navigate(`/edit-work-schedule/${schedule._id}`)
+                        }
                         className="w-8 h-8 cursor-pointer text-blue-500 bg-blue-100 rounded-full p-2 transition-all shadow-lg"
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
@@ -160,16 +172,22 @@ const DoctorWorkSchedule = () => {
       {/* Pagination */}
       {shouldDisplayPagination && (
         <div className="flex justify-center mt-4">
-          {Array.from({ length: Math.ceil(schedules.length / schedulesPerPage) }, (_, index) => (
-            <button
-              key={index + 1}
-              onClick={() => paginate(index + 1)}
-              className={`px-4 py-2 ${currentPage === index + 1 ? "bg-[#219c9e] text-white" : "bg-gray-200"
+          {Array.from(
+            { length: Math.ceil(schedules.length / schedulesPerPage) },
+            (_, index) => (
+              <button
+                key={index + 1}
+                onClick={() => paginate(index + 1)}
+                className={`px-4 py-2 ${
+                  currentPage === index + 1
+                    ? "bg-[#219c9e] text-white"
+                    : "bg-gray-200"
                 } rounded-md mx-1 hover:bg-[#0091a1] hover:text-white`}
-            >
-              {index + 1}
-            </button>
-          ))}
+              >
+                {index + 1}
+              </button>
+            )
+          )}
         </div>
       )}
 
@@ -177,11 +195,19 @@ const DoctorWorkSchedule = () => {
       {showModal && selectedSchedule && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-lg p-6 w-96">
-            <h2 className="text-xl font-semibold mb-4 text-center">Xác nhận xóa</h2>
+            <h2 className="text-xl font-semibold mb-4 text-center">
+              Xác nhận xóa
+            </h2>
             <p className="mb-4 text-center">
               Bạn có chắc chắn muốn xóa lịch làm việc buổi{" "}
-              <strong className="text-red-600">{selectedSchedule.work_shift === "afternoon" ? "Chiều" : "Sáng"}</strong> ngày{" "}
-              <strong className="text-red-600">{formatDate(selectedSchedule.work_date)}</strong> không?
+              <strong className="text-red-600">
+                {selectedSchedule.work_shift === "afternoon" ? "Chiều" : "Sáng"}
+              </strong>{" "}
+              ngày{" "}
+              <strong className="text-red-600">
+                {formatDate(selectedSchedule.work_date)}
+              </strong>{" "}
+              không?
             </p>
             <div className="flex justify-end gap-4">
               <button
