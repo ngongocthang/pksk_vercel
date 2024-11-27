@@ -44,7 +44,7 @@ const DoctorWorkSchedule = () => {
           setCurrentPage(1);
           navigate(`/doctor-work-schedule`, { replace: true });
         }
-      }, 0); 
+      }, 0);
     }
   };
 
@@ -102,7 +102,7 @@ const DoctorWorkSchedule = () => {
                   </td>
                   <td
                     className="py-3 px-4 text-center font-medium text-[16px] cursor-pointer"
-                    onClick={() => navigate(`/confirm-appointments?${schedule.work_date}`)}
+                    onClick={() => navigate(`/confirm-completed-appointments?${schedule.work_date}`)}
                   >
                     {formatDate(schedule.work_date)}
                   </td>
