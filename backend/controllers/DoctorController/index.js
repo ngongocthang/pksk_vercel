@@ -33,6 +33,12 @@ const createDoctor = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
+    //check email
+    const checkEmail = await User.findOne({ email: req.body.email });
+    if (checkEmail) {
+      return res.status(400).json({ message: "Email đã tồn tại!" });
+    }
+
     let imageUrl = null;
     if (req.file) {
       // Chuyển đổi buffer của file thành chuỗi Base64 để upload
