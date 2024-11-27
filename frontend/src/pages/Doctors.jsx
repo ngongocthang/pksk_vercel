@@ -136,8 +136,7 @@ const Doctors = () => {
             <div
               onClick={() => navigate(`/appointment/${item._id}`)}
               className="border border-blue-200 rounded-xl overflow-hidden cursor-pointer hover:translate-y-[-10px] transition-all duration-500 relative"
-              key={index}
-            >
+              key={index}>
               <img className="bg-blue-50" src={item.user_id.image} alt="" />
               <span className="absolute top-2 left-2 bg-indigo-100 text-indigo-800 text-xs font-semibold px-2 py-1 rounded-full">
                 {item.specialization_id ? item.specialization_id.name : "Chưa có chuyên khoa"}

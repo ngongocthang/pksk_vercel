@@ -48,8 +48,8 @@ const Notifications = () => {
 
           // Cập nhật số lượng thông báo chưa đọc vào Context
           const unreadCount = data.filter(notification => !notification.isRead).length;
-          setUnreadCount(unreadCount); // Cập nhật ở đây
-          localStorage.setItem("unreadCount", unreadCount);
+          setUnreadCount(unreadCount);
+          // localStorage.setItem("unreadCount", unreadCount);
         } catch (error) {
           console.error("Error fetching notifications:", error);
         } finally {
@@ -111,8 +111,10 @@ const Notifications = () => {
               }`}
             onClick={() => handleNotificationClick(notification._id)}
           >
-            <div className="flex-1">
-              <p className="font-medium">{notification.content}</p>
+            <div className="flex-1 ml-3">
+              <p className="font-medium">
+                {notification.isRead ? notification.content : <strong>{notification.content}</strong>}
+              </p>
               <p className="text-xs text-gray-400">
                 Ca khám: {notification.work_shift === "morning" ? "buổi sáng" : "buổi chiều"}
               </p>
