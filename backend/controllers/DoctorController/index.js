@@ -109,6 +109,7 @@ const findDoctor = async (req, res) => {
 
 const updateDoctor = async (req, res) => {
   try {
+    console.log(req.body);
     const { id } = req.params;
     const doctor = await Doctor.findById(id).populate("user_id");
 
@@ -159,6 +160,7 @@ const updateDoctor = async (req, res) => {
       {
         specialization_id: req.body.specialization_id,
         description: req.body.description,
+        price: req.body.price,
       },
       { new: true }
     );
@@ -463,6 +465,7 @@ const updateProfileDoctor = async (req, res) => {
       {
         specialization_id: req.body.specialization_id,
         description: req.body.description,
+        price: req.body.price,
       },
       { new: true }
     );
