@@ -14,27 +14,30 @@ const Navbar = () => {
     }
   }, [user]);
 
+  const fetchUnreadNotifications = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/notification", {
+        headers: { Authorization: `Bearer ${user.token}` },
+      });
+      const data = await response.json();
+
+      // Lọc thông báo chưa đọc
+      const unreadNotifications = data.filter(notification => !notification.isRead);
+      const unreadCount = unreadNotifications.length;
+
+      setUnreadCount(unreadCount);
+      // localStorage.setItem("unreadCount", unreadCount);
+    } catch (error) {
+      console.error("Lỗi khi lấy thông báo chưa đọc:", error);
+    }
+  };
+
   useEffect(() => {
     if (user?.token) {
-      const fetchUnreadNotifications = async () => {
-        try {
-          const response = await fetch("http://localhost:5000/notification", {
-            headers: { Authorization: `Bearer ${user.token}` },
-          });
-          const data = await response.json();
+      fetchUnreadNotifications(); // Lần đầu tiên khi có user
+      const interval = setInterval(fetchUnreadNotifications, 1000); // Lấy thông báo mỗi 30 giây
 
-          // Lọc thông báo chưa đọc
-          const unreadNotifications = data.filter(notification => !notification.isRead);
-          const unreadCount = unreadNotifications.length;
-
-          setUnreadCount(unreadCount);
-          localStorage.setItem("unreadCount", unreadCount);
-        } catch (error) {
-          console.error("Lỗi khi lấy thông báo chưa đọc:", error);
-        }
-      };
-
-      fetchUnreadNotifications();
+      return () => clearInterval(interval); // Dọn dẹp interval khi component bị hủy
     }
   }, [user, setUnreadCount]);
 
