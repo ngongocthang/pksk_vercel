@@ -13,11 +13,11 @@ const ConfirmationSchedule = () => {
   const appointmentsPerPage = 10;
 
   // Lấy danh sách lịch hẹn khi component được tải
-  useEffect(() => {
-    if (dToken) {
-      getAppointments();
-    }
-  }, [dToken]);
+  // useEffect(() => {
+  //   if (dToken) {
+  //     getAppointments();
+  //   }
+  // }, [dToken]);
 
   // // Kiểm tra lịch hẹn mới mỗi 10 giây
   // useEffect(() => {
