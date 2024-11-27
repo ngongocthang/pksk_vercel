@@ -1,13 +1,13 @@
-import React, { useContext, useState, useEffect } from "react";
+import { BellIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
+import { formatDistanceToNow } from 'date-fns';
+import { vi } from 'date-fns/locale';
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets";
 import { AdminContext } from "../context/AdminContext";
-import { useNavigate } from "react-router-dom";
 import { DoctorContext } from "../context/DoctorContext";
 import "../index.css";
-import { BellIcon } from "@heroicons/react/24/outline";
-import { formatDistanceToNow } from 'date-fns'; // Sử dụng date-fns để hiển thị thời gian
-import { vi } from 'date-fns/locale'; // Import tiếng Việt từ date-fns
 
 const Navbar = () => {
   const { aToken, setAToken } = useContext(AdminContext);
@@ -53,6 +53,12 @@ const Navbar = () => {
     }
   };
 
+  useEffect(() => {
+    if (dToken) {
+      fetchNotifications();
+    }
+  }, [dToken]);
+
   // Cập nhật trạng thái thông báo là đã đọc
   const markAsRead = async (notificationId) => {
     try {
@@ -71,19 +77,19 @@ const Navbar = () => {
     }
   };
 
-  useEffect(() => {
-    fetchNotifications();
-  }, []);
+  // useEffect(() => {
+  //   fetchNotifications();
+  // }, []);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (dToken) {
-        fetchNotifications();
-      }
-    }, 0); 
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     if (dToken) {
+  //       fetchNotifications();
+  //     }
+  //   }, 0); 
 
-    return () => clearInterval(interval);
-  }, [dToken]); 
+  //   return () => clearInterval(interval);
+  // }, [dToken]); 
 
   // Nhóm thông báo theo ngày và sắp xếp từ mới nhất đến cũ nhất
   const groupedNotifications = notifications
