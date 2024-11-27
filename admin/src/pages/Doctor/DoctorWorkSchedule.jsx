@@ -108,7 +108,7 @@ const DoctorWorkSchedule = () => {
                     className="py-3 px-4 text-center font-medium text-[16px] cursor-pointer"
                     onClick={() =>
                       navigate(
-                        `/confirm-appointments?date=${
+                        `/confirm-completed-appointments?date=${
                           schedule.work_date.split("T")[0]
                         }&work-shift=${schedule.work_shift}`
                       )
