@@ -22,6 +22,8 @@ const DoctorDashboard = () => {
     appointments,
     getAppointmentsByStatus,
     appointmentStatus,
+    moneys,
+    amountPaymentDoctors
   } = useContext(DoctorContext);
 
   const [monthlyData, setMonthlyData] = useState([]);
@@ -33,14 +35,13 @@ const DoctorDashboard = () => {
       if (userId) {
         showUpcomingAppointments(userId);
         getAppointmentsByStatus(userId);
+        amountPaymentDoctors(userId);
       }
 
-      // Fetch statistics from the API
       fetchAppointmentsData(userId);
     }
   }, [dToken]);
 
-  // Fetch data from API and set monthlyData
   const fetchAppointmentsData = async (userId) => {
     try {
       const response = await fetch(`http://localhost:5000/get-data-doctor-dashboard/${userId}`);
@@ -184,6 +185,11 @@ const DoctorDashboard = () => {
     return appointmentStatus.filter(item => item.status === "completed").length;
   };
 
+  const formatPrice = (price) => {
+    if (isNaN(price)) return price; 
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  };
+
   return (
     <div className="m-5 w-full shadow-lg">
       {/* Overview Section */}
@@ -196,8 +202,8 @@ const DoctorDashboard = () => {
 
           <div className="text-center relative z-20">
             <img className="w-14 mx-auto" src={assets.earning_icon} alt="" />
-            <p className="text-xl font-semibold text-white">1.900.000</p>
-            <p className="text-white text-xl font-semibold">Thu nhập</p>
+            <p className="text-xl font-semibold text-white">{moneys ? formatPrice(moneys) : 0}</p>
+            <p className="text-white text-xl font-semibold">Thu nhập (VND)</p>
           </div>
         </div>
 

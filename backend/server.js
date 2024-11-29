@@ -36,6 +36,7 @@ const corsOptions = {
 // Sử dụng middleware CORS với các tùy chọn
 app.use(cors(corsOptions));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Cron job
 // cron.schedule("* 7 * * *", async () => {
