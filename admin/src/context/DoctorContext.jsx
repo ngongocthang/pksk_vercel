@@ -255,7 +255,7 @@ const DoctorContextProvider = (props) => {
       }
     } catch (error) {
       console.log(error);
-      toast.error("Bạn không thể xoá lịch làm việc trong vòng 24h trước khi diễn ra!");
+      toast.error( error.response?.data?.message || "Bạn không thể xoá lịch làm việc trong vòng 24h trước khi diễn ra!");
     }
   };
 
