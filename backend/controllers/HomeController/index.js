@@ -9,6 +9,7 @@ const Patient = require("../../models/Patient");
 const Doctor = require("../../models/Doctor");
 const Appointment = require("../../models/Appointment");
 const Payment = require("../../models/Payment");
+const History_appointment = require("../../models/Appointment_history");
 JWT_SECRET = process.env.JWT_SECRET;
 
 const register = async (req, res) => {

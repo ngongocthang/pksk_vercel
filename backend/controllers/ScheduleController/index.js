@@ -6,6 +6,7 @@ const transporter = require("../../helpers/mailer-config");
 const moment = require("moment");
 const Patient = require("../../models/Patient");
 const User = require("../../models/User");
+const Notification = require("../../models/Notification");
 require("moment/locale/vi");
 
 const createSchedule = async (req, res) => {
@@ -81,13 +82,33 @@ const deleteSchedule = async (req, res) => {
         .json({ success: false, message: "Schedule not found" });
     }
 
+    const doctor = await Doctor.findById(schedule.doctor_id);
+    if (!doctor) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Doctor not found" });
+    }
+
+    const appointments = await Appointment.find({
+      doctor_id: doctor._id,
+      work_date: schedule.work_date,
+      work_shift: schedule.work_shift, 
+      status: "confirmed",
+    });
+    if (appointments.length > 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Không thể xoá lịch làm việc khi có lịch hẹn!" });
+    }
+
     const now = new Date();
     const workDate = new Date(schedule.work_date);
     // Tính toán thời gian còn lại đến lịch làm việc
     const timeDifference = workDate - now;
 
-    // Kiểm tra nếu thời gian còn lại lớn hơn 24 giờ (24 * 60 * 60 * 1000 milliseconds)
+    // Kiểm tra nếu thời gian còn lại lớn hơn 24 giờ
     if (timeDifference > 24 * 60 * 60 * 1000) {
+      // Xóa lịch làm việc
       await Schedule.findByIdAndDelete(id);
       return res
         .status(200)
@@ -97,7 +118,7 @@ const deleteSchedule = async (req, res) => {
     return res.status(400).json({
       success: false,
       message:
-        "Cannot delete schedule less than 24 hours before the appointment!",
+        "Bạn không thể xoá lịch làm việc trong vòng 24h trước khi diễn ra!",
     });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
@@ -291,6 +312,13 @@ const doctorUpdateSchedule = async (req, res) => {
 
       try {
         await transporter.sendMail(mailOptions);
+        await Notification.create({
+          patient_id: appointment.patient_id,
+          doctor_id: appointment.doctor_id,
+          message: `Lịch hẹn của bản thay đổi từ ngày ${formattedOldDate} - Ca khám: ${oldShift} thành ngày ${formattedNewDate} - Ca khám: ${newShift}.`,
+          appointment_id: appointment._id,
+          recipientType: "patient",
+        });
       } catch (emailError) {
         console.error(`Failed to send email to ${userInfo.email}:`, emailError);
       }
