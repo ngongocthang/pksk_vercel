@@ -9,6 +9,7 @@ const cloudinary = require("cloudinary").v2;
 const validateDoctor = require("../../requests/validateDoctor");
 const Appointment = require("../../models/Appointment");
 const Notification = require("../../models/Notification");
+const Schedule = require("../../models/Schedule");
 const validateUpdateDoctor = require("../../requests/validateUpdateProfileDoctor");
 const transporter = require("../../helpers/mailer-config");
 const moment = require("moment");
@@ -79,23 +80,57 @@ const createDoctor = async (req, res) => {
   }
 };
 
+// const findAllDoctor = async (req, res) => {
+//   try {
+//     const doctors = await Doctor.find({})
+//       .populate("user_id")
+//       .populate("specialization_id");
+
+//     if (doctors) {
+//       return res.status(200).json({ success: true, doctors });
+//     } else {
+//       return res
+//         .status(404)
+//         .json({ success: false, message: "Doctors not found." });
+//     }
+//   } catch (error) {
+//     return res.status(500).json({ success: false, message: error.message });
+//   }
+// };
 const findAllDoctor = async (req, res) => {
   try {
+    // Lấy danh sách bác sĩ
     const doctors = await Doctor.find({})
       .populate("user_id")
       .populate("specialization_id");
 
-    if (doctors) {
-      return res.status(200).json({ success: true, doctors });
-    } else {
-      return res
-        .status(404)
-        .json({ success: false, message: "Doctors not found." });
-    }
+    // Lấy lịch làm việc cho tất cả bác sĩ
+    const schedules = await Schedule.find({
+      doctor_id: { $in: doctors.map(doctor => doctor._id) }
+    });
+
+    // Ghép lịch làm việc vào thông tin bác sĩ
+    const doctorsWithSchedules = doctors.map(doctor => {
+      const doctorSchedules = schedules.filter(schedule => 
+        schedule.doctor_id.toString() === doctor._id.toString()
+      ).map(schedule => ({
+        work_date: schedule.work_date,
+        work_shift: schedule.work_shift
+      }));
+
+      return {
+        ...doctor.toObject(), // Chuyển đổi bác sĩ thành đối tượng đơn giản
+        schedules: doctorSchedules // Thêm lịch làm việc vào bác sĩ
+      };
+    });
+
+    return res.status(200).json({ success: true, doctors: doctorsWithSchedules });
+    
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
+
 
 const findDoctor = async (req, res) => {
   try {

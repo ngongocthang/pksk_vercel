@@ -87,11 +87,8 @@ const MedicalHistory = () => {
 
   const fetchMedicalHistory = async () => {
     const token = user?.token;
-<<<<<<< HEAD
-=======
     setLoading(true);
     setError(null);
->>>>>>> d076aa2010107d44d68b9bb2c3a78fbebdbca501
 
     if (!token) {
       navigate("/account");
