@@ -1,16 +1,16 @@
     import {
-      BarElement,
-      CategoryScale,
-      Chart as ChartJS,
-      Legend,
-      LinearScale,
-      Title,
-      Tooltip,
-    } from "chart.js";
-    import React, { useContext, useEffect, useState } from "react";
-    import { Bar } from "react-chartjs-2";
-    import { assets } from "../../assets/assets";
-    import { DoctorContext } from "../../context/DoctorContext";
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  Title,
+  Tooltip,
+} from "chart.js";
+import React, { useContext, useEffect, useState } from "react";
+import { Bar } from "react-chartjs-2";
+import { assets } from "../../assets/assets";
+import { DoctorContext } from "../../context/DoctorContext";
 
     // Register chart.js components
     ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -287,7 +287,7 @@
                       {appointments.slice(0, 5).map((item) => (
                         <tr key={item._id} className="hover:bg-gray-50 transition-all duration-200">
                           <td className="py-4 px-5 text-left font-medium text-gray-800">{item.patient_name}</td>
-                          <td className="py-4 px-5 text-center text-gray-600">{new Date(item.work_date).toLocaleDateString()}</td>
+                          <td className="py-4 px-5 text-gray-600">{new Date(item.work_date).toLocaleDateString()}</td>
                           <td className="py-4 px-5 text-center">
                             <p
                               className={`py-1 px-4 rounded-full text-white text-base font-semibold ${item.work_shift === "afternoon" ? "bg-orange-400" : "bg-blue-400"} shadow-md`}

@@ -1,9 +1,9 @@
+import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AppContext } from "../context/AppContext";
-import axios from "axios";
 
 const MyAppointments = () => {
   const { user, setUser } = useContext(AppContext);
@@ -199,7 +199,7 @@ const MyAppointments = () => {
       <p className="pb-3 mt-12 font-medium text-zinc-700 border-b text-xl">
         Lịch hẹn của tôi:
       </p>
-      <div>
+      <div className="appointments-container"> {/* Thêm div này */}
         {loading ? (
           <p className="text-center text-gray-500 mt-5">Đang tải dữ liệu...</p>
         ) : appointments.length === 0 ? (
