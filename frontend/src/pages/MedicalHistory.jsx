@@ -11,7 +11,6 @@ const MedicalHistory = () => {
 
   const fetchMedicalHistory = async () => {
     const token = user?.token;
-    console.log(token);
 
     if (!token) {
       navigate("/account");
