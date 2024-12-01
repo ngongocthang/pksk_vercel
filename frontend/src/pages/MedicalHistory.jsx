@@ -1,7 +1,7 @@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, Calendar, Clock, User } from "lucide-react";
+import { AlertCircle, Calendar, Clock } from "lucide-react";
 import React, { memo, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
@@ -38,7 +38,11 @@ const MedicalRecordCard = memo(({ record }) => {
     <Card className="hover:shadow-lg transition-shadow">
       <CardContent className="p-6">
         <div className="flex items-center mb-4">
-          <User className="w-5 h-5 text-blue-500 mr-2" />
+          <img
+            src={record.history.doctor_image} // Thay đổi đây nếu trường khác
+            alt={`Bs. ${record.history.doctor_name}`}
+            className="w-10 h-10 rounded-full mr-2" // Thay đổi kích thước và kiểu dáng
+          />
           <span className="font-medium">Bs. {record.history.doctor_name}</span>
         </div>
         <div className="flex items-center mb-4">

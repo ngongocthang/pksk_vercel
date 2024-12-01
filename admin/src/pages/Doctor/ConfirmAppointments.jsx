@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useLocation } from "react-router-dom";
 import moment from "moment-timezone";
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 
 const ConfirmAppointments = () => {
   const [confirmedAppointments, setConfirmedAppointments] = useState([]);
@@ -87,7 +87,7 @@ const ConfirmAppointments = () => {
       .format("DD/MM/YYYY"); // Định dạng theo kiểu dd/mm/yyyy
     return formattedDate;
   };
-  
+
 
   return (
     <div className="w-full max-w-6xl m-5 shadow-lg">
@@ -143,24 +143,20 @@ const ConfirmAppointments = () => {
                   <td className="py-3 px-4 text-gray-800 font-medium">
                     {appointment.patient_id.user_id.name}
                   </td>
-                  <td className="py-3 px-4 text-center w-[170px]">
+                  <td className="py-3 px-4 text-center w-[250px]">
                     <p
-                      className={`py-1 px-4 rounded-full text-white text-base font-semibold ${
-                        appointment.paymentStatus === "true"
-                          ? "bg-green-300"
-                          : "bg-red-300"
-                      }`}
+                      className={`py-1 px-4 rounded-full text-white text-base font-semibold ${appointment.paymentStatus === "true" ? "bg-green-300" : "bg-red-300"
+                        }`}
                     >
-                      {appointment.paymentStatus === "true" ? "Đã" : "Chưa"}
+                      {appointment.paymentStatus === "true" ? "Đã thanh toán" : "Chưa thanh toán"}
                     </p>
                   </td>
                   <td className="py-3 px-4 text-center w-[170px]">
                     <p
-                      className={`py-1 px-4 rounded-full text-white text-base font-semibold ${
-                        appointment.work_shift === "afternoon"
+                      className={`py-1 px-4 rounded-full text-white text-base font-semibold ${appointment.work_shift === "afternoon"
                           ? "bg-orange-300"
                           : "bg-blue-300"
-                      }`}
+                        }`}
                     >
                       {appointment.work_shift === "morning" ? "Sáng" : "Chiều"}
                     </p>
