@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useContext } from "react";
 import FullCalendar from "@fullcalendar/react";
 import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
-import viLocale from "@fullcalendar/core/locales/vi"; // Ngôn ngữ tiếng Việt
+import viLocale from "@fullcalendar/core/locales/vi"; 
 import { AppContext } from "../context/AppContext";
 import axios from "axios"; // Import axios
-import { ToastContainer, toast } from "react-toastify"; // Import Toastify
-import "react-toastify/dist/ReactToastify.css"; // Import style cho Toastify
+import { ToastContainer, toast } from "react-toastify"; 
+import "react-toastify/dist/ReactToastify.css"; 
+import "../index.css"
 
 const DoctorTimeline = () => {
   const [doctors, setDoctors] = useState([]);
@@ -32,7 +33,7 @@ const DoctorTimeline = () => {
         // Xử lý lịch làm việc (events)
         const mappedEvents = data.flatMap((doctor) =>
           doctor.schedules.map((schedule) => {
-            const workDate = new Date(schedule.work_date); // Ngày làm việc
+            const workDate = new Date(schedule.work_date); 
             const startDate = new Date(workDate);
             const endDate = new Date(workDate);
 
@@ -76,7 +77,7 @@ const DoctorTimeline = () => {
       patient_id: patient_id,
       doctor_id: clickedEvent.getResources()[0]?.id || "",
       work_shift: convertTitle,
-      work_date: clickedEvent.start.toISOString().split("T")[0], // Ngày
+      work_date: clickedEvent.start.toISOString().split("T")[0], 
     };
 
     // Hiển thị hộp thoại xác nhận bằng Toastify
@@ -154,7 +155,7 @@ const DoctorTimeline = () => {
         initialView="resourceTimelineWeek"
         resources={doctors}
         events={events}
-        locale={viLocale} // Cài đặt ngôn ngữ tiếng Việt
+        locale={viLocale}
         resourceAreaColumns={[
           {
             // Tùy chỉnh hiển thị cột tài nguyên
@@ -163,7 +164,10 @@ const DoctorTimeline = () => {
             cellContent: (args) => {
               const { doctorImage, doctorName } = args.resource.extendedProps;
               return (
-                <div style={{ display: "flex", alignItems: "center" }}>
+                <div style={{ 
+                  display: "flex", 
+                  alignItems: "center",
+                   }}>
                   <img
                     src={doctorImage}
                     alt={doctorName}
@@ -181,7 +185,7 @@ const DoctorTimeline = () => {
           },
         ]}
         headerToolbar={{
-          left: "prev,next today",
+          left: "prev today next",
           center: "title",
           right: "resourceTimelineDay,resourceTimelineWeek",
         }}
@@ -190,7 +194,7 @@ const DoctorTimeline = () => {
         nowIndicator={true} // Hiển thị vạch thời gian hiện tại
         eventClick={handleEventClick} // Thêm sự kiện click cho lịch
       />
-      <ToastContainer /> {/* Hiển thị các thông báo của Toastify */}
+      <ToastContainer /> 
     </div>
   );
 };
