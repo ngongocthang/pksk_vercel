@@ -23,7 +23,9 @@ const DoctorDashboard = () => {
     getAppointmentsByStatus,
     appointmentStatus,
     moneys,
-    amountPaymentDoctors
+    amountPaymentDoctors,
+    patients,
+    countPatients
   } = useContext(DoctorContext);
 
   const [monthlyData, setMonthlyData] = useState([]);
@@ -36,6 +38,7 @@ const DoctorDashboard = () => {
         showUpcomingAppointments(userId);
         getAppointmentsByStatus(userId);
         amountPaymentDoctors(userId);
+        countPatients(userId);
       }
 
       fetchAppointmentsData(userId);
@@ -216,7 +219,7 @@ const DoctorDashboard = () => {
           <div className="text-center relative z-20">
             <img className="w-14 mx-auto" src={assets.earning_icon} alt="" />
             <p className="text-xl font-semibold text-white">{moneys ? formatPrice(moneys) : 0}</p>
-            <p className="text-white text-xl font-semibold">Thu nhập (VND)</p>
+            <p className="text-white text-xl font-semibold">Thu nhập 0 (VND)</p>
           </div>
         </div>
 
@@ -243,7 +246,7 @@ const DoctorDashboard = () => {
           <div className="text-center relative z-20">
             <img className="w-14 mx-auto" src={assets.patients_icon} alt="" />
             <div>
-              <p className="text-xl font-semibold text-white">{appointments.length}</p>
+              <p className="text-xl font-semibold text-white">{patients.length}</p>
               <p className="text-white text-xl font-semibold">Bệnh nhân</p>
             </div>
           </div>

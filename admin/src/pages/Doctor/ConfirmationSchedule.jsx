@@ -35,7 +35,6 @@ const ConfirmationSchedule = () => {
     setLoadingId(id);
     try {
       await cancelAppointment(id);
-      toast.success('Lịch hẹn đã được hủy.');
     } catch (error) {
       toast.error('Có lỗi xảy ra khi hủy lịch hẹn.');
     } finally {
