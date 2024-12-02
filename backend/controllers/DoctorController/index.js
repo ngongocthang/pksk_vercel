@@ -275,11 +275,13 @@ const confirmAppointment = async (req, res) => {
 
     const shiftType =
       updatedAppointment.work_shift === "morning" ? "Sáng" : "Chiều";
+      const time = updatedAppointment.work_shift === "morning" ? "7h30-11h30" : "13h30-17h30";
+
 
     // Tạo thông báo
     let notificationContent;
     if (status === "confirmed") {
-      notificationContent = `Lịch hẹn ngày ${formattedVietnamTime} của bạn đã được xác nhận.`;
+      notificationContent = `Lịch hẹn ngày ${formattedVietnamTime} của bạn đã được xác nhận. Thời gian diễn ra: ${time}.`;
     } else if (status === "canceled") {
       notificationContent = `Lịch hẹn ngày ${formattedVietnamTime} của bạn đã bị hủy.`;
     } else if (status === "completed") {
@@ -311,7 +313,7 @@ const confirmAppointment = async (req, res) => {
 
     if (status === "confirmed") {
       emailSubject = "Phản hồi: Lịch hẹn của bạn đã được xác nhận.";
-      emailText = `Kính gửi ${userInfo.name},\n\nLịch hẹn của bạn đã được xác nhận như sau:\n\nNgày: ${formattedVietnamTime}\nCa khám: ${shiftType}\n\nVui lòng có mặt đúng giờ để đảm bảo quá trình khám diễn ra thuận lợi.\n\nNếu cần hỗ trợ, vui lòng liên hệ chúng tôi qua email hoặc số điện thoại.\n\nTrân trọng!\n[Đội ngũ hỗ trợ khách hàng].`;
+      emailText = `Kính gửi ${userInfo.name},\n\nLịch hẹn của bạn đã được xác nhận như sau:\n\nNgày: ${formattedVietnamTime}\nCa khám: ${shiftType}.\n\nThời gian diễn ra: ${time}.\n\nVui lòng có mặt đúng giờ để đảm bảo quá trình khám diễn ra thuận lợi.\n\nNếu cần hỗ trợ, vui lòng liên hệ chúng tôi qua email hoặc số điện thoại.\n\nTrân trọng!\n[Đội ngũ hỗ trợ khách hàng].`;
     } else if (status === "canceled") {
       emailSubject = "Phản hồi: Lịch hẹn của bạn đã bị hủy.";
       emailText = `Kính gửi ${userInfo.name},\n\nLịch hẹn của bạn vào ngày ${formattedVietnamTime} - Ca khám: ${shiftType} đã bị hủy.\n\nNếu có bất kỳ thắc mắc nào, vui lòng liên hệ chúng tôi qua email hoặc số điện thoại.\n\nTrân trọng!\n[Đội ngũ hỗ trợ khách hàng].`;
