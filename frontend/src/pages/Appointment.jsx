@@ -155,6 +155,8 @@ const Appointment = () => {
         work_date: selectedSchedule.work_date,
       };
 
+      console.log("log form", appointmentData);
+
       const token = user?.token || "";
       const response = await axios.post(
         `http://localhost:5000/create-appointment/${patientId}`,
