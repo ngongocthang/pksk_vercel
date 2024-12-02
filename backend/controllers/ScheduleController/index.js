@@ -354,12 +354,13 @@ const doctorUpdateSchedule = async (req, res) => {
       const oldShift = findSchedule.work_shift === "morning" ? "Sáng" : "Chiều";
       const newShift =
         updatedSchedule.work_shift === "morning" ? "Sáng" : "Chiều";
+      const time = updatedSchedule.work_shift === "morning" ? "7h30-11h30" : "13h30-17h30";
 
       const mailOptions = {
         from: process.env.EMAIL_USER,
         to: userInfo.email,
         subject: "Lịch hẹn thay đổi từ bác sĩ",
-        text: `Xin chào ${userInfo.name},\n\nLịch hẹn của bạn vào ngày ${formattedOldDate} - Ca khám: ${oldShift} đã thay đổi thành ngày ${formattedNewDate} - Ca khám: ${newShift}.\n\nTrân trọng!`,
+        text: `Xin chào ${userInfo.name},\n\nLịch hẹn của bạn vào ngày ${formattedOldDate} - Ca khám: ${oldShift} đã thay đổi thành ngày ${formattedNewDate} - Ca khám: ${newShift}.\n\nThời gian diễn ra: ${time}.\n\nTrân trọng!`,
       };
 
       try {
@@ -367,7 +368,7 @@ const doctorUpdateSchedule = async (req, res) => {
         await Notification.create({
           patient_id: appointment.patient_id,
           doctor_id: appointment.doctor_id,
-          message: `Lịch hẹn của bản thay đổi từ ngày ${formattedOldDate} - Ca khám: ${oldShift} thành ngày ${formattedNewDate} - Ca khám: ${newShift}.`,
+          message: `Lịch hẹn của bản thay đổi từ ngày ${formattedOldDate} - Ca khám: ${oldShift} thành ngày ${formattedNewDate} - Ca khám: ${newShift}.Thời gian diễn ra: ${time}.`,
           appointment_id: appointment._id,
           recipientType: "patient",
         });
