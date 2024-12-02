@@ -15,6 +15,7 @@ const DoctorContextProvider = (props) => {
   const [schedules, setSchedules] = useState([]);
   const [specialzations, setSpecialzations] = useState([]);
   const [moneys, setMoneys] = useState([]);
+  const [patients, setCountPatients] = useState([]);
   const [dashData, setDashData] = useState(false);
   const [profileData, setProfileData] = useState(false);
 
@@ -283,7 +284,7 @@ const DoctorContextProvider = (props) => {
       if (Array.isArray(data) && data.length > 0) {
         setAppointmentStatus(data);
       } else {
-        toast.error("Không có lịch hẹn sắp tới nào!");
+        console.log("Không có lịch hẹn sắp tới nào!");
       }
     } catch (error) {
       console.log(error);
@@ -297,6 +298,20 @@ const DoctorContextProvider = (props) => {
 
       if (data.success) {
         setMoneys(data.data);
+      } else {
+        console.log(data.message);
+      }
+    } catch (error) {
+      console.log(error.response?.data?.message || error.message);
+    }
+  };
+
+  const countPatients = async (doctorId) => {
+    try {
+      const { data } = await axios.get(`${backendUrl}/patient/get-patient-dashboard-doctor/${doctorId}`, {});
+
+      if (data.success) {
+        setCountPatients(data.data);
       } else {
         console.log(data.message);
       }
@@ -338,7 +353,10 @@ const DoctorContextProvider = (props) => {
     getAppointmentsByStatus,
     moneys,
     setMoneys,
-    amountPaymentDoctors
+    amountPaymentDoctors,
+    patients,
+    setCountPatients,
+    countPatients
   };
 
   return (

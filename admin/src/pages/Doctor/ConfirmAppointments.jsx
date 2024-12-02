@@ -32,7 +32,7 @@ const ConfirmAppointments = () => {
           }
         );
         if (response.data.success) {
-          console.log(response.data.data);
+          console.log("lay lich hen da xac nhan ", response.data.data);
           setConfirmedAppointments(response.data.data);
         }
       } catch (error) {
