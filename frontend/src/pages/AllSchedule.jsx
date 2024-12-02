@@ -4,6 +4,8 @@ import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
 import viLocale from "@fullcalendar/core/locales/vi"; // Ngôn ngữ tiếng Việt
 import { AppContext } from "../context/AppContext";
 import axios from "axios"; // Import axios
+import { ToastContainer, toast } from "react-toastify"; // Import Toastify
+import "react-toastify/dist/ReactToastify.css"; // Import style cho Toastify
 
 const DoctorTimeline = () => {
   const [doctors, setDoctors] = useState([]);
@@ -30,9 +32,18 @@ const DoctorTimeline = () => {
         // Xử lý lịch làm việc (events)
         const mappedEvents = data.flatMap((doctor) =>
           doctor.schedules.map((schedule) => {
-            const startDate = new Date(schedule.work_date); // Lấy thời gian bắt đầu
-            const endDate = new Date(startDate); // Tính thời gian kết thúc
-            endDate.setHours(endDate.getHours() + 4); // Cộng thêm 4 tiếng
+            const workDate = new Date(schedule.work_date); // Ngày làm việc
+            const startDate = new Date(workDate);
+            const endDate = new Date(workDate);
+
+            // Thiết lập thời gian bắt đầu và kết thúc dựa trên work_shift
+            if (schedule.work_shift === "morning") {
+              startDate.setHours(7, 30, 0, 0); // 7h30 sáng
+              endDate.setHours(11, 30, 0, 0); // Kết thúc ca sáng
+            } else if (schedule.work_shift === "afternoon") {
+              startDate.setHours(13, 30, 0, 0); // 13h30 chiều
+              endDate.setHours(17, 30, 0, 0); // Kết thúc ca chiều
+            }
 
             const converWork_shift =
               schedule.work_shift === "morning" ? "Sáng" : "Chiều";
@@ -57,20 +68,66 @@ const DoctorTimeline = () => {
     fetchSchedules();
   }, []);
 
-  const handleEventClick = async (info) => {
+  const handleEventClick = (info) => {
     const clickedEvent = info.event;
-    const convertitle = clickedEvent.title === "Sáng" ? "morning" : "afternoon";
-  
-    // Lấy dữ liệu từ sự kiện được click
+    const convertTitle = clickedEvent.title === "Sáng" ? "morning" : "afternoon";
+
     const appointmentData = {
       patient_id: patient_id,
-      doctor_id: clickedEvent.getResources()[0]?.id || "", 
-      work_shift: convertitle, 
-      work_date: clickedEvent.start.toISOString().split("T")[0],
+      doctor_id: clickedEvent.getResources()[0]?.id || "",
+      work_shift: convertTitle,
+      work_date: clickedEvent.start.toISOString().split("T")[0], // Ngày
     };
-  
-    console.log("log form", appointmentData);
-  
+
+    // Hiển thị hộp thoại xác nhận bằng Toastify
+    toast.info(
+      <div>
+        <p>
+          Bạn có chắc chắn muốn đặt lịch hẹn vào{" "}
+          <b>{appointmentData.work_date}</b> vào ca <b>{clickedEvent.title}</b>?
+        </p>
+        <div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
+          <button
+            onClick={async () => {
+              await confirmBooking(appointmentData);
+              toast.dismiss();
+            }}
+            style={{
+              padding: "8px 16px",
+              backgroundColor: "#00759c",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+            }}
+          >
+            Xác nhận
+          </button>
+          <button
+            onClick={() => toast.dismiss()}
+            style={{
+              padding: "8px 16px",
+              backgroundColor: "gray",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+            }}
+          >
+            Hủy
+          </button>
+        </div>
+      </div>,
+      {
+        position: "top-center",
+        autoClose: false,
+        closeOnClick: false,
+        draggable: false,
+      }
+    );
+  };
+
+  const confirmBooking = async (appointmentData) => {
     try {
       const response = await axios.post(
         `http://localhost:5000/create-appointment/${patient_id}`,
@@ -81,14 +138,13 @@ const DoctorTimeline = () => {
           },
         }
       );
+      toast.success("Đặt lịch hẹn thành công!");
       console.log("Đặt lịch hẹn thành công:", response.data);
-      alert("Đặt lịch hẹn thành công!");
     } catch (error) {
-      console.error("Lỗi khi đặt lịch hẹn:", error);
-      alert("Có lỗi xảy ra khi đặt lịch hẹn.");
+      console.error("Lỗi khi đặt lịch hẹn:", error.response?.data?.message);
+      toast.error(error.response?.data?.message || "Có lỗi xảy ra khi đặt lịch hẹn.");
     }
   };
-  
 
   return (
     <div>
@@ -134,6 +190,7 @@ const DoctorTimeline = () => {
         nowIndicator={true} // Hiển thị vạch thời gian hiện tại
         eventClick={handleEventClick} // Thêm sự kiện click cho lịch
       />
+      <ToastContainer /> {/* Hiển thị các thông báo của Toastify */}
     </div>
   );
 };
