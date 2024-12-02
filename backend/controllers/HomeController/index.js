@@ -77,7 +77,7 @@ const login = async (req, res) => {
 
     // Tạo token JWT
     const token = jwt.sign({ id: user._id, role: userRole }, JWT_SECRET, {
-      expiresIn: "1h",
+      expiresIn: "7d",
     });
 
     return res.status(200).json({
@@ -155,7 +155,7 @@ const filter = async (req, res) => {
 
 const getHistoryAppointment = async (req, res) => {
   try {
-    const { id } = req.params;// id user
+    const { id } = req.params; // id user
 
     const user = await User.findOne({ _id: id });
     if (!user) {
@@ -179,7 +179,12 @@ const getHistoryAppointment = async (req, res) => {
       });
 
       const doctor = await Doctor.findById(appointment.doctor_id);
-      const nameDoctor = await User.findById({ _id: doctor.user_id }).select("name"); 
+      const nameDoctor = await User.findById({ _id: doctor.user_id }).select(
+        "name"
+      );
+      const imageDoctor = await User.findById({ _id: doctor.user_id }).select(
+        "image"
+      );
 
       for (const history of historyEntries) {
         detailedHistoryAppointments.push({
@@ -187,7 +192,8 @@ const getHistoryAppointment = async (req, res) => {
             work_shift: appointment.work_shift,
             work_date: appointment.work_date,
             status: appointment.status,
-            doctor_name: nameDoctor ? nameDoctor.name : "Unknown Doctor",
+            doctor_name: nameDoctor ? nameDoctor.name : "Unknown Name Doctor",
+            doctor_image: imageDoctor ? imageDoctor.image : "Unknown Image Doctor",
             createdAt: history.createdAt,
             updatedAt: history.updatedAt,
           },
@@ -196,11 +202,15 @@ const getHistoryAppointment = async (req, res) => {
     }
 
     if (detailedHistoryAppointments.length === 0) {
-      return res.status(404).json({ message: "History appointment not found!" });
+      return res
+        .status(404)
+        .json({ message: "History appointment not found!" });
     }
 
     // Sort appointments by work_date in descending order
-    detailedHistoryAppointments.sort((a, b) => new Date(b.history.updatedAt) - new Date(a.history.updatedAt));
+    detailedHistoryAppointments.sort(
+      (a, b) => new Date(b.history.updatedAt) - new Date(a.history.updatedAt)
+    );
 
     return res.status(200).json({
       historyAppointments: detailedHistoryAppointments,
@@ -221,13 +231,17 @@ const getdataMoneyDashboardAdmin = async (req, res) => {
     // Nhóm theo tháng và tính tổng số tiền
     const revenueByMonth = payments.reduce((acc, payment) => {
       const workDate = payment.appointment_id.work_date;
-      const month = new Date(workDate).toLocaleString('default', { month: 'long' }); // Lấy tên tháng
+      const month = new Date(workDate).toLocaleString("default", {
+        month: "long",
+      }); // Lấy tên tháng
       acc[month] = (acc[month] || 0) + payment.amount; // Cộng dồn số tiền
       return acc;
     }, {});
 
     // Chuyển đổi kết quả thành mảng
-    const revenueData = Object.entries(revenueByMonth).map(([month, revenue]) => ({ month, revenue }));
+    const revenueData = Object.entries(revenueByMonth).map(
+      ([month, revenue]) => ({ month, revenue })
+    );
 
     return res.status(200).json(revenueData);
   } catch (error) {
@@ -235,7 +249,57 @@ const getdataMoneyDashboardAdmin = async (req, res) => {
   }
 };
 
- 
+const getAllScheduleDoctor = async (req, res) => {
+  try {
+    // Lấy danh sách bác sĩ
+    const doctors = await Doctor.find({}).populate("user_id", "name image");
+    if (!doctors || doctors.length === 0) {
+      return res.status(404).json({ message: "Doctor not found" });
+    }
+
+    // Lấy lịch làm việc của các bác sĩ
+    const schedules = await Schedule.find({ doctor_id: { $in: doctors.map(doctor => doctor._id) } });
+    if (!schedules || schedules.length === 0) {
+      return res.status(404).json({ message: "Schedule not found" });
+    }
+
+    // Kết hợp thông tin bác sĩ với lịch làm việc
+    const result = doctors.map(doctor => {
+      const doctorSchedules = schedules
+        .filter(schedule => schedule.doctor_id.equals(doctor._id))
+        .map(schedule => ({
+          _id: schedule._id,
+          work_date: schedule.work_date,
+          work_shift: schedule.work_shift,
+          createdAt: schedule.createdAt,
+          updatedAt: schedule.updatedAt,
+          doctorName: doctor.user_id.name, // Thêm tên bác sĩ
+          doctorImage: doctor.user_id.image // Thêm ả bác sĩ
+        }));
+
+      return {
+        doctorId: doctor._id,
+        doctorName: doctor.user_id.name,
+        doctorImage: doctor.user_id.image,
+        schedules: doctorSchedules
+      };
+    });
+
+    return res.status(200).json(result);
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
 
 
-module.exports = { register, login, logout, filter, getHistoryAppointment, getdataMoneyDashboardAdmin };
+
+
+module.exports = {
+  register,   
+  login,
+  logout,
+  filter,
+  getHistoryAppointment,
+  getdataMoneyDashboardAdmin,
+  getAllScheduleDoctor,
+};

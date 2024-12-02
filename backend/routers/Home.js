@@ -6,7 +6,8 @@ const {
   logout,
   filter,
   getHistoryAppointment,
-  getdataMoneyDashboardAdmin
+  getdataMoneyDashboardAdmin,
+  getAllScheduleDoctor
 } = require("../controllers/HomeController/index");
 const {
   patientCreateAppointment, 
@@ -48,6 +49,7 @@ router.post("/payment/:id", payment);
 router.post("/callback", callback);
 router.get("/check-payment-status/:id", checkPaymentStatus); 
 router.get("/get-money-dashboard-admin", getdataMoneyDashboardAdmin); 
+router.get("/get-all-schedule-doctor", getAllScheduleDoctor); 
 
 
 module.exports = router;
