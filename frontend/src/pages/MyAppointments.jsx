@@ -127,7 +127,7 @@ const MyAppointments = () => {
         }
       } catch (error) {
         console.error("Error canceling appointment:", error);
-        toast.error(error.response?.data?.message || "Bạn chỉ huỷ cuộc hẹn trước 24h.");
+        toast.error( "Bạn chỉ huỷ cuộc hẹn trước 24h." || error.response?.data?.message );
       }
     };
 

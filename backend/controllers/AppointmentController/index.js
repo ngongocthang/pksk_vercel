@@ -139,13 +139,13 @@ const updateAppointment = async (req, res) => {
       .tz("Asia/Ho_Chi_Minh")
       .format("dddd, MMMM DD YYYY");
 
-    const newShift =
-      appointmentUpdate.work_shift === "morning" ? "Sáng" : "Chiều";
+    const newShift = appointmentUpdate.work_shift === "morning" ? "Sáng" : "Chiều";
+    const time = appointmentUpdate.work_shift === "morning" ? "7h30-11h30" : "13h30-17h30";
 
     await Notification.create({
       patient_id: appointmentUpdate.patient_id,
       doctor_id: appointmentUpdate.doctor_id,
-      content: `Thông báo lịch hẹn ${oldDate}-${oldShift} của bạn đã thay đổi: \nNgày khám mới: ${newDate}. \n Ca khám mới: ${newShift}.`,
+      content: `Thông báo lịch hẹn ${oldDate}-${oldShift} của bạn đã thay đổi: \nNgày khám mới: ${newDate}. \n Ca khám mới: ${newShift}.\n Thời gian diễn ra: ${time}`,
       appointment_id: appointmentUpdate._id,
       recipientType: "patient",
     });
@@ -154,7 +154,7 @@ const updateAppointment = async (req, res) => {
       from: process.env.EMAIL_USER,
       to: patientInfo.email,
       subject: "Thông báo lịch hẹn:",
-      text: `Xin chào ${patientInfo.name}, lịch hẹn của bạn đã thay đổi: \nNgày khám mới: ${newDate}. \n Ca khám mới: ${newShift}.`,
+      text: `Xin chào ${patientInfo.name}, lịch hẹn của bạn đã thay đổi: \nNgày khám mới: ${newDate}. \n Ca khám mới: ${newShift}.\n\nThời gian diễn ra: ${time}. \n\n Trân trọng!`,
     };
 
     // const mailOptionsDoctor = {
@@ -545,8 +545,7 @@ const processPrematureCancellation = async (req, res) => {
       .tz("Asia/Ho_Chi_Minh")
       .format("dddd, MMMM DD YYYY");
 
-    const converWshift =
-    appointmentUd.work_shift === "morning" ? "Sáng" : "Chiều";
+    const converWshift = appointmentUd.work_shift === "morning" ? "Sáng" : "Chiều";
 
     await Notification.create({
       patient_id: appointmentUd.patient_id,
@@ -556,13 +555,14 @@ const processPrematureCancellation = async (req, res) => {
       recipientType: "doctor",
     });
 
+    console.log("log email doctor", infoDoctor.email);
+
     const mailOptionsDoctor = {
       from: process.env.EMAIL_USER,
       to: infoDoctor.email,
       subject: "Thông báo lịch hẹn: Huỷ lịch hẹn",
-      text: `Xin chào bác sĩ, Bệnh nhân ${infoPatient.name} đã huỷ lịch hẹn ngày: ${vietnamTime} - ca khám : ${converWshift}. \\ Trân trọng.`,
+      text: `Xin chào bác sĩ, Bệnh nhân ${infoPatient.name} đã huỷ lịch hẹn ngày: ${vietnamTime} - ca khám : ${converWshift}. \n\n Trân trọng.`,
     };
-    await sendMail(mailOptionsDoctor);
     await transporter.sendMail(mailOptionsDoctor);
 
     return res.status(200).json({ message: "Delete appointment success!" });
