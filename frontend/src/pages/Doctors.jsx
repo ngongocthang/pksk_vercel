@@ -184,7 +184,7 @@ const Doctors = () => {
                 <p className="text-gray-900 text-sm truncate">{item.description}</p>
               </div>
             </div>
-          ))}
+          ))} 
         </div>
       </div>
       {totalPages > 1 && renderPagination()}

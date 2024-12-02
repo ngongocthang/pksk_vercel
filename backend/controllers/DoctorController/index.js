@@ -570,15 +570,18 @@ const getAppointmentConfirmByDoctor = async (req, res) => {
     const { id } = req.params;
     const doctor = await Doctor.findOne({ user_id: id });
     if (!doctor) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Doctor not found" });
+      return res.status(404).json({ success: false, message: "Doctor not found" });
     }
+
+    // Lấy work_date từ req.body
+    const workDate = new Date(req.body.work_date);
+    const startOfDay = new Date(workDate.setUTCHours(0, 0, 0, 0));
+    const endOfDay = new Date(workDate.setUTCHours(23, 59, 59, 999));
 
     const appointments = await Appointment.find({
       doctor_id: doctor._id,
       status: "confirmed",
-      work_date: req.body.work_date,
+      work_date: { $gte: startOfDay, $lte: endOfDay },
       work_shift: req.body.work_shift,
     }).populate({
       path: "patient_id",
@@ -586,9 +589,7 @@ const getAppointmentConfirmByDoctor = async (req, res) => {
     });
 
     if (!appointments || appointments.length === 0) {
-      return res
-        .status(404)
-        .json({ success: false, message: "No appointments found" });
+      return res.status(404).json({ success: false, message: "No appointments found" });
     }
 
     // Lấy thông tin thanh toán cho các cuộc hẹn
@@ -605,7 +606,7 @@ const getAppointmentConfirmByDoctor = async (req, res) => {
 
     // Thêm trạng thái thanh toán vào từng cuộc hẹn
     const result = appointments.map((appointment) => ({
-      ...appointment.toObject(), // Chuyển đổi Mongoose Document thành đối tượng JS
+      ...appointment.toObject(),
       paymentStatus: paymentStatusMap[appointment._id] || "false",
     }));
 
