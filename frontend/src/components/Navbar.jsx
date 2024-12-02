@@ -83,7 +83,7 @@ const Navbar = () => {
           <li className="py-1 text-base">Liên hệ</li>
         </NavLink>
         <NavLink to="/all-schedule" activeClassName="underline">
-          <li className="py-1 text-base">Đặt lịch hẹn</li>
+          <li className="py-1 text-base">Lịch làm việc</li>
         </NavLink>
       </ul>
 
