@@ -225,12 +225,14 @@ const Dashboard = () => {
                     <tr key={index} className={`hover:bg-gray-50 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"}`}>
                       <td className="py-4 px-4">
                         <div className="text-sm text-center">
-                          <p className="font-medium text-gray-800">{item.patient_id.user_id.name}</p>
+                          <p className="font-medium text-gray-800">{item.patient_id ? item.patient_id.user_id.name : "Không có tên"}</p>
+                          {/* <p className="font-medium text-gray-800">{item.patient_id.user_id.name}</p> */}
                           <p className="text-gray-500 text-xs">Ngày khám: {new Date(item.work_date).toLocaleDateString()}</p>
                         </div>
                       </td>
                       <td className="py-4 px-4">
-                        <p className="font-medium text-gray-800 text-sm">{item.doctor_id.user_id.name}</p>
+                        <p className="font-medium text-gray-800 text-sm">{item.doctor_id ? item.doctor_id.user_id.name : "Không có tên"}</p>
+                        {/* <p className="font-medium text-gray-800 text-sm">{item.doctor_id.user_id.name}</p> */}
                       </td>
                       <td className="py-4 px-4">
                         <span className={`py-1 px-4 rounded-full text-sm font-medium text-white shadow-md ${item.work_shift === "afternoon" ? "bg-orange-400" : "bg-blue-400"}`}>
@@ -243,7 +245,7 @@ const Dashboard = () => {
                         </span>
                       </td>
                     </tr>
-                  ))}
+                  ))}  
               </tbody>
             </table>
           </div>

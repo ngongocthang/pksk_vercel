@@ -26,8 +26,12 @@ const Doctors = () => {
 
   const fetchSpecializations = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/specialization/find-all");
-      setSpecializations(response.data.success ? response.data.specializations : []);
+      const response = await axios.get(
+        "http://localhost:5000/specialization/find-all"
+      );
+      setSpecializations(
+        response.data.success ? response.data.specializations : []
+      );
     } catch (error) {
       console.error("Error fetching specializations:", error);
     }
@@ -43,8 +47,10 @@ const Doctors = () => {
     // Lọc theo ngày làm việc
     if (selectedDate) {
       filtered = filtered.filter((doc) =>
-        doc.schedules.some(schedule => 
-          new Date(schedule.work_date).toISOString().split('T')[0] === selectedDate
+        doc.schedules.some(
+          (schedule) =>
+            new Date(schedule.work_date).toISOString().split("T")[0] ===
+            selectedDate
         )
       );
     }
@@ -100,12 +106,18 @@ const Doctors = () => {
     const delta = 2;
 
     for (let i = 1; i <= totalPages; i++) {
-      if (i === 1 || i === totalPages || (i >= currentPage - delta && i <= currentPage + delta)) {
+      if (
+        i === 1 ||
+        i === totalPages ||
+        (i >= currentPage - delta && i <= currentPage + delta)
+      ) {
         paginationItems.push(
           <button
             key={i}
             onClick={() => handlePageChange(i)}
-            className={`py-1 px-3 border rounded ${i === currentPage ? "bg-indigo-500 text-white" : "text-gray-600"}`}
+            className={`py-1 px-3 border rounded ${
+              i === currentPage ? "bg-indigo-500 text-white" : "text-gray-600"
+            }`}
           >
             {i}
           </button>
@@ -114,7 +126,11 @@ const Doctors = () => {
         (i === currentPage - delta - 1 && currentPage > delta + 2) ||
         (i === currentPage + delta + 1 && currentPage < totalPages - delta - 1)
       ) {
-        paginationItems.push(<span key={i} className="px-2">...</span>);
+        paginationItems.push(
+          <span key={i} className="px-2">
+            ...
+          </span>
+        );
       }
     }
 
@@ -126,7 +142,7 @@ const Doctors = () => {
   };
 
   const formatPrice = (price) => {
-    if (isNaN(price)) return price; 
+    if (isNaN(price)) return price;
     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };
 
@@ -134,10 +150,19 @@ const Doctors = () => {
     <div>
       <p className="text-gray-600 text-[20px]">Các bác sĩ chuyên khoa.</p>
       <div className="flex flex-col sm:flex-row items-start gap-5 mt-5">
-        <button className={`py-1 px-3 border rounded text-sm transition-all sm:hidden ${showFilter ? "bg-primary text-white" : ""}`} onClick={() => setShowFilter((prev) => !prev)}>
+        <button
+          className={`py-1 px-3 border rounded text-sm transition-all sm:hidden ${
+            showFilter ? "bg-primary text-white" : ""
+          }`}
+          onClick={() => setShowFilter((prev) => !prev)}
+        >
           Filters
         </button>
-        <div className={`flex-col gap-4 text-[18px] text-gray-600 ${showFilter ? "flex" : "hidden sm:flex"}`}>
+        <div
+          className={`flex-col gap-4 text-[18px] text-gray-600 ${
+            showFilter ? "flex" : "hidden sm:flex"
+          }`}
+        >
           <h3>Chuyên khoa:</h3>
           {specializations.map((spec) => (
             <div
@@ -147,17 +172,19 @@ const Doctors = () => {
                   ? navigate("/doctors")
                   : navigate(`/doctors/${convertToSlug(spec.name)}`)
               }
-              className={`w-[94vw] sm:w-40 pl-3 py-1.5 border border-gray-300 rounded transition-all cursor-pointer ${speciality === convertToSlug(spec.name)
+              className={`w-[94vw] sm:w-40 pl-3 py-1.5 border border-gray-300 rounded transition-all cursor-pointer ${
+                speciality === convertToSlug(spec.name)
                   ? "bg-[#e0f4fb] text-[#00759c]"
                   : ""
-                }`}>
+              }`}
+            >
               <p className="m-0">{spec.name}</p>
             </div>
           ))}
           {/* Thêm phần chọn ngày */}
           <h3>Ngày làm việc:</h3>
-          <input 
-            type="date" 
+          <input
+            type="date"
             value={selectedDate} // Đặt giá trị cho ô nhập ngày
             onChange={(e) => handleDateChange(e.target.value)} // Gọi hàm cập nhật ngày
             className="w-[94vw] sm:w-40 border rounded p-2"
@@ -169,22 +196,39 @@ const Doctors = () => {
             <div
               onClick={() => navigate(`/appointment/${item._id}`)}
               className="border border-blue-200 rounded-xl overflow-hidden cursor-pointer hover:translate-y-[-10px] transition-all duration-500 relative"
-              key={index}>
+              key={index}
+            >
               <img className="bg-blue-50" src={item.user_id.image} alt="" />
               <span className="absolute top-2 left-2 bg-indigo-100 text-indigo-800 text-xs font-semibold px-2 py-1 rounded-full">
-                {item.specialization_id ? item.specialization_id.name : "Chưa có chuyên khoa"}
+                {item.specialization_id
+                  ? item.specialization_id.name
+                  : "Chưa có chuyên khoa"}
               </span>
               <div className="p-4">
-                <div className="flex items-center gap-2 text-sm text-center text-[#00759c]">
-                  <p className="w-2 h-2 bg-[#00759c] rounded-full"></p>
-                  <p>Đặt lịch</p>
-                </div>
-                <p className="text-gray-900 text-lg font-medium">{item.user_id.name}</p>
-                <p className="text-gray-900 text-sm truncate">Giá: {formatPrice(item.price)} (VND)</p>
-                <p className="text-gray-900 text-sm truncate">{item.description}</p>
+                {item.available === true ? (
+                  <div className="flex items-center gap-2 text-sm text-center text-[#00759c]">
+                    <p className="w-2 h-2 bg-[#00759c] rounded-full"></p>
+                    <p>Lịch hẹn</p>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 text-sm text-center text-[#9c0000]">
+                    <p className="w-2 h-2 bg-[#9c0000] rounded-full"></p>
+                    <p>Lịch hẹn</p>
+                  </div>
+                )}
+
+                <p className="text-gray-900 text-lg font-medium">
+                  {item.user_id.name}
+                </p>
+                <p className="text-gray-900 text-sm truncate">
+                  Giá: {formatPrice(item.price)} (VND)
+                </p>
+                <p className="text-gray-900 text-sm truncate">
+                  {item.description}
+                </p>
               </div>
             </div>
-          ))} 
+          ))}
         </div>
       </div>
       {totalPages > 1 && renderPagination()}

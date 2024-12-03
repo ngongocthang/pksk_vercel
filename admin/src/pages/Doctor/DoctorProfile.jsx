@@ -4,8 +4,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const DoctorProfile = () => {
-  const { dToken, profileData, getProfileData, backendUrl } =
-    useContext(DoctorContext);
+  const { dToken, profileData, getProfileData, backendUrl } = useContext(DoctorContext);
   const [isEdit, setIsEdit] = useState(false);
   const [formData, setFormData] = useState({});
   const [selectedImage, setSelectedImage] = useState(null);
@@ -44,16 +43,25 @@ const DoctorProfile = () => {
       const doctorInfo = JSON.parse(sessionStorage.getItem("doctorInfo"));
       const doctorId = doctorInfo ? doctorInfo.id : null;
       const updatedData = new FormData();
-      updatedData.append("name", formData.name);
-      updatedData.append("email", formData.email);
-      updatedData.append("phone", formData.phone);
-      updatedData.append("description", formData.description);
-      updatedData.append("price", formData.price.replace(/\./g, ''));
+
+      // Thêm tất cả các trường vào FormData
+      updatedData.append("name", formData.name || "");
+      updatedData.append("email", formData.email || "");
+      updatedData.append("phone", formData.phone || "");
+      updatedData.append("description", formData.description || "");
+
+      // Gửi giá trị price mà không cần loại bỏ dấu chấm
+      updatedData.append("price", formData.price || "0"); // Nếu không có giá trị thì gửi "0"
+      updatedData.append("available", formData.available ? "true" : "false");
+
+      // Chỉ thêm hình ảnh nếu có
       if (selectedImage) {
         updatedData.append("image", selectedImage);
       }
+
+      // Chỉ thêm mật khẩu nếu có
       if (newPassword) {
-        updatedData.append("oldPassword", oldPassword);
+        updatedData.append("oldPassword", oldPassword || "");
         updatedData.append("newPassword", newPassword);
       }
 
@@ -76,7 +84,7 @@ const DoctorProfile = () => {
         toast.error(data.message);
       }
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response ? error.response.data.message : "Đã xảy ra lỗi!");
     } finally {
       setLoading(false);
     }
@@ -87,8 +95,8 @@ const DoctorProfile = () => {
     setIsEdit(false);
     setSelectedImage(null);
     setPreviewImage(null);
-    setNewPassword('');
-    setOldPassword('');
+    setNewPassword("");
+    setOldPassword("");
   };
 
   // Handle Read More / Read Less toggle
@@ -102,14 +110,15 @@ const DoctorProfile = () => {
 
   // Check if the update button should be disabled
   const isUpdateDisabled = () => {
-    return isEdit && (
-      (newPassword && !oldPassword) || 
-      (!newPassword && (oldPassword || selectedImage))
+    return (
+      isEdit &&
+      ((newPassword && !oldPassword) ||
+        (!newPassword && (oldPassword || selectedImage)))
     );
   };
 
   const formatPrice = (price) => {
-    if (isNaN(price)) return price; 
+    if (isNaN(price)) return price;
     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };
 
@@ -126,8 +135,8 @@ const DoctorProfile = () => {
                   previewImage
                     ? previewImage
                     : selectedImage
-                      ? URL.createObjectURL(selectedImage)
-                      : profileData.doctorProfile.image
+                    ? URL.createObjectURL(selectedImage)
+                    : profileData.doctorProfile.image
                 }
                 alt="Profile"
               />
@@ -193,7 +202,9 @@ const DoctorProfile = () => {
             <div className="mb-6">
               {isEdit ? (
                 <>
-                  <label className="block text-gray-700 font-bold mb-1">Email:</label>
+                  <label className="block text-gray-700 font-bold mb-1">
+                    Email:
+                  </label>
                   <input
                     type="email"
                     name="email"
@@ -205,7 +216,8 @@ const DoctorProfile = () => {
                 </>
               ) : (
                 <p className="text-gray-800 text-lg">
-                  <span className="font-bold">Email:</span> {profileData.doctorProfile.email}
+                  <span className="font-bold">Email:</span>{" "}
+                  {profileData.doctorProfile.email}
                 </p>
               )}
             </div>
@@ -213,7 +225,9 @@ const DoctorProfile = () => {
             <div className="mb-6">
               {isEdit ? (
                 <>
-                  <label className="block text-gray-700 font-bold mb-1">Phone:</label>
+                  <label className="block text-gray-700 font-bold mb-1">
+                    Phone:
+                  </label>
                   <input
                     type="tel"
                     name="phone"
@@ -225,7 +239,8 @@ const DoctorProfile = () => {
                 </>
               ) : (
                 <p className="text-gray-800 text-lg">
-                  <span className="font-bold">Số điện thoại:</span> {profileData.doctorProfile.phone}
+                  <span className="font-bold">Số điện thoại:</span>{" "}
+                  {profileData.doctorProfile.phone}
                 </p>
               )}
             </div>
@@ -233,30 +248,37 @@ const DoctorProfile = () => {
             <div className="mb-6">
               {isEdit ? (
                 <>
-                  <label className="block text-gray-700 font-bold mb-1">Giá:</label>
+                  <label className="block text-gray-700 font-bold mb-1">
+                    Giá:
+                  </label>
                   <input
                     type="text" // Sử dụng type="text" để cho phép dấu phân cách
                     name="price"
-                    value={formData.price ? formatPrice(formData.price) : ''}
-                    onChange={(e) => handleInputChange({
-                      target: {
-                        name: 'price',
-                        value: e.target.value.replace(/\./g, '') // Xóa dấu chấm trước khi lưu
-                      }
-                    })}
+                    value={formData.price ? formatPrice(formData.price) : ""}
+                    onChange={(e) =>
+                      handleInputChange({
+                        target: {
+                          name: "price",
+                          value: e.target.value.replace(/\./g, ""), // Xóa dấu chấm trước khi lưu
+                        },
+                      })
+                    }
                     className="w-full p-3 border-2 border-gray-300 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
                     placeholder="Giá"
                   />
                 </>
               ) : (
                 <p className="text-gray-800 text-lg">
-                  <span className="font-bold">Giá:</span> {formatPrice(profileData.doctorProfile.price)} (VND)
+                  <span className="font-bold">Giá:</span>{" "}
+                  {formatPrice(profileData.doctorProfile.price)} (VND)
                 </p>
               )}
             </div>
 
             <div className="mb-6">
-              <label className="block text-gray-700 font-bold mb-1">Giới thiệu:</label>
+              <label className="block text-gray-700 font-bold mb-1">
+                Giới thiệu:
+              </label>
               {isEdit ? (
                 <textarea
                   name="description"
@@ -280,7 +302,9 @@ const DoctorProfile = () => {
             {isEdit && (
               <div className="mb-6">
                 {/* New Password Field */}
-                <label className="block text-gray-700 font-bold mb-1">Mật khẩu mới:</label>
+                <label className="block text-gray-700 font-bold mb-1">
+                  Mật khẩu mới:
+                </label>
                 <input
                   type="text"
                   value={newPassword}
@@ -292,7 +316,9 @@ const DoctorProfile = () => {
                 {/* Old Password Field */}
                 {newPassword && (
                   <>
-                    <label className="block text-gray-700 font-bold mb-1 mt-4">Mật khẩu cũ:</label>
+                    <label className="block text-gray-700 font-bold mb-1 mt-4">
+                      Mật khẩu cũ:
+                    </label>
                     <input
                       type="text"
                       value={oldPassword}
@@ -305,12 +331,34 @@ const DoctorProfile = () => {
               </div>
             )}
 
+            <div className="flex gap-1 pt-2">
+              <input
+                onChange={() => {
+                  if (isEdit) {
+                    setFormData((prev) => ({
+                      ...prev,
+                      available: !prev.available, // Cập nhật trạng thái available
+                    }));
+                  }
+                }}
+                checked={formData.available}
+                type="checkbox"
+                name="available"
+                id=""
+              />
+              <label htmlFor="">Available</label>
+            </div>
+
             <div className="flex justify-center space-x-2">
               {isEdit ? (
                 <>
                   <button
                     onClick={updateProfile}
-                    className={`px-4 py-2 rounded-md ${loading || isUpdateDisabled() ? "bg-gray-300 text-black disabled-button" : "bg-[#219c9e] text-white"}`}
+                    className={`px-4 py-2 rounded-md ${
+                      loading || isUpdateDisabled()
+                        ? "bg-gray-300 text-black disabled-button"
+                        : "bg-[#219c9e] text-white"
+                    }`}
                     disabled={loading || isUpdateDisabled()}
                   >
                     {loading ? "Updating..." : "Cập nhật"}

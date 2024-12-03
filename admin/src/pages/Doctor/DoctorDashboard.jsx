@@ -219,7 +219,7 @@ import { DoctorContext } from "../../context/DoctorContext";
               <div className="text-center relative z-20">
                 <img className="w-14 mx-auto" src={assets.earning_icon} alt="" />
                 <p className="text-xl font-semibold text-white">{moneys ? formatPrice(moneys) : 0}</p>
-                <p className="text-white text-xl font-semibold">Thu nhập 0 (VND)</p>
+                <p className="text-white text-xl font-semibold">Thu nhập (VND)</p>
               </div>
             </div>
 
