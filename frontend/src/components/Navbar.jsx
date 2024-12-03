@@ -32,14 +32,14 @@ const Navbar = () => {
     }
   };
 
-  // useEffect(() => {
-  //   if (user?.token) {
-  //     fetchUnreadNotifications(); // Lần đầu tiên khi có user
-  //     const interval = setInterval(fetchUnreadNotifications, 1000); // Lấy thông báo mỗi 30 giây
+  useEffect(() => {
+    if (user?.token) {
+      fetchUnreadNotifications(); // Lần đầu tiên khi có user
+      const interval = setInterval(fetchUnreadNotifications, 1000); // Lấy thông báo mỗi 30 giây
 
-  //     return () => clearInterval(interval); // Dọn dẹp interval khi component bị hủy
-  //   }
-  // }, [user, setUnreadCount]);
+      return () => clearInterval(interval); // Dọn dẹp interval khi component bị hủy
+    }
+  }, [user, setUnreadCount]);
 
   const getDisplayName = (fullName) => {
     const nameParts = fullName.split(" ");
