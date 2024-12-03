@@ -102,61 +102,68 @@ const Doctors = () => {
   };
 
   const renderPagination = () => {
+    const delta = 1; // Số trang hiển thị trước và sau trang hiện tại
     const paginationItems = [];
-    for (let i = 1; i <= totalPages; i++) {
-      if (
-        i === 1 ||
-        i === totalPages ||
-        (i >= currentPage - delta && i <= currentPage + delta)
-      ) {
-        paginationItems.push(
-          <button
-            key={i}
-            onClick={() => handlePageChange(i)}
-            className={`py-1 px-3 border rounded ${
-              i === currentPage ? "bg-indigo-500 text-white" : "text-gray-600"
-            }`}
-          >
-            {i}
-          </button>
-        );
-      } else if (
-        (i === currentPage - delta - 1 && currentPage > delta + 2) ||
-        (i === currentPage + delta + 1 && currentPage < totalPages - delta - 1)
-      ) {
-        paginationItems.push(
-          <span key={i} className="px-2">
-            ...
-          </span>
-        );
-      }
+
+    // Nút "Trang trước"
+    paginationItems.push(
+      <button
+        key="prev"
+        onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+        className={`py-1 px-3 border rounded ${currentPage === 1 ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "text-gray-600"
+          }`}
+        disabled={currentPage === 1}
+      >
+        Trước
+      </button>
+    );
+
+    // Hiển thị trang 1
+    paginationItems.push(
+      <button
+        key={1}
+        onClick={() => handlePageChange(1)}
+        className={`py-1 px-3 border rounded ${currentPage === 1 ? "bg-indigo-500 text-white" : "text-gray-600"
+          }`}
+      >
+        1
+      </button>
+    );
+
+    // Hiển thị dấu ba chấm nếu cần, khi currentPage > 3
+    if (currentPage > 2) {
+      paginationItems.push(
+        <span key="start-dots" className="px-2">
+          ...
+        </span>
+      );
     }
 
-    // Hiển thị dấu "..." ở giữa nếu cần
-    if (totalPages > 3 && currentPage > 2) {
-      paginationItems.push(<span key="dots-middle" className="px-2">...</span>);
-    }
-
-    // Hiển thị trang hiện tại (nếu nó không phải là một trong hai trang đầu tiên hoặc trang cuối)
-    if (currentPage > 2 && currentPage < totalPages - 1) {
+    // Hiển thị các trang xung quanh trang hiện tại
+    for (let i = Math.max(2, currentPage - delta); i <= Math.min(totalPages - 1, currentPage + delta); i++) {
       paginationItems.push(
         <button
-          key={currentPage}
-          onClick={() => handlePageChange(currentPage)}
-          className="py-1 px-3 border rounded bg-indigo-500 text-white"
+          key={i}
+          onClick={() => handlePageChange(i)}
+          className={`py-1 px-3 border rounded ${i === currentPage ? "bg-indigo-500 text-white" : "text-gray-600"
+            }`}
         >
-          {currentPage}
+          {i}
         </button>
       );
     }
 
-    // Hiển thị dấu "..." trước trang cuối nếu cần
-    if (totalPages > 3 && currentPage < totalPages - 1) {
-      paginationItems.push(<span key="dots-end" className="px-2">...</span>);
+    // Hiển thị dấu ba chấm nếu cần, khi currentPage < totalPages - 1
+    if (currentPage < totalPages - 1) {
+      paginationItems.push(
+        <span key="end-dots" className="px-2">
+          ...
+        </span>
+      );
     }
 
-    // Hiển thị trang cuối cùng
-    if (totalPages > 2) {
+    // Hiển thị trang cuối
+    if (totalPages > 1) {
       paginationItems.push(
         <button
           key={totalPages}
@@ -169,7 +176,7 @@ const Doctors = () => {
       );
     }
 
-    // Nút "Next"
+    // Nút "Trang tiếp theo"
     paginationItems.push(
       <button
         key="next"
@@ -199,17 +206,15 @@ const Doctors = () => {
       <p className="text-gray-600 text-[20px]">Các bác sĩ chuyên khoa.</p>
       <div className="flex flex-col sm:flex-row items-start gap-5 mt-5">
         <button
-          className={`py-1 px-3 border rounded text-sm transition-all sm:hidden ${
-            showFilter ? "bg-primary text-white" : ""
-          }`}
+          className={`py-1 px-3 border rounded text-sm transition-all sm:hidden ${showFilter ? "bg-primary text-white" : ""
+            }`}
           onClick={() => setShowFilter((prev) => !prev)}
         >
           Filters
         </button>
         <div
-          className={`flex-col gap-4 text-[18px] text-gray-600 ${
-            showFilter ? "flex" : "hidden sm:flex"
-          }`}
+          className={`flex-col gap-4 text-[18px] text-gray-600 ${showFilter ? "flex" : "hidden sm:flex"
+            }`}
         >
           <h3>Chuyên khoa:</h3>
           {specializations.map((spec) => (
@@ -220,11 +225,10 @@ const Doctors = () => {
                   ? navigate("/doctors")
                   : navigate(`/doctors/${convertToSlug(spec.name)}`)
               }
-              className={`w-[94vw] sm:w-40 pl-3 py-1.5 border border-gray-300 rounded transition-all cursor-pointer ${
-                speciality === convertToSlug(spec.name)
-                  ? "bg-[#e0f4fb] text-[#00759c]"
-                  : ""
-              }`}
+              className={`w-[94vw] sm:w-40 pl-3 py-1.5 border border-gray-300 rounded transition-all cursor-pointer ${speciality === convertToSlug(spec.name)
+                ? "bg-[#e0f4fb] text-[#00759c]"
+                : ""
+                }`}
             >
               <p className="m-0">{spec.name}</p>
             </div>
