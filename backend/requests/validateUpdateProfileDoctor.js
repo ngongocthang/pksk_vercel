@@ -55,6 +55,9 @@ const updateDoctorSchema = Joi.object({
     "number.min": "Giá khám không được nhỏ hơn 0.",
     "any.required": "Giá khám là bắt buộc.",
   }),
+  available: Joi.boolean().required().messages({
+    "any.required": "Trạng thái làm việc là bắt buộc.",
+  }),
 });
 
 const validateUpdateDoctor = (data) => {

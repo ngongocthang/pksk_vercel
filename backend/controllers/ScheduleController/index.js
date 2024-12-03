@@ -125,27 +125,61 @@ const deleteSchedule = async (req, res) => {
   }
 };
 
+// const getScheduleByDoctor = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const today = new Date();
+//     today.setHours(0, 0, 0, 0);
+//     const doctor = await Doctor.findOne({ _id: id });
+//     if (!doctor) {
+//       return res.status(400).json({ message: "Doctor not found" });
+//     }
+//     const schedules = await Schedule.find({
+//       doctor_id: doctor._id,
+//       work_date: { $gte: today },
+//     }).sort({ work_date: 1 });
+//     if (schedules.length <= 0) {
+//       return res.status(400).json({ message: "Schedule not found" });
+//     }
+//     return res.status(200).json(schedules);
+//   } catch (error) {
+//     return res.status(500).json({ message: error.message });
+//   }
+// };
+
 const getScheduleByDoctor = async (req, res) => {
   try {
     const { id } = req.params;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+
     const doctor = await Doctor.findOne({ _id: id });
     if (!doctor) {
       return res.status(400).json({ message: "Doctor not found" });
     }
+
     const schedules = await Schedule.find({
       doctor_id: doctor._id,
       work_date: { $gte: today },
     }).sort({ work_date: 1 });
+
     if (schedules.length <= 0) {
       return res.status(400).json({ message: "Schedule not found" });
     }
-    return res.status(200).json(schedules);
+
+    // Thêm trường available từ doctor vào từng lịch
+    const schedulesWithAvailability = schedules.map(schedule => ({
+      ...schedule.toObject(), // Chuyển đổi Mongoose Document thành Object
+      available: doctor.available // Lấy trường available từ doctor
+    }));
+
+    return res.status(200).json(schedulesWithAvailability);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
+
+
 const getScheduleByDoctorDashboard = async (req, res) => {
   try {
     const { id } = req.params;
@@ -199,55 +233,6 @@ const doctorCreateSchedule = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
-// const doctorCreateSchedule = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const { work_shift, work_date } = req.body;
-
-//     const doctor = await Doctor.findOne({ user_id: id });
-//     if (!doctor) {
-//       return res.status(400).json({ message: "Doctor not found" });
-//     }
-
-//     const checkSchedule = await Schedule.findOne({
-//       work_date: req.body.work_date,
-//       doctor_id: doctor._id,
-//     });
-//     if (checkSchedule) {
-//       return res.status(400).json({ message: "Schedule already exists" });
-//     }
-
-//     // Xác định thời gian bắt đầu dựa trên work_shift
-//     let startTime;
-
-//     if (work_shift === "morning") {
-//       startTime = new Date(work_date);
-//       startTime.setHours(7, 30, 0, 0); // 7h30
-//     } else if (work_shift === "afternoon") {
-//       startTime = new Date(work_date);
-//       startTime.setHours(13, 30, 0, 0); // 13h30
-//     } else {
-//       return res.status(400).json({ message: "Invalid work shift" });
-//     }
-
-//     // Cộng thêm 7 giờ để chuyển đổi sang giờ Việt Nam
-//     startTime.setHours(startTime.getHours() + 7);
-
-//     // Lưu work_date với giờ đã cập nhật
-//     const schedule = await Schedule.create({
-//       ...req.body,
-//       doctor_id: doctor._id,
-//       work_date: startTime.toISOString(), // Lưu work_date với giờ đã cập nhật
-//     });
-
-//     if (schedule) {
-//       return res.status(200).json({ success: true, schedule });
-//     }
-//     return res.status(400).json({ success: false, message: "Schedule not found" });
-//   } catch (error) {
-//     return res.status(500).json({ success: false, message: error.message });
-//   }
-// };
 
 const getSchedule = async (req, res) => {
   try {
