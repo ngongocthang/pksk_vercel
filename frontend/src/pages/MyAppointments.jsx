@@ -10,6 +10,7 @@ const MyAppointments = () => {
   const [appointments, setAppointments] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [isLoadingCancel, setIsLoadingCancel] = useState(false); // Thêm state cho loading khi hủy
   const navigate = useNavigate();
   const toastId = React.useRef(null);
 
@@ -90,11 +91,8 @@ const MyAppointments = () => {
 
   const handleCancelAppointment = (appointmentId) => {
     const appointment = appointments.find((appt) => appt._id === appointmentId);
-    const appointmentDate = new Date(appointment.work_date).toLocaleDateString(
-      "vi-VN"
-    );
-    const appointmentShift =
-      appointment.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều";
+    const appointmentDate = new Date(appointment.work_date).toLocaleDateString("vi-VN");
+    const appointmentShift = appointment.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều";
 
     const confirmDelete = async () => {
       const token = user?.token;
@@ -106,6 +104,7 @@ const MyAppointments = () => {
       }
 
       try {
+        setIsLoadingCancel(appointmentId); // Set loading state cho cuộc hẹn đang hủy
         const response = await axios.put(
           `http://localhost:5000/cancel-appointment/${appointmentId}`,
           {},
@@ -117,17 +116,16 @@ const MyAppointments = () => {
         );
 
         if (response.data.success) {
-          toast.error("Có lỗi xảy ra khi hủy cuộc hẹn.");
-          console.error("Error else here:", error);
-         
-        } else {
-          console.log("Appointment canceled successfully");
           toast.success("Cuộc hẹn đã được hủy thành công!");
           fetchAppointments();
+        } else {
+          toast.error("Có lỗi xảy ra khi hủy cuộc hẹn.");
         }
       } catch (error) {
         console.error("Error canceling appointment:", error);
-        toast.error( "Bạn chỉ huỷ cuộc hẹn trước 24h." || error.response?.data?.message );
+        toast.error("Bạn chỉ huỷ cuộc hẹn trước 24h." || error.response?.data?.message);
+      } finally {
+        setIsLoadingCancel(null); // Reset loading state khi hoàn thành
       }
     };
 
@@ -245,19 +243,18 @@ const MyAppointments = () => {
                     Trạng thái:
                   </span>{" "}
                   <span
-                    className={`${
-                      appointment.status === "pending"
-                        ? "text-yellow-500"
-                        : appointment.status === "confirmed"
+                    className={`${appointment.status === "pending"
+                      ? "text-yellow-500"
+                      : appointment.status === "confirmed"
                         ? "text-green-500"
                         : "text-red-500"
-                    }`}
+                      }`}
                   >
                     {appointment.status === "pending"
                       ? "Đang chờ"
                       : appointment.status === "confirmed"
-                      ? "Đã xác nhận"
-                      : "Đã hủy"}
+                        ? "Đã xác nhận"
+                        : "Đã hủy"}
                   </span>
                 </p>
                 <p className="text-xs mt-1">
@@ -271,11 +268,10 @@ const MyAppointments = () => {
                     Trạng thái thanh toán:
                   </span>{" "}
                   <span
-                    className={`${
-                      appointment.paymentStatus
-                        ? "text-green-500"
-                        : "text-yellow-500"
-                    }`}
+                    className={`${appointment.paymentStatus
+                      ? "text-green-500"
+                      : "text-yellow-500"
+                      }`}
                   >
                     {appointment.paymentStatus
                       ? "Đã thanh toán"
@@ -289,12 +285,11 @@ const MyAppointments = () => {
                   onClick={() =>
                     handlePayment(appointment._id, appointment.doctor_id.price)
                   }
-                  className={`text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded transition-all duration-300 ${
-                    !appointment.paymentStatus &&
+                  className={`text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded transition-all duration-300 ${!appointment.paymentStatus &&
                     appointment.status === "confirmed"
-                      ? "hover:bg-primary hover:text-white"
-                      : "bg-gray-300 cursor-not-allowed"
-                  }`}
+                    ? "hover:bg-primary hover:text-white"
+                    : "bg-gray-300 cursor-not-allowed"
+                    }`}
                   disabled={
                     appointment.status !== "confirmed" ||
                     appointment.paymentStatus
@@ -305,14 +300,13 @@ const MyAppointments = () => {
                 {/* Vô hiệu hóa nút hủy nếu trạng thái thanh toán là "Đã thanh toán" */}
                 <button
                   onClick={() => handleCancelAppointment(appointment._id)}
-                  className={`text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded transition-all duration-300 ${
-                    appointment.paymentStatus
-                      ? "bg-gray-300 cursor-not-allowed"
-                      : "hover:bg-red-600 hover:text-white"
-                  }`}
-                  disabled={appointment.paymentStatus}
+                  className={`text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded transition-all duration-300 ${appointment.paymentStatus
+                    ? "bg-gray-300 cursor-not-allowed"
+                    : "hover:bg-red-600 hover:text-white"
+                    }`}
+                  disabled={appointment.paymentStatus || isLoadingCancel === appointment._id} // Chỉ vô hiệu hóa nút nếu đang hủy cuộc hẹn này
                 >
-                  Hủy cuộc hẹn
+                  {isLoadingCancel === appointment._id ? "Đang hủy..." : "Hủy cuộc hẹn"}
                 </button>
               </div>
             </div>
