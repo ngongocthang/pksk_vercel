@@ -26,9 +26,9 @@ const Navbar = () => {
       const unreadCount = unreadNotifications.length;
 
       setUnreadCount(unreadCount);
-      // localStorage.setItem("unreadCount", unreadCount);
+      localStorage.setItem("unreadCount", unreadCount);
     } catch (error) {
-      console.error("Lỗi khi lấy thông báo chưa đọc:", error);
+      // console.error("Lỗi khi lấy thông báo chưa đọc:", error);
     }
   };
 
@@ -72,15 +72,19 @@ const Navbar = () => {
       <ul className="hidden md:flex items-start gap-5 font-medium">
         <NavLink to="/" activeClassName="underline">
           <li className="py-1 text-base">Trang chủ</li>
+          <hr className='border-none outline-none h-0.5 bg-[#00759c] w-3/5 m-auto hidden' />
         </NavLink>
         <NavLink to="/doctors" activeClassName="underline">
           <li className="py-1 text-base">Tất cả bác sĩ</li>
+          <hr className='border-none outline-none h-0.5 bg-[#00759c] w-3/5 m-auto hidden' />
         </NavLink>
         <NavLink to="/abouts" activeClassName="underline">
           <li className="py-1 text-base">Về chúng tôi</li>
+          <hr className='border-none outline-none h-0.5 bg-[#00759c] w-3/5 m-auto hidden' />
         </NavLink>
         <NavLink to="/contact" activeClassName="underline">
           <li className="py-1 text-base">Liên hệ</li>
+          <hr className='border-none outline-none h-0.5 bg-[#00759c] w-3/5 m-auto hidden' />
         </NavLink>
         <NavLink to="/all-schedule" activeClassName="underline">
           <li className="py-1 text-base">Lịch làm việc</li>
@@ -109,22 +113,22 @@ const Navbar = () => {
         )}
 
         <div className="relative">
-          <img
-            onClick={() => {
-              if (user) {
-                navigate("/notifications");
-              } else {
-                navigate("/account");
-              }
-            }}
-            className="w-6 cursor-pointer"
-            src={assets.notification_icon}
-            alt="Thông báo"
-          />
-          {unreadCount > 0 && (
-            <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-1 text-xs">
-              {unreadCount}
-            </span>
+          {user && (
+            <>
+              <img
+                onClick={() => {
+                  navigate("/notifications");
+                }}
+                className="w-6 cursor-pointer"
+                src={assets.notification_icon}
+                alt="Thông báo"
+              />
+              {unreadCount > 0 && (
+                <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-1 text-xs">
+                  {unreadCount}
+                </span>
+              )}
+            </>
           )}
         </div>
       </div>
