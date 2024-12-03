@@ -36,14 +36,14 @@ const Doctors = () => {
   const applyFilter = () => {
     let filtered = speciality
       ? doctors.filter(
-          (doc) => convertToSlug(doc.specialization_id?.name) === speciality
-        )
+        (doc) => convertToSlug(doc.specialization_id?.name) === speciality
+      )
       : doctors;
 
     // Lọc theo ngày làm việc
     if (selectedDate) {
       filtered = filtered.filter((doc) =>
-        doc.schedules.some(schedule => 
+        doc.schedules.some(schedule =>
           new Date(schedule.work_date).toISOString().split('T')[0] === selectedDate
         )
       );
@@ -97,26 +97,83 @@ const Doctors = () => {
 
   const renderPagination = () => {
     const paginationItems = [];
-    const delta = 2;
 
-    for (let i = 1; i <= totalPages; i++) {
-      if (i === 1 || i === totalPages || (i >= currentPage - delta && i <= currentPage + delta)) {
-        paginationItems.push(
-          <button
-            key={i}
-            onClick={() => handlePageChange(i)}
-            className={`py-1 px-3 border rounded ${i === currentPage ? "bg-indigo-500 text-white" : "text-gray-600"}`}
-          >
-            {i}
-          </button>
-        );
-      } else if (
-        (i === currentPage - delta - 1 && currentPage > delta + 2) ||
-        (i === currentPage + delta + 1 && currentPage < totalPages - delta - 1)
-      ) {
-        paginationItems.push(<span key={i} className="px-2">...</span>);
-      }
+    // Nút "Previous"
+    paginationItems.push(
+      <button
+        key="prev"
+        onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+        className={`py-1 px-3 border rounded ${currentPage === 1 ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "text-gray-600"
+          }`}
+        disabled={currentPage === 1}
+      >
+        Trước
+      </button>
+    );
+
+    // Hiển thị hai trang đầu tiên
+    for (let i = 1; i <= 2 && i <= totalPages; i++) {
+      paginationItems.push(
+        <button
+          key={i}
+          onClick={() => handlePageChange(i)}
+          className={`py-1 px-3 border rounded ${i === currentPage ? "bg-indigo-500 text-white" : "text-gray-600"
+            }`}
+        >
+          {i}
+        </button>
+      );
     }
+
+    // Hiển thị dấu "..." ở giữa nếu cần
+    if (totalPages > 3 && currentPage > 2) {
+      paginationItems.push(<span key="dots-middle" className="px-2">...</span>);
+    }
+
+    // Hiển thị trang hiện tại (nếu nó không phải là một trong hai trang đầu tiên hoặc trang cuối)
+    if (currentPage > 2 && currentPage < totalPages - 1) {
+      paginationItems.push(
+        <button
+          key={currentPage}
+          onClick={() => handlePageChange(currentPage)}
+          className="py-1 px-3 border rounded bg-indigo-500 text-white"
+        >
+          {currentPage}
+        </button>
+      );
+    }
+
+    // Hiển thị dấu "..." trước trang cuối nếu cần
+    if (totalPages > 3 && currentPage < totalPages - 1) {
+      paginationItems.push(<span key="dots-end" className="px-2">...</span>);
+    }
+
+    // Hiển thị trang cuối cùng
+    if (totalPages > 2) {
+      paginationItems.push(
+        <button
+          key={totalPages}
+          onClick={() => handlePageChange(totalPages)}
+          className={`py-1 px-3 border rounded ${currentPage === totalPages ? "bg-indigo-500 text-white" : "text-gray-600"
+            }`}
+        >
+          {totalPages}
+        </button>
+      );
+    }
+
+    // Nút "Next"
+    paginationItems.push(
+      <button
+        key="next"
+        onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+        className={`py-1 px-3 border rounded ${currentPage === totalPages ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "text-gray-600"
+          }`}
+        disabled={currentPage === totalPages}
+      >
+        Tiếp
+      </button>
+    );
 
     return (
       <div className="flex justify-center items-center mt-6 space-x-2">
@@ -126,7 +183,7 @@ const Doctors = () => {
   };
 
   const formatPrice = (price) => {
-    if (isNaN(price)) return price; 
+    if (isNaN(price)) return price;
     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };
 
@@ -148,16 +205,16 @@ const Doctors = () => {
                   : navigate(`/doctors/${convertToSlug(spec.name)}`)
               }
               className={`w-[94vw] sm:w-40 pl-3 py-1.5 border border-gray-300 rounded transition-all cursor-pointer ${speciality === convertToSlug(spec.name)
-                  ? "bg-[#e0f4fb] text-[#00759c]"
-                  : ""
+                ? "bg-[#e0f4fb] text-[#00759c]"
+                : ""
                 }`}>
               <p className="m-0">{spec.name}</p>
             </div>
           ))}
           {/* Thêm phần chọn ngày */}
           <h3>Ngày làm việc:</h3>
-          <input 
-            type="date" 
+          <input
+            type="date"
             value={selectedDate} // Đặt giá trị cho ô nhập ngày
             onChange={(e) => handleDateChange(e.target.value)} // Gọi hàm cập nhật ngày
             className="w-[94vw] sm:w-40 border rounded p-2"
@@ -184,7 +241,7 @@ const Doctors = () => {
                 <p className="text-gray-900 text-sm truncate">{item.description}</p>
               </div>
             </div>
-          ))} 
+          ))}
         </div>
       </div>
       {totalPages > 1 && renderPagination()}
