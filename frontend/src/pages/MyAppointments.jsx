@@ -93,15 +93,15 @@ const MyAppointments = () => {
     const appointment = appointments.find((appt) => appt._id === appointmentId);
     const appointmentDate = new Date(appointment.work_date).toLocaleDateString("vi-VN");
     const appointmentShift = appointment.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều";
-  
+
     const confirmDelete = async () => {
       const token = localStorage.getItem("token"); // Lấy token từ localStorage
-  
+
       if (!token) {
         setError("User not authenticated. Please log in.");
         return; // Không điều hướng nếu không có token
       }
-  
+
       try {
         setIsLoadingCancel(appointmentId); // Set loading state cho cuộc hẹn đang hủy
         const response = await axios.put(
@@ -113,7 +113,7 @@ const MyAppointments = () => {
             },
           }
         );
-  
+
         if (response.data.success) {
           toast.success("Cuộc hẹn đã được hủy thành công!");
           fetchAppointments();
@@ -127,7 +127,7 @@ const MyAppointments = () => {
         setIsLoadingCancel(null); // Reset loading state khi hoàn thành
       }
     };
-  
+
     if (!toast.isActive(toastId.current)) {
       toastId.current = toast.warn(
         <div className="flex flex-col items-center justify-center">
@@ -165,8 +165,7 @@ const MyAppointments = () => {
         }
       );
     }
-  };  
-  
+  };
   const handlePayment = async (appointmentId, price) => {
     try {
       const response = await axios.post(
@@ -225,7 +224,7 @@ const MyAppointments = () => {
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12"/>
+                    d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
 

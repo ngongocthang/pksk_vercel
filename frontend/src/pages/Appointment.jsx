@@ -76,29 +76,29 @@ const Appointment = () => {
       navigate("/account");
       return;
     }
-  
+
     // Kiểm tra xem bác sĩ có nhận đặt lịch hẹn hay không
     if (docInfo && docInfo.available === false) {
       toast.warn("Hiện tại bác sĩ không nhận đặt lịch hẹn.");
       return;
     }
-  
+
     if (!selectedDate || !slotTime) {
       toast.warn("Vui lòng chọn ngày và ca làm việc.");
       return;
     }
-  
+
     const formattedDate = new Date(selectedDate).toLocaleDateString("vi-VN", {
       day: "numeric",
       month: "numeric",
       year: "numeric",
     });
-  
+
     toast.dismiss();
     toast.info(
       <div className="flex flex-col items-center justify-center">
         <div className="flex items-center mb-2">
-          <p className="font-bold text-lg">Thông báo</p>
+          <p className="font-bold text-lg">Xác nhận</p>
         </div>
         <p>
           Bạn có chắc chắn muốn đặt lịch hẹn vào {formattedDate} ca{" "}
@@ -110,15 +110,15 @@ const Appointment = () => {
               confirmBooking();
               toast.dismiss();
             }}
-            className="bg-red-600 text-white px-4 py-2 rounded transition duration-300 hover:bg-red-700"
+            className="bg-green-500 text-white px-4 py-2 rounded transition duration-300 hover:bg-green-600"
           >
-            Có
+            Xác nhận
           </button>
           <button
             onClick={() => toast.dismiss()}
             className="bg-gray-300 text-black px-4 py-2 rounded transition duration-300 hover:bg-gray-400"
           >
-            Không
+            Hủy
           </button>
         </div>
       </div>,
@@ -192,7 +192,7 @@ const Appointment = () => {
   }
 
   const formatPrice = (price) => {
-    if (isNaN(price)) return price; 
+    if (isNaN(price)) return price;
     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };
 
@@ -272,8 +272,8 @@ const Appointment = () => {
                 key={schedule._id}
                 onClick={() => setSlotTime(schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều")}
                 className={`text-sm font-semibold px-6 py-3 rounded-full cursor-pointer transition-all duration-300 ${slotTime === (schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều")
-                    ? "bg-[#00759c] text-white"
-                    : "text-gray-500 border border-gray-300 hover:border-[#00759c] hover:text-[#00759c]"
+                  ? "bg-[#00759c] text-white"
+                  : "text-gray-500 border border-gray-300 hover:border-[#00759c] hover:text-[#00759c]"
                   }`}
               >
                 {schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều"}
