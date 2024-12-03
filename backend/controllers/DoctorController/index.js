@@ -509,6 +509,7 @@ const updateProfileDoctor = async (req, res) => {
         specialization_id: req.body.specialization_id,
         description: req.body.description,
         price: req.body.price,
+        available: req.body.available,
       },
       { new: true }
     );

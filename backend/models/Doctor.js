@@ -20,6 +20,11 @@ const DoctorSchema = new mongoose.Schema(
         type: Number,
         required: true,
       },
+      available: {
+        type: Boolean,
+        default: false,
+        required: true
+      }
   },
   {
     timestamps: true,
