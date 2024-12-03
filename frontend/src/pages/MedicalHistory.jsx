@@ -35,23 +35,38 @@ const MedicalRecordCard = memo(({ record }) => {
   };
 
   return (
-    <Card className="hover:shadow-lg transition-shadow">
+    <Card className="hover:shadow-lg transition-shadow w-[300px]">
       <CardContent className="p-6">
-        <div className="flex items-center mb-4">
-          <User className="w-5 h-5 text-blue-500 mr-2" />
-          <span className="font-medium">Bs. {record.history.doctor_name}</span>
+        {/* Phần hiển thị hình ảnh bác sĩ */}
+        <div className="flex justify-center mb-4">
+          <img
+            src={record.history.doctor_image}
+            alt={record.history.doctor_name}
+            className="w-60 h-70 shadow-lg"
+          />
         </div>
-        <div className="flex items-center mb-4">
-          <Calendar className="w-5 h-5 text-gray-500 mr-2" />
-          <span>{new Date(record.history.work_date).toLocaleDateString("vi-VN")}</span>
+
+        {/* Phần hiển thị thông tin bác sĩ */}
+        <div className="flex flex-col items-center">
+          <div className="flex items-center mb-4">
+            <User className="w-5 h-5 text-blue-500 mr-2" />
+            <span className="font-medium">Bs. {record.history.doctor_name}</span>
+          </div>
+          <Badge className={`${getStatusColor(record.history.status)} px-3 py-1 rounded-full text-sm font-medium mt-2`}>
+            Trạng thái: {getStatusText(record.history.status)}
+          </Badge>
+          <div className="flex items-center mt-2 space-x-4">
+            <div className="flex items-center">
+              <Calendar className="w-5 h-5 text-gray-500 mr-2" />
+              <span>{new Date(record.history.work_date).toLocaleDateString("vi-VN")}</span>
+            </div>
+            <div className="flex items-center">
+              <Clock className="w-5 h-5 text-gray-500 mr-2" />
+              <span>{record.history.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều"}</span>
+            </div>
+          </div>
         </div>
-        <div className="flex items-center mb-4">
-          <Clock className="w-5 h-5 text-gray-500 mr-2" />
-          <span>{record.history.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều"}</span>
-        </div>
-        <Badge className={`${getStatusColor(record.history.status)} px-3 py-1 rounded-full text-sm font-medium`}>
-          {getStatusText(record.history.status)}
-        </Badge>
+
         <div className="mt-4 pt-4 border-t border-gray-100 text-sm text-gray-500">
           Ngày xác nhận: {new Date(record.history.createdAt).toLocaleDateString("vi-VN")}
         </div>
@@ -134,7 +149,7 @@ const MedicalHistory = () => {
 
   useEffect(() => {
     fetchMedicalHistory();
-  }, [user]); 
+  }, [user]);
 
   return (
     <div className="container mx-auto px-4 py-8">
