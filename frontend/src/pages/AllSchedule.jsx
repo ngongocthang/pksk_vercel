@@ -1,12 +1,12 @@
-import React, { useEffect, useState, useContext } from "react";
+import viLocale from "@fullcalendar/core/locales/vi";
 import FullCalendar from "@fullcalendar/react";
 import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
-import viLocale from "@fullcalendar/core/locales/vi"; 
+import axios from "axios";
+import React, { useContext, useEffect, useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { AppContext } from "../context/AppContext";
-import axios from "axios"; // Import axios
-import { ToastContainer, toast } from "react-toastify"; 
-import "react-toastify/dist/ReactToastify.css"; 
-import "../index.css"
+import "../index.css";
 
 const DoctorTimeline = () => {
   const [doctors, setDoctors] = useState([]);
@@ -23,27 +23,24 @@ const DoctorTimeline = () => {
         );
         const data = await response.json();
 
-        // Tạo danh sách bác sĩ (resources)
         const resources = data.map((doctor) => ({
           id: doctor.doctorId,
           doctorName: doctor.doctorName,
           doctorImage: doctor.doctorImage,
         }));
 
-        // Xử lý lịch làm việc (events)
         const mappedEvents = data.flatMap((doctor) =>
           doctor.schedules.map((schedule) => {
-            const workDate = new Date(schedule.work_date); 
+            const workDate = new Date(schedule.work_date);
             const startDate = new Date(workDate);
             const endDate = new Date(workDate);
 
-            // Thiết lập thời gian bắt đầu và kết thúc dựa trên work_shift
             if (schedule.work_shift === "morning") {
-              startDate.setHours(7, 30, 0, 0); // 7h30 sáng
-              endDate.setHours(11, 30, 0, 0); // Kết thúc ca sáng
+              startDate.setHours(7, 30, 0, 0);
+              endDate.setHours(11, 30, 0, 0);
             } else if (schedule.work_shift === "afternoon") {
-              startDate.setHours(13, 30, 0, 0); // 13h30 chiều
-              endDate.setHours(17, 30, 0, 0); // Kết thúc ca chiều
+              startDate.setHours(13, 30, 0, 0);
+              endDate.setHours(17, 30, 0, 0);
             }
 
             const converWork_shift =
@@ -77,43 +74,30 @@ const DoctorTimeline = () => {
       patient_id: patient_id,
       doctor_id: clickedEvent.getResources()[0]?.id || "",
       work_shift: convertTitle,
-      work_date: clickedEvent.start.toISOString().split("T")[0], 
+      work_date: clickedEvent.start.toISOString().split("T")[0],
     };
 
-    // Hiển thị hộp thoại xác nhận bằng Toastify
     toast.info(
       <div>
-        <p>
+        <div className="flex items-center mb-2">
+          <p className="font-bold text-lg">Xác nhận</p>
+        </div>
+        <p className="text-lg font-medium text-center">
           Bạn có chắc chắn muốn đặt lịch hẹn vào{" "}
           <b>{appointmentData.work_date}</b> vào ca <b>{clickedEvent.title}</b>?
         </p>
-        <div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
+        <div className="flex justify-center gap-4 mt-4">
           <button
             onClick={async () => {
               await confirmBooking(appointmentData);
-              toast.dismiss();
             }}
-            style={{
-              padding: "8px 16px",
-              backgroundColor: "#00759c",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
+            className="bg-red-600 text-white px-4 py-2 rounded transition duration-300 hover:bg-red-700"
           >
             Xác nhận
           </button>
           <button
             onClick={() => toast.dismiss()}
-            style={{
-              padding: "8px 16px",
-              backgroundColor: "gray",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
+            className="bg-gray-300 text-black px-4 py-2 rounded transition duration-300 hover:bg-gray-400"
           >
             Hủy
           </button>
@@ -140,7 +124,6 @@ const DoctorTimeline = () => {
         }
       );
       toast.success("Đặt lịch hẹn thành công!");
-      console.log("Đặt lịch hẹn thành công:", response.data);
     } catch (error) {
       console.error("Lỗi khi đặt lịch hẹn:", error.response?.data?.message);
       toast.error(error.response?.data?.message || "Có lỗi xảy ra khi đặt lịch hẹn.");
@@ -148,53 +131,60 @@ const DoctorTimeline = () => {
   };
 
   return (
-    <div>
-      <h1 className="">Lịch Làm Việc Của Bác Sĩ</h1>
-      <FullCalendar
-        plugins={[resourceTimelinePlugin]}
-        initialView="resourceTimelineWeek"
-        resources={doctors}
-        events={events}
-        locale={viLocale}
-        resourceAreaColumns={[
-          {
-            // Tùy chỉnh hiển thị cột tài nguyên
-            headerContent: "Bác sĩ",
-            field: "doctorName",
-            cellContent: (args) => {
-              const { doctorImage, doctorName } = args.resource.extendedProps;
+    <div className="bg-gray-100 min-h-500px">
+      <div className="container mx-auto p-4">
+        <header className="text-center py-6">
+          <h1 className="text-4xl font-bold text-blue-700">
+            Lịch Làm Việc Của Bác Sĩ
+          </h1>
+        </header>
+        <div className="bg-white shadow-lg rounded-lg p-6 overflow-auto" style={{ maxHeight: "600px" }}>
+          <FullCalendar
+            plugins={[resourceTimelinePlugin]}
+            initialView="resourceTimelineWeek"
+            resources={doctors}
+            events={events}
+            locale={viLocale}
+            resourceAreaColumns={[
+              {
+                headerContent: "Bác sĩ",
+                field: "doctorName",
+                cellContent: (args) => {
+                  const { doctorImage, doctorName } = args.resource.extendedProps;
+                  return (
+                    <div className="flex items-center">
+                      <img
+                        src={doctorImage}
+                        alt={doctorName}
+                        className="w-8 h-8 rounded-full mr-2"
+                      />
+                      {doctorName}
+                    </div>
+                  );
+                },
+              },
+            ]}
+            eventContent={(args) => {
+              const workShift = args.event.title; // Ca làm việc
               return (
-                <div style={{ 
-                  display: "flex", 
-                  alignItems: "center",
-                   }}>
-                  <img
-                    src={doctorImage}
-                    alt={doctorName}
-                    style={{
-                      width: 30,
-                      height: 30,
-                      borderRadius: "50%",
-                      marginRight: 8,
-                    }}
-                  />
-                  {doctorName}
+                <div className="flex items-center justify-center h-full w-full ">
+                  <span className="text-center">{workShift}</span>
                 </div>
               );
-            },
-          },
-        ]}
-        headerToolbar={{
-          left: "prev today next",
-          center: "title",
-          right: "resourceTimelineDay,resourceTimelineWeek",
-        }}
-        slotMinTime="06:00:00" // Thời gian bắt đầu hiển thị
-        slotMaxTime="19:00:00" // Thời gian kết thúc hiển thị
-        nowIndicator={true} // Hiển thị vạch thời gian hiện tại
-        eventClick={handleEventClick} // Thêm sự kiện click cho lịch
-      />
-      <ToastContainer /> 
+            }}
+            headerToolbar={{
+              left: "prev today next",
+              center: "title",
+              right: "resourceTimelineDay,resourceTimelineWeek",
+            }}
+            slotMinTime="06:00:00"
+            slotMaxTime="19:00:00"
+            nowIndicator
+            eventClick={handleEventClick}
+          />
+        </div>
+      </div>
+      <ToastContainer />
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AppContext } from "../context/AppContext";
 import { assets } from "../assets/assets";
+import { AppContext } from "../context/AppContext";
 
 // Chức năng tính thời gian trước đây
 const timeAgo = (date) => {
@@ -54,7 +54,7 @@ const Notifications = () => {
           const unreadCount = data.filter((notification) => !notification.isRead).length;
           setUnreadCount(unreadCount);
         } catch (error) {
-          console.error("Error fetching notifications:", error);
+          // console.error("Error fetching notifications:", error);
         } finally {
           setLoading(false);
         }
