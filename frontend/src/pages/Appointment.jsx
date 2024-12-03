@@ -98,11 +98,10 @@ const Appointment = () => {
     toast.info(
       <div className="flex flex-col items-center justify-center">
         <div className="flex items-center mb-2">
-          <i className="fas fa-info-circle text-blue-500 text-2xl mr-2"></i>
           <p className="font-bold text-lg">Thông báo</p>
         </div>
         <p>
-          Bạn có chắc chắn muốn đặt lịch hẹn vào {formattedDate} lúc{" "}
+          Bạn có chắc chắn muốn đặt lịch hẹn vào {formattedDate} ca{" "}
           {slotTime} không?
         </p>
         <div className="flex justify-center gap-4">

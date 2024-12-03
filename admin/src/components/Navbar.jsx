@@ -54,26 +54,26 @@ const Navbar = () => {
   }, [dToken]);
 
   // Cập nhật trạng thái thông báo là đã đọc
-  // const markAsRead = async (notificationId) => {
-  //   try {
-  //     // Cập nhật thông báo là đã đọc
-  //     await axios.put(`http://localhost:5000/notification/read/${notificationId}`);
+  const markAsRead = async (notificationId) => {
+    try {
+      // Cập nhật thông báo là đã đọc
+      await axios.put(`http://localhost:5000/notification/read/${notificationId}`);
 
-  //     // Cập nhật trạng thái trong state
-  //     const updatedNotifications = notifications.map((notification) =>
-  //       notification._id === notificationId
-  //         ? { ...notification, isRead: true }
-  //         : notification
-  //     );
-  //     setNotifications(updatedNotifications);
-  //   } catch (error) {
-  //     console.error("Lỗi khi cập nhật thông báo:", error);
-  //   }
-  // };
+      // Cập nhật trạng thái trong state
+      const updatedNotifications = notifications.map((notification) =>
+        notification._id === notificationId
+          ? { ...notification, isRead: true }
+          : notification
+      );
+      setNotifications(updatedNotifications);
+    } catch (error) {
+      console.error("Lỗi khi cập nhật thông báo:", error);
+    }
+  };
 
-  // useEffect(() => {
-  //   fetchNotifications();
-  // }, []);
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {

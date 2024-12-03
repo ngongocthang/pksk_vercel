@@ -85,13 +85,25 @@ const MedicalHistory = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Hàm kiểm tra tính hợp lệ của token
+  const isTokenValid = (token) => {
+    if (!token) return false;
+    try {
+      const decoded = JSON.parse(atob(token.split('.')[1])); // Giải mã token để kiểm tra thời gian hết hạn
+      if (decoded.exp * 1000 < Date.now()) return false; // Kiểm tra nếu token hết hạn
+    } catch (e) {
+      return false;
+    }
+    return true;
+  };
+
   const fetchMedicalHistory = async () => {
-    const token = user?.token;
+    const token = localStorage.getItem("token"); // Lấy token từ localStorage
     setLoading(true);
     setError(null);
 
-    if (!token) {
-      navigate("/account");
+    if (!token || !isTokenValid(token)) {
+      navigate("/account"); // Nếu token không hợp lệ, chuyển đến trang đăng nhập
       return;
     }
 
@@ -114,7 +126,6 @@ const MedicalHistory = () => {
         throw new Error("Dữ liệu từ server không hợp lệ");
       }
     } catch (error) {
-      // setError(error.message);
       console.log(error.message);
     } finally {
       setLoading(false);
@@ -123,7 +134,7 @@ const MedicalHistory = () => {
 
   useEffect(() => {
     fetchMedicalHistory();
-  }, [user]);
+  }, [user]); 
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -137,9 +148,9 @@ const MedicalHistory = () => {
           ) : error ? (
             <ErrorAlert message={error} />
           ) : (
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="gap-4 md:grid-cols-2 lg:grid-cols-3">
               {medicalRecords.length === 0 ? (
-                <div className="text-center py-12">
+                <div className="flex items-center justify-center grid text-center py-12">
                   <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                     <Calendar className="w-12 h-12 text-gray-400" />
                   </div>

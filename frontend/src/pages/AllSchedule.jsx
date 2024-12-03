@@ -69,22 +69,30 @@ const DoctorTimeline = () => {
   const handleEventClick = (info) => {
     const clickedEvent = info.event;
     const convertTitle = clickedEvent.title === "Sáng" ? "morning" : "afternoon";
-
+  
+    // Chuyển đổi ngày sang định dạng DD/MM/YYYY
+    const formatDate = (isoDate) => {
+      const [year, month, day] = isoDate.split("-");
+      return `${day}/${month}/${year}`;
+    };
+  
     const appointmentData = {
       patient_id: patient_id,
       doctor_id: clickedEvent.getResources()[0]?.id || "",
       work_shift: convertTitle,
-      work_date: clickedEvent.start.toISOString().split("T")[0],
+      work_date: clickedEvent.start.toISOString().split("T")[0], // Giữ định dạng ISO trong dữ liệu
     };
-
+  
+    const formattedDate = formatDate(appointmentData.work_date);
+  
     toast.info(
-      <div>
+      <div className="flex flex-col items-center justify-center">
         <div className="flex items-center mb-2">
           <p className="font-bold text-lg">Xác nhận</p>
         </div>
-        <p className="text-lg font-medium text-center">
-          Bạn có chắc chắn muốn đặt lịch hẹn vào{" "}
-          <b>{appointmentData.work_date}</b> vào ca <b>{clickedEvent.title}</b>?
+        <p>
+          Bạn có chắc chắn muốn đặt lịch hẹn vào {formattedDate} ca{" "}
+          {clickedEvent.title}?
         </p>
         <div className="flex justify-center gap-4 mt-4">
           <button
@@ -110,7 +118,7 @@ const DoctorTimeline = () => {
         draggable: false,
       }
     );
-  };
+  };  
 
   const confirmBooking = async (appointmentData) => {
     try {
