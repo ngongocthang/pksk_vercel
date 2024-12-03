@@ -93,16 +93,15 @@ const MyAppointments = () => {
     const appointment = appointments.find((appt) => appt._id === appointmentId);
     const appointmentDate = new Date(appointment.work_date).toLocaleDateString("vi-VN");
     const appointmentShift = appointment.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều";
-
+  
     const confirmDelete = async () => {
-      const token = user?.token;
-
+      const token = localStorage.getItem("token"); // Lấy token từ localStorage
+  
       if (!token) {
         setError("User not authenticated. Please log in.");
-        navigate("/account");
-        return;
+        return; // Không điều hướng nếu không có token
       }
-
+  
       try {
         setIsLoadingCancel(appointmentId); // Set loading state cho cuộc hẹn đang hủy
         const response = await axios.put(
@@ -114,7 +113,7 @@ const MyAppointments = () => {
             },
           }
         );
-
+  
         if (response.data.success) {
           toast.success("Cuộc hẹn đã được hủy thành công!");
           fetchAppointments();
@@ -128,7 +127,7 @@ const MyAppointments = () => {
         setIsLoadingCancel(null); // Reset loading state khi hoàn thành
       }
     };
-
+  
     if (!toast.isActive(toastId.current)) {
       toastId.current = toast.warn(
         <div className="flex flex-col items-center justify-center">
@@ -166,8 +165,8 @@ const MyAppointments = () => {
         }
       );
     }
-  };
-
+  };  
+  
   const handlePayment = async (appointmentId, price) => {
     try {
       const response = await axios.post(
@@ -207,9 +206,29 @@ const MyAppointments = () => {
         ) : (
           appointments.map((appointment) => (
             <div
-              className="grid grid-cols-[1fr_2fr] gap-4 sm:flex sm:gap-6 py-2 border-b"
-              key={appointment._id}
-            >
+              className="relative grid grid-cols-[1fr_2fr] gap-4 sm:flex sm:gap-6 py-2 border-b"
+              key={appointment._id}>
+              <button
+                onClick={() => handleCancelAppointment(appointment._id)}
+                className={`absolute top-2 right-2 p-1 text-gray-500 rounded-full transition-all duration-300 ${appointment.paymentStatus
+                  ? "bg-gray-300 cursor-not-allowed"
+                  : "hover:bg-red-600 hover:text-white"
+                  }`}
+                disabled={appointment.paymentStatus || isLoadingCancel === appointment._id}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-4 h-4">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+              </button>
+
               <div>
                 <img
                   className="w-32 bg-indigo-50"
@@ -225,23 +244,15 @@ const MyAppointments = () => {
                   Bác sĩ: {appointment.doctor_id ? appointment.doctor_id.user_id.name : "Không có tên"}
                 </p>
                 <p className="text-xs mt-1">
-                  <span className="text-sm text-neutral-700 font-medium">
-                    Ngày khám:
-                  </span>{" "}
+                  <span className="text-sm text-neutral-700 font-medium">Ngày khám:</span>{" "}
                   {new Date(appointment.work_date).toLocaleDateString("vi-VN")}
                 </p>
                 <p className="text-xs mt-1">
-                  <span className="text-sm text-neutral-700 font-medium">
-                    Ca khám:
-                  </span>{" "}
-                  {appointment.work_shift === "morning"
-                    ? "Buổi sáng"
-                    : "Buổi chiều"}
+                  <span className="text-sm text-neutral-700 font-medium">Ca khám:</span>{" "}
+                  {appointment.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều"}
                 </p>
                 <p className="text-xs mt-1">
-                  <span className="text-sm text-neutral-700 font-medium">
-                    Trạng thái:
-                  </span>{" "}
+                  <span className="text-sm text-neutral-700 font-medium">Trạng thái:</span>{" "}
                   <span
                     className={`${appointment.status === "pending"
                       ? "text-yellow-500"
@@ -258,29 +269,23 @@ const MyAppointments = () => {
                   </span>
                 </p>
                 <p className="text-xs mt-1">
-                  <span className="text-sm text-neutral-700 font-medium">
-                    Giá khám:
-                  </span>{" "}
+                  <span className="text-sm text-neutral-700 font-medium">Giá khám:</span>{" "}
                   {appointment.doctor_id ? formatPrice(appointment.doctor_id.price) : "0"} (VND)
                 </p>
                 <p className="text-xs mt-1">
-                  <span className="text-sm text-neutral-700 font-medium">
-                    Trạng thái thanh toán:
-                  </span>{" "}
+                  <span className="text-sm text-neutral-700 font-medium">Trạng thái thanh toán:</span>{" "}
                   <span
                     className={`${appointment.paymentStatus
                       ? "text-green-500"
                       : "text-yellow-500"
                       }`}
                   >
-                    {appointment.paymentStatus
-                      ? "Đã thanh toán"
-                      : "Chưa thanh toán"}
+                    {appointment.paymentStatus ? "Đã thanh toán" : "Chưa thanh toán"}
                   </span>
                 </p>
               </div>
               <div className="flex flex-col gap-2 justify-end">
-                {/* Vô hiệu hóa nút thanh toán nếu trạng thái không phải là confirmed */}
+                {/* Nút thanh toán */}
                 <button
                   onClick={() =>
                     handlePayment(appointment._id, appointment.doctor_id.price)
@@ -297,14 +302,14 @@ const MyAppointments = () => {
                 >
                   Thanh toán trực tuyến
                 </button>
-                {/* Vô hiệu hóa nút hủy nếu trạng thái thanh toán là "Đã thanh toán" */}
+                {/* Nút hủy */}
                 <button
                   onClick={() => handleCancelAppointment(appointment._id)}
                   className={`text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded transition-all duration-300 ${appointment.paymentStatus
                     ? "bg-gray-300 cursor-not-allowed"
                     : "hover:bg-red-600 hover:text-white"
                     }`}
-                  disabled={appointment.paymentStatus || isLoadingCancel === appointment._id} // Chỉ vô hiệu hóa nút nếu đang hủy cuộc hẹn này
+                  disabled={appointment.paymentStatus || isLoadingCancel === appointment._id}
                 >
                   {isLoadingCancel === appointment._id ? "Đang hủy..." : "Hủy cuộc hẹn"}
                 </button>

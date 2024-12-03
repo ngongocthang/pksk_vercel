@@ -110,7 +110,7 @@ const Doctors = () => {
       <button
         key="prev"
         onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-        className={`py-1 px-3 border rounded ${currentPage === 1 ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "text-gray-600"
+        className={`py-1 px-3 border rounded w-[70px] ${currentPage === 1 ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "text-gray-600"
           }`}
         disabled={currentPage === 1}
       >
@@ -181,7 +181,7 @@ const Doctors = () => {
       <button
         key="next"
         onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
-        className={`py-1 px-3 border rounded ${currentPage === totalPages ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "text-gray-600"
+        className={`py-1 px-3 border rounded w-[70px] ${currentPage === totalPages ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "text-gray-600"
           }`}
         disabled={currentPage === totalPages}
       >
