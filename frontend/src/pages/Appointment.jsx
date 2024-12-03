@@ -76,18 +76,24 @@ const Appointment = () => {
       navigate("/account");
       return;
     }
-
+  
+    // Kiểm tra xem bác sĩ có nhận đặt lịch hẹn hay không
+    if (docInfo && docInfo.available === false) {
+      toast.warn("Hiện tại bác sĩ không nhận đặt lịch hẹn.");
+      return;
+    }
+  
     if (!selectedDate || !slotTime) {
       toast.warn("Vui lòng chọn ngày và ca làm việc.");
       return;
     }
-
+  
     const formattedDate = new Date(selectedDate).toLocaleDateString("vi-VN", {
       day: "numeric",
       month: "numeric",
       year: "numeric",
     });
-
+  
     toast.dismiss();
     toast.info(
       <div className="flex flex-col items-center justify-center">
