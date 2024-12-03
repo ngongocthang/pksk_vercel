@@ -157,16 +157,8 @@ const updateAppointment = async (req, res) => {
       text: `Xin chào ${patientInfo.name}, lịch hẹn của bạn đã thay đổi: \nNgày khám mới: ${newDate}. \n Ca khám mới: ${newShift}.\n\nThời gian diễn ra: ${time}. \n\n Trân trọng!`,
     };
 
-    // const mailOptionsDoctor = {
-    //   from: process.env.EMAIL_USER,
-    //   to: doctorInfo.email,
-    //   subject: "Notification Appointment",
-    //   text: `Dear Doctor, your appointment with patient has been updated. \nNew date: ${vietnamTime}. \nTime: ${appointment.work_shift}.`,
-    // };
-
     // Gửi email
     await transporter.sendMail(mailOptionsPatient);
-    // await transporter.sendMail(mailOptionsDoctor);
 
     return res.status(200).json(appointmentUpdate);
   } catch (error) {
@@ -179,12 +171,12 @@ const deleteAppointment = async (req, res) => {
     const { id } = req.params;
     const appointment = await Appointment.findById(id);
     if (!appointment) {
-      return res.status(400).json({ message: "Appointment not found" });
+      return res.status(400).json({success: false, message: "Appointment not found" });
     }
     await Appointment.findByIdAndDelete(id);
-    return res.status(200).json({ message: "Delete appointment success!" });
+    return res.status(200).json({success: true, message: "Delete appointment success!" });
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({success: false, message: error.message });
   }
 };
 
@@ -205,6 +197,11 @@ const patientCreateAppointment = async (req, res) => {
     const patient = await Patient.findOne({ user_id: user_id });
     if (!patient) {
       return res.status(400).json({ message: "Patient not found" });
+    }
+    //check bsi có tồn tại hay không
+    const checkDoctor = await Doctor.findOne({ _id: req.body.doctor_id });
+    if (!checkDoctor) {
+      return res.status(400).json({ message: "Bác sĩ không tồn tại!" });
     }
 
     // Kiểm tra xem lịch hẹn đã tồn tại chưa
