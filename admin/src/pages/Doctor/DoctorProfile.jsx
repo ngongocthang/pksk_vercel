@@ -270,7 +270,7 @@ const DoctorProfile = () => {
               ) : (
                 <p className="text-gray-800 text-lg">
                   <span className="font-bold">Giá:</span>{" "}
-                  {formatPrice(profileData.doctorProfile.price)} (VND)
+                  {formatPrice(profileData.doctorProfile.price)} VND
                 </p>
               )}
             </div>
@@ -284,7 +284,7 @@ const DoctorProfile = () => {
                   name="description"
                   value={formData.description}
                   onChange={handleInputChange}
-                  className="w-full p-3 border-2 border-gray-300 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
+                  className="w-full h-[90px] p-3 border-2 border-gray-300 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
                   placeholder="Description"
                 />
               ) : (
@@ -293,7 +293,7 @@ const DoctorProfile = () => {
                   value={profileData.doctorProfile.description}
                   onChange={handleInputChange}
                   readOnly={!isEdit}
-                  className="w-full p-3 border-2 border-gray-300 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
+                  className="w-full h-[90px] p-3 border-2 border-gray-300 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
                   placeholder="Description"
                 />
               )}

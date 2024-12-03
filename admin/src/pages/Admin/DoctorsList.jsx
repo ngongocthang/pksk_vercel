@@ -118,8 +118,8 @@ const DoctorsList = () => {
   // Lọc danh sách bác sĩ theo chuyên khoa đã chọn
   const filteredDoctors = selectedSpecialization
     ? doctors.filter(
-        (doctor) => doctor.specialization_id.name === selectedSpecialization
-      )
+      (doctor) => doctor.specialization_id.name === selectedSpecialization
+    )
     : doctors;
 
   const currentDoctors = filteredDoctors.slice(
@@ -132,10 +132,9 @@ const DoctorsList = () => {
     setCurrentPage(pageNumber);
     // Cập nhật URL mà không cần tham số ?page
     navigate(
-      `/doctor-list${
-        selectedSpecialization
-          ? `/${convertToSlug(selectedSpecialization)}`
-          : ""
+      `/doctor-list${selectedSpecialization
+        ? `/${convertToSlug(selectedSpecialization)}`
+        : ""
       }`
     );
   };
@@ -156,8 +155,7 @@ const DoctorsList = () => {
               setSelectedSpecialization(e.target.value);
               // Cập nhật URL khi người dùng chọn chuyên khoa, nhưng không có tham số page
               navigate(
-                `/doctor-list${
-                  e.target.value ? `/${convertToSlug(e.target.value)}` : ""
+                `/doctor-list${e.target.value ? `/${convertToSlug(e.target.value)}` : ""
                 }`
               );
             }}
@@ -232,20 +230,20 @@ const DoctorsList = () => {
               </p>
               <div className="flex justify-between items-center">
                 <p className="text-zinc-600 text-sm">
-                  Giá: {formatPrice(item.price)} (VND)
+                  Giá: {item.price ? formatPrice(item.price) : "0"} VND
                 </p>
                 <p className="text-zinc-600 text-sm">
-                {item.available === true ? (
-                  <div className="flex items-center gap-2 text-sm text-center text-[#00759c]">
-                    <p className="w-2 h-2 bg-[#00759c] rounded-full"></p>
-                    <p>Lịch hẹn</p>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2 text-sm text-center text-[#9c0000]">
-                    <p className="w-2 h-2 bg-[#9c0000] rounded-full"></p>
-                    <p>Lịch hẹn</p>
-                  </div>
-                )}
+                  {item.available === true ? (
+                    <div className="flex items-center gap-2 text-sm text-center text-[#00759c]">
+                      <p className="w-2 h-2 bg-[#00759c] rounded-full"></p>
+                      <p>Lịch hẹn</p>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 text-sm text-center text-[#9c0000]">
+                      <p className="w-2 h-2 bg-[#9c0000] rounded-full"></p>
+                      <p>Lịch hẹn</p>
+                    </div>
+                  )}
                 </p>
               </div>
             </div>
@@ -260,11 +258,10 @@ const DoctorsList = () => {
             <button
               key={index}
               onClick={() => paginate(index + 1)}
-              className={`px-4 py-2 rounded-md ${
-                currentPage === index + 1
+              className={`px-4 py-2 rounded-md ${currentPage === index + 1
                   ? "bg-blue-500 text-white"
                   : "bg-gray-200"
-              }`}
+                }`}
             >
               {index + 1}
             </button>

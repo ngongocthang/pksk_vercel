@@ -217,7 +217,7 @@ const Appointment = () => {
             </p>
           </p>
           <div className="flex items-center gap-2 text-sm mt-1 text-gray-600" style={{ lineHeight: "2.5" }}>
-            <p>Giá: {formatPrice(docInfo.price)} (VND)</p>
+            <p>Giá: {docInfo.price ? formatPrice(docInfo.price) : "0"} VND</p>
           </div>
           <div className="flex items-center gap-2 text-sm mt-1 text-gray-600" style={{ lineHeight: "2.5" }}>
             <p>Chuyên Khoa: {docInfo.specialization_id.name}</p>
