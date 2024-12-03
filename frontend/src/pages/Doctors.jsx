@@ -273,7 +273,7 @@ const Doctors = () => {
                   {item.user_id.name}
                 </p>
                 <p className="text-gray-900 text-sm truncate">
-                  Giá: {formatPrice(item.price)} (VND)
+                  Giá: {item.price ? formatPrice(item.price) : "0"} VND
                 </p>
                 <p className="text-gray-900 text-sm truncate">
                   {item.description}
