@@ -1,4 +1,4 @@
-    import {
+import {
   BarElement,
   CategoryScale,
   Chart as ChartJS,
