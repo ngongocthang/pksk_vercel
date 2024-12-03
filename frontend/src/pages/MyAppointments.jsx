@@ -90,11 +90,8 @@ const MyAppointments = () => {
 
   const handleCancelAppointment = (appointmentId) => {
     const appointment = appointments.find((appt) => appt._id === appointmentId);
-    const appointmentDate = new Date(appointment.work_date).toLocaleDateString(
-      "vi-VN"
-    );
-    const appointmentShift =
-      appointment.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều";
+    const appointmentDate = new Date(appointment.work_date).toLocaleDateString("vi-VN");
+    const appointmentShift = appointment.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều";
 
     const confirmDelete = async () => {
       const token = user?.token;
@@ -119,7 +116,6 @@ const MyAppointments = () => {
         if (response.data.success) {
           toast.error("Có lỗi xảy ra khi hủy cuộc hẹn.");
           console.error("Error else here:", error);
-         
         } else {
           console.log("Appointment canceled successfully");
           toast.success("Cuộc hẹn đã được hủy thành công!");
@@ -127,7 +123,7 @@ const MyAppointments = () => {
         }
       } catch (error) {
         console.error("Error canceling appointment:", error);
-        toast.error( "Bạn chỉ huỷ cuộc hẹn trước 24h." || error.response?.data?.message );
+        toast.error("Bạn chỉ huỷ cuộc hẹn trước 24h." || error.response?.data?.message);
       }
     };
 
@@ -199,7 +195,7 @@ const MyAppointments = () => {
       <p className="pb-3 mt-12 font-medium text-zinc-700 border-b text-xl">
         Lịch hẹn của tôi:
       </p>
-      <div className="appointments-container"> {/* Thêm div này */}
+      <div className="appointments-container">
         {loading ? (
           <p className="text-center text-gray-500 mt-5">Đang tải dữ liệu...</p>
         ) : appointments.length === 0 ? (
@@ -236,9 +232,7 @@ const MyAppointments = () => {
                   <span className="text-sm text-neutral-700 font-medium">
                     Ca khám:
                   </span>{" "}
-                  {appointment.work_shift === "morning"
-                    ? "Buổi sáng"
-                    : "Buổi chiều"}
+                  {appointment.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều"}
                 </p>
                 <p className="text-xs mt-1">
                   <span className="text-sm text-neutral-700 font-medium">
@@ -302,15 +296,15 @@ const MyAppointments = () => {
                 >
                   Thanh toán trực tuyến
                 </button>
-                {/* Vô hiệu hóa nút hủy nếu trạng thái thanh toán là "Đã thanh toán" */}
+                {/* Vô hiệu hóa nút hủy nếu trạng thái thanh toán là "Đã thanh toán" hoặc "Đã hủy" */}
                 <button
                   onClick={() => handleCancelAppointment(appointment._id)}
                   className={`text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded transition-all duration-300 ${
-                    appointment.paymentStatus
+                    appointment.paymentStatus || appointment.status === "canceled"
                       ? "bg-gray-300 cursor-not-allowed"
                       : "hover:bg-red-600 hover:text-white"
                   }`}
-                  disabled={appointment.paymentStatus}
+                  disabled={appointment.paymentStatus || appointment.status === "canceled"}
                 >
                   Hủy cuộc hẹn
                 </button>
