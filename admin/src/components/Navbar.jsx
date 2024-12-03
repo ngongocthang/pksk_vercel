@@ -165,7 +165,6 @@ const Navbar = () => {
         {/* Nút Đăng xuất */}
         <button onClick={logout} className="bg-[#0091a1] text-white text-sm px-5 py-2 rounded-full">
           <span className="hidden md:inline">Đăng xuất</span>
-          <i className="fa-solid fa-right-from-bracket mx-2"></i>
         </button>
       </div>
 

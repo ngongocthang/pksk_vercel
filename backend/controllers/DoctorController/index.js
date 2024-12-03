@@ -8,6 +8,7 @@ const Payment = require("../../models/Payment");
 const cloudinary = require("cloudinary").v2;
 const validateDoctor = require("../../requests/validateDoctor");
 const Appointment = require("../../models/Appointment");
+const History_Appointment = require("../../models/Appointment_history");
 const Notification = require("../../models/Notification");
 const Schedule = require("../../models/Schedule");
 const validateUpdateDoctor = require("../../requests/validateUpdateProfileDoctor");
@@ -227,6 +228,7 @@ const deleteDoctor = async (req, res) => {
       await cloudinary.uploader.destroy(`doctor/${publicId}`);
     }
 
+    await History_Appointment.deleteMany({ doctor_id: doctor._id });
     await Doctor.findByIdAndDelete(doctor._id);
     await User.deleteOne({ _id: id });
     await UserRole.deleteOne({ user_id: id });
