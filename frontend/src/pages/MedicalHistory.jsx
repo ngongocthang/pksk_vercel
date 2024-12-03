@@ -114,7 +114,8 @@ const MedicalHistory = () => {
         throw new Error("Dữ liệu từ server không hợp lệ");
       }
     } catch (error) {
-      setError(error.message);
+      // setError(error.message);
+      console.log(error.message);
     } finally {
       setLoading(false);
     }

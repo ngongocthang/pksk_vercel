@@ -215,16 +215,16 @@ const MyAppointments = () => {
               <div>
                 <img
                   className="w-32 bg-indigo-50"
-                  src={appointment.doctor_id.user_id.image}
+                  src={appointment.doctor_id ? appointment.doctor_id.user_id.image : "Không có ảnh"}
                   alt="Doctor"
                 />
               </div>
               <div className="flex-1 text-sm text-zinc-600">
                 <p className="text-lg text-neutral-800 font-semibold">
-                  Bệnh nhân: {appointment.patient_id.user_id.name}
+                  Bệnh nhân: {appointment.patient_id ? appointment.patient_id.user_id.name : "Không có tên"}
                 </p>
                 <p className="text-neutral-800 font-semibold">
-                  Bác sĩ: {appointment.doctor_id.user_id.name}
+                  Bác sĩ: {appointment.doctor_id ? appointment.doctor_id.user_id.name : "Không có tên"}
                 </p>
                 <p className="text-xs mt-1">
                   <span className="text-sm text-neutral-700 font-medium">
@@ -264,7 +264,7 @@ const MyAppointments = () => {
                   <span className="text-sm text-neutral-700 font-medium">
                     Giá khám:
                   </span>{" "}
-                  {formatPrice(appointment.doctor_id.price)} (VND)
+                  {appointment.doctor_id ? formatPrice(appointment.doctor_id.price) : "0"} (VND)
                 </p>
                 <p className="text-xs mt-1">
                   <span className="text-sm text-neutral-700 font-medium">
