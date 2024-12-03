@@ -12,20 +12,25 @@ const Doctors = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [doctorsPerPage] = useState(8);
   const [selectedDate, setSelectedDate] = useState(""); // Thêm trạng thái cho ngày làm việc
+  const [isLoading, setIsLoading] = useState(false); // Thêm trạng thái tải dữ liệu
   const navigate = useNavigate();
   const location = useLocation();
 
   const fetchDoctors = async () => {
     try {
+      setIsLoading(true); // Đặt trạng thái tải dữ liệu là true
       const response = await axios.get("http://localhost:5000/doctor/find-all");
       setDoctors(response.data.success ? response.data.doctors : []);
     } catch (error) {
       console.error("Error fetching doctors:", error);
+    } finally {
+      setIsLoading(false); // Đặt trạng thái tải dữ liệu là false
     }
   };
 
   const fetchSpecializations = async () => {
     try {
+      setIsLoading(true); // Đặt trạng thái tải dữ liệu là true
       const response = await axios.get(
         "http://localhost:5000/specialization/find-all"
       );
@@ -34,14 +39,16 @@ const Doctors = () => {
       );
     } catch (error) {
       console.error("Error fetching specializations:", error);
+    } finally {
+      setIsLoading(false); // Đặt trạng thái tải dữ liệu là false
     }
   };
 
   const applyFilter = () => {
     let filtered = speciality
       ? doctors.filter(
-        (doc) => convertToSlug(doc.specialization_id?.name) === speciality
-      )
+          (doc) => convertToSlug(doc.specialization_id?.name) === speciality
+        )
       : doctors;
 
     // Lọc theo ngày làm việc
@@ -203,87 +210,94 @@ const Doctors = () => {
 
   return (
     <div>
-      <p className="text-gray-600 text-[20px]">Các bác sĩ chuyên khoa.</p>
-      <div className="flex flex-col sm:flex-row items-start gap-5 mt-5">
-        <button
-          className={`py-1 px-3 border rounded text-sm transition-all sm:hidden ${showFilter ? "bg-primary text-white" : ""
-            }`}
-          onClick={() => setShowFilter((prev) => !prev)}
-        >
-          Filters
-        </button>
-        <div
-          className={`flex-col gap-4 text-[18px] text-gray-600 ${showFilter ? "flex" : "hidden sm:flex"
-            }`}
-        >
-          <h3>Chuyên khoa:</h3>
-          {specializations.map((spec) => (
+      {isLoading ? (
+        <div className="flex justify-center items-center h-[80vh]">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+        </div>
+      ) : (
+        <div>
+          <p className="text-gray-600 text-[20px]">Các bác sĩ chuyên khoa.</p>
+          <div className="flex flex-col sm:flex-row items-start gap-5 mt-5">
+            <button
+              className={`py-1 px-3 border rounded text-sm transition-all sm:hidden ${showFilter ? "bg-primary text-white" : ""
+                }`}
+              onClick={() => setShowFilter((prev) => !prev)}
+            >
+              Filters
+            </button>
             <div
-              key={spec._id}
-              onClick={() =>
-                speciality === convertToSlug(spec.name)
-                  ? navigate("/doctors")
-                  : navigate(`/doctors/${convertToSlug(spec.name)}`)
-              }
-              className={`w-[94vw] sm:w-40 pl-3 py-1.5 border border-gray-300 rounded transition-all cursor-pointer ${speciality === convertToSlug(spec.name)
-                ? "bg-[#e0f4fb] text-[#00759c]"
-                : ""
+              className={`flex-col gap-4 text-[18px] text-gray-600 ${showFilter ? "flex" : "hidden sm:flex"
                 }`}
             >
-              <p className="m-0">{spec.name}</p>
+              <h3>Chuyên khoa:</h3>
+              {specializations.map((spec) => (
+                <div
+                  key={spec._id}
+                  onClick={() =>
+                    speciality === convertToSlug(spec.name)
+                      ? navigate("/doctors")
+                      : navigate(`/doctors/${convertToSlug(spec.name)}`)
+                  }
+                  className={`w-[94vw] sm:w-40 pl-3 py-1.5 border border-gray-300 rounded transition-all cursor-pointer ${speciality === convertToSlug(spec.name)
+                    ? "bg-[#e0f4fb] text-[#00759c]"
+                    : ""
+                    }`}
+                >
+                  <p className="m-0">{spec.name}</p>
+                </div>
+              ))}
+              <h3>Ngày làm việc:</h3>
+              <input
+                type="date"
+                value={selectedDate} // Đặt giá trị cho ô nhập ngày
+                onChange={(e) => handleDateChange(e.target.value)} // Gọi hàm cập nhật ngày
+                className="w-[94vw] sm:w-40 border rounded p-2"
+              />
             </div>
-          ))}
-          {/* Thêm phần chọn ngày */}
-          <h3>Ngày làm việc:</h3>
-          <input
-            type="date"
-            value={selectedDate} // Đặt giá trị cho ô nhập ngày
-            onChange={(e) => handleDateChange(e.target.value)} // Gọi hàm cập nhật ngày
-            className="w-[94vw] sm:w-40 border rounded p-2"
-          />
-        </div>
 
-        <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6">
-          {currentDoctors.map((item, index) => (
-            <div
-              onClick={() => navigate(`/appointment/${item._id}`)}
-              className="border border-blue-200 rounded-xl overflow-hidden cursor-pointer hover:translate-y-[-10px] transition-all duration-500 relative"
-              key={index}
-            >
-              <img className="bg-blue-50" src={item.user_id.image} alt="" />
-              <span className="absolute top-2 left-2 bg-indigo-100 text-indigo-800 text-xs font-semibold px-2 py-1 rounded-full">
-                {item.specialization_id
-                  ? item.specialization_id.name
-                  : "Chưa có chuyên khoa"}
-              </span>
-              <div className="p-4">
-                {item.available === true ? (
-                  <div className="flex items-center gap-2 text-sm text-center text-[#00759c]">
-                    <p className="w-2 h-2 bg-[#00759c] rounded-full"></p>
-                    <p>Lịch hẹn</p>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2 text-sm text-center text-[#9c0000]">
-                    <p className="w-2 h-2 bg-[#9c0000] rounded-full"></p>
-                    <p>Lịch hẹn</p>
-                  </div>
-                )}
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6">
+              {currentDoctors.map((item, index) => (
+                <div
+                  onClick={() => navigate(`/appointment/${item._id}`)}
+                  className="border border-blue-200 rounded-xl overflow-hidden cursor-pointer hover:translate-y-[-10px] transition-all duration-500 relative"
+                  key={index}
+                >
+                  <img className="bg-blue-50" src={item.user_id.image} alt="" />
+                  <span className="absolute top-2 left-2 bg-indigo-100 text-indigo-800 text-xs font-semibold px-2 py-1 rounded-full">
+                    {item.specialization_id
+                      ? item.specialization_id.name
+                      : "Chưa có chuyên khoa"}
+                  </span>
+                  <div className="p-4">
+                    {item.available === true ? (
+                      <div className="flex items-center gap-2 text-sm text-center text-[#00759c]">
+                        <p className="w-2 h-2 bg-[#00759c] rounded-full"></p>
+                        <p>Lịch hẹn</p>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 text-sm text-center text-[#9c0000]">
+                        <p className="w-2 h-2 bg-[#9c0000] rounded-full"></p>
+                        <p>Lịch hẹn</p>
+                      </div>
+                    )}
 
-                <p className="text-gray-900 text-lg font-medium">
-                  {item.user_id.name}
-                </p>
-                <p className="text-gray-900 text-sm truncate">
-                  Giá: {item.price ? formatPrice(item.price) : "0"} VND
-                </p>
-                <p className="text-gray-900 text-sm truncate">
-                  {item.description}
-                </p>
-              </div>
+                    <p className="text-gray-900 text-lg font-medium">
+                      {item.user_id.name}
+                    </p>
+                    <p className="text-gray-900 text-sm truncate">
+                      Giá: {item.price ? formatPrice(item.price) : "0"} VND
+                    </p>
+                    <p className="text-gray-900 text-sm truncate">
+                      {item.description}
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
+          {totalPages > 1 && renderPagination()}
         </div>
-      </div>
-      {totalPages > 1 && renderPagination()}
+      )}
     </div>
   );
 };
