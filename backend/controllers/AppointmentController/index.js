@@ -169,11 +169,19 @@ const updateAppointment = async (req, res) => {
 const deleteAppointment = async (req, res) => {
   try {
     const { id } = req.params;
+    const { user_id } = req.body;
+
+    const patient = await Patient.findOne({ user_id: user_id });
+    if (!patient) {
+      return res.status(400).json({success: false, message: "Patient not found" });
+    }
+
     const appointment = await Appointment.findById(id);
     if (!appointment) {
       return res.status(400).json({success: false, message: "Appointment not found" });
     }
     await Appointment.findByIdAndDelete(id);
+    await Appointment_history.deleteMany({appointment_id: id, patient_id: patient._id});
     return res.status(200).json({success: true, message: "Delete appointment success!" });
   } catch (error) {
     return res.status(500).json({success: false, message: error.message });
