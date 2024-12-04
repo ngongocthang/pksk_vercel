@@ -37,34 +37,89 @@ const DoctorProfile = () => {
   };
 
   // Update profile information
+  // const updateProfile = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const doctorInfo = JSON.parse(sessionStorage.getItem("doctorInfo"));
+  //     const doctorId = doctorInfo ? doctorInfo.id : null;
+  //     const updatedData = new FormData();
+
+  //     // Thêm tất cả các trường vào FormData
+  //     updatedData.append("name", formData.name || "");
+  //     updatedData.append("email", formData.email || "");
+  //     updatedData.append("phone", formData.phone || "");
+  //     updatedData.append("description", formData.description || "");
+
+  //     // Gửi giá trị price mà không cần loại bỏ dấu chấm
+  //     updatedData.append("price", formData.price || "0");
+  //     updatedData.append("available", formData.available ? "true" : "false");
+
+  //     // Chỉ thêm hình ảnh nếu có
+  //     if (selectedImage) {
+  //       updatedData.append("image", selectedImage);
+  //     }
+  //     if (selectedImage) {
+  //       updatedData.append("image", selectedImage);
+  //     }
+
+  //     // Chỉ thêm mật khẩu nếu có
+  //     if (newPassword) {
+  //       updatedData.append("oldPassword", oldPassword || "");
+  //       updatedData.append("newPassword", newPassword);
+  //     }
+
+  //     const { data } = await axios.put(
+  //       `${backendUrl}/doctor/update-profile/${doctorId}`,
+  //       updatedData,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${dToken}`,
+  //           "Content-Type": "multipart/form-data",
+  //         },
+  //       }
+  //     );
+
+  //     if (data.success) {
+  //       toast.success(data.message);
+  //       setIsEdit(false);
+  //       getProfileData();
+  //     } else {
+  //       toast.error(data.message);
+  //     }
+  //   } catch (error) {
+  //     toast.error(error.response ? error.response.data.message : "Đã xảy ra lỗi!");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
   const updateProfile = async () => {
     try {
       setLoading(true);
       const doctorInfo = JSON.parse(sessionStorage.getItem("doctorInfo"));
       const doctorId = doctorInfo ? doctorInfo.id : null;
       const updatedData = new FormData();
-
+  
       // Thêm tất cả các trường vào FormData
       updatedData.append("name", formData.name || "");
       updatedData.append("email", formData.email || "");
       updatedData.append("phone", formData.phone || "");
       updatedData.append("description", formData.description || "");
-
+  
       // Gửi giá trị price mà không cần loại bỏ dấu chấm
-      updatedData.append("price", formData.price || "0"); // Nếu không có giá trị thì gửi "0"
+      updatedData.append("price", formData.price || "0");
       updatedData.append("available", formData.available ? "true" : "false");
-
-      // Chỉ thêm hình ảnh nếu có
+  
+      // Chỉ thêm hình ảnh nếu có ảnh mới được chọn
       if (selectedImage) {
         updatedData.append("image", selectedImage);
       }
-
+  
       // Chỉ thêm mật khẩu nếu có
       if (newPassword) {
         updatedData.append("oldPassword", oldPassword || "");
         updatedData.append("newPassword", newPassword);
       }
-
+  
       const { data } = await axios.put(
         `${backendUrl}/doctor/update-profile/${doctorId}`,
         updatedData,
@@ -75,7 +130,7 @@ const DoctorProfile = () => {
           },
         }
       );
-
+  
       if (data.success) {
         toast.success(data.message);
         setIsEdit(false);
@@ -89,6 +144,7 @@ const DoctorProfile = () => {
       setLoading(false);
     }
   };
+  
 
   // Cancel changes
   const handleCancel = () => {
@@ -112,11 +168,10 @@ const DoctorProfile = () => {
   const isUpdateDisabled = () => {
     return (
       isEdit &&
-      ((newPassword && !oldPassword) ||
-        (!newPassword && (oldPassword || selectedImage)))
+      (newPassword && !oldPassword)
     );
   };
-
+  
   const formatPrice = (price) => {
     if (isNaN(price)) return price;
     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -168,6 +223,7 @@ const DoctorProfile = () => {
                     <span className="text-sm">Thay đổi ảnh</span>
                     <input
                       id="file-upload"
+                      name="image"
                       type="file"
                       onChange={handleImageChange}
                       className="hidden"
@@ -270,7 +326,7 @@ const DoctorProfile = () => {
               ) : (
                 <p className="text-gray-800 text-lg">
                   <span className="font-bold">Giá:</span>{" "}
-                  {formatPrice(profileData.doctorProfile.price)} (VND)
+                  {formatPrice(profileData.doctorProfile.price)} VND
                 </p>
               )}
             </div>
@@ -284,7 +340,7 @@ const DoctorProfile = () => {
                   name="description"
                   value={formData.description}
                   onChange={handleInputChange}
-                  className="w-full p-3 border-2 border-gray-300 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
+                  className="w-full h-[90px] p-3 border-2 border-gray-300 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
                   placeholder="Description"
                 />
               ) : (
@@ -293,7 +349,7 @@ const DoctorProfile = () => {
                   value={profileData.doctorProfile.description}
                   onChange={handleInputChange}
                   readOnly={!isEdit}
-                  className="w-full p-3 border-2 border-gray-300 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
+                  className="w-full h-[90px] p-3 border-2 border-gray-300 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
                   placeholder="Description"
                 />
               )}
@@ -354,18 +410,18 @@ const DoctorProfile = () => {
                 <>
                   <button
                     onClick={updateProfile}
-                    className={`px-4 py-2 rounded-md ${
+                    className={`px-4 py-2 mt-2 rounded-md ${
                       loading || isUpdateDisabled()
                         ? "bg-gray-300 text-black disabled-button"
                         : "bg-[#219c9e] text-white"
                     }`}
                     disabled={loading || isUpdateDisabled()}
                   >
-                    {loading ? "Updating..." : "Cập nhật"}
+                    {loading ? "Cập nhật..." : "Cập nhật"}
                   </button>
                   <button
                     onClick={handleCancel}
-                    className="px-4 py-2 bg-gray-300 text-black rounded-md"
+                    className="px-4 py-2 mt-2 bg-gray-300 text-black rounded-md"
                   >
                     Hủy
                   </button>
@@ -373,7 +429,7 @@ const DoctorProfile = () => {
               ) : (
                 <button
                   onClick={() => setIsEdit(true)}
-                  className="px-4 py-2 bg-[#219c9e] text-white rounded-md"
+                  className="px-4 py-2 bg-[#219c9e] text-white rounded-md mt-2"
                 >
                   Chỉnh sửa
                 </button>

@@ -148,9 +148,9 @@ const MyProfile = () => {
   };
 
   return (
-    <div className="flex items-center justify-center mb-16">
-      <div className="max-w-lg flex flex-col gap-2 text-sm bg-white shadow-lg rounded-lg p-6">
-        <p className="text-lg text-center">Chào mừng, {userData.name}!</p>
+    <div className="flex items-center justify-center mb-16 px-4 sm:px-6 md:px-8">
+      <div className="max-w-lg w-full flex flex-col gap-2 text-sm bg-white shadow-lg rounded-lg p-6">
+        <p className="text-lg md:text-xl text-center font-semibold text-gray-600">Chào mừng, {userData.name}!</p>
         <div className="flex items-center justify-center">
           <img className="w-36 rounded" src={userData.image} alt="Profile" />
         </div>
@@ -158,7 +158,7 @@ const MyProfile = () => {
         {isEdit ? (
           <div className="flex justify-center mt-4">
             <input
-              className="bg-gray-50 text-3xl font-medium max-w-60 text-center"
+              className="bg-gray-50 text-3xl font-medium max-w-[100%] sm:max-w-[80%] text-center"
               type="text"
               value={userData.name}
               onChange={(e) =>
@@ -176,8 +176,8 @@ const MyProfile = () => {
 
         <div>
           <p className="text-neutral-500 underline mt-3 text-center">THÔNG TIN CHI TIẾT:</p>
-          <div className="grid grid-cols-[1fr_3fr] gap-y-2.5 mt-3 text-neutral-700">
-            <p className="font-medium text-gray-800 flex items-center">Email:</p>
+          <div className="grid grid-cols-1 gap-y-2.5 mt-3 text-neutral-700 sm:grid-cols-2 sm:gap-x-6">
+            <p className="font-medium text-gray-800">Email:</p>
             {isEdit ? (
               <input
                 className="bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 max-w-[340px]"
@@ -191,7 +191,7 @@ const MyProfile = () => {
               <p className="text-gray-600">{userData.email}</p>
             )}
 
-            <p className="font-medium mr-4 text-gray-800 flex items-center">Số điện thoại:</p>
+            <p className="font-medium text-gray-800">Số điện thoại:</p>
             {isEdit ? (
               <input
                 className="bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 max-w-[340px]"
@@ -207,10 +207,10 @@ const MyProfile = () => {
 
             {isEdit && (
               <>
-                <p className="font-medium text-gray-800 flex items-center">Mật khẩu mới:</p>
+                <p className="font-medium text-gray-800">Mật khẩu mới:</p>
                 <div className="relative flex items-center">
                   <input
-                    className="bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-[340px]"
+                    className="bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full sm:w-[340px]"
                     type="text"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
@@ -219,10 +219,10 @@ const MyProfile = () => {
                 </div>
                 {newPassword && (
                   <>
-                    <p className="font-medium text-gray-800 flex items-center">Mật khẩu cũ:</p>
+                    <p className="font-medium text-gray-800">Mật khẩu cũ:</p>
                     <div className="relative flex items-center">
                       <input
-                        className="bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-[340px]"
+                        className="bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full sm:w-[340px]"
                         type="text"
                         value={oldPassword}
                         onChange={(e) => setOldPassword(e.target.value)}
@@ -239,13 +239,14 @@ const MyProfile = () => {
           </div>
         </div>
 
-        <div className="flex justify-center gap-4 mt-4">
+        <div className="flex flex-col sm:flex-row justify-center gap-4 mt-4">
           {isEdit ? (
             <>
               <button
                 onClick={handleSave}
-                className={`bg-blue-500 text-white py-2 px-4 rounded ${isSaveDisabled() ? "bg-gray-300 disabled-button" : ""
-                  }`}
+                className={`bg-blue-500 text-white py-2 px-4 rounded ${
+                  isSaveDisabled() ? "bg-gray-300 disabled-button" : ""
+                }`}
                 disabled={isSaveDisabled()}
               >
                 Lưu

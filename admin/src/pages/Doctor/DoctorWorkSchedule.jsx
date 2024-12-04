@@ -173,8 +173,8 @@ const DoctorWorkSchedule = () => {
       {/* Modal xác nhận xóa */}
       {showModal && selectedSchedule && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg p-6 w-96">
-            <h2 className="text-xl font-semibold mb-4">Xác nhận xóa</h2>
+          <div className="bg-white rounded-lg p-4 w-96 mx-2">
+            <h2 className="text-xl font-semibold mb-3">Xác nhận xóa</h2>
             <p className="mb-4">
               Bạn có chắc chắn muốn xóa lịch làm việc buổi{" "}
               {selectedSchedule.work_shift === "afternoon" ? "Chiều" : "Sáng"} ngày{" "}
@@ -189,7 +189,7 @@ const DoctorWorkSchedule = () => {
               </button>
               <button
                 onClick={handleConfirmDelete}
-                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                className="px-4 py-2 bg-[#22c55e] text-white rounded hover:bg-red-600"
               >
                 Xóa
               </button>

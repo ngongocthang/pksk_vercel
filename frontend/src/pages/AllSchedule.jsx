@@ -8,25 +8,30 @@ import "react-toastify/dist/ReactToastify.css";
 import { AppContext } from "../context/AppContext";
 import "../index.css";
 
-const DoctorTimeline = () => {
+const AllSchedule = () => {
   const [doctors, setDoctors] = useState([]);
   const [events, setEvents] = useState([]);
   const { user } = useContext(AppContext);
-  const patient_id = user.id;
+  const [isToastVisible, setIsToastVisible] = useState(false);
+  const [loading, setLoading] = useState(true); // Thêm trạng thái loading
+  const patient_id = user?.id || null;
   const token = user?.token || localStorage.getItem("token");
 
   useEffect(() => {
     const fetchSchedules = async () => {
+      setLoading(true); // Bắt đầu loading
       try {
-        const response = await fetch(
-          "http://localhost:5000/get-all-schedule-doctor"
-        );
+        const response = await fetch("http://localhost:5000/get-all-schedule-doctor");
+        if (!response.ok) {
+          throw new Error("Không thể tải dữ liệu");
+        }
         const data = await response.json();
 
         const resources = data.map((doctor) => ({
           id: doctor.doctorId,
           doctorName: doctor.doctorName,
           doctorImage: doctor.doctorImage,
+          specialization: doctor.specialization,
         }));
 
         const mappedEvents = data.flatMap((doctor) =>
@@ -60,6 +65,9 @@ const DoctorTimeline = () => {
         setEvents(mappedEvents);
       } catch (error) {
         console.error("Lỗi khi tải dữ liệu:", error);
+        toast.error("Có lỗi xảy ra khi tải lịch làm việc.");
+      } finally {
+        setLoading(false); // Kết thúc loading
       }
     };
 
@@ -67,8 +75,17 @@ const DoctorTimeline = () => {
   }, []);
 
   const handleEventClick = (info) => {
+    if (isToastVisible) {
+      return; // Nếu đã có thông báo đang hiển thị, không làm gì cả
+    }
+
     const clickedEvent = info.event;
     const convertTitle = clickedEvent.title === "Sáng" ? "morning" : "afternoon";
+
+    const formatDate = (isoDate) => {
+      const [year, month, day] = isoDate.split("-");
+      return `${day}/${month}/${year}`;
+    };
 
     const appointmentData = {
       patient_id: patient_id,
@@ -77,26 +94,34 @@ const DoctorTimeline = () => {
       work_date: clickedEvent.start.toISOString().split("T")[0],
     };
 
+    const formattedDate = formatDate(appointmentData.work_date);
+    setIsToastVisible(true);
+
     toast.info(
-      <div>
+      <div className="flex flex-col items-center justify-center">
         <div className="flex items-center mb-2">
           <p className="font-bold text-lg">Xác nhận</p>
         </div>
-        <p className="text-lg font-medium text-center">
-          Bạn có chắc chắn muốn đặt lịch hẹn vào{" "}
-          <b>{appointmentData.work_date}</b> vào ca <b>{clickedEvent.title}</b>?
+        <p>
+          Bạn có chắc chắn muốn đặt lịch hẹn vào {formattedDate} ca{" "}
+          {clickedEvent.title}?
         </p>
         <div className="flex justify-center gap-4 mt-4">
           <button
             onClick={async () => {
+              toast.dismiss();
               await confirmBooking(appointmentData);
+              setIsToastVisible(false);
             }}
-            className="bg-red-600 text-white px-4 py-2 rounded transition duration-300 hover:bg-red-700"
+            className="bg-green-500 text-white px-4 py-2 rounded transition duration-300 hover:bg-green-600"
           >
             Xác nhận
           </button>
           <button
-            onClick={() => toast.dismiss()}
+            onClick={() => {
+              toast.dismiss();
+              setIsToastVisible(false);
+            }}
             className="bg-gray-300 text-black px-4 py-2 rounded transition duration-300 hover:bg-gray-400"
           >
             Hủy
@@ -131,57 +156,66 @@ const DoctorTimeline = () => {
   };
 
   return (
-    <div className="container bg-gray-100 rounded-lg mx-auto p-1">
-      <div className="container mx-auto p-2">
-        <h1 className="text-xl md:text-3xl font-bold text-center mb-6">
-          Lịch Làm Việc Của Bác Sĩ
-        </h1>
-        <div className="calendar-container shadow-md rounded-lg overflow-hidden border border-gray-300 bg-white py-2 px-2">
-          <FullCalendar
-            plugins={[resourceTimelinePlugin]}
-            initialView="resourceTimelineWeek"
-            resources={doctors}
-            events={events}
-            locale={viLocale}
-            resourceAreaColumns={[
-              {
-                headerContent: "Bác sĩ",
-                field: "doctorName",
-                cellContent: (args) => {
-                  const { doctorImage, doctorName } = args.resource.extendedProps;
-                  return (
-                    <div className="flex items-center">
-                      <img
-                        src={doctorImage}
-                        alt={doctorName}
-                        className="w-8 h-8 rounded-full mr-2"
-                      />
-                      <span className="text-sm md:text-base font-medium truncate md:whitespace-normal md:overflow-visible md:max-w-none max-w-[150px] sm:max-w-[200px]">
-                        {doctorName}
-                      </span>
-                    </div>
-                  );
+    <div className="bg-gray-100 min-h-max rounded-lg">
+      <div className="container mx-auto p-4">
+        <header className="text-center py-4 text-[#0091a1]">
+          <h1 className="text-2xl md:text-3xl font-bold text-center mb-6">
+            Lịch Làm Việc Của Bác Sĩ
+          </h1>
+        </header>
+        <div className="calendar-container shadow-md rounded-lg overflow-hidden border border-gray-300 bg-white">
+          {loading ? ( // Hiển thị thông báo loading
+            <div className="text-center py-4">
+              <i className="fa-solid fa-spinner animate-spin text-4xl"></i>
+              <p className="text-gray-500 font-medium">Đang tải lịch làm việc...</p>
+            </div>
+          ) : (
+            <FullCalendar
+              plugins={[resourceTimelinePlugin]}
+              initialView="resourceTimelineWeek"
+              resources={doctors}
+              events={events}
+              locale={viLocale}
+              resourceAreaColumns={[
+                {
+                  headerContent: "Bác sĩ",
+                  field: "doctorName",
+                  cellContent: (args) => {
+                    const { doctorImage, doctorName, specialization } = args.resource.extendedProps;
+                    return (
+                      <div className="flex items-center">
+                        <img
+                          src={doctorImage}
+                          alt={doctorName}
+                          className="w-8 h-8 rounded-full mr-2"
+                        />
+                        <span className="text-sm md:text-base font-medium truncate md:whitespace-normal md:overflow-visible md:max-w-none max-w-[150px] sm:max-w-[200px]">
+                          {doctorName}  {" "} (Chuyên khoa: {specialization})
+                        </span>
+                      </div>
+                    );
+                  },
                 },
-              },
-            ]}
-            eventContent={(args) => {
-              const workShift = args.event.title; // Ca làm việc
-              return (
-                <div className="flex items-center justify-center h-full w-full ">
-                  <span className="text-center">{workShift}</span>
-                </div>
-              );
-            }}
-            headerToolbar={{
-              left: "prev today next",
-              center: "title",
-              right: "resourceTimelineDay,resourceTimelineWeek",
-            }}
-            slotMinTime="06:00:00"
-            slotMaxTime="19:00:00"
-            nowIndicator
-            eventClick={handleEventClick}
-          />
+              ]}
+              eventContent={(args) => {
+                const workShift = args.event.title;
+                return (
+                  <div className="flex items-center justify-center">
+                    <span>{workShift}</span>
+                  </div>
+                );
+              }}
+              headerToolbar={{
+                left: "prev today next",
+                center: "title",
+                right: "resourceTimelineDay,resourceTimelineWeek",
+              }}
+              slotMinTime="06:00:00"
+              slotMaxTime="19:00:00"
+              nowIndicator
+              eventClick={handleEventClick}
+            />
+          )}
         </div>
       </div>
       <ToastContainer />
@@ -189,4 +223,4 @@ const DoctorTimeline = () => {
   );
 };
 
-export default DoctorTimeline;
+export default AllSchedule;

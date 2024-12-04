@@ -41,7 +41,7 @@ const ScrollToTopButton = () => {
         className="fixed bg-[#0090a1] text-white p-5 rounded-full shadow-lg hover:bg-[#00759c]"
         style={{
           position: 'fixed',
-          bottom: '20px',
+          bottom: '50px',
           right: '20px',
           zIndex: 1000,
         }}

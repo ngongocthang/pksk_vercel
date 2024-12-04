@@ -121,10 +121,14 @@
   /* Căn giữa hình ảnh theo chiều dọc */
 }
 
+.fc-event {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Thay đổi nền của headerToolbar */
 .fc-toolbar {
-  background-color: #f3f4f6;
-  /* Màu nền */
   padding: 10px;
   /* Khoảng cách padding */
   border-radius: 5px;
@@ -226,32 +230,5 @@
     /* Giảm kích thước chữ nút */
     padding: 5px 8px;
     /* Thu gọn thêm padding */
-  }
-}
-
-.fc .fc-toolbar-title {
-  font-size: 1.2rem;
-}
-
-/* code chữ chạy đổi màu */
-.marquee-text {
-  font-size: 15px;
-  animation: blink 1.5s infinite;
-}
-
-@keyframes blink {
-  0% {
-    opacity: 1;
-    color: #00759c;
-  }
-
-  50% {
-    opacity: 1;
-    color: darkorange;
-  }
-
-  100% {
-    opacity: 1;
-    color: #00759c;
   }
 }
