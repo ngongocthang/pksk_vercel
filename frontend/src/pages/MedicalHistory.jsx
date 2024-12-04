@@ -35,23 +35,38 @@ const MedicalRecordCard = memo(({ record }) => {
   };
 
   return (
-    <Card className="hover:shadow-lg transition-shadow">
+    <Card className="hover:shadow-lg transition-shadow w-[300px]">
       <CardContent className="p-6">
-        <div className="flex items-center mb-4">
-          <User className="w-5 h-5 text-blue-500 mr-2" />
-          <span className="font-medium">Bs. {record.history.doctor_name}</span>
+        {/* Phần hiển thị hình ảnh bác sĩ */}
+        <div className="flex justify-center mb-4">
+          <img
+            src={record.history.doctor_image}
+            alt={record.history.doctor_name}
+            className="w-60 h-70 shadow-lg"
+          />
         </div>
-        <div className="flex items-center mb-4">
-          <Calendar className="w-5 h-5 text-gray-500 mr-2" />
-          <span>{new Date(record.history.work_date).toLocaleDateString("vi-VN")}</span>
+
+        {/* Phần hiển thị thông tin bác sĩ */}
+        <div className="flex flex-col items-center">
+          <div className="flex items-center mb-4">
+            <User className="w-5 h-5 text-blue-500 mr-2" />
+            <span className="font-medium">Bs. {record.history.doctor_name}</span>
+          </div>
+          <Badge className={`${getStatusColor(record.history.status)} px-3 py-1 rounded-full text-sm font-medium mt-2`}>
+            Trạng thái: {getStatusText(record.history.status)}
+          </Badge>
+          <div className="flex items-center mt-2 space-x-4">
+            <div className="flex items-center">
+              <Calendar className="w-5 h-5 text-gray-500 mr-2" />
+              <span>{new Date(record.history.work_date).toLocaleDateString("vi-VN")}</span>
+            </div>
+            <div className="flex items-center">
+              <Clock className="w-5 h-5 text-gray-500 mr-2" />
+              <span>{record.history.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều"}</span>
+            </div>
+          </div>
         </div>
-        <div className="flex items-center mb-4">
-          <Clock className="w-5 h-5 text-gray-500 mr-2" />
-          <span>{record.history.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều"}</span>
-        </div>
-        <Badge className={`${getStatusColor(record.history.status)} px-3 py-1 rounded-full text-sm font-medium`}>
-          {getStatusText(record.history.status)}
-        </Badge>
+
         <div className="mt-4 pt-4 border-t border-gray-100 text-sm text-gray-500">
           Ngày xác nhận: {new Date(record.history.createdAt).toLocaleDateString("vi-VN")}
         </div>
@@ -85,12 +100,23 @@ const MedicalHistory = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const isTokenValid = (token) => {
+    if (!token) return false;
+    try {
+      const decoded = JSON.parse(atob(token.split(".")[1])); // Decode token
+      if (decoded.exp * 1000 < Date.now()) return false; // Check expiration
+    } catch (e) {
+      return false;
+    }
+    return true;
+  };
+
   const fetchMedicalHistory = async () => {
-    const token = user?.token;
+    const token = localStorage.getItem("token");
     setLoading(true);
     setError(null);
 
-    if (!token) {
+    if (!token || !isTokenValid(token)) {
       navigate("/account");
       return;
     }
@@ -114,8 +140,7 @@ const MedicalHistory = () => {
         throw new Error("Dữ liệu từ server không hợp lệ");
       }
     } catch (error) {
-      // setError(error.message);
-      console.log(error.message);
+      setError(error.message);
     } finally {
       setLoading(false);
     }
@@ -137,9 +162,9 @@ const MedicalHistory = () => {
           ) : error ? (
             <ErrorAlert message={error} />
           ) : (
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="flex flex-wrap justify-start gap-4">
               {medicalRecords.length === 0 ? (
-                <div className="text-center py-12">
+                <div className="flex items-center justify-center text-center py-12 w-full">
                   <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                     <Calendar className="w-12 h-12 text-gray-400" />
                   </div>
