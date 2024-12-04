@@ -186,11 +186,12 @@ const Appointment = () => {
 
   if (!docInfo) {
     return (
-      <div className="text-center text-2xl mt-10 text-gray-500">
-        Đang tải thông tin bác sĩ...
+      <div className="flex flex-col items-center justify-center mt-10 text-gray-500">
+        <i className="fa-solid fa-spinner animate-spin text-4xl"></i>
+        <p className="text-center text-2xl mt-4">Đang tải thông tin bác sĩ...</p>
       </div>
     );
-  }
+  }  
 
   const formatPrice = (price) => {
     if (isNaN(price)) return price; 

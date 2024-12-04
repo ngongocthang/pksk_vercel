@@ -53,8 +53,8 @@ const AddDoctor = () => {
     }
 
     // Kiểm tra giá
-    const numericPrice = price.replace(/\./g, ""); 
-    const priceValue = Number(numericPrice); 
+    const numericPrice = price.replace(/\./g, "");
+    const priceValue = Number(numericPrice);
 
     if (isNaN(priceValue) || priceValue < 0) {
       return toast.error(
@@ -228,21 +228,23 @@ const AddDoctor = () => {
           />
         </div>
 
-        <button
-          type="submit"
-          className={`bg-primary px-10 py-3 mt-4 text-white rounded-full ${
-            loading ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-          disabled={loading}
-        >
-          {loading ? (
-            <div className="flex items-center justify-center">
-              <div className="w-5 h-5 border-t-2 border-white border-solid rounded-full animate-spin"></div>
-            </div>
-          ) : (
-            "Thêm bác sĩ"
-          )}
-        </button>
+        <div className="flex justify-center items-center md:justify-start">
+          <button
+            type="submit"
+            className={`bg-primary px-10 py-3 mt-4 text-white rounded-full ${loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            disabled={loading}
+          >
+            {loading ? (
+              <div className="flex items-center justify-center">
+                <div className="w-5 h-5 border-t-2 border-white border-solid rounded-full animate-spin"></div>
+              </div>
+            ) : (
+              "Thêm bác sĩ"
+            )}
+          </button>
+        </div>
+
       </div>
     </form>
   );

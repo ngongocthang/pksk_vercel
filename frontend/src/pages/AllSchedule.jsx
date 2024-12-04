@@ -131,14 +131,12 @@ const DoctorTimeline = () => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-500px">
-      <div className="container mx-auto p-4">
-        <header className="text-center py-6">
-          <h1 className="text-4xl font-bold text-blue-700">
-            Lịch Làm Việc Của Bác Sĩ
-          </h1>
-        </header>
-        <div className="bg-white shadow-lg rounded-lg p-6 overflow-auto" style={{ maxHeight: "600px" }}>
+    <div className="container bg-gray-100 rounded-lg mx-auto p-1">
+      <div className="container mx-auto p-2">
+        <h1 className="text-xl md:text-3xl font-bold text-center mb-6">
+          Lịch Làm Việc Của Bác Sĩ
+        </h1>
+        <div className="calendar-container shadow-md rounded-lg overflow-hidden border border-gray-300 bg-white py-2 px-2">
           <FullCalendar
             plugins={[resourceTimelinePlugin]}
             initialView="resourceTimelineWeek"
@@ -158,7 +156,9 @@ const DoctorTimeline = () => {
                         alt={doctorName}
                         className="w-8 h-8 rounded-full mr-2"
                       />
-                      {doctorName}
+                      <span className="text-sm md:text-base font-medium truncate md:whitespace-normal md:overflow-visible md:max-w-none max-w-[150px] sm:max-w-[200px]">
+                        {doctorName}
+                      </span>
                     </div>
                   );
                 },

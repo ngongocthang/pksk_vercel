@@ -107,12 +107,151 @@
 /* Căn giữa nội dung của cột bác sĩ theo chiều dọc */
 .fc-timeline-resource-cell {
   display: flex;
-  justify-content: center; /* Căn giữa theo chiều ngang */
-  align-items: center; /* Căn giữa theo chiều dọc */
-  height: 100%; /* Đảm bảo rằng chiều cao của cell đủ lớn để căn giữa */
+  justify-content: center;
+  /* Căn giữa theo chiều ngang */
+  align-items: center;
+  /* Căn giữa theo chiều dọc */
+  height: 100%;
+  /* Đảm bảo rằng chiều cao của cell đủ lớn để căn giữa */
 }
 
 /* Đảm bảo hình ảnh bác sĩ cũng căn giữa theo chiều dọc */
 .fc-timeline-resource-cell img {
-  vertical-align: middle; /* Căn giữa hình ảnh theo chiều dọc */
+  vertical-align: middle;
+  /* Căn giữa hình ảnh theo chiều dọc */
+}
+
+/* Thay đổi nền của headerToolbar */
+.fc-toolbar {
+  background-color: #f3f4f6;
+  /* Màu nền */
+  padding: 10px;
+  /* Khoảng cách padding */
+  border-radius: 5px;
+  /* Bo góc */
+  display: flex;
+  flex-wrap: wrap;
+  /* Đảm bảo các phần tử xuống dòng khi không đủ chỗ */
+  justify-content: space-between;
+  /* Cân đối các phần tử */
+  align-items: center;
+}
+
+/* Tùy chỉnh nút điều hướng (prev, next, today) */
+.fc-toolbar-chunk button {
+  background-color: #2196f3;
+  /* Màu nền */
+  color: white;
+  /* Màu chữ */
+  border: none;
+  /* Bỏ viền */
+  padding: 8px 12px;
+  /* Padding trong nút */
+  margin: 5px 5px;
+  /* Khoảng cách giữa các nút */
+  border-radius: 4px;
+  /* Bo góc */
+  cursor: pointer;
+  font-size: 0.9rem;
+  /* Kích thước chữ mặc định */
+  white-space: nowrap;
+  /* Ngăn nút bị xuống dòng */
+}
+
+.fc-toolbar-chunk button:hover {
+  background-color: #1e88e5;
+  /* Màu nền khi hover */
+}
+
+/* Tùy chỉnh tiêu đề ở giữa */
+.fc-toolbar-title {
+  font-size: 1.5rem;
+  /* Kích thước font */
+  font-weight: bold;
+  /* Đậm chữ */
+  color: #374151;
+  /* Màu chữ */
+  text-transform: capitalize;
+  /* Viết hoa chữ cái đầu */
+  text-align: center;
+  /* Canh giữa văn bản */
+  margin: 10px 0;
+  /* Khoảng cách trên/dưới */
+}
+
+/* Media Queries cho màn hình nhỏ hơn */
+@media (max-width: 768px) {
+  .fc-toolbar {
+    flex-direction: column;
+    /* Sắp xếp các phần tử theo cột */
+    align-items: stretch;
+    /* Kéo dài các phần tử để vừa màn hình */
+  }
+
+  .fc-toolbar-title {
+    font-size: 1.2rem;
+    /* Giảm kích thước chữ trên màn hình nhỏ */
+    margin-bottom: 10px;
+    /* Khoảng cách phía dưới */
+  }
+
+  .fc-toolbar-chunk {
+    display: flex;
+    /* Sắp xếp lại các nút trong một dòng */
+    justify-content: center;
+    /* Canh giữa các nút */
+    margin-bottom: 10px;
+    /* Thêm khoảng cách giữa các nút và phần khác */
+  }
+
+  .fc-toolbar-chunk button {
+    font-size: 0.8rem;
+    /* Giảm kích thước chữ trên nút */
+    padding: 6px 10px;
+    /* Thu nhỏ padding */
+    margin: 3px;
+    /* Giảm khoảng cách giữa các nút */
+  }
+}
+
+/* Media Queries cho màn hình rất nhỏ (dưới 480px) */
+@media (max-width: 480px) {
+  .fc-toolbar-title {
+    font-size: 1rem;
+    /* Giảm thêm kích thước chữ */
+  }
+
+  .fc-toolbar-chunk button {
+    font-size: 0.75rem;
+    /* Giảm kích thước chữ nút */
+    padding: 5px 8px;
+    /* Thu gọn thêm padding */
+  }
+}
+
+.fc .fc-toolbar-title {
+  font-size: 1.2rem;
+}
+
+/* code chữ chạy đổi màu */
+.marquee-text {
+  font-size: 15px;
+  animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+    color: #00759c;
+  }
+
+  50% {
+    opacity: 1;
+    color: darkorange;
+  }
+
+  100% {
+    opacity: 1;
+    color: #00759c;
+  }
 }
