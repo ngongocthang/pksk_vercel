@@ -80,23 +80,21 @@ const ConfirmationSchedule = () => {
       <div className='bg-white border rounded-xl text-sm max-h-[80vh] min-h-[50vh] overflow-y-auto'>
 
         {/* Header Row */}
-        <div className='hidden md:grid grid-cols-[0.5fr_2fr_2fr_2fr_1fr] gap-4 py-4 px-6 bg-gray-200 border-b text-center'>
+        <div className='hidden sm:grid grid-cols-[0.5fr_2fr_2fr_2fr_1fr] bg-gray-100 gap-4 py-3 px-6 border-b'>
           <p className='font-bold text-[16px]'>#</p>
-          <p className='font-bold text-[16px]'>Bệnh nhân</p>
-          <p className='font-bold text-[16px]'>Ngày khám</p>
-          <p className='font-bold text-[16px]'>Ca khám</p>
+          <p className='font-bold text-center text-[16px]'>Bệnh nhân</p>
+          <p className='font-bold text-center text-[16px]'>Ngày khám</p>
+          <p className='font-bold text-center text-[16px]'>Ca khám</p>
           <p className='font-bold text-[16px] justify-self-end'>Hành động</p>
         </div>
 
         {/* Appointment Rows */}
         {currentAppointments.length > 0 ? (
           currentAppointments.map((item, index) => (
-            <div
-              className='border-b hover:bg-gray-50 p-4 md:p-1'
-              key={item._id}
-            >
+            <div className='border-b hover:bg-gray-50 p-4 md:p-3'
+              key={item._id}>
               <div className='md:grid md:grid-cols-[0.5fr_2fr_2fr_2fr_1fr] items-center gap-4'>
-                <p className='text-center font-bold md:col-span-1'>{index + 1 + (currentPage - 1) * appointmentsPerPage}</p>
+                <p className='font-bold md:col-span-1 ml-3'>{index + 1 + (currentPage - 1) * appointmentsPerPage}</p>
 
                 {/* Mobile-friendly stacking */}
                 <div className='flex flex-col gap-1 md:gap-0'>
@@ -106,13 +104,12 @@ const ConfirmationSchedule = () => {
                   </p>
                   <div className='md:hidden'>
                     <p className='text-sm py-2 font-semibold'>Ngày khám: {formatDate(item.work_date)}</p>
-                    {/* <p>{formatDate(item.work_date)}</p> */}
                   </div>
                   <div className='md:hidden flex items-center'>
                     <p className='text-sm font-semibold'>Ca khám:</p>
                     <p
-                      className={`py-0 ml-1 p-2 md:py-1 rounded-full text-white text-sm text-center max-w-[100px] 
-                      ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg max-w-[70px] w-full`}
+                      className={`py-1 px-3 rounded-full text-sm text-center shadow-lg
+                      ${item.work_shift === "afternoon" ? "bg-yellow-500 text-white" : "bg-blue-500 text-white"}`}
                     >
                       {item.work_shift === "morning" ? "Sáng" : "Chiều"}
                     </p>

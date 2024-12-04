@@ -44,7 +44,7 @@ const DoctorAppointments = () => {
           <p className='font-bold text-[16px]'>Bệnh nhân</p>
           <p className='font-bold text-[16px]'>Ngày khám</p>
           <p className='font-bold text-[16px]'>Ca khám</p>
-          <p className='font-bold text-[16px] justify-self-end'>Trạng thái</p>
+          <p className='font-bold text-[16px]'>Trạng thái</p>
         </div>
 
         {currentAppointments.length > 0 ? (
@@ -86,22 +86,22 @@ const DoctorAppointments = () => {
               <div className='flex gap-3 justify-start sm:justify-self-end'>
                 <span className="md:hidden text-sm font-semibold">Trạng thái: </span>
                 {item.status === "pending" && (
-                  <button className='bg-yellow-400 text-white font-semibold py-1 px-4 rounded-full text-xs sm:text-sm'>
+                  <button className='bg-yellow-400 text-white font-semibold py-1 px-4 rounded-full text-xs shadow-lg sm:text-sm w-[140px]'>
                     Đang chờ
                   </button>
                 )}
                 {item.status === "confirmed" && (
-                  <button className='bg-green-500 text-white font-semibold py-1 px-4 rounded-full text-xs sm:text-sm'>
+                  <button className='bg-green-500 text-white font-semibold py-1 px-4 rounded-full text-xs shadow-lg sm:text-sm w-[140px]'>
                     Đã xác nhận
                   </button>
                 )}
                 {item.status === "canceled" && (
-                  <button className='bg-red-500 text-white font-semibold py-1 px-4 rounded-full text-xs sm:text-sm'>
+                  <button className='bg-red-500 text-white font-semibold py-1 px-4 rounded-full text-xs shadow-lg sm:text-sm w-[140px]'>
                     Đã từ chối
                   </button>
                 )}
                 {item.status === "completed" && (
-                  <button className='bg-blue-500 text-white font-semibold py-1 px-4 rounded-full text-xs sm:text-sm'>
+                  <button className='bg-blue-500 text-white font-semibold py-1 px-4 rounded-full text-xs shadow-lg sm:text-sm w-[140px]'>
                     Đã hoàn thành
                   </button>
                 )}

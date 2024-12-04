@@ -205,47 +205,55 @@ const Dashboard = () => {
 
         {/* Cột phải: Hiển thị lịch hẹn sắp tới */}
         <div className="flex-1 bg-white p-4 rounded-lg border-2 border-gray-100 shadow-lg">
-          <div className="flex items-center gap-2.5 px-4 py-4 rounded-t bg-gray-50">
-            <img src={assets.list_icon} alt="icon" />
-            <p className="font-semibold text-gray-800">Lịch hẹn sắp tới</p>
+          <div className="flex items-center gap-3 px-4 py-2 bg-blue-100 rounded-t">
+            <img src={assets.list_icon} alt="icon" className="w-6 h-6" />
+            <p className="font-semibold text-gray-800 text-lg">Lịch hẹn sắp tới</p>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full bg-white rounded-lg overflow-hidden shadow-md">
-              <thead className="bg-gray-100 border-b">
+            <table className="w-full bg-white rounded-lg shadow-md">
+              <thead className="bg-gray-100">
                 <tr>
-                  <th className="py-3 px-4 text-gray-700 font-semibold text-center">Bệnh nhân</th>
-                  <th className="py-3 px-4 text-left text-gray-700 font-semibold">Bác sĩ</th>
-                  <th className="py-3 px-4 text-left text-gray-700 font-semibold">Ca làm việc</th>
-                  <th className="py-3 px-4 text-left text-gray-700 font-semibold">Trạng thái</th>
+                  <th className="py-3 px-4 text-center text-gray-700 font-semibold">Bệnh nhân</th>
+                  <th className="py-3 px-4 text-center text-gray-700 font-semibold">Bác sĩ</th>
+                  <th className="py-3 px-4 text-center text-gray-700 font-semibold">Ca làm việc</th>
+                  <th className="py-3 px-4 text-center text-gray-700 font-semibold">Trạng thái</th>
                 </tr>
               </thead>
               <tbody>
                 {dashUpApData &&
                   dashUpApData.map((item, index) => (
                     <tr key={index} className={`hover:bg-gray-50 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"}`}>
-                      <td className="py-4 px-4">
-                        <div className="text-sm text-center">
-                          <p className="font-medium text-gray-800">{item.patient_id ? item.patient_id.user_id.name : "Không có tên"}</p>
-                          {/* <p className="font-medium text-gray-800">{item.patient_id.user_id.name}</p> */}
-                          <p className="text-gray-500 text-xs">Ngày khám: {new Date(item.work_date).toLocaleDateString()}</p>
-                        </div>
+                      <td className="py-4 px-4 text-center">
+                        <p className="font-medium text-gray-800">
+                          {item.patient_id ? item.patient_id.user_id.name : "Không có tên"}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          Ngày khám: {new Date(item.work_date).toLocaleDateString("vi-VN")}
+                        </p>
                       </td>
-                      <td className="py-4 px-4">
-                        <p className="font-medium text-gray-800 text-sm">{item.doctor_id ? item.doctor_id.user_id.name : "Không có tên"}</p>
-                        {/* <p className="font-medium text-gray-800 text-sm">{item.doctor_id.user_id.name}</p> */}
+                      <td className="py-4 px-4 text-center">
+                        <p className="font-medium text-gray-800">
+                          {item.doctor_id ? item.doctor_id.user_id.name : "Không có tên"}
+                        </p>
                       </td>
-                      <td className="py-4 px-4">
-                        <span className={`py-1 px-4 rounded-full text-sm font-medium text-white shadow-md ${item.work_shift === "afternoon" ? "bg-orange-400" : "bg-blue-400"}`}>
+                      <td className="py-4 px-4 text-center">
+                        <span
+                          className={`py-1 px-4 rounded-full text-sm font-medium text-white shadow-md ${item.work_shift === "afternoon" ? "bg-orange-400" : "bg-blue-400"
+                            }`}
+                        >
                           {item.work_shift === "afternoon" ? "Chiều" : "Sáng"}
                         </span>
                       </td>
-                      <td className="py-4 px-4">
-                        <span className={`py-1 px-4 rounded-full text-sm font-medium text-white shadow-md ${item.status === "confirmed" ? "bg-green-500" : "bg-red-500"}`}>
+                      <td className="py-4 px-4 text-center">
+                        <button
+                          className={`py-1 px-4 rounded-full text-sm font-medium text-white shadow-md ${item.status === "confirmed" ? "bg-green-500" : "bg-red-500"
+                            }`}
+                        >
                           {item.status === "confirmed" ? "Đã xác nhận" : "Chưa xác nhận"}
-                        </span>
+                        </button>
                       </td>
                     </tr>
-                  ))}  
+                  ))}
               </tbody>
             </table>
           </div>

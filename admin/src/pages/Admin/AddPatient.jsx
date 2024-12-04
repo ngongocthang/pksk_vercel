@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { toast } from "react-toastify";
 import axios from "axios";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { toast } from "react-toastify";
 
 const AddPatient = () => {
     const [name, setName] = useState("");
@@ -55,8 +55,10 @@ const AddPatient = () => {
 
     return (
         <form onSubmit={onSubmitHandler} className="m-5 w-full">
-            <p className="mb-3 text-lg font-medium">Thêm bệnh nhân</p>
-            <div className="bg-white px-8 py-8 border rounded w-full max-w-4xl max-h-[80vh] overflow-y-scroll">
+            <div className="flex justify-between items-center mb-4">
+                <p className="md:text-3xl text-xl font-bold text-[#0091a1]">Thêm bệnh nhân</p>
+            </div>
+            <div className="overflow-x-auto bg-white p-4 rounded-md shadow-md">
                 <div className="flex flex-col lg:flex-row items-start gap-10 text-gray-500">
                     <div className="w-full lg:flex-1 flex flex-col gap-4">
                         <div className="flex-1 flex flex-col gap-1">
@@ -107,7 +109,7 @@ const AddPatient = () => {
                             />
                         </div>
                     </div>
-                </div>  
+                </div>
 
                 <div className="flex gap-4 mt-4">
                     <button

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import { DoctorContext } from "../../context/DoctorContext";
 import { useNavigate } from "react-router-dom";
+import { DoctorContext } from "../../context/DoctorContext";
 
 const DoctorWorkSchedule = () => {
   const { dToken, schedules, getDoctorSchedule, deleteSchedule } = useContext(DoctorContext);
@@ -124,8 +124,8 @@ const DoctorWorkSchedule = () => {
               <div className="flex sm:items-center sm:justify-center gap-2">
                 <span className="md:hidden font-semibold">Ca làm việc: </span>
                 <p
-                  className={`py-0 ml-1 p-2 md:py-1 rounded-full text-white text-center max-w-[80px] 
-                  ${schedule.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg md:max-w-[100px] w-full`}
+                  className={`py-0 md:py-1 rounded-full text-white text-sm text-center  
+                  ${schedule.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg max-w-[100px] w-full`}
                 >
                   {schedule.work_shift === "afternoon" ? "Chiều" : "Sáng"}
                 </p>
@@ -137,15 +137,13 @@ const DoctorWorkSchedule = () => {
                   onClick={() => navigate(`/edit-work-schedule/${schedule._id}`)}
                   className="bg-blue-500 text-white px-3 py-1 rounded shadow-md hover:bg-blue-600"
                 >
-                  Sửa
-                  <i class="fa-solid fa-user-pen ml-2"></i>
+                  <i class="fa-solid fa-user-pen"></i>
                 </button>
                 <button
                   onClick={() => handleDeleteClick(schedule)}
                   className="bg-red-500 text-white px-3 py-1 rounded shadow-md hover:bg-red-600"
                 >
-                  Xóa
-                  <i class="fa-solid fa-trash ml-2"></i>
+                  <i class="fa-solid fa-trash"></i>
                 </button>
               </div>
             </div>

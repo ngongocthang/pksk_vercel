@@ -3,7 +3,7 @@ import moment from "moment-timezone";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
-const ConfirmAppointments = () => {
+const ConfirmCompletedAppointments = () => {
   const [confirmedAppointments, setConfirmedAppointments] = useState([]);
   const [loadingId, setLoadingId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -206,4 +206,4 @@ const ConfirmAppointments = () => {
   );
 };
 
-export default ConfirmAppointments;
+export default ConfirmCompletedAppointments;
