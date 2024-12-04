@@ -122,7 +122,7 @@ const PatientList = () => {
                                     {patient.user_id.email}
                                 </td>
                                 <td className="py-2 px-4 border-b text-center">
-                                    {patient.user_id.phone}
+                                    {patient.user_id.phone ? patient.user_id.phone : "Chưa có"}
                                 </td>
                                 <td className="py-2 px-4 border-b text-sm flex gap-2">
                                     <svg

@@ -6,13 +6,15 @@ import EyeOffIcon from "../assets/eye_off.svg";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { GoogleLogin } from "@react-oauth/google";
+import FacebookLogin from "react-facebook-login";
 import axios from "axios";
 
 const Login = () => {
+  const VITE_META_CLIENT_ID = import.meta.env.VITE_META_CLIENT_ID;
   const navigate = useNavigate();
   const { setUser } = useContext(AppContext);
 
-  const [state, setState] = useState("Login"); // Set initial state to "Login"
+  const [state, setState] = useState("Login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -93,7 +95,7 @@ const Login = () => {
         setUser(data.user);
         localStorage.setItem("token", data.user.token);
         localStorage.setItem("user", JSON.stringify(data.user));
-        navigate("/my-profile");
+        navigate("/");
       }
     } catch (error) {
       toast.error(`Đã xảy ra lỗi! Vui lòng thử lại sau.`);
@@ -105,6 +107,36 @@ const Login = () => {
     toast.error(`Đã xảy ra lỗi! Vui lòng thử lại sau.`);
     console.log("Login Failed:", error);
   };
+
+  // const handleResponseFacebook = async (response) => {
+  //   if (response.status !== "connected") {
+  //     toast.error("Đăng nhập Facebook thất bại!");
+  //     return;
+  //   }
+
+  //   const { accessToken, email, name } = response;
+
+  //   try {
+  //     const res = await axios.post("http://localhost:5000/facebook-login", {
+  //       accessToken,
+  //       email,
+  //       name,
+  //     });
+
+  //     const data = res.data;
+  //     if (data.user && data.user.token) {
+  //       setUser(data.user);
+  //       localStorage.setItem("token", data.user.token);
+  //       localStorage.setItem("user", JSON.stringify(data.user));
+  //       navigate("/");
+  //     } else {
+  //       toast.error("Đăng nhập không thành công!");
+  //     }
+  //   } catch (error) {
+  //     toast.error("Đã xảy ra lỗi! Vui lòng thử lại sau.");
+  //     console.log("Login Failed:", error);
+  //   }
+  // };
 
   return (
     <>
@@ -199,6 +231,13 @@ const Login = () => {
             onSuccess={handleSuccessGoogleLogin}
             onError={handleErrorGoogleLogin}
           />
+
+          {/* <FacebookLogin
+            appId={VITE_META_CLIENT_ID}
+            autoLoad={true}
+            fields="name,email,picture"
+            callback={handleResponseFacebook}
+          /> */}
 
           {state === "Sign Up" ? (
             <p>

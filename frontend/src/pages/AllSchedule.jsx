@@ -1,4 +1,4 @@
-import viLocale from "@fullcalendar/core/locales/vi";
+import viLocale from '@fullcalendar/core/locales/vi';
 import FullCalendar from "@fullcalendar/react";
 import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
 import axios from "axios";

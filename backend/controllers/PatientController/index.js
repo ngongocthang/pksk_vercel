@@ -7,6 +7,7 @@ const validatePatient = require("../../requests/validatePatient");
 const validateUpdatePatient = require("../../requests/validateUpdatePatientDashboard");
 const Patient = require("../../models/Patient");
 const Appointment = require("../../models/Appointment");
+const History_Appointment = require("../../models/Appointment_history");
 
 //{ key: value } là một đtuong trong js, thường dùng để crud
 /*
@@ -172,6 +173,7 @@ const deletePatient = async (req, res) => {
     // Xóa info liên quan
     await User.deleteOne({ _id: patient.user_id });
     await UserRole.deleteOne({ user_id: patient.user_id });
+    await Appointment.deleteMany({ patient_id: patient._id });
     return res.status(200).json({success: true, message: "Delete patient success!" });
   } catch (error) {
     res.status(500).json({success: false, message: error.message });

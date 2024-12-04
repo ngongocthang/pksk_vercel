@@ -1,11 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AdminContext } from "../../context/AdminContext";
-import { AppContext } from "../../context/AppContext";
 
 const AllAppointments = () => {
   const { aToken, appointments, getAllAppointments } = useContext(AdminContext);
-  const { calculateAge, slotDateFormat, currency } = useContext(AppContext);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [appointmentsPerPage] = useState(10);
@@ -104,7 +102,7 @@ const AllAppointments = () => {
             </div>
           ))
         ) : (
-          <p className="text-gray-500 py-3 px-4">Không tìm thấy cuộc hẹn nào.</p>
+          <p className="text-gray-500 py-3 px-4 text-center">Không tìm thấy cuộc hẹn nào.</p>
         )}
       </div>
 

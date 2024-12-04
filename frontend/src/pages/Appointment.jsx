@@ -28,6 +28,7 @@ const Appointment = () => {
   const fetchDocInfo = async () => {
     try {
       const response = await axios.get(`http://localhost:5000/doctor/find/${docId}`);
+      console.log(response.data);
       setDocInfo(response.data);
     } catch (error) {
       console.error("Error fetching doctor info:", error);
@@ -271,6 +272,9 @@ const Appointment = () => {
             <p>Chuyên Khoa: {docInfo.specialization_id.name}</p>
           </div>
           <div>
+          <div className="flex items-center gap-2 text-sm mt-1 text-gray-600" style={{ lineHeight: "2.5" }}>
+            <p>Số điện thoại: {docInfo.user_id.phone}</p>
+          </div>
             <p className="flex items-center gap-1 text-sm font-medium text-gray-900" style={{ lineHeight: "2.5" }}>
               Giới thiệu <img src={assets.info_icon} alt="Info" />
             </p>

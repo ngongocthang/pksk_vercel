@@ -357,6 +357,56 @@ const googleLogin = async (req, res) => {
   }
 };
 
+// const facebookLogin = async (req, res) => {
+//   const { accessToken, email, name } = req.body;
+
+//   try {
+//     let user = await User.findOne({ email });
+//     if (!user) {
+//       user = await User.create({
+//         email,
+//         name,
+//         password: "123456"
+//       });
+//       const role = await Role.findOne({ name: "patient" });
+
+//       if (!role) {
+//         return res.status(400).json({ message: "Role 'patient' not found" });
+//       }
+//       await RoleUser.create({
+//         user_id: user._id,
+//         role_id: role._id,
+//       });
+
+//       await Patient.create({
+//         user_id: user._id,
+//       });
+//     }
+
+//     // Tạo token JWT
+//     const roleUsers = await RoleUser.find({ user_id: user._id }).populate("role_id");
+//     const userRole = roleUsers.length > 0 ? roleUsers[0].role_id.name : null;
+
+//     const token = jwt.sign({ id: user._id, role: userRole }, JWT_SECRET, {
+//       expiresIn: "7d",
+//     });
+
+//     return res.status(200).json({
+//       message: "Login successful!",
+//       user: {
+//         id: user._id,
+//         name: user.name,
+//         email: user.email,
+//         role: userRole,
+//         token: token,
+//       },
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({ message: "Internal server error." });
+//   }
+// };
+
 
 
 
@@ -368,5 +418,6 @@ module.exports = {
   getHistoryAppointment,
   getdataMoneyDashboardAdmin,
   getAllScheduleDoctor,
-  googleLogin
+  googleLogin,
+  // facebookLogin
 };

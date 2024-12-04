@@ -121,6 +121,9 @@ const ConfirmAppointments = () => {
                   Bệnh nhân
                 </th>
                 <th className="py-2 px-4 font-bold text-center text-[16px]">
+                  SDT
+                </th>
+                <th className="py-2 px-4 font-bold text-center text-[16px]">
                   Trạng thái thanh toán
                 </th>
                 <th className="py-2 px-4 font-bold text-center text-[16px]">
@@ -142,6 +145,9 @@ const ConfirmAppointments = () => {
                   </td>
                   <td className="py-3 px-4 text-gray-800 font-medium">
                     {appointment.patient_id.user_id.name}
+                  </td>
+                  <td className="py-3 px-4 text-gray-800 font-medium">
+                    {appointment.patient_id.user_id.phone}
                   </td>
                   <td className="py-3 px-4 text-center w-[250px]">
                     <p
