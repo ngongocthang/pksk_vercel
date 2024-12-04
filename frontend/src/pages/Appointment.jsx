@@ -16,6 +16,7 @@ const Appointment = () => {
   const [slotTime, setSlotTime] = useState("");
   const [doctorSchedule, setDoctorSchedule] = useState({});
   const [selectedDate, setSelectedDate] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [errorLoadingSchedule, setErrorLoadingSchedule] = useState(false);
 
   useEffect(() => {
@@ -24,20 +25,21 @@ const Appointment = () => {
     }
   }, [user, navigate]);
 
-  const fetchDocInfo = () => {
-    const docInfo = doctors.find((doc) => doc._id === docId);
-    setDocInfo(docInfo);
+  const fetchDocInfo = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/doctor/find/${docId}`);
+      setDocInfo(response.data);
+    } catch (error) {
+      console.error("Error fetching doctor info:", error);
+      toast.error("Không thể lấy thông tin bác sĩ.");
+    }
   };
 
   const fetchDoctorSchedule = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:5000/get-schedule-doctor/${docId}`
-      );
+      const response = await axios.get(`http://localhost:5000/get-schedule-doctor/${docId}`);
       const groupedSchedule = response.data.reduce((acc, schedule) => {
-        const dateStr = new Date(schedule.work_date)
-          .toISOString()
-          .split("T")[0];
+        const dateStr = new Date(schedule.work_date).toISOString().split("T")[0];
         if (!acc[dateStr]) acc[dateStr] = [];
         acc[dateStr].push(schedule);
         return acc;
@@ -47,8 +49,18 @@ const Appointment = () => {
     } catch (error) {
       console.error("Error fetching doctor schedule:", error);
       setErrorLoadingSchedule(true);
+      toast.error("Không thể lấy lịch làm việc của bác sĩ.");
     }
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await fetchDocInfo();
+      await fetchDoctorSchedule();
+      setLoading(false);
+    };
+    fetchData();
+  }, [docId]);
 
   useEffect(() => {
     setSelectedDate(null);
@@ -62,12 +74,6 @@ const Appointment = () => {
   }, [doctors, docId]);
 
   useEffect(() => {
-    if (docInfo) {
-      fetchDoctorSchedule();
-    }
-  }, [docInfo]);
-
-  useEffect(() => {
     setSlotTime("");
   }, [selectedDate]);
 
@@ -76,33 +82,31 @@ const Appointment = () => {
       navigate("/account");
       return;
     }
-  
-    // Kiểm tra xem bác sĩ có nhận đặt lịch hẹn hay không
+
     if (docInfo && docInfo.available === false) {
       toast.warn("Hiện tại bác sĩ không nhận đặt lịch hẹn.");
       return;
     }
-  
+
     if (!selectedDate || !slotTime) {
       toast.warn("Vui lòng chọn ngày và ca làm việc.");
       return;
     }
-  
+
     const formattedDate = new Date(selectedDate).toLocaleDateString("vi-VN", {
       day: "numeric",
       month: "numeric",
       year: "numeric",
     });
-  
+
     toast.dismiss();
     toast.info(
       <div className="flex flex-col items-center justify-center">
         <div className="flex items-center mb-2">
-          <i className="fas fa-info-circle text-blue-500 text-2xl mr-2"></i>
-          <p className="font-bold text-lg">Thông báo</p>
+          <p className="font-bold text-lg">Xác nhận</p>
         </div>
         <p>
-          Bạn có chắc chắn muốn đặt lịch hẹn vào {formattedDate} lúc{" "}
+          Bạn có chắc chắn muốn đặt lịch hẹn vào {formattedDate} ca{" "}
           {slotTime} không?
         </p>
         <div className="flex justify-center gap-4">
@@ -111,15 +115,15 @@ const Appointment = () => {
               confirmBooking();
               toast.dismiss();
             }}
-            className="bg-red-600 text-white px-4 py-2 rounded transition duration-300 hover:bg-red-700"
+            className="bg-green-500 text-white px-4 py-2 rounded transition duration-300 hover:bg-green-600"
           >
-            Có
+            Xác nhận
           </button>
           <button
             onClick={() => toast.dismiss()}
             className="bg-gray-300 text-black px-4 py-2 rounded transition duration-300 hover:bg-gray-400"
           >
-            Không
+            Hủy
           </button>
         </div>
       </div>,
@@ -161,8 +165,6 @@ const Appointment = () => {
         work_date: selectedSchedule.work_date,
       };
 
-      console.log("log form", appointmentData);
-
       const token = user?.token || "";
       const response = await axios.post(
         `http://localhost:5000/create-appointment/${patientId}`,
@@ -184,7 +186,7 @@ const Appointment = () => {
     }
   };
 
-  if (!docInfo) {
+  if (loading) {
     return (
       <div className="text-center text-2xl mt-10 text-gray-500">
         Đang tải thông tin bác sĩ...
@@ -192,8 +194,16 @@ const Appointment = () => {
     );
   }
 
+  if (!docInfo) {
+    return (
+      <div className="text-center text-2xl mt-10 text-gray-500">
+        Không tìm thấy thông tin bác sĩ.
+      </div>
+    );
+  }
+
   const formatPrice = (price) => {
-    if (isNaN(price)) return price; 
+    if (isNaN(price)) return price;
     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };
 
@@ -213,19 +223,17 @@ const Appointment = () => {
         <div className="flex-1 border border-gray-400 rounded-lg p-8 py-7 bg-white mx-2 sm:mx-0 mt-[-80px] sm:mt-0">
           <p className="flex items-center gap-2 text-2xl font-medium text-gray-900" style={{ lineHeight: "2.5" }}>
             {docInfo.user_id.name}
-            <p className="flex items-center gap-2 text-2xl font-medium text-gray-900" style={{ lineHeight: "2.5" }}>
-              <img className="w-5" src={assets.verified_icon} alt="" />
-            </p>
+            <img className="w-5" src={assets.verified_icon} alt="Verified" />
           </p>
           <div className="flex items-center gap-2 text-sm mt-1 text-gray-600" style={{ lineHeight: "2.5" }}>
-            <p>Giá: {formatPrice(docInfo.price)} (VND)</p>
+            <p>Giá: {docInfo.price ? formatPrice(docInfo.price) : "0"} VND</p>
           </div>
           <div className="flex items-center gap-2 text-sm mt-1 text-gray-600" style={{ lineHeight: "2.5" }}>
             <p>Chuyên Khoa: {docInfo.specialization_id.name}</p>
           </div>
           <div>
             <p className="flex items-center gap-1 text-sm font-medium text-gray-900" style={{ lineHeight: "2.5" }}>
-              Giới thiệu <img src={assets.info_icon} alt="" />
+              Giới thiệu <img src={assets.info_icon} alt="Info" />
             </p>
             <p className="text-sm text-gray-500 mt-1 max-w-full sm:max-w-[12000px]" style={{ lineHeight: "1.5", textAlign: "justify" }}>
               {docInfo.description}
@@ -240,7 +248,6 @@ const Appointment = () => {
 
         {errorLoadingSchedule ? (
           <p className="text-red-500">Hiện tại bác sĩ chưa có lịch làm việc.</p>
-
         ) : (
           <div className="flex gap-3 items-center w-full overflow-x-scroll mt-4 py-2">
             {Object.keys(doctorSchedule).map((dateStr) => {
@@ -252,7 +259,7 @@ const Appointment = () => {
                 <div
                   key={dateStr}
                   className={`text-center w-[100px] h-[100px] flex flex-col justify-center items-center rounded-full border cursor-pointer transition-all duration-300
-              ${isSelected ? "bg-[#00759c] text-white border-[#00759c]" : "border-gray-200 text-gray-600 hover:border-gray-300"}`}
+                  ${isSelected ? "bg-[#00759c] text-white border-[#00759c]" : "border-gray-200 text-gray-600 hover:border-gray-300"}`}
                   onClick={() => setSelectedDate(dateStr)}
                 >
                   <p className={`text-sm font-bold ${isSelected ? "text-white" : "text-gray-600"}`}>{dayOfWeek}</p>
@@ -273,8 +280,8 @@ const Appointment = () => {
                 key={schedule._id}
                 onClick={() => setSlotTime(schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều")}
                 className={`text-sm font-semibold px-6 py-3 rounded-full cursor-pointer transition-all duration-300 ${slotTime === (schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều")
-                    ? "bg-[#00759c] text-white"
-                    : "text-gray-500 border border-gray-300 hover:border-[#00759c] hover:text-[#00759c]"
+                  ? "bg-[#00759c] text-white"
+                  : "text-gray-500 border border-gray-300 hover:border-[#00759c] hover:text-[#00759c]"
                   }`}
               >
                 {schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều"}

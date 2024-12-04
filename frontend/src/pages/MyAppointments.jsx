@@ -96,12 +96,11 @@ const MyAppointments = () => {
       appointment.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều";
 
     const confirmDelete = async () => {
-      const token = user?.token;
+      const token = localStorage.getItem("token"); // Lấy token từ localStorage
 
       if (!token) {
         setError("User not authenticated. Please log in.");
-        navigate("/account");
-        return;
+        return; // Không điều hướng nếu không có token
       }
 
       try {
@@ -172,45 +171,6 @@ const MyAppointments = () => {
     }
   };
 
-  // const handleDeleteAppointment = async (appointmentId) => {
-  //   const token = user?.token;
-  //   const user_id = user?.id;
-
-  //   if (!token) {
-  //     setError("User not authenticated. Please log in.");
-  //     navigate("/account");
-  //     return;
-  //   }
-
-  //   try {
-  //     setIsLoadingDelete(true);
-  //     const response = await axios.delete(
-  //       `http://localhost:5000/appointment/delete/${appointmentId}`,
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //           "Content-Type": "application/json",
-  //         },
-  //         data: { user_id },
-  //       }
-  //     );
-
-  //     if (response.data.success) {
-  //       setAppointments((prevAppointments) =>
-  //         prevAppointments.filter((appt) => appt._id !== appointmentId)
-  //       );
-  //       toast.success("Cuộc hẹn đã được xóa thành công!");
-  //     } else {
-  //       toast.error("Có lỗi xảy ra khi xóa cuộc hẹn.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error deleting appointment:", error);
-  //     toast.error("Có lỗi xảy ra khi xóa cuộc hẹn.");
-  //   } finally {
-  //     setIsLoadingDelete(false);
-  //   }
-  // };
-
   const handleDeleteAppointment = async (appointmentId) => {
     const token = user?.token;
     const user_id = user?.id;
@@ -225,7 +185,9 @@ const MyAppointments = () => {
     const appointment = appointments.find((appt) => appt._id === appointmentId);
 
     if (appointment.status !== "canceled") {
-      toast.error("Bạn chỉ có thể xóa cuộc hẹn đã được hủy.");
+      if (!toast.isActive(toastId.current)) {
+        toastId.current = toast.error("Bạn chỉ có thể xóa cuộc hẹn đã được hủy.");
+      }
       return;
     }
 
@@ -310,13 +272,11 @@ const MyAppointments = () => {
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
                   stroke="currentColor"
-                  className="w-4 h-4"
-                >
+                  className="w-4 h-4">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
+                    d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
               <div>
@@ -344,37 +304,28 @@ const MyAppointments = () => {
                     : "Không có tên"}
                 </p>
                 <p className="text-xs mt-1">
-                  <span className="text-sm text-neutral-700 font-medium">
-                    Ngày khám:
-                  </span>{" "}
+                  <span className="text-sm text-neutral-700 font-medium">Ngày khám:</span>{" "}
                   {new Date(appointment.work_date).toLocaleDateString("vi-VN")}
                 </p>
                 <p className="text-xs mt-1">
-                  <span className="text-sm text-neutral-700 font-medium">
-                    Ca khám:
-                  </span>{" "}
-                  {appointment.work_shift === "morning"
-                    ? "Buổi sáng"
-                    : "Buổi chiều"}
+                  <span className="text-sm text-neutral-700 font-medium">Ca khám:</span>{" "}
+                  {appointment.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều"}
                 </p>
                 <p className="text-xs mt-1">
-                  <span className="text-sm text-neutral-700 font-medium">
-                    Trạng thái:
-                  </span>{" "}
+                  <span className="text-sm text-neutral-700 font-medium">Trạng thái:</span>{" "}
                   <span
-                    className={`${
-                      appointment.status === "pending"
+                    className={`${appointment.status === "pending"
                         ? "text-yellow-500"
                         : appointment.status === "confirmed"
-                        ? "text-green-500"
-                        : "text-red-500"
-                    }`}
+                          ? "text-green-500"
+                          : "text-red-500"
+                      }`}
                   >
                     {appointment.status === "pending"
                       ? "Đang chờ"
                       : appointment.status === "confirmed"
-                      ? "Đã xác nhận"
-                      : "Đã hủy"}
+                        ? "Đã xác nhận"
+                        : "Đã hủy"}
                   </span>
                 </p>
                 <p className="text-xs mt-1">
@@ -387,33 +338,28 @@ const MyAppointments = () => {
                   (VND)
                 </p>
                 <p className="text-xs mt-1">
-                  <span className="text-sm text-neutral-700 font-medium">
-                    Trạng thái thanh toán:
-                  </span>{" "}
+                  <span className="text-sm text-neutral-700 font-medium">Trạng thái thanh toán:</span>{" "}
                   <span
-                    className={`${
-                      appointment.paymentStatus
+                    className={`${appointment.paymentStatus
                         ? "text-green-500"
                         : "text-yellow-500"
-                    }`}
+                      }`}
                   >
-                    {appointment.paymentStatus
-                      ? "Đã thanh toán"
-                      : "Chưa thanh toán"}
+                    {appointment.paymentStatus ? "Đã thanh toán" : "Chưa thanh toán"}
                   </span>
                 </p>
               </div>
               <div className="flex flex-col gap-2 justify-end">
+                {/* Nút thanh toán */}
                 <button
                   onClick={() =>
                     handlePayment(appointment._id, appointment.doctor_id.price)
                   }
-                  className={`text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded transition-all duration-300 ${
-                    !appointment.paymentStatus &&
-                    appointment.status === "confirmed"
+                  className={`text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded transition-all duration-300 ${!appointment.paymentStatus &&
+                      appointment.status === "confirmed"
                       ? "hover:bg-primary hover:text-white"
                       : "bg-gray-300 cursor-not-allowed"
-                  }`}
+                    }`}
                   disabled={
                     appointment.status !== "confirmed" ||
                     appointment.paymentStatus
@@ -421,18 +367,14 @@ const MyAppointments = () => {
                 >
                   Thanh toán trực tuyến
                 </button>
+                {/* Nút hủy */}
                 <button
                   onClick={() => handleCancelAppointment(appointment._id)}
-                  className={`text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded transition-all duration-300 ${
-                    appointment.paymentStatus ||
-                    appointment.status === "canceled"
-                      ? "bg-gray-300 cursor-not-allowed"
-                      : "hover:bg-red-600 hover:text-white"
-                  }`}
-                  disabled={
-                    appointment.paymentStatus ||
-                    appointment.status === "canceled"
-                  }
+                  className={`text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded transition-all duration-300 ${appointment.paymentStatus
+                    ? "bg-gray-300 cursor-not-allowed"
+                    : "hover:bg-red-600 hover:text-white"
+                    }`}
+                  disabled={appointment.paymentStatus || isLoadingCancel === appointment._id}
                 >
                   {isLoadingCancel === appointment._id
                     ? "Đang hủy..."
