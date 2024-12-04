@@ -28,11 +28,11 @@ const App = () => {
           <Route path='/abouts' element={<About />} />
           <Route path='/contact' element={<Contact />} />
           <Route path='/notifications' element={<Notifications />} />
-          <Route path='/my-profile' element={<MyProfile />} />
           <Route path='/my-appointments' element={<MyAppointments />} />
           <Route path='/appointment/:docId' element={<Appointment />} />
           <Route path='/medical-history' element={<MedicalHistory />} />
           <Route path='/all-schedule' element={<AllSchedule />} />
+          <Route path='/my-profile' element={<MyProfile />} />
         </Routes>
       </div>
       <Footer />

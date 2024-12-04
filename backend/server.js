@@ -38,6 +38,12 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Middleware để thêm header COOP
+app.use((req, res, next) => {
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+  res.setHeader("Cross-Origin-Embedder-Policy", "same-origin");
+  next();
+});
 // Cron job
 // cron.schedule("* 7 * * *", async () => {
 //   try {

@@ -1,8 +1,8 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../../models/User");
-const RoleUser = require("../../models/User_role"); // Import model RoleUser
-const Role = require("../../models/Role"); // Import model Role
+const RoleUser = require("../../models/User_role");
+const Role = require("../../models/Role");
 const Schedule = require("../../models/Schedule");
 const validatePatient = require("../../requests/validatePatient");
 const Patient = require("../../models/Patient");
@@ -11,6 +11,8 @@ const Appointment = require("../../models/Appointment");
 const Payment = require("../../models/Payment");
 const History_appointment = require("../../models/Appointment_history");
 JWT_SECRET = process.env.JWT_SECRET;
+const { OAuth2Client } = require('google-auth-library');
+const client = new OAuth2Client(process.env.GG_CLIENT_ID);
 
 const register = async (req, res) => {
   try {
@@ -292,6 +294,69 @@ const getAllScheduleDoctor = async (req, res) => {
   }
 };
 
+const googleLogin = async (req, res) => {
+  const { credential } = req.body;
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GG_CLIENT_ID,
+  });
+
+    const payload = ticket.getPayload();
+    const email = payload.email;
+
+    // Kiểm tra xem người dùng đã tồn tại chưa
+    let user = await User.findOne({ email });
+    if (!user) {
+      // Nếu không tồn tại, tạo người dùng mới
+      user = await User.create({
+        email,
+        name: payload.name,
+        password: "123456"
+      });
+      const role = await Role.findOne({ name: "patient" });
+
+      if (!role) {
+        return res.status(400).json({ message: "Role 'patient' not found" });
+      }
+      const roleUser = await RoleUser.create({
+        user_id: user._id,
+        role_id: role._id,
+      });
+
+      if (!roleUser) {
+        return res.status(400).json({ message: "User Role create failed" });
+      }
+
+      await Patient.create({
+        user_id: user._id,
+      });
+    }
+
+    // Tạo token JWT
+    const roleUsers = await RoleUser.find({ user_id: user._id }).populate("role_id");
+    const userRole = roleUsers.length > 0 ? roleUsers[0].role_id.name : null;
+
+    const token = jwt.sign({ id: user._id, role: userRole }, JWT_SECRET, {
+      expiresIn: "7d",
+    });
+
+    return res.status(200).json({
+      message: "Login successful!",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: userRole,
+        token: token,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+};
+
 
 
 
@@ -303,4 +368,5 @@ module.exports = {
   getHistoryAppointment,
   getdataMoneyDashboardAdmin,
   getAllScheduleDoctor,
+  googleLogin
 };

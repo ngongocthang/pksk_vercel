@@ -113,6 +113,7 @@ const DoctorTimeline = () => {
   };
 
   const confirmBooking = async (appointmentData) => {
+    console.log("appointmentData", appointmentData);
     try {
       const response = await axios.post(
         `http://localhost:5000/create-appointment/${patient_id}`,

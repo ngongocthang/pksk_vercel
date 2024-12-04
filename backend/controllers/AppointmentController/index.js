@@ -304,7 +304,6 @@ const patientCreateAppointment = async (req, res) => {
   }
 };
 
-
 const getCurrentUserAppointments = async (req, res) => {
   try {
     const user_id = req.user?.id;
