@@ -116,3 +116,9 @@
 .fc-timeline-resource-cell img {
   vertical-align: middle; /* Căn giữa hình ảnh theo chiều dọc */
 }
+
+.fc-event {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
