@@ -1,17 +1,16 @@
-import React, { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { AppContext } from "../context/AppContext";
-import EyeIcon from "../assets/eye.svg";
-import EyeOffIcon from "../assets/eye_off.svg";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
+import { Eye, EyeOff } from "lucide-react"; // Import Eye and EyeOff icons
+import React, { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { AppContext } from "../context/AppContext";
 
 const Login = () => {
   const VITE_META_CLIENT_ID = import.meta.env.VITE_META_CLIENT_ID;
   const navigate = useNavigate();
-  const { setUser, setIsNavbarVisible } = useContext(AppContext);
+  const { setUser } = useContext(AppContext);
 
   const [state, setState] = useState("Login");
   const [email, setEmail] = useState("");
@@ -20,7 +19,6 @@ const Login = () => {
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
@@ -107,35 +105,11 @@ const Login = () => {
     console.log("Login Failed:", error);
   };
 
-  const handleForgotPassword = async (event) => {
-    event.preventDefault();
-
-    const email = document.getElementById("forgot-email").value;
-
-    if (!email) return;
-
-    try {
-      const response = await axios.post("http://localhost:5000/forgot-password", { email });
-
-      if (response.status === 200) {
-        toast.success("Email khôi phục mật khẩu đã được gửi!");
-        setShowForgotPassword(false);
-        setIsNavbarVisible(true); // Hiện lại navbar
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (error) {
-      console.error("Lỗi:", error);
-      toast.error("Đã xảy ra lỗi! Vui lòng thử lại sau.");
-    }
-  };
-
   return (
     <>
       <form
         className="min-h-[80vh] flex items-center"
-        onSubmit={onSubmitHandler}
-      >
+        onSubmit={onSubmitHandler}>
         <div className="flex flex-col gap-3 m-auto items-start p-8 min-w-[340px] sm:min-w-96 border rounded-xl text-zinc-600 text-sm shadow-lg">
           <div className="flex flex-col items-center w-full">
             <p className="text-2xl font-semibold text-center">
@@ -196,13 +170,9 @@ const Login = () => {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-transparent border-none cursor-pointer"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-transparent border-none cursor-pointer flex items-center justify-center pt-6"
               >
-                <img
-                  src={showPassword ? EyeIcon : EyeOffIcon}
-                  alt="Chuyển đổi hiển thị mật khẩu"
-                  className="w-5 h-5 mt-5"
-                />
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
             )}
           </div>
@@ -218,79 +188,46 @@ const Login = () => {
                 : "Đăng nhập"}
           </button>
 
-          <GoogleLogin
-            onSuccess={handleSuccessGoogleLogin}
-            onError={handleErrorGoogleLogin}
-          />
+          <div className="flex justify-center w-full">
+            <GoogleLogin
+              onSuccess={handleSuccessGoogleLogin}
+              onError={handleErrorGoogleLogin}
+            />
+          </div>
 
-          {state === "Sign Up" ? (
-            <p>
-              Đã có tài khoản?{" "}
-              <span
-                onClick={() => setState("Login")}
-                className="text-[#00759c] underline cursor-pointer"
-              >
-                Đăng nhập tại đây
-              </span>
-            </p>
-          ) : (
-            <p>
-              Tạo một tài khoản mới?{" "}
-              <span
-                onClick={() => setState("Sign Up")}
-                className="text-[#00759c] underline cursor-pointer"
-              >
-                bấm vào đây
-              </span>
-            </p>
-          )}
+          <div className="flex flex-col items-center text-center w-full mt-3">
+            {state === "Sign Up" ? (
+              <p>
+                Đã có tài khoản?{" "}
+                <span
+                  onClick={() => setState("Login")}
+                  className="text-[#00759c] underline cursor-pointer"
+                >
+                  Đăng nhập tại đây
+                </span>
+              </p>
+            ) : (
+              <p>
+                Tạo một tài khoản mới?{" "}
+                <span
+                  onClick={() => setState("Sign Up")}
+                  className="text-[#00759c] underline cursor-pointer"
+                >
+                  bấm vào đây
+                </span>
+              </p>
+            )}
 
-          <button
-            type="button"
-            onClick={() => {
-              setShowForgotPassword(true);
-              setIsNavbarVisible(false); // Ẩn navbar khi form hiển thị
-            }}
-            className="text-[#00759c] underline cursor-pointer"
-          >
-            Quên mật khẩu?
-          </button>
-        </div>
-      </form>
-
-      {/* Forgot Password Form */}
-      {showForgotPassword && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50">
-          <div className="bg-white p-8 rounded-xl text-center">
-            <h2 className="text-xl font-semibold">Khôi phục mật khẩu</h2>
-            <form onSubmit={handleForgotPassword}>
-              <input
-                id="forgot-email"
-                type="email"
-                placeholder="Nhập email của bạn"
-                required
-                className="border border-zinc-300 rounded w-full p-2 mt-3"
-              />
-              <button
-                type="submit"
-                className="bg-[#00759c] text-white py-2 rounded-md mt-4 w-full"
-              >
-                Gửi yêu cầu
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setShowForgotPassword(false);
-                  setIsNavbarVisible(true); // Hiện lại navbar khi form đóng
-                }}
-                className="mt-3 text-[#00759c] underline cursor-pointer"
-              >
-                Quay lại
-              </button>
-            </form>
+            <button
+              type="button"
+              onClick={() => navigate("/forgot-password")}
+              className="text-[#00759c] underline cursor-pointer mt-2"
+            >
+              Quên mật khẩu?
+            </button>
           </div>
         </div>
-      )}
+      </form>
       <ToastContainer />
     </>
   );
