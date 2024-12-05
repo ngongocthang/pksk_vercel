@@ -40,10 +40,10 @@ const AllAppointments = () => {
         {/* Table header */}
         <div className="grid-cols-[0.5fr_1.5fr_2fr_0.5fr_2fr_1fr] bg-gray-200 py-3 px-6 border-b sm:grid hidden">
           <p className="font-bold text-[16px] text-center">#</p>
+          <p className="font-bold text-[16px] text-center">Bác sĩ</p>
           <p className="font-bold text-[16px] text-center">Bệnh nhân</p>
           <p className="font-bold text-[16px] text-center">Ngày</p>
           <p className="font-bold text-[16px] text-center">Ca</p>
-          <p className="font-bold text-[16px] text-center">Bác sĩ</p>
           <p className="font-bold text-[16px] ml-7">Trạng thái</p>
         </div>
 
@@ -55,46 +55,48 @@ const AllAppointments = () => {
               key={index}
             >
               <p className="font-bold text-center">{index + 1}</p>
+              <div className="flex md:justify-center gap-2 mb-2">
+                <span className="sm:hidden font-semibold">Bác sĩ: </span>
+                <p className="md:mb-0 text-gray-600 md:text-base">{item.doctorInfo.name}</p>
+              </div>
+              
               <div className="flex items-center mb-2 md:mb-0 justify-start md:justify-center gap-2">
                 <span className="sm:hidden font-semibold">Bệnh nhân:</span>
                 <p className="text-gray-700 md:text-base truncate md:whitespace-normal md:w-auto">{item.patientInfo.name}</p>
               </div>
 
-              <p className="md:text-center md:text-base text-left mb-2 md:mb-0">
+              <div className="flex items-center mb-2 md:mb-0 justify-start md:justify-center gap-2">
                 <span className="sm:hidden font-semibold">Ngày: </span>
                 {formatDate(item.work_date)}
-              </p>
-              <p className="flex md:gap-3 gap-2">
+              </div>
+
+              <div className="flex items-center mb-2 md:mb-0 justify-start md:justify-center gap-2">
                 <span className="sm:hidden font-semibold">Ca: </span>
                 <span
-                  className={`px-2 md:py-2 mb-2 md:mb-0 rounded-full text-white text-sm text-center max-w-[80px]
-                  ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-400"} shadow-lg md:max-w-[100px] w-full`}
+                  className={`py-0 md:py-1 rounded-full text-white text-sm text-center font-semibold
+                  ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-400"} shadow-lg max-w-[100px] w-full`}
                 >
                   {item.work_shift === "morning" ? "Sáng" : "Chiều"}
                 </span>
-              </p>
-
-              <div className="flex md:justify-center gap-2 mb-2">
-                <span className="sm:hidden font-semibold">Bác sĩ: </span>
-                <p className="md:mb-0 text-gray-600 md:text-base">{item.doctorInfo.name}</p>
               </div>
+
 
               {/* Appointment Status Button */}
               <div className="flex justify-center">
                 {item.status === "canceled" ? (
-                  <button className="bg-red-500 text-white text-xs font-medium px-2 py-1 rounded-full shadow-md hover:shadow-lg transition-all duration-300 w-full max-w-[140px] text-center">
+                  <button className="bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-md hover:shadow-lg transition-all duration-300 w-full w-[140px] text-center">
                     Đã hủy
                   </button>
                 ) : item.status === "confirmed" ? (
-                  <button className="bg-blue-500 text-white text-xs font-medium px-2 py-1 rounded-full shadow-md hover:shadow-lg transition-all duration-300 w-full max-w-[140px] text-center">
+                  <button className="bg-blue-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-md hover:shadow-lg transition-all duration-300 w-full w-[140px] text-center">
                     Đã xác nhận
                   </button>
                 ) : item.status === "pending" ? (
-                  <button className="bg-yellow-500 text-white text-xs font-medium px-2 py-1 rounded-full shadow-md hover:shadow-lg transition-all duration-300 w-full max-w-[140px] text-center">
+                  <button className="bg-yellow-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-md hover:shadow-lg transition-all duration-300 w-full w-[140px] text-center">
                     Đang chờ xác nhận
                   </button>
                 ) : (
-                  <button className="bg-blue-500 text-white text-xs font-medium px-2 py-1 rounded-full shadow-md hover:shadow-lg transition-all duration-300 w-full max-w-[140px] text-center">
+                  <button className="bg-blue-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-md hover:shadow-lg transition-all duration-300 w-full w-[140px] text-center">
                     Hoàn thành
                   </button>
                 )}

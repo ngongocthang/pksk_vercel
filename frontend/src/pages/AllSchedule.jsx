@@ -138,6 +138,14 @@ const AllSchedule = () => {
   };
 
   const confirmBooking = async (appointmentData) => {
+    const loggedInUser = user || JSON.parse(localStorage.getItem("user"));
+    if (!loggedInUser) {
+      toast.warn("Vui lòng đăng nhập để đặt lịch hẹn.", {
+        onClose: () => navigate("/account"),
+        autoClose: 3000,
+      });
+      return;
+    }
     console.log("appointmentData", appointmentData);
     try {
       const response = await axios.post(

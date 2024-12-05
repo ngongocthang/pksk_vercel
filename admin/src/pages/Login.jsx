@@ -1,12 +1,11 @@
 // export default Login
-import React, { useContext, useState } from 'react'
-import { AdminContext } from '../context/AdminContext'
-import axios from 'axios'
-import { toast } from 'react-toastify'
-import { DoctorContext } from '../context/DoctorContext'
-import { useNavigate } from 'react-router-dom'
-import EyeIcon from "../assets/eye.svg"
-import EyeOffIcon from "../assets/eye_off.svg"
+import axios from 'axios';
+import { Eye, EyeOff } from "lucide-react"; // Import Eye and EyeOff icons
+import React, { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { AdminContext } from '../context/AdminContext';
+import { DoctorContext } from '../context/DoctorContext';
 
 const Login = () => {
     const [state, setState] = useState('Admin')
@@ -53,7 +52,7 @@ const Login = () => {
     return (
         <form onSubmit={onSubmitHandler} className='min-h-[80vh] flex items-center'>
             <div className='flex flex-col gap-3 m-auto items-start p-8 min-w-[340px] sm:min-w-96 border rounded-xl text-[#5E5E5E] text-sm shadow-lg'>
-                <p className='text-2xl font-semibold m-auto'><span className='text-[#0091a1]'> {state}</span> Login</p>
+                <p className='text-2xl font-semibold m-auto'> Đăng nhập <span className='text-[#0091a1]'> {state}</span></p>
                 <div className='w-full'>
                     <p>Email</p>
                     <input
@@ -74,18 +73,19 @@ const Login = () => {
                         required
                     />
                     {password && (
-                        <img
-                            src={showPassword ? EyeIcon : EyeOffIcon}
-                            alt="Toggle Password Visibility"
+                        <button
+                            type="button"
                             onClick={() => setShowPassword(!showPassword)}
-                            className='absolute top-1/2 right-3 transform -translate-y-1/2 w-6 h-6 cursor-pointer w-4 h-4 mt-3'
-                        />
+                            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-transparent border-none cursor-pointer flex items-center justify-center pt-6"
+                        >
+                            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                        </button>
                     )}
                 </div>
-                <button className='bg-[#0091a1] text-white w-full py-2 rounded-md text-base'>Login</button>
+                <button className='bg-[#0091a1] text-white w-full py-2 rounded-md text-base'>Đăng nhập</button>
                 {state === 'Admin'
-                    ? <p>Doctor Login? <span className='text-[#0091a1] underline cursor-pointer' onClick={() => setState('Doctor')}>Click here</span></p>
-                    : <p>Admin Login? <span className='text-[#0091a1] underline cursor-pointer' onClick={() => setState('Admin')}>Click here</span></p>
+                    ? <p>Đăng nhập bác sĩ? <span className='text-[#0091a1] underline cursor-pointer' onClick={() => setState('Doctor')}>Nhấp vào đây</span></p>
+                    : <p>Đăng nhập quản trị? <span className='text-[#0091a1] underline cursor-pointer' onClick={() => setState('Admin')}>Nhấp vào đây</span></p>
                 }
             </div>
         </form>

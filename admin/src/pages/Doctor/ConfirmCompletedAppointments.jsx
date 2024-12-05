@@ -3,10 +3,12 @@ import moment from "moment-timezone";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
-const ConfirmAppointments = () => {
+const ConfirmCompletedAppointments = () => {
   const [confirmedAppointments, setConfirmedAppointments] = useState([]);
   const [loadingId, setLoadingId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [appointmentsPerPage] = useState(10); // Số lịch hẹn hiển thị trên mỗi trang
   const doctorInfo = JSON.parse(sessionStorage.getItem("doctorInfo"));
   const doctorId = doctorInfo ? doctorInfo.id : null;
   const location = useLocation();
@@ -32,7 +34,6 @@ const ConfirmAppointments = () => {
           }
         );
         if (response.data.success) {
-          console.log("lay lich hen da xac nhan ", response.data.data);
           setConfirmedAppointments(response.data.data);
         }
       } catch (error) {
@@ -52,7 +53,6 @@ const ConfirmAppointments = () => {
         `http://localhost:5000/doctor/complete-appointment/${id}`
       );
       if (response.data.success) {
-        // Cập nhật trạng thái lịch hẹn
         setConfirmedAppointments((prev) =>
           prev.map((appointment) =>
             appointment._id === id
@@ -84,10 +84,66 @@ const ConfirmAppointments = () => {
     const formattedDate = moment
       .utc(date)
       .tz("Asia/Ho_Chi_Minh")
-      .format("DD/MM/YYYY"); // Định dạng theo kiểu dd/mm/yyyy
+      .format("DD/MM/YYYY");
     return formattedDate;
   };
 
+  // Logic phân trang
+  const totalPages = Math.ceil(filteredAppointments.length / appointmentsPerPage);
+  const indexOfLastAppointment = currentPage * appointmentsPerPage;
+  const indexOfFirstAppointment = indexOfLastAppointment - appointmentsPerPage;
+  const currentAppointments = filteredAppointments.slice(indexOfFirstAppointment, indexOfLastAppointment);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const renderPagination = () => {
+    const paginationItems = [];
+
+    // Nút "Trang trước"
+    paginationItems.push(
+      <button
+        key="prev"
+        onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+        className={`py-1 px-3 border rounded ${currentPage === 1 ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "text-gray-600"}`}
+        disabled={currentPage === 1}
+      >
+        Trước
+      </button>
+    );
+
+    // Hiển thị các trang
+    for (let i = 1; i <= totalPages; i++) {
+      paginationItems.push(
+        <button
+          key={i}
+          onClick={() => handlePageChange(i)}
+          className={`py-1 px-3 border rounded ${i === currentPage ? "bg-indigo-500 text-white" : "text-gray-600"}`}
+        >
+          {i}
+        </button>
+      );
+    }
+
+    // Nút "Trang tiếp theo"
+    paginationItems.push(
+      <button
+        key="next"
+        onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+        className={`py-1 px-3 border rounded ${currentPage === totalPages ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "text-gray-600"}`}
+        disabled={currentPage === totalPages}
+      >
+        Tiếp
+      </button>
+    );
+
+    return (
+      <div className="flex justify-center items-center mt-4 space-x-2">
+        {paginationItems}
+      </div>
+    );
+  };
 
   return (
     <div className="w-full max-w-6xl m-5">
@@ -108,7 +164,7 @@ const ConfirmAppointments = () => {
       </div>
 
       <div className="bg-white border rounded text-sm max-h-[80vh] min-h-[50vh] overflow-y-scroll">
-        {filteredAppointments.length === 0 ? (
+        {currentAppointments.length === 0 ? (
           <p className="text-center py-4 text-gray-600">
             Không có lịch hẹn nào trong lịch làm việc này.
           </p>
@@ -117,53 +173,26 @@ const ConfirmAppointments = () => {
             <thead className="bg-gray-200">
               <tr>
                 <th className="py-2 px-4 font-bold text-[16px]">#</th>
-                <th className="py-2 px-4 font-bold text-center text-[16px]">
-                  Bệnh nhân
-                </th>
-                <th className="py-2 px-4 font-bold text-center text-[16px]">
-                  SDT
-                </th>
-                <th className="py-2 px-4 font-bold text-center text-[16px]">
-                  Trạng thái thanh toán
-                </th>
-                <th className="py-2 px-4 font-bold text-center text-[16px]">
-                  Ca khám
-                </th>
-                <th className="py-2 px-4 font-bold text-center text-[16px] cursor-pointer">
-                  Xác nhận
-                </th>
+                <th className="py-2 px-4 font-bold text-center text-[16px]">Bệnh nhân</th>
+                <th className="py-2 px-4 font-bold text-center text-[16px]">SDT</th>
+                <th className="py-2 px-4 font-bold text-center text-[16px]">Trạng thái thanh toán</th>
+                <th className="py-2 px-4 font-bold text-center text-[16px]">Ca khám</th>
+                <th className="py-2 px-4 font-bold text-center text-[16px] cursor-pointer">Xác nhận</th>
               </tr>
             </thead>
             <tbody>
-              {filteredAppointments.map((appointment, index) => (
-                <tr
-                  key={appointment._id}
-                  className="hover:bg-gray-50 text-center text-[16px]"
-                >
-                  <td className="py-3 px-4 text-gray-800 font-medium">
-                    {index + 1}
-                  </td>
-                  <td className="py-3 px-4 text-gray-800 font-medium">
-                    {appointment.patient_id.user_id.name}
-                  </td>
-                  <td className="py-3 px-4 text-gray-800 font-medium">
-                    {appointment.patient_id.user_id.phone}
-                  </td>
+              {currentAppointments.map((appointment, index) => (
+                <tr key={appointment._id} className="hover:bg-gray-50 text-center text-[16px]">
+                  <td className="py-3 px-4 text-gray-800 font-medium">{index + 1 + (currentPage - 1) * appointmentsPerPage}</td>
+                  <td className="py-3 px-4 text-gray-800 font-medium">{appointment.patient_id.user_id.name}</td>
+                  <td className="py-3 px-4 text-gray-800 font-medium">{appointment.patient_id.user_id.phone}</td>
                   <td className="py-3 px-4 text-center w-[250px]">
-                    <p
-                      className={`py-1 px-4 rounded-full text-white text-base font-semibold ${appointment.paymentStatus === "true" ? "bg-green-300" : "bg-red-300"
-                        }`}
-                    >
+                    <p className={`py-1 px-4 rounded-full text-white text-base font-semibold ${appointment.paymentStatus === "true" ? "bg-green-300" : "bg-red-300"}`}>
                       {appointment.paymentStatus === "true" ? "Đã thanh toán" : "Chưa thanh toán"}
                     </p>
                   </td>
                   <td className="py-3 px-4 text-center w-[170px]">
-                    <p
-                      className={`py-1 px-4 rounded-full text-white text-base font-semibold ${appointment.work_shift === "afternoon"
-                          ? "bg-orange-300"
-                          : "bg-blue-300"
-                        }`}
-                    >
+                    <p className={`py-1 px-4 rounded-full text-white text-base font-semibold ${appointment.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"}`}>
                       {appointment.work_shift === "morning" ? "Sáng" : "Chiều"}
                     </p>
                   </td>
@@ -174,9 +203,7 @@ const ConfirmAppointments = () => {
                       ) : (
                         <>
                           {appointment.status === "completed" ? (
-                            <span className="border border-blue-500 text-blue-500 bg-white py-1 px-3 rounded-full font-semibold">
-                              Hoàn thành
-                            </span>
+                            <span className="border border-blue-500 text-blue-500 bg-white py-1 px-3 rounded-full font-semibold">Hoàn thành</span>
                           ) : (
                             <svg
                               onClick={() => handleConfirm(appointment._id)}
@@ -202,8 +229,11 @@ const ConfirmAppointments = () => {
           </table>
         )}
       </div>
+
+      {/* Phân trang */}
+      {totalPages > 1 && renderPagination()}
     </div>
   );
 };
 
-export default ConfirmAppointments;
+export default ConfirmCompletedAppointments;

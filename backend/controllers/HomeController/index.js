@@ -378,7 +378,7 @@ const forgotPassword = async (req, res) => {
     await user.save();
 
     // Gửi email khôi phục mật khẩu
-    const resetUrl = `${FRONTEND_URI}/reset-password/${resetToken}`;
+    const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
     const mailOptions = {
       to: email,
       subject: "Khôi phục mật khẩu",
