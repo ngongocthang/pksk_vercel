@@ -5,6 +5,8 @@
 
   var accessKey = process.env.MOMO_ACCESS_KEY;
   var secretKey = process.env.MOMO_SECRET_KEY;
+  const FRONTEND_URI = process.env.FRONTEND_URI;
+  const IPNURL_MOMO = process.env.IPNURL_MOMO;
 
 
   const payment = async (req, res) => {
@@ -14,8 +16,8 @@
     //parameters
   var orderInfo = "Pay with MoMo";
   var partnerCode = "MOMO";
-  var redirectUrl = "http://localhost:5173/my-appointments";
-  var ipnUrl = "https://b628-116-98-249-88.ngrok-free.app/callback";
+  var redirectUrl = `${FRONTEND_URI}/my-appointments`;
+  var ipnUrl = `${IPNURL_MOMO}/callback`;
   var requestType = "payWithMethod";
   var amount = price;
   var orderId = partnerCode + new Date().getTime();
