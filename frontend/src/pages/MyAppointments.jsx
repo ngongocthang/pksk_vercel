@@ -196,17 +196,15 @@ const MyAppointments = () => {
   return (
     <div className="mb-10">
       <ToastContainer />
-      <p className="pb-3 mt-12 font-medium text-zinc-700 border-b text-xl">
+      <p className="pb-3 mt-12 font-medium text-zinc-700 border-b text-xl flex justify-between items-center">
         Lịch hẹn của tôi:
-      </p>
-      <div className="flex justify-between mb-4">
         <button
           onClick={() => setShowCanceled((prev) => !prev)}
-          className="text-blue-500 underline"
+          className="text-blue-500 font-medium text-zinc-400 text-sm"
         >
           {showCanceled ? "Ẩn lịch hẹn đã hủy" : "Hiện lịch hẹn đã hủy"}
         </button>
-      </div>
+      </p>
       <div className="appointments-container">
         {loading ? (
           <p className="text-center text-gray-500 mt-5">Đang tải dữ liệu...</p>
@@ -269,19 +267,18 @@ const MyAppointments = () => {
                       Trạng thái:
                     </span>{" "}
                     <span
-                      className={`${
-                        appointment.status === "pending"
+                      className={`${appointment.status === "pending"
                           ? "text-yellow-500"
                           : appointment.status === "confirmed"
-                          ? "text-green-500"
-                          : "text-red-500"
-                      }`}
+                            ? "text-green-500"
+                            : "text-red-500"
+                        }`}
                     >
                       {appointment.status === "pending"
                         ? "Đang chờ"
                         : appointment.status === "confirmed"
-                        ? "Đã xác nhận"
-                        : "Đã hủy"}
+                          ? "Đã xác nhận"
+                          : "Đã hủy"}
                     </span>
                   </p>
                   <p className="text-xs mt-1">
@@ -298,11 +295,10 @@ const MyAppointments = () => {
                       Trạng thái thanh toán:
                     </span>{" "}
                     <span
-                      className={`${
-                        appointment.paymentStatus
+                      className={`${appointment.paymentStatus
                           ? "text-green-500"
                           : "text-yellow-500"
-                      }`}
+                        }`}
                     >
                       {appointment.paymentStatus
                         ? "Đã thanh toán"
@@ -319,12 +315,11 @@ const MyAppointments = () => {
                         appointment.doctor_id.price
                       )
                     }
-                    className={`text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded transition-all duration-300 ${
-                      !appointment.paymentStatus &&
-                      appointment.status === "confirmed"
+                    className={`text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded transition-all duration-300 ${!appointment.paymentStatus &&
+                        appointment.status === "confirmed"
                         ? "hover:bg-primary hover:text-white"
                         : "bg-gray-300 cursor-not-allowed"
-                    }`}
+                      }`}
                     disabled={
                       appointment.status !== "confirmed" ||
                       appointment.paymentStatus
@@ -335,12 +330,11 @@ const MyAppointments = () => {
                   {/* Nút hủy */}
                   <button
                     onClick={() => handleCancelAppointment(appointment._id)}
-                    className={`text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded transition-all duration-300 ${
-                      appointment.paymentStatus ||
-                      appointment.status === "canceled"
+                    className={`text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded transition-all duration-300 ${appointment.paymentStatus ||
+                        appointment.status === "canceled"
                         ? "bg-gray-300 cursor-not-allowed"
                         : "hover:bg-red-600 hover:text-white"
-                    }`}
+                      }`}
                     disabled={
                       appointment.paymentStatus ||
                       appointment.status === "canceled" ||
