@@ -167,12 +167,9 @@ const DoctorAppointments = () => {
                 </p>
               </div>
 
-              <div className="flex justify-start sm:justify-center items-center">
-                <span className="md:hidden text-sm font-semibold mr-5">Ca khám: </span>
-                <p
-                  className={`py-0 md:py-1 rounded-full text-white text-sm text-center max-w-[80px]
-                    ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg md:max-w-[100px] w-full`}
-                >
+              <div className='flex justify-center items-center'>
+                <p className={`py-1 rounded-full text-white text-sm text-center max-w-[100px] hidden md:block 
+                ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg max-w-[100px] w-full`}>
                   {item.work_shift === "morning" ? "Sáng" : "Chiều"}
                 </p>
               </div>

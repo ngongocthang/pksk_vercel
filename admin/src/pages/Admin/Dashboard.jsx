@@ -70,7 +70,7 @@ const Dashboard = () => {
             };
           });
 
-          setRevenueData(updatedRevenueData); // Cập nhật dữ liệu doanh thu
+          setRevenueData(updatedRevenueData);
         } catch (error) {
           console.error("Error fetching revenue data:", error);
         }

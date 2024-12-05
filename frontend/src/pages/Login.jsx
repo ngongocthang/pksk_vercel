@@ -7,12 +7,11 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
-import { useEffect } from "react";
 
 const Login = () => {
   const VITE_META_CLIENT_ID = import.meta.env.VITE_META_CLIENT_ID;
   const navigate = useNavigate();
-  const { setUser } = useContext(AppContext);
+  const { setUser, setIsNavbarVisible } = useContext(AppContext);
 
   const [state, setState] = useState("Login");
   const [email, setEmail] = useState("");
@@ -21,6 +20,7 @@ const Login = () => {
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
@@ -64,7 +64,6 @@ const Login = () => {
           }
         }
       } else {
-        // Kiểm tra trạng thái để hiển thị thông báo phù hợp
         if (state === "Login") {
           toast.error("Đăng nhập thất bại!");
         } else {
@@ -105,35 +104,28 @@ const Login = () => {
     console.log("Login Failed:", error);
   };
 
-  //forgot password
-  const handleForgotPassword = async () => {
-    const email = prompt("Vui lòng nhập email của bạn:");
+  const handleForgotPassword = async (event) => {
+    event.preventDefault();
+
+    const email = document.getElementById("forgot-email").value;
 
     if (!email) return;
 
     try {
-        const response = await axios.post("http://localhost:5000/forgot-password", {
-            email,
-        }, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+      const response = await axios.post("http://localhost:5000/forgot-password", { email });
 
-        const data = response.data;
-
-        // Kiểm tra mã trạng thái HTTP
-        if (response.status === 200) {
-            toast.success("Email khôi phục mật khẩu đã được gửi!");
-        } else {
-            toast.error(data.message);
-        }
+      if (response.status === 200) {
+        toast.success("Email khôi phục mật khẩu đã được gửi!");
+        setShowForgotPassword(false);
+        setIsNavbarVisible(true); // Hiện lại navbar
+      } else {
+        toast.error(response.data.message);
+      }
     } catch (error) {
-        console.error("Error:", error);
-        toast.error("Đã xảy ra lỗi! Vui lòng thử lại sau.");
+      console.error("Lỗi:", error);
+      toast.error("Đã xảy ra lỗi! Vui lòng thử lại sau.");
     }
-};
-
+  };
 
   return (
     <>
@@ -213,16 +205,15 @@ const Login = () => {
           </div>
 
           <button
-            className={`bg-[#00759c] text-white w-full py-2 rounded-md text-base ${
-              loading ? "opacity-50 cursor-not-allowed" : ""
-            }`}
+            className={`bg-[#00759c] text-white w-full py-2 rounded-md text-base ${loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
             disabled={loading}
           >
             {loading
               ? "Đang xử lý..."
               : state === "Sign Up"
-              ? "Tạo tài khoản"
-              : "Đăng nhập"}
+                ? "Tạo tài khoản"
+                : "Đăng nhập"}
           </button>
 
           <GoogleLogin
@@ -254,13 +245,50 @@ const Login = () => {
 
           <button
             type="button"
-            onClick={handleForgotPassword}
+            onClick={() => {
+              setShowForgotPassword(true);
+              setIsNavbarVisible(false); // Ẩn navbar khi form hiển thị
+            }}
             className="text-[#00759c] underline cursor-pointer"
           >
             Quên mật khẩu?
           </button>
         </div>
       </form>
+
+      {/* Forgot Password Form */}
+      {showForgotPassword && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50">
+          <div className="bg-white p-8 rounded-xl text-center">
+            <h2 className="text-xl font-semibold">Khôi phục mật khẩu</h2>
+            <form onSubmit={handleForgotPassword}>
+              <input
+                id="forgot-email"
+                type="email"
+                placeholder="Nhập email của bạn"
+                required
+                className="border border-zinc-300 rounded w-full p-2 mt-3"
+              />
+              <button
+                type="submit"
+                className="bg-[#00759c] text-white py-2 rounded-md mt-4 w-full"
+              >
+                Gửi yêu cầu
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowForgotPassword(false);
+                  setIsNavbarVisible(true); // Hiện lại navbar khi form đóng
+                }}
+                className="mt-3 text-[#00759c] underline cursor-pointer"
+              >
+                Quay lại
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
       <ToastContainer />
     </>
   );

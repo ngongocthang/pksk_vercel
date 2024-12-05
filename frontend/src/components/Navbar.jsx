@@ -6,14 +6,14 @@ import { NavLink, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { user, setUser, unreadCount, setUnreadCount } = useContext(AppContext);
+  const { user, setUser, unreadCount, setUnreadCount, isNavbarVisible } = useContext(AppContext);
   const [showMenu, setShowMenu] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [loading, setLoading] = useState(true);
   const [notificationsCount, setNotificationsCount] = useState(0);
   const [rotateIcon, setRotateIcon] = useState(false);
-  const [isVisible, setIsVisible] = useState(true); // State for navbar visibility
-
+  const [isVisible, setIsVisible] = useState(true); 
+  
   const getDisplayName = (fullName) => {
     const nameParts = fullName.split(" ");
     return nameParts.slice(-2).join(" ");
@@ -69,7 +69,7 @@ const Navbar = () => {
 
   const handleNotificationClick = () => {
     setNotificationsCount(0);
-    navigate("/Notifications");
+    navigate("/notifications");
   };
 
   // Scroll event handler for hiding/showing navbar
@@ -122,7 +122,7 @@ const Navbar = () => {
   }
 
   return (
-    <div className={`flex items-center justify-between text-sm py-4 mb-5 border-b border-b-gray-400 bg-white sticky top-0 z-50 transition-transform duration-300 ${isVisible ? "transform-none" : "-translate-y-full"}`}>
+    <div className={`flex items-center justify-between text-sm py-4 mb-5 border-b border-b-gray-400 bg-white sticky top-0 z-50 transition-transform duration-300 ${isNavbarVisible ? "transform-none" : "-translate-y-full"}`}>
       <img
         onClick={() => navigate('/')}
         className="w-20 sm:w-24 cursor-pointer"
