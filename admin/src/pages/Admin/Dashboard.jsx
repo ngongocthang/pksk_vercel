@@ -70,7 +70,7 @@ const Dashboard = () => {
             };
           });
 
-          setRevenueData(updatedRevenueData); // Cập nhật dữ liệu doanh thu
+          setRevenueData(updatedRevenueData);
         } catch (error) {
           console.error("Error fetching revenue data:", error);
         }
@@ -236,17 +236,17 @@ const Dashboard = () => {
                           {item.doctor_id ? item.doctor_id.user_id.name : "Không có tên"}
                         </p>
                       </td>
-                      <td className="py-4 px-4 text-center">
-                        <span
-                          className={`py-1 px-4 rounded-full text-sm font-medium text-white shadow-md ${item.work_shift === "afternoon" ? "bg-orange-400" : "bg-blue-400"
-                            }`}
+                      <td className="py-4 px-5 text-center">
+                        <p
+                          className={`py-1 px-4 rounded-full text-white text-base font-semibold ${item.work_shift === "afternoon" ? "bg-orange-400" : "bg-blue-400"
+                            } shadow-md`}
                         >
-                          {item.work_shift === "afternoon" ? "Chiều" : "Sáng"}
-                        </span>
+                          {item.work_shift === "morning" ? "Sáng" : "Chiều"}
+                        </p>
                       </td>
                       <td className="py-4 px-4 text-center">
                         <button
-                          className={`py-1 px-4 rounded-full text-sm font-medium text-white shadow-md ${item.status === "confirmed" ? "bg-green-500" : "bg-red-500"
+                          className={`py-1 px-4 rounded-full text-sm font-medium text-white shadow-md w-[120px] h-[32px] ${item.status === "confirmed" ? "bg-green-500" : "bg-red-500"
                             }`}
                         >
                           {item.status === "confirmed" ? "Đã xác nhận" : "Chưa xác nhận"}

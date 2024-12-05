@@ -11,27 +11,27 @@ const ResetPassword = () => {
     event.preventDefault();
 
     try {
-        const response = await axios.post(`http://localhost:5000/reset-password/${token}`, {
-            password,
-        }, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+      const response = await axios.post(`http://localhost:5000/reset-password/${token}`, {
+        password,
+      }, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-        const data = response.data;
+      const data = response.data;
 
-        // Kiểm tra mã trạng thái HTTP
-        if (response.status === 200) {
-            toast.success("Mật khẩu đã được đặt lại thành công!");
-        } else {
-            toast.error(data.message);
-        }
+      // Kiểm tra mã trạng thái HTTP
+      if (response.status === 200) {
+        toast.success("Mật khẩu đã được đặt lại thành công!");
+      } else {
+        toast.error(data.message);
+      }
     } catch (error) {
-        console.error("Error:", error);
-        toast.error("Đã xảy ra lỗi! Vui lòng thử lại sau.");
+      console.error("Error:", error);
+      toast.error("Đã xảy ra lỗi! Vui lòng thử lại sau.");
     }
-};
+  };
 
 
   return (

@@ -8,6 +8,7 @@ const AppContextProvider = (props) => {
   const [doctors, setDoctors] = useState([]);
   const [patient, setPatient] = useState(null);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [isNavbarVisible, setIsNavbarVisible] = useState(true); 
 
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
@@ -30,6 +31,8 @@ const AppContextProvider = (props) => {
     setPatient,
     unreadCount,
     setUnreadCount,
+    isNavbarVisible, 
+    setIsNavbarVisible
   };
 
   return (

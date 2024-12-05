@@ -53,7 +53,7 @@ const Login = () => {
     return (
         <form onSubmit={onSubmitHandler} className='min-h-[80vh] flex items-center'>
             <div className='flex flex-col gap-3 m-auto items-start p-8 min-w-[340px] sm:min-w-96 border rounded-xl text-[#5E5E5E] text-sm shadow-lg'>
-                <p className='text-2xl font-semibold m-auto'><span className='text-[#0091a1]'> {state}</span> Login</p>
+                <p className='text-2xl font-semibold m-auto'> Đăng nhập <span className='text-[#0091a1]'> {state}</span></p>
                 <div className='w-full'>
                     <p>Email</p>
                     <input
@@ -82,10 +82,10 @@ const Login = () => {
                         />
                     )}
                 </div>
-                <button className='bg-[#0091a1] text-white w-full py-2 rounded-md text-base'>Login</button>
+                <button className='bg-[#0091a1] text-white w-full py-2 rounded-md text-base'>Đăng nhập</button>
                 {state === 'Admin'
-                    ? <p>Doctor Login? <span className='text-[#0091a1] underline cursor-pointer' onClick={() => setState('Doctor')}>Click here</span></p>
-                    : <p>Admin Login? <span className='text-[#0091a1] underline cursor-pointer' onClick={() => setState('Admin')}>Click here</span></p>
+                    ? <p>Đăng nhập bác sĩ? <span className='text-[#0091a1] underline cursor-pointer' onClick={() => setState('Doctor')}>Nhấp vào đây</span></p>
+                    : <p>Đăng nhập quản trị? <span className='text-[#0091a1] underline cursor-pointer' onClick={() => setState('Admin')}>Nhấp vào đây</span></p>
                 }
             </div>
         </form>
