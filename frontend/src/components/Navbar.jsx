@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useContext } from "react";
-import { AppContext } from "../context/AppContext";
-import { assets } from "../assets/assets";
+import React, { useContext, useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { assets } from "../assets/assets";
+import { AppContext } from "../context/AppContext";
 
 
 const Navbar = () => {

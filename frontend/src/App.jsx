@@ -1,21 +1,22 @@
-import React from 'react'
-import { Route, Routes } from 'react-router-dom'
-import Footer from './components/Footer'
-import Navbar from './components/Navbar'
-import About from './pages/About'
-import AllSchedule from './pages/AllSchedule'
-import Appointment from './pages/Appointment'
-import Contact from './pages/Contact'
-import Doctors from './pages/Doctors'
-import Home from './pages/Home'
-import Login from './pages/Login'
-import MedicalHistory from './pages/MedicalHistory'
-import MyAppointments from './pages/MyAppointments'
-import MyProfile from './pages/MyProfile'
-import Notifications from './pages/Notifications'
+import React from 'react';
 import Marquee from "react-fast-marquee";
-import ScrollToTopButton from './components/ScrollToTopButton.jsx'
-import ResetPassword from './pages/ResetPassword.jsx'
+import { Route, Routes } from 'react-router-dom';
+import Footer from './components/Footer';
+import Navbar from './components/Navbar';
+import ScrollToTopButton from './components/ScrollToTopButton.jsx';
+import About from './pages/About';
+import AllSchedule from './pages/AllSchedule';
+import Appointment from './pages/Appointment';
+import Contact from './pages/Contact';
+import Doctors from './pages/Doctors';
+import ForgotPassword from './pages/ForgotPassword.jsx';
+import Home from './pages/Home';
+import Login from './pages/Login';
+import MedicalHistory from './pages/MedicalHistory';
+import MyAppointments from './pages/MyAppointments';
+import MyProfile from './pages/MyProfile';
+import Notifications from './pages/Notifications';
+import ResetPassword from './pages/ResetPassword.jsx';
 
 const App = () => {
   return (
@@ -30,6 +31,7 @@ const App = () => {
           <Route path='/doctors' element={<Doctors />} />
           <Route path='/doctors/:speciality' element={<Doctors />} />
           <Route path='/account' element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path='/abouts' element={<About />} />
           <Route path='/contact' element={<Contact />} />
           <Route path='/notifications' element={<Notifications />} />

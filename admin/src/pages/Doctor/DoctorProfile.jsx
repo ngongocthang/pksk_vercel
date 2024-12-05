@@ -1,7 +1,7 @@
-import React, { useState, useContext, useEffect } from "react";
-import { DoctorContext } from "../../context/DoctorContext";
 import axios from "axios";
+import React, { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { DoctorContext } from "../../context/DoctorContext";
 
 const DoctorProfile = () => {
   const { dToken, profileData, getProfileData, backendUrl } = useContext(DoctorContext);
@@ -255,19 +255,18 @@ const DoctorProfile = () => {
                     </p>
                     <div className="flex items-center gap-2">
                       <input
-                        onChange={() =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            available: !prev.available,
-                          }))
-                        }
+                        onChange={() => {
+                          if (isEdit) {
+                            setFormData((prev) => ({
+                              ...prev,
+                              available: !prev.available,
+                            }));
+                          }
+                        }}
                         checked={formData.available}
                         type="checkbox"
                         name="available"
-                        id="available-checkbox"
-                        className={`cursor-pointer h-4 w-4 rounded 
-                        ${isEdit ? "border-blue-500 focus:ring-green-500" : "bg-green-500 border-none"}`}
-                        disabled={!isEdit} 
+                        id=""
                       />
                       <label htmlFor="available-checkbox" className="cursor-pointer">
                         Available
