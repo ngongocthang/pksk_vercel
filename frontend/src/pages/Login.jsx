@@ -7,6 +7,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
+import { useEffect } from "react";
 
 const Login = () => {
   const VITE_META_CLIENT_ID = import.meta.env.VITE_META_CLIENT_ID;
@@ -107,35 +108,35 @@ const Login = () => {
     console.log("Login Failed:", error);
   };
 
-  // const handleResponseFacebook = async (response) => {
-  //   if (response.status !== "connected") {
-  //     toast.error("Đăng nhập Facebook thất bại!");
-  //     return;
-  //   }
+  //forgot password
+  const handleForgotPassword = async () => {
+    const email = prompt("Vui lòng nhập email của bạn:");
 
-  //   const { accessToken, email, name } = response;
+    if (!email) return;
 
-  //   try {
-  //     const res = await axios.post("http://localhost:5000/facebook-login", {
-  //       accessToken,
-  //       email,
-  //       name,
-  //     });
+    try {
+        const response = await axios.post("http://localhost:5000/forgot-password", {
+            email,
+        }, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
 
-  //     const data = res.data;
-  //     if (data.user && data.user.token) {
-  //       setUser(data.user);
-  //       localStorage.setItem("token", data.user.token);
-  //       localStorage.setItem("user", JSON.stringify(data.user));
-  //       navigate("/");
-  //     } else {
-  //       toast.error("Đăng nhập không thành công!");
-  //     }
-  //   } catch (error) {
-  //     toast.error("Đã xảy ra lỗi! Vui lòng thử lại sau.");
-  //     console.log("Login Failed:", error);
-  //   }
-  // };
+        const data = response.data;
+
+        // Kiểm tra mã trạng thái HTTP
+        if (response.status === 200) {
+            toast.success("Email khôi phục mật khẩu đã được gửi!");
+        } else {
+            toast.error(data.message);
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        toast.error("Đã xảy ra lỗi! Vui lòng thử lại sau.");
+    }
+};
+
 
   return (
     <>
@@ -231,13 +232,6 @@ const Login = () => {
             onError={handleErrorGoogleLogin}
           />
 
-          {/* <FacebookLogin
-            appId={VITE_META_CLIENT_ID}
-            autoLoad={true}
-            fields="name,email,picture"
-            callback={handleResponseFacebook}
-          /> */}
-
           {state === "Sign Up" ? (
             <p>
               Đã có tài khoản?{" "}
@@ -259,6 +253,13 @@ const Login = () => {
               </span>
             </p>
           )}
+          <button
+            type="button"
+            onClick={handleForgotPassword}
+            className="text-[#00759c] underline cursor-pointer"
+          >
+            Quên mật khẩu?
+          </button>
         </div>
       </form>
       <ToastContainer />

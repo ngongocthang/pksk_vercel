@@ -9,7 +9,8 @@ const {
   getdataMoneyDashboardAdmin,
   getAllScheduleDoctor,
   googleLogin,
-  // facebookLogin
+  forgotPassword,
+  resetPassword,
 } = require("../controllers/HomeController/index");
 const {
   patientCreateAppointment, 
@@ -52,6 +53,7 @@ router.get("/check-payment-status/:id", checkPaymentStatus);
 router.get("/get-money-dashboard-admin", getdataMoneyDashboardAdmin); 
 router.get("/get-all-schedule-doctor", getAllScheduleDoctor); 
 router.post('/google-login', googleLogin);
-// router.post('/facebook-login', facebookLogin);
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password/:token", resetPassword);
 
 module.exports = router;
