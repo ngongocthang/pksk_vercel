@@ -44,7 +44,6 @@ const Appointment = () => {
     } catch (error) {
       console.error("Error fetching doctor schedule:", error);
       setErrorLoadingSchedule(true);
-      toast.error("Không thể lấy lịch làm việc của bác sĩ.");
     }
   };
 
