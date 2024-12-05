@@ -6,7 +6,6 @@ import EyeOffIcon from "../assets/eye_off.svg";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { GoogleLogin } from "@react-oauth/google";
-import FacebookLogin from "react-facebook-login";
 import axios from "axios";
 
 const Login = () => {

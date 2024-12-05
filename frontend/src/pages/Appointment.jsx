@@ -19,12 +19,6 @@ const Appointment = () => {
   const [loading, setLoading] = useState(true);
   const [errorLoadingSchedule, setErrorLoadingSchedule] = useState(false);
 
-  useEffect(() => {
-    if (!user && !localStorage.getItem("user")) {
-      navigate("/account");
-    }
-  }, [user, navigate]);
-
   const fetchDocInfo = async () => {
     try {
       const response = await axios.get(`http://localhost:5000/doctor/find/${docId}`);
@@ -79,8 +73,12 @@ const Appointment = () => {
   }, [selectedDate]);
 
   const handleBooking = () => {
-    if (!user && !localStorage.getItem("user")) {
-      navigate("/account");
+    const loggedInUser = user || JSON.parse(localStorage.getItem("user"));
+    if (!loggedInUser) {
+      toast.warn("Vui lòng đăng nhập để đặt lịch hẹn.", {
+        onClose: () => navigate("/account"),
+        autoClose: 3000,
+      });
       return;
     }
 
@@ -272,9 +270,9 @@ const Appointment = () => {
             <p>Chuyên Khoa: {docInfo.specialization_id.name}</p>
           </div>
           <div>
-          <div className="flex items-center gap-2 text-sm mt-1 text-gray-600" style={{ lineHeight: "2.5" }}>
-            <p>Số điện thoại: {docInfo.user_id.phone}</p>
-          </div>
+            <div className="flex items-center gap-2 text-sm mt-1 text-gray-600" style={{ lineHeight: "2.5" }}>
+              <p>Số điện thoại: {docInfo.user_id.phone}</p>
+            </div>
             <p className="flex items-center gap-1 text-sm font-medium text-gray-900" style={{ lineHeight: "2.5" }}>
               Giới thiệu <img src={assets.info_icon} alt="Info" />
             </p>

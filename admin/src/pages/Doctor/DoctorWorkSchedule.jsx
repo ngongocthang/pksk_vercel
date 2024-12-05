@@ -18,11 +18,9 @@ const DoctorWorkSchedule = () => {
     }
   }, [dToken]);
 
-  // Hàm định dạng ngày
   const formatDate = (date) => {
     const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
-    const formattedDate = new Date(date).toLocaleDateString('vi-VN', options);
-    return formattedDate;
+    return new Date(date).toLocaleDateString('vi-VN', options);
   };
 
   const handleDeleteClick = (schedule) => {
@@ -33,20 +31,12 @@ const DoctorWorkSchedule = () => {
   const handleConfirmDelete = async () => {
     if (selectedSchedule) {
       await deleteSchedule(selectedSchedule._id);
-
-      const updatedSchedules = schedules.filter(
-        (schedule) => schedule._id !== selectedSchedule._id
-      );
-
-      // Đợi 0 giây trước khi đóng modal
-      setTimeout(() => {
-        setShowModal(false);
-        setSelectedSchedule(null);
-        if (updatedSchedules.length <= 10) {
-          setCurrentPage(1);
-          navigate(`/doctor-work-schedule`, { replace: true });
-        }
-      }, 0);
+      setShowModal(false);
+      setSelectedSchedule(null);
+      if (schedules.length <= 10) {
+        setCurrentPage(1);
+        navigate(`/doctor-work-schedule`, { replace: true });
+      }
     }
   };
 
@@ -56,39 +46,129 @@ const DoctorWorkSchedule = () => {
   }, [schedules]);
 
   // Logic phân trang
+  const totalSchedules = schedules.length;
+  const totalPages = Math.ceil(totalSchedules / schedulesPerPage);
   const indexOfLastSchedule = currentPage * schedulesPerPage;
   const indexOfFirstSchedule = indexOfLastSchedule - schedulesPerPage;
-  const currentSchedules = schedules.slice(
-    indexOfFirstSchedule,
-    indexOfLastSchedule
-  );
+  const currentSchedules = schedules.slice(indexOfFirstSchedule, indexOfLastSchedule);
 
-  const paginate = (pageNumber) => {
-    setCurrentPage(pageNumber);
-    navigate(`/doctor-work-schedule?page=${pageNumber}`);
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    navigate(`/doctor-work-schedule?page=${page}`, { replace: true });
   };
 
-  // Check if pagination is needed (only show if schedules length > 10)
-  const shouldDisplayPagination = schedules.length > schedulesPerPage;
+  const renderPagination = () => {
+    const delta = 1; // Số trang hiển thị trước và sau trang hiện tại
+    const paginationItems = [];
+
+    // Nút "Trang trước"
+    paginationItems.push(
+      <button
+        key="prev"
+        onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+        className={`py-1 px-3 border rounded w-[70px] ${currentPage === 1 ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "text-gray-600"
+          }`}
+        disabled={currentPage === 1}
+      >
+        Trước
+      </button>
+    );
+
+    // Hiển thị trang 1
+    paginationItems.push(
+      <button
+        key={1}
+        onClick={() => handlePageChange(1)}
+        className={`py-1 px-3 border rounded ${currentPage === 1 ? "bg-indigo-500 text-white" : "text-gray-600"
+          }`}
+      >
+        1
+      </button>
+    );
+
+    // Hiển thị dấu ba chấm nếu cần, khi currentPage > 3
+    if (currentPage > 2) {
+      paginationItems.push(
+        <span key="start-dots" className="px-2">
+          ...
+        </span>
+      );
+    }
+
+    // Hiển thị các trang xung quanh trang hiện tại
+    for (let i = Math.max(2, currentPage - delta); i <= Math.min(totalPages - 1, currentPage + delta); i++) {
+      paginationItems.push(
+        <button
+          key={i}
+          onClick={() => handlePageChange(i)}
+          className={`py-1 px-3 border rounded ${i === currentPage ? "bg-indigo-500 text-white" : "text-gray-600"
+            }`}
+        >
+          {i}
+        </button>
+      );
+    }
+
+    // Hiển thị dấu ba chấm nếu cần, khi currentPage < totalPages - 1
+    if (currentPage < totalPages - 1) {
+      paginationItems.push(
+        <span key="end-dots" className="px-2">
+          ...
+        </span>
+      );
+    }
+
+    // Hiển thị trang cuối
+    if (totalPages > 1) {
+      paginationItems.push(
+        <button
+          key={totalPages}
+          onClick={() => handlePageChange(totalPages)}
+          className={`py-1 px-3 border rounded ${currentPage === totalPages ? "bg-indigo-500 text-white" : "text-gray-600"
+            }`}
+        >
+          {totalPages}
+        </button>
+      );
+    }
+
+    // Nút "Trang tiếp theo"
+    paginationItems.push(
+      <button
+        key="next"
+        onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+        className={`py-1 px-3 border rounded w-[70px] ${currentPage === totalPages ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "text-gray-600"
+          }`}
+        disabled={currentPage === totalPages}
+      >
+        Tiếp
+      </button>
+    );
+
+    return (
+      <div className="flex justify-center items-center mt-6 space-x-2">
+        {paginationItems}
+      </div>
+    );
+  };
 
   return (
     <div className="w-full max-w-6xl m-5">
-      <div className="flex justify-between items-center mb-3">
-        <p className="text-lg font-medium">Tất cả lịch làm việc</p>
+      <div className="flex justify-between items-center mb-4">
+        <p className="text-2xl md:text-3xl font-bold text-[#0091a1]">Tất Cả Lịch Làm Việc</p>
         <button
           onClick={() => navigate("/doctor-create-schedule")}
-          className="flex items-center px-5 py-2 bg-[#219B9D] text-white text-base rounded hover:bg-[#0091a1]"
+          className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 bg-gradient-to-r from-[#4CAF50] to-[#219B9D] text-white rounded-full shadow-md hover:from-[#45A049] hover:to-[#009688] transform hover:scale-110 transition-all duration-300"
         >
-          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+          <svg className="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 20 20">
             <path d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" />
           </svg>
-          <span className="hidden mx-1 md:block">Tạo mới</span>
         </button>
       </div>
 
       <div className="bg-white border rounded-xl text-sm max-h-[80vh] min-h-[50vh] overflow-y-scroll">
         {/* Header chỉ hiển thị trên desktop */}
-        <div className="hidden sm:grid grid-cols-[0.5fr_2fr_1fr_1fr] bg-gray-200 gap-4 py-3 px-6 border-b">
+        <div className="hidden sm:grid grid-cols-[0.5fr_2fr_1fr_1fr] gap-4 py-4 px-6 bg-gray-200 border-b text-center">
           <p className="font-bold text-center text-[16px]">#</p>
           <p className="font-bold text-center text-[16px]">Ngày làm việc</p>
           <p className="font-bold text-center text-[16px]">Ca làm việc</p>
@@ -102,10 +182,7 @@ const DoctorWorkSchedule = () => {
               key={schedule._id}
               className="flex flex-col sm:grid sm:grid-cols-[0.5fr_2fr_1fr_1fr] gap-3 py-3 px-5 border-b hover:bg-gray-50"
             >
-              {/* Số thứ tự */}
-              <p className="md:text-center text-center font-bold">{index + 1}</p>
-
-              {/* Ngày làm việc */}
+              <p className="md:text-center text-center font-bold">{(currentPage - 1) * schedulesPerPage + index + 1}</p>
               <div className="flex md:justify-center items-center cursor-pointer">
                 <span className="sm:hidden font-semibold mr-2">Ngày làm việc: </span>
                 <td
@@ -119,31 +196,23 @@ const DoctorWorkSchedule = () => {
                   {formatDate(schedule.work_date)}
                 </td>
               </div>
-
-              {/* Ca làm việc */}
               <div className="flex sm:items-center sm:justify-center gap-2">
-                <span className="md:hidden font-semibold">Ca làm việc: </span>
-                <p
-                  className={`py-0 md:py-1 rounded-full text-white text-sm text-center  
-                  ${schedule.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg max-w-[100px] w-full`}
-                >
+                <p className={`py-0 md:py-1 rounded-full text-white text-sm text-center ${schedule.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg max-w-[100px] w-full`}>
                   {schedule.work_shift === "afternoon" ? "Chiều" : "Sáng"}
                 </p>
               </div>
-
-              {/* Hành động */}
               <div className="flex gap-2 justify-center">
                 <button
                   onClick={() => navigate(`/edit-work-schedule/${schedule._id}`)}
                   className="bg-blue-500 text-white px-3 py-1 rounded shadow-md hover:bg-blue-600"
                 >
-                  <i class="fa-solid fa-user-pen"></i>
+                  <i className="fa-solid fa-user-pen"></i>
                 </button>
                 <button
                   onClick={() => handleDeleteClick(schedule)}
                   className="bg-red-500 text-white px-3 py-1 rounded shadow-md hover:bg-red-600"
                 >
-                  <i class="fa-solid fa-trash"></i>
+                  <i className="fa-solid fa-trash"></i>
                 </button>
               </div>
             </div>
@@ -154,25 +223,13 @@ const DoctorWorkSchedule = () => {
       </div>
 
       {/* Phân trang */}
-      {shouldDisplayPagination && (
-        <div className="flex justify-center mt-4">
-          {Array.from({ length: Math.ceil(schedules.length / schedulesPerPage) }, (_, index) => (
-            <button
-              key={index + 1}
-              onClick={() => paginate(index + 1)}
-              className={`px-4 py-2 ${currentPage === index + 1 ? 'bg-[#219c9e] text-white' : 'bg-gray-200'} rounded-md mx-1 hover:bg-[#0091a1]`}
-            >
-              {index + 1}
-            </button>
-          ))}
-        </div>
-      )}
+      {totalPages > 1 && renderPagination()}
 
       {/* Modal xác nhận xóa */}
       {showModal && selectedSchedule && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg p-6 w-96">
-            <h2 className="text-xl font-semibold mb-4">Xác nhận xóa</h2>
+          <div className="bg-white rounded-lg p-4 w-96 mx-2">
+            <h2 className="text-xl font-semibold mb-3">Xác nhận xóa</h2>
             <p className="mb-4">
               Bạn có chắc chắn muốn xóa lịch làm việc buổi{" "}
               {selectedSchedule.work_shift === "afternoon" ? "Chiều" : "Sáng"} ngày{" "}
@@ -187,7 +244,7 @@ const DoctorWorkSchedule = () => {
               </button>
               <button
                 onClick={handleConfirmDelete}
-                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                className="px-4 py-2 bg-[#22c55e] text-white rounded hover:bg-red-600"
               >
                 Xóa
               </button>
