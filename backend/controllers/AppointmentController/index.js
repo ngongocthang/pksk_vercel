@@ -197,6 +197,112 @@ const formatVietnameseDate = (date) => {
   return formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
 };
 
+// const patientCreateAppointment = async (req, res) => {
+//   try {
+//     const user_id = req.params.id;
+
+//     // Lấy thông tin bệnh nhân
+//     const patient = await Patient.findOne({ user_id: user_id });
+//     if (!patient) {
+//       return res.status(400).json({ message: "Patient not found" });
+//     }
+//     //check bsi có tồn tại hay không
+//     const checkDoctor = await Doctor.findOne({ _id: req.body.doctor_id });
+//     if (!checkDoctor) {
+//       return res.status(400).json({ message: "Bác sĩ không tồn tại!" });
+//     }
+
+//     // Kiểm tra xem lịch hẹn đã tồn tại chưa
+//     const checkAppointment = await Appointment.findOne({
+//       patient_id: patient._id,
+//       work_date: req.body.work_date,
+//       work_shift: req.body.work_shift,
+//       status: { $nin: ["canceled"] },
+//     });
+//     if (checkAppointment) {
+//       return res.status(400).json({ message: "Bạn đã đặt lịch hẹn này rồi!" });
+//     }
+
+//     // Kiểm tra nếu đã hủy 2 lần trước đó
+//     // const canceledCount = await Appointment.countDocuments({
+//     //   patient_id: patient._id,
+//     //   work_date: req.body.work_date,
+//     //   work_shift: req.body.work_shift,
+//     //   status: "canceled",
+//     // });
+//     // if (canceledCount >= 2) {
+//     //   return res.status(400).json({ message: "Bạn đã hủy lịch hẹn này hai lần, không thể đặt lại!" });
+//     // }
+
+//     // Xác định thời gian buổi sáng và buổi chiều
+//     const appointmentDate = new Date(req.body.work_date);
+
+//     const morningTime = new Date(appointmentDate);
+//     morningTime.setUTCHours(7, 30, 0, 0); // 7h30 sáng (UTC)
+
+//     const afternoonTime = new Date(appointmentDate);
+//     afternoonTime.setUTCHours(13, 30, 0, 0); // 1h30 chiều (UTC)
+
+//     // Thời gian hiện tại (UTC)
+//     const currentTime = new Date();
+
+//     // Kiểm tra nếu là buổi sáng
+//     if (appointmentDate >= morningTime && appointmentDate < afternoonTime) {
+//       const minAppointmentTime = new Date(morningTime.getTime() - 30 * 60 * 1000); // Trước 30 phút
+//       if (currentTime > minAppointmentTime) {
+//         return res.status(400).json({
+//           message: "Bạn chỉ có thể đặt lịch hẹn trước 30 phút cho buổi sáng!",
+//         });
+//       }
+//     }
+
+//     // Kiểm tra nếu là buổi chiều
+//     if (appointmentDate >= afternoonTime) {
+//       const minAppointmentTime = new Date(afternoonTime.getTime() - 30 * 60 * 1000); // Trước 30 phút
+//       if (currentTime > minAppointmentTime) {
+//         return res.status(400).json({
+//           message: "Bạn chỉ có thể đặt lịch hẹn trước 30 phút cho buổi chiều!",
+//         });
+//       }
+//     }
+
+//     // Tạo lịch hẹn
+//     const appointment = await Appointment.create({
+//       ...req.body,
+//       patient_id: patient._id,
+//     });
+
+//     // Lưu vào lịch sử hẹn
+//     await Appointment_history.create({
+//       appointment_id: appointment._id,
+//       patient_id: patient._id,
+//       doctor_id: appointment.doctor_id,
+//     });
+
+//     const formattedDate = formatVietnameseDate(appointment.work_date);
+
+//     // Tạo thông báo
+//     await Notification.create({
+//       patient_id: appointment.patient_id,
+//       doctor_id: appointment.doctor_id,
+//       content: `Bạn đã đặt lịch hẹn vào ngày: ${formattedDate}, hãy chờ phản hồi từ bác sĩ.`,
+//       appointment_id: appointment._id,
+//       recipientType: "patient",
+//     });
+
+//     await Notification.create({
+//       patient_id: appointment.patient_id,
+//       doctor_id: appointment.doctor_id,
+//       content: `Bạn có lịch hẹn đang chờ xác nhận vào ngày: ${formattedDate}.`,
+//       appointment_id: appointment._id,
+//       recipientType: "doctor",
+//     });
+
+//     return res.status(200).json(appointment);
+//   } catch (error) {
+//     return res.status(500).json({ message: error.message });
+//   }
+// };
 const patientCreateAppointment = async (req, res) => {
   try {
     const user_id = req.params.id;
@@ -206,7 +312,8 @@ const patientCreateAppointment = async (req, res) => {
     if (!patient) {
       return res.status(400).json({ message: "Patient not found" });
     }
-    //check bsi có tồn tại hay không
+
+    // Kiểm tra bác sĩ có tồn tại hay không
     const checkDoctor = await Doctor.findOne({ _id: req.body.doctor_id });
     if (!checkDoctor) {
       return res.status(400).json({ message: "Bác sĩ không tồn tại!" });
@@ -223,7 +330,7 @@ const patientCreateAppointment = async (req, res) => {
       return res.status(400).json({ message: "Bạn đã đặt lịch hẹn này rồi!" });
     }
 
-    // Kiểm tra nếu đã hủy 2 lần trước đó
+        // Kiểm tra nếu đã hủy 2 lần trước đó
     // const canceledCount = await Appointment.countDocuments({
     //   patient_id: patient._id,
     //   work_date: req.body.work_date,
@@ -233,6 +340,19 @@ const patientCreateAppointment = async (req, res) => {
     // if (canceledCount >= 2) {
     //   return res.status(400).json({ message: "Bạn đã hủy lịch hẹn này hai lần, không thể đặt lại!" });
     // }
+
+    // Kiểm tra số lượng lịch hẹn trong ngày
+    const dailyAppointments = await Appointment.countDocuments({
+      patient_id: patient._id,
+      work_date: req.body.work_date,
+      status: { $nin: ["canceled"] },
+    });
+
+    if (dailyAppointments >= 4) {
+      return res.status(400).json({
+        message: "Bạn chỉ có thể đặt tối đa 4 lịch hẹn trong một ngày!",
+      });
+    }
 
     // Xác định thời gian buổi sáng và buổi chiều
     const appointmentDate = new Date(req.body.work_date);
@@ -674,6 +794,23 @@ const getAllAppointmentAdmin = async (req, res) => {
   }
 };
 
+const deleteAppointmentByStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const appointment = await Appointment.findById(id);
+    if (!appointment) {
+      return res.status(400).json({ success: false, message: "Appointment not found" });
+    }
+    await Appointment.findByIdAndDelete(id);
+    await Appointment_history.deleteMany({ appointment_id: id });
+    return res.status(200).json({ success: true, message: "Delete appointment success!" });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
 module.exports = {
   createAppointment,
   findAllAppointment,
@@ -688,4 +825,5 @@ module.exports = {
   countAppointmentDoctorDashboard,
   getUpcomingAppointmentsDashboardAdmin,
   getAllAppointmentAdmin,
+  deleteAppointmentByStatus
 };
