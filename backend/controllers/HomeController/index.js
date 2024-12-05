@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const User = require("../../models/User");
 const RoleUser = require("../../models/User_role");
@@ -13,6 +14,9 @@ const History_appointment = require("../../models/Appointment_history");
 JWT_SECRET = process.env.JWT_SECRET;
 const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(process.env.GG_CLIENT_ID);
+const transporter = require("../../helpers/mailer-config");
+const FRONTEND_URI = process.env.FRONTEND_URI;
+
 
 const register = async (req, res) => {
   try {
@@ -357,58 +361,64 @@ const googleLogin = async (req, res) => {
   }
 };
 
-// const facebookLogin = async (req, res) => {
-//   const { accessToken, email, name } = req.body;
+// Route quên mật khẩu
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
 
-//   try {
-//     let user = await User.findOne({ email });
-//     if (!user) {
-//       user = await User.create({
-//         email,
-//         name,
-//         password: "123456"
-//       });
-//       const role = await Role.findOne({ name: "patient" });
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "Người dùng không tồn tại!" });
+    }
 
-//       if (!role) {
-//         return res.status(400).json({ message: "Role 'patient' not found" });
-//       }
-//       await RoleUser.create({
-//         user_id: user._id,
-//         role_id: role._id,
-//       });
+    // Tạo mã khôi phục và lưu vào cơ sở dữ liệu
+    const resetToken = crypto.randomBytes(20).toString("hex");
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpires = Date.now() + 3600000; // Hết hạn sau 1 giờ
+    await user.save();
 
-//       await Patient.create({
-//         user_id: user._id,
-//       });
-//     }
+    // Gửi email khôi phục mật khẩu
+    const resetUrl = `${FRONTEND_URI}/reset-password/${resetToken}`;
+    const mailOptions = {
+      to: email,
+      subject: "Khôi phục mật khẩu",
+      text: `Bạn đã yêu cầu khôi phục mật khẩu. Vui lòng nhấp vào liên kết sau để đặt lại mật khẩu: ${resetUrl}`,
+    };
 
-//     // Tạo token JWT
-//     const roleUsers = await RoleUser.find({ user_id: user._id }).populate("role_id");
-//     const userRole = roleUsers.length > 0 ? roleUsers[0].role_id.name : null;
+    await transporter.sendMail(mailOptions);
+    res.status(200).json({ message: "Email khôi phục mật khẩu đã được gửi!" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Đã xảy ra lỗi!" });
+  }
+};
 
-//     const token = jwt.sign({ id: user._id, role: userRole }, JWT_SECRET, {
-//       expiresIn: "7d",
-//     });
+const resetPassword = async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
 
-//     return res.status(200).json({
-//       message: "Login successful!",
-//       user: {
-//         id: user._id,
-//         name: user.name,
-//         email: user.email,
-//         role: userRole,
-//         token: token,
-//       },
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(500).json({ message: "Internal server error." });
-//   }
-// };
+  try {
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
 
+    if (!user) {
+      return res.status(400).json({ message: "Token không hợp lệ hoặc đã hết hạn!" });
+    }
 
+    // Băm mật khẩu mới
+    user.password = await bcrypt.hash(password, 10);
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
 
+    res.status(200).json({ message: "Mật khẩu đã được đặt lại thành công!" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Đã xảy ra lỗi!" });
+  }
+};
 
 module.exports = {
   register,   
@@ -419,5 +429,6 @@ module.exports = {
   getdataMoneyDashboardAdmin,
   getAllScheduleDoctor,
   googleLogin,
-  // facebookLogin
+  forgotPassword,
+  resetPassword
 };

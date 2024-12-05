@@ -15,6 +15,7 @@ import MyProfile from './pages/MyProfile'
 import Notifications from './pages/Notifications'
 import Marquee from "react-fast-marquee";
 import ScrollToTopButton from './components/ScrollToTopButton.jsx'
+import ResetPassword from './pages/ResetPassword.jsx'
 
 const App = () => {
   return (
@@ -37,6 +38,7 @@ const App = () => {
           <Route path='/medical-history' element={<MedicalHistory />} />
           <Route path='/all-schedule' element={<AllSchedule />} />
           <Route path='/my-profile' element={<MyProfile />} />
+          <Route path='/reset-password/:token' element={<ResetPassword />} />
         </Routes>
       </div>
       <Footer />
