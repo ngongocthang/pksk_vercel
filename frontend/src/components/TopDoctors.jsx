@@ -1,12 +1,18 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
+import AOS from 'aos';
+import 'aos/dist/aos.css'; // Import AOS styles
 
 const TopDoctors = () => {
   const navigate = useNavigate();
   const { doctors, setDoctors } = useContext(AppContext);
   const [error, setError] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    AOS.init({ duration: 1000, once: true }); // Init AOS with 1s duration and only animate once
+  }, []);
 
   // Lắng nghe thay đổi kích thước màn hình để xác định thiết bị
   useEffect(() => {
@@ -59,7 +65,7 @@ const TopDoctors = () => {
         Khám phá danh sách phong phú các bác sĩ uy tín của chúng tôi để dễ dàng
         lên lịch hẹn.
       </p>
-      <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 gap-y-6">
+      <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 gap-y-6" data-aos="fade-up">
         {Array.isArray(visibleDoctors) &&
           visibleDoctors.slice(0, 10).map((item, index) => (
             <div

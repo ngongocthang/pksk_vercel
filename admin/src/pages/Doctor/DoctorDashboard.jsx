@@ -263,7 +263,7 @@ const DoctorDashboard = () => {
       </div>
 
       {/* Appointment List Section */}
-      <div className="flex gap-4 bg-white mt-5 mb-4 px-2">
+      <div className="flex flex-wrap gap-6 bg-white mt-5 mb-4 px-4 lg:px-6">
         {/* Latest Bookings */}
         <div className="flex-1 bg-white p-4 rounded-lg shadow-md">
           {/* Tiêu đề */}
@@ -273,8 +273,8 @@ const DoctorDashboard = () => {
           </div>
 
           {/* Bảng */}
-          <div className="pt-4">
-            <table className="w-full text-sm bg-white border border-gray-200 rounded-lg overflow-hidden">
+          <div className="pt-4 overflow-x-auto">
+            <table className="w-full text-sm bg-white border border-gray-200 rounded-lg">
               {/* Header */}
               <thead className="bg-gray-100">
                 <tr>
@@ -293,19 +293,12 @@ const DoctorDashboard = () => {
                     className="hover:bg-gray-50 transition-all duration-200 border-b border-gray-200"
                   >
                     {/* Bệnh nhân */}
-                    <td className="py-4 px-4 text-center font-medium text-gray-800">
-                      {item.patient_name}
-                    </td>
+                    <td className="py-4 px-4 text-center font-medium text-gray-800">{item.patient_name}</td>
                     {/* Ngày khám */}
-                    <td className="py-4 px-4 text-center text-gray-600">
-                      {new Date(item.work_date).toLocaleDateString("vi-VN")}
-                    </td>
+                    <td className="py-4 px-4 text-center text-gray-600">{new Date(item.work_date).toLocaleDateString("vi-VN")}</td>
                     {/* Ca khám */}
                     <td className="py-4 px-5 text-center">
-                      <p
-                        className={`py-1 px-4 rounded-full text-white text-base font-semibold ${item.work_shift === "afternoon" ? "bg-orange-400" : "bg-blue-400"
-                          } shadow-md`}
-                      >
+                      <p className={`py-1 px-4 rounded-full text-white text-base font-semibold ${item.work_shift === "afternoon" ? "bg-orange-400" : "bg-blue-400"} shadow-md`}>
                         {item.work_shift === "morning" ? "Sáng" : "Chiều"}
                       </p>
                     </td>
@@ -333,14 +326,12 @@ const DoctorDashboard = () => {
           {/* Tiêu đề */}
           <div className="flex items-center gap-3 px-4 py-2 bg-blue-100 rounded-t">
             <img src={assets.list_icon} alt="list-icon" className="w-6 h-6" />
-            <p className="font-semibold text-gray-800 text-lg">
-              Lịch hẹn đã xác nhận & hoàn thành
-            </p>
+            <p className="font-semibold text-gray-800 text-lg">Lịch hẹn đã xác nhận & hoàn thành</p>
           </div>
 
           {/* Bảng */}
-          <div className="pt-4">
-            <table className="w-full text-sm bg-white border border-gray-200 rounded-lg overflow-hidden">
+          <div className="pt-4 overflow-x-auto">
+            <table className="w-full text-sm bg-white border border-gray-200 rounded-lg">
               {/* Header */}
               <thead className="bg-gray-100">
                 <tr>
@@ -359,19 +350,12 @@ const DoctorDashboard = () => {
                     className="hover:bg-gray-50 transition-all duration-200 border-b border-gray-200"
                   >
                     {/* Bệnh nhân */}
-                    <td className="py-4 px-4 text-center font-medium text-gray-800">
-                      {item.patient_name}
-                    </td>
+                    <td className="py-4 px-4 text-center font-medium text-gray-800">{item.patient_name}</td>
                     {/* Ngày khám */}
-                    <td className="py-4 px-4 text-center text-gray-600">
-                      {new Date(item.work_date).toLocaleDateString("vi-VN")}
-                    </td>
+                    <td className="py-4 px-4 text-center text-gray-600">{new Date(item.work_date).toLocaleDateString("vi-VN")}</td>
                     {/* Ca khám */}
                     <td className="py-4 px-5 text-center">
-                      <p
-                        className={`py-1 px-4 rounded-full text-white text-base font-semibold ${item.work_shift === "afternoon" ? "bg-orange-400" : "bg-blue-400"
-                          } shadow-md`}
-                      >
+                      <p className={`py-1 px-4 rounded-full text-white text-base font-semibold ${item.work_shift === "afternoon" ? "bg-orange-400" : "bg-blue-400"} shadow-md`}>
                         {item.work_shift === "morning" ? "Sáng" : "Chiều"}
                       </p>
                     </td>

@@ -67,7 +67,7 @@ const MedicalRecordCard = memo(({ record }) => {
           </div>
         </div>
 
-        <div className="mt-4 pt-4 border-t border-gray-100 text-sm text-gray-500">
+        <div className="mt-4 pt-4 border-t border-gray-100 text-sm text-gray-500 text-center">
           Ngày xác nhận: {new Date(record.history.createdAt).toLocaleDateString("vi-VN")}
         </div>
       </CardContent>

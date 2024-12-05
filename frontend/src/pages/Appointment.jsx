@@ -193,7 +193,7 @@ const Appointment = () => {
         <p className="text-center text-2xl mt-4">Đang tải thông tin bác sĩ...</p>
       </div>
     );
-  }  
+  }
 
   if (!docInfo) {
     return (
@@ -259,12 +259,22 @@ const Appointment = () => {
               return (
                 <div
                   key={dateStr}
-                  className={`text-center w-[100px] h-[100px] flex flex-col justify-center items-center rounded-full border cursor-pointer transition-all duration-300
+                  className={`text-center sm:p-10 p-5 w-auto h-auto sm:w-[100px] sm:h-[100px] flex flex-col justify-center items-center rounded-full border cursor-pointer transition-all duration-300
                   ${isSelected ? "bg-[#00759c] text-white border-[#00759c]" : "border-gray-200 text-gray-600 hover:border-gray-300"}`}
                   onClick={() => setSelectedDate(dateStr)}
                 >
-                  <p className={`text-sm font-bold ${isSelected ? "text-white" : "text-gray-600"}`}>{dayOfWeek}</p>
-                  <p className={`text-sm font-semibold ${isSelected ? "text-white" : "text-gray-500"}`}>
+                  {/* Dòng chữ thứ ngày */}
+                  <p
+                    className={`text-sm font-bold whitespace-nowrap ${isSelected ? "text-white" : "text-gray-600"
+                      }`}
+                  >
+                    {dayOfWeek}
+                  </p>
+                  {/* Dòng ngày tháng */}
+                  <p
+                    className={`text-sm font-semibold mt-1 ${isSelected ? "text-white" : "text-gray-500"
+                      }`}
+                  >
                     {`${date.getDate()}/${date.getMonth() + 1}`}
                   </p>
                 </div>

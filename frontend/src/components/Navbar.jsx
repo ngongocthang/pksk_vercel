@@ -215,7 +215,7 @@ const Navbar = () => {
           </div>
         )}
 
-<img
+      <img
         onClick={toggleMenu}
         className="w-6 md:hidden"
         src={assets.menu_icon}

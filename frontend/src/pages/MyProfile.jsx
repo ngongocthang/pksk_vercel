@@ -177,7 +177,7 @@ const MyProfile = () => {
         <div>
           <p className="text-neutral-500 underline mt-3 text-center">THÔNG TIN CHI TIẾT:</p>
           <div className="grid grid-cols-1 gap-y-2.5 mt-3 text-neutral-700 sm:grid-cols-2 sm:gap-x-6">
-            <p className="font-medium text-gray-800">Email:</p>
+            <p className="font-medium text-gray-800 flex items-center">Email:</p>
             {isEdit ? (
               <input
                 className="bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 max-w-[340px]"
@@ -191,7 +191,7 @@ const MyProfile = () => {
               <p className="text-gray-600">{userData.email}</p>
             )}
 
-            <p className="font-medium text-gray-800">Số điện thoại:</p>
+            <p className="font-medium text-gray-800 flex items-center">Số điện thoại:</p>
             {isEdit ? (
               <input
                 className="bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 max-w-[340px]"
@@ -207,7 +207,7 @@ const MyProfile = () => {
 
             {isEdit && (
               <>
-                <p className="font-medium text-gray-800">Mật khẩu mới:</p>
+                <p className="font-medium text-gray-800 flex items-center">Mật khẩu mới:</p>
                 <div className="relative flex items-center">
                   <input
                     className="bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full sm:w-[340px]"
@@ -219,7 +219,7 @@ const MyProfile = () => {
                 </div>
                 {newPassword && (
                   <>
-                    <p className="font-medium text-gray-800">Mật khẩu cũ:</p>
+                    <p className="font-medium text-gray-800 flex items-center">Mật khẩu cũ: </p>
                     <div className="relative flex items-center">
                       <input
                         className="bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full sm:w-[340px]"
@@ -229,11 +229,12 @@ const MyProfile = () => {
                         placeholder="Nhập mật khẩu cũ"
                       />
                     </div>
+
+                    <small className="text-neutral-400 italic">
+                      Chỉ cần nhập mật khẩu cũ nếu bạn muốn thiết lập một mật khẩu mới.
+                    </small>
                   </>
                 )}
-                <small className="text-neutral-500 italic">
-                  Nhập mật khẩu cũ chỉ khi muốn đổi mật khẩu.
-                </small>
               </>
             )}
           </div>
@@ -244,9 +245,8 @@ const MyProfile = () => {
             <>
               <button
                 onClick={handleSave}
-                className={`bg-blue-500 text-white py-2 px-4 rounded ${
-                  isSaveDisabled() ? "bg-gray-300 disabled-button" : ""
-                }`}
+                className={`bg-blue-500 text-white py-2 px-4 rounded ${isSaveDisabled() ? "bg-gray-300 disabled-button" : ""
+                  }`}
                 disabled={isSaveDisabled()}
               >
                 Lưu

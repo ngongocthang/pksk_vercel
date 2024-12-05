@@ -216,7 +216,7 @@ const Doctors = () => {
         </div>
       ) : (
         <div>
-          <p className="text-gray-600 text-[20px]">Các bác sĩ chuyên khoa.</p>
+          <p className="text-gray-600 font-semibold text-[20px]">Các bác sĩ chuyên khoa.</p>
           <div className="flex flex-col sm:flex-row items-start gap-5 mt-5">
             <button
               className={`py-1 px-3 border rounded text-sm transition-all sm:hidden ${showFilter ? "bg-primary text-white" : ""
@@ -229,7 +229,8 @@ const Doctors = () => {
               className={`flex-col gap-4 text-[18px] text-gray-600 ${showFilter ? "flex" : "hidden sm:flex"
                 }`}
             >
-              <h3>Chuyên khoa:</h3>
+              <h3 className="sm:hidden">Chuyên khoa:</h3>
+              {/* <h3>Chuyên khoa:</h3> */}
               {specializations.map((spec) => (
                 <div
                   key={spec._id}

@@ -98,28 +98,28 @@ const DoctorProfile = () => {
       const doctorInfo = JSON.parse(sessionStorage.getItem("doctorInfo"));
       const doctorId = doctorInfo ? doctorInfo.id : null;
       const updatedData = new FormData();
-  
+
       // Thêm tất cả các trường vào FormData
       updatedData.append("name", formData.name || "");
       updatedData.append("email", formData.email || "");
       updatedData.append("phone", formData.phone || "");
       updatedData.append("description", formData.description || "");
-  
+
       // Gửi giá trị price mà không cần loại bỏ dấu chấm
       updatedData.append("price", formData.price || "0");
       updatedData.append("available", formData.available ? "true" : "false");
-  
+
       // Chỉ thêm hình ảnh nếu có ảnh mới được chọn
       if (selectedImage) {
         updatedData.append("image", selectedImage);
       }
-  
+
       // Chỉ thêm mật khẩu nếu có
       if (newPassword) {
         updatedData.append("oldPassword", oldPassword || "");
         updatedData.append("newPassword", newPassword);
       }
-  
+
       const { data } = await axios.put(
         `${backendUrl}/doctor/update-profile/${doctorId}`,
         updatedData,
@@ -130,7 +130,7 @@ const DoctorProfile = () => {
           },
         }
       );
-  
+
       if (data.success) {
         toast.success(data.message);
         setIsEdit(false);
@@ -144,7 +144,7 @@ const DoctorProfile = () => {
       setLoading(false);
     }
   };
-  
+
 
   // Cancel changes
   const handleCancel = () => {
@@ -171,7 +171,7 @@ const DoctorProfile = () => {
       (newPassword && !oldPassword)
     );
   };
-  
+
   const formatPrice = (price) => {
     if (isNaN(price)) return price;
     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -179,10 +179,10 @@ const DoctorProfile = () => {
 
   return (
     profileData && (
-      <div className="w-full max-w-4xl mx-auto p-5 bg-gray-50 shadow-md rounded-md mt-8">
-        <div className="flex flex-col sm:flex-row gap-5 mb-6">
+      <div className="w-full max-w-screen-lg mx-auto px-4 py-8">
+        <div className="bg-white rounded-lg shadow-lg md:pt-0 pt-4 flex flex-col md:flex-row md:items-center">
           {/* Left section: Image, Name, and Specialization */}
-          <div className="flex flex-col items-center sm:items-start gap-4 sm:w-1/3">
+          <div className="flex flex-col items-center gap-4 sm:w-1/3">
             <div className="relative ml-6">
               <img
                 className="bg-primary/80 sm:max-w-64 h-64 rounded-lg object-cover shadow-lg"
@@ -190,8 +190,8 @@ const DoctorProfile = () => {
                   previewImage
                     ? previewImage
                     : selectedImage
-                    ? URL.createObjectURL(selectedImage)
-                    : profileData.doctorProfile.image
+                      ? URL.createObjectURL(selectedImage)
+                      : profileData.doctorProfile.image
                 }
                 alt="Profile"
               />
@@ -223,7 +223,6 @@ const DoctorProfile = () => {
                     <span className="text-sm">Thay đổi ảnh</span>
                     <input
                       id="file-upload"
-                      name="image"
                       type="file"
                       onChange={handleImageChange}
                       className="hidden"
@@ -258,9 +257,7 @@ const DoctorProfile = () => {
             <div className="mb-6">
               {isEdit ? (
                 <>
-                  <label className="block text-gray-700 font-bold mb-1">
-                    Email:
-                  </label>
+                  <label className="block text-gray-700 font-bold mb-1">Email:</label>
                   <input
                     type="email"
                     name="email"
@@ -271,9 +268,8 @@ const DoctorProfile = () => {
                   />
                 </>
               ) : (
-                <p className="text-gray-800 text-lg">
-                  <span className="font-bold">Email:</span>{" "}
-                  {profileData.doctorProfile.email}
+                <p className="text-gray-800 text-lg break-words">
+                  <span className="font-bold">Email:</span> {profileData.doctorProfile.email}
                 </p>
               )}
             </div>
@@ -281,9 +277,7 @@ const DoctorProfile = () => {
             <div className="mb-6">
               {isEdit ? (
                 <>
-                  <label className="block text-gray-700 font-bold mb-1">
-                    Phone:
-                  </label>
+                  <label className="block text-gray-700 font-bold mb-1">Phone:</label>
                   <input
                     type="tel"
                     name="phone"
@@ -295,8 +289,7 @@ const DoctorProfile = () => {
                 </>
               ) : (
                 <p className="text-gray-800 text-lg">
-                  <span className="font-bold">Số điện thoại:</span>{" "}
-                  {profileData.doctorProfile.phone}
+                  <span className="font-bold">Số điện thoại:</span> {profileData.doctorProfile.phone}
                 </p>
               )}
             </div>
@@ -304,43 +297,37 @@ const DoctorProfile = () => {
             <div className="mb-6">
               {isEdit ? (
                 <>
-                  <label className="block text-gray-700 font-bold mb-1">
-                    Giá:
-                  </label>
+                  <label className="block text-gray-700 font-bold mb-1">Giá:</label>
                   <input
                     type="text" // Sử dụng type="text" để cho phép dấu phân cách
                     name="price"
-                    value={formData.price ? formatPrice(formData.price) : ""}
-                    onChange={(e) =>
-                      handleInputChange({
-                        target: {
-                          name: "price",
-                          value: e.target.value.replace(/\./g, ""), // Xóa dấu chấm trước khi lưu
-                        },
-                      })
-                    }
+                    value={formData.price ? formatPrice(formData.price) : ''}
+                    onChange={(e) => handleInputChange({
+                      target: {
+                        name: 'price',
+                        value: e.target.value.replace(/\./g, '') // Xóa dấu chấm trước khi lưu
+                      }
+                    })}
                     className="w-full p-3 border-2 border-gray-300 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
                     placeholder="Giá"
                   />
                 </>
               ) : (
                 <p className="text-gray-800 text-lg">
-                  <span className="font-bold">Giá:</span>{" "}
-                  {formatPrice(profileData.doctorProfile.price)} VND
+
+                  <span className="font-bold">Giá:</span> {formatPrice(profileData.doctorProfile.price)} VND
                 </p>
               )}
             </div>
 
             <div className="mb-6">
-              <label className="block text-gray-700 font-bold mb-1">
-                Giới thiệu:
-              </label>
+              <label className="block text-gray-700 font-bold mb-1">Giới thiệu:</label>
               {isEdit ? (
                 <textarea
                   name="description"
                   value={formData.description}
                   onChange={handleInputChange}
-                  className="w-full h-[90px] p-3 border-2 border-gray-300 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-3 border-2 border-gray-300 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
                   placeholder="Description"
                 />
               ) : (
@@ -349,7 +336,7 @@ const DoctorProfile = () => {
                   value={profileData.doctorProfile.description}
                   onChange={handleInputChange}
                   readOnly={!isEdit}
-                  className="w-full h-[90px] p-3 border-2 border-gray-300 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-3 border-2 border-gray-300 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
                   placeholder="Description"
                 />
               )}
@@ -358,9 +345,7 @@ const DoctorProfile = () => {
             {isEdit && (
               <div className="mb-6">
                 {/* New Password Field */}
-                <label className="block text-gray-700 font-bold mb-1">
-                  Mật khẩu mới:
-                </label>
+                <label className="block text-gray-700 font-bold mb-1">Mật khẩu mới:</label>
                 <input
                   type="text"
                   value={newPassword}
@@ -372,9 +357,7 @@ const DoctorProfile = () => {
                 {/* Old Password Field */}
                 {newPassword && (
                   <>
-                    <label className="block text-gray-700 font-bold mb-1 mt-4">
-                      Mật khẩu cũ:
-                    </label>
+                    <label className="block text-gray-700 font-bold mb-1 mt-4">Mật khẩu cũ:</label>
                     <input
                       type="text"
                       value={oldPassword}
@@ -410,18 +393,14 @@ const DoctorProfile = () => {
                 <>
                   <button
                     onClick={updateProfile}
-                    className={`px-4 py-2 mt-2 rounded-md ${
-                      loading || isUpdateDisabled()
-                        ? "bg-gray-300 text-black disabled-button"
-                        : "bg-[#219c9e] text-white"
-                    }`}
+                    className={`px-4 py-2 rounded-md ${loading || isUpdateDisabled() ? "bg-gray-300 text-black disabled-button" : "bg-[#219c9e] text-white"}`}
                     disabled={loading || isUpdateDisabled()}
                   >
-                    {loading ? "Cập nhật..." : "Cập nhật"}
+                    {loading ? "Updating..." : "Cập nhật"}
                   </button>
                   <button
                     onClick={handleCancel}
-                    className="px-4 py-2 mt-2 bg-gray-300 text-black rounded-md"
+                    className="px-4 py-2 bg-gray-300 text-black rounded-md"
                   >
                     Hủy
                   </button>
@@ -429,7 +408,7 @@ const DoctorProfile = () => {
               ) : (
                 <button
                   onClick={() => setIsEdit(true)}
-                  className="px-4 py-2 bg-[#219c9e] text-white rounded-md mt-2"
+                  className="px-4 py-2 bg-[#219c9e] text-white rounded-md"
                 >
                   Chỉnh sửa
                 </button>
