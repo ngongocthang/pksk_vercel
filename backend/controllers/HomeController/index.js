@@ -1,8 +1,9 @@
 const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const User = require("../../models/User");
-const RoleUser = require("../../models/User_role"); // Import model RoleUser
-const Role = require("../../models/Role"); // Import model Role
+const RoleUser = require("../../models/User_role");
+const Role = require("../../models/Role");
 const Schedule = require("../../models/Schedule");
 const validatePatient = require("../../requests/validatePatient");
 const Patient = require("../../models/Patient");
@@ -11,6 +12,12 @@ const Appointment = require("../../models/Appointment");
 const Payment = require("../../models/Payment");
 const History_appointment = require("../../models/Appointment_history");
 JWT_SECRET = process.env.JWT_SECRET;
+
+const { OAuth2Client } = require('google-auth-library');
+const client = new OAuth2Client(process.env.GG_CLIENT_ID);
+const transporter = require("../../helpers/mailer-config");
+const FRONTEND_URI = process.env.FRONTEND_URI;
+
 
 const register = async (req, res) => {
   try {
@@ -292,8 +299,127 @@ const getAllScheduleDoctor = async (req, res) => {
   }
 };
 
+const googleLogin = async (req, res) => {
+  const { credential } = req.body;
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GG_CLIENT_ID,
+  });
 
+    const payload = ticket.getPayload();
+    const email = payload.email;
 
+    // Kiểm tra xem người dùng đã tồn tại chưa
+    let user = await User.findOne({ email });
+    if (!user) {
+      // Nếu không tồn tại, tạo người dùng mới
+      user = await User.create({
+        email,
+        name: payload.name,
+        password: "123456"
+      });
+      const role = await Role.findOne({ name: "patient" });
+
+      if (!role) {
+        return res.status(400).json({ message: "Role 'patient' not found" });
+      }
+      const roleUser = await RoleUser.create({
+        user_id: user._id,
+        role_id: role._id,
+      });
+
+      if (!roleUser) {
+        return res.status(400).json({ message: "User Role create failed" });
+      }
+
+      await Patient.create({
+        user_id: user._id,
+      });
+    }
+
+    // Tạo token JWT
+    const roleUsers = await RoleUser.find({ user_id: user._id }).populate("role_id");
+    const userRole = roleUsers.length > 0 ? roleUsers[0].role_id.name : null;
+
+    const token = jwt.sign({ id: user._id, role: userRole }, JWT_SECRET, {
+      expiresIn: "7d",
+    });
+
+    return res.status(200).json({
+      message: "Login successful!",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: userRole,
+        token: token,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+// Route quên mật khẩu
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "Người dùng không tồn tại!" });
+    }
+
+    // Tạo mã khôi phục và lưu vào cơ sở dữ liệu
+    const resetToken = crypto.randomBytes(20).toString("hex");
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpires = Date.now() + 3600000; // Hết hạn sau 1 giờ
+    await user.save();
+
+    // Gửi email khôi phục mật khẩu
+    const resetUrl = `${FRONTEND_URI}/reset-password/${resetToken}`;
+    const mailOptions = {
+      to: email,
+      subject: "Khôi phục mật khẩu",
+      text: `Bạn đã yêu cầu khôi phục mật khẩu. Vui lòng nhấp vào liên kết sau để đặt lại mật khẩu: ${resetUrl}`,
+    };
+
+    await transporter.sendMail(mailOptions);
+    res.status(200).json({ message: "Email khôi phục mật khẩu đã được gửi!" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Đã xảy ra lỗi!" });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  try {
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: "Token không hợp lệ hoặc đã hết hạn!" });
+    }
+
+    // Băm mật khẩu mới
+    user.password = await bcrypt.hash(password, 10);
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+
+    res.status(200).json({ message: "Mật khẩu đã được đặt lại thành công!" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Đã xảy ra lỗi!" });
+  }
+};
 
 module.exports = {
   register,   
@@ -303,4 +429,7 @@ module.exports = {
   getHistoryAppointment,
   getdataMoneyDashboardAdmin,
   getAllScheduleDoctor,
+  googleLogin,
+  forgotPassword,
+  resetPassword
 };

@@ -702,7 +702,7 @@ const getAppointmentConfirmByDoctor = async (req, res) => {
       work_shift: req.body.work_shift,
     }).populate({
       path: "patient_id",
-      populate: { path: "user_id", select: "name" },
+      populate: { path: "user_id", select: "name phone" },
     });
 
     if (!appointments || appointments.length === 0) {

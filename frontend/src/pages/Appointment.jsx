@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { assets } from "../assets/assets";
 import RelatedDoctors from "../components/RelatedDoctors";
 import { AppContext } from "../context/AppContext";
+import "../index.css";
 
 const Appointment = () => {
   const { docId } = useParams();
@@ -18,12 +19,6 @@ const Appointment = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errorLoadingSchedule, setErrorLoadingSchedule] = useState(false);
-
-  useEffect(() => {
-    if (!user && !localStorage.getItem("user")) {
-      navigate("/account");
-    }
-  }, [user, navigate]);
 
   const fetchDocInfo = async () => {
     try {
@@ -67,19 +62,13 @@ const Appointment = () => {
     setSlotTime("");
   }, [docId]);
 
-  useEffect(() => {
-    if (doctors.length > 0) {
-      fetchDocInfo();
-    }
-  }, [doctors, docId]);
-
-  useEffect(() => {
-    setSlotTime("");
-  }, [selectedDate]);
-
   const handleBooking = () => {
-    if (!user && !localStorage.getItem("user")) {
-      navigate("/account");
+    const loggedInUser = user || JSON.parse(localStorage.getItem("user"));
+    if (!loggedInUser) {
+      toast.warn("Vui lòng đăng nhập để đặt lịch hẹn.", {
+        onClose: () => navigate("/account"),
+        autoClose: 3000,
+      });
       return;
     }
 
@@ -188,9 +177,8 @@ const Appointment = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center mt-10 text-gray-500">
-        <i className="fa-solid fa-spinner animate-spin text-4xl"></i>
-        <p className="text-center text-2xl mt-4">Đang tải thông tin bác sĩ...</p>
+      <div className="text-center text-2xl mt-10 text-gray-500">
+        Đang tải thông tin bác sĩ...
       </div>
     );
   }
@@ -222,21 +210,24 @@ const Appointment = () => {
         </div>
 
         <div className="flex-1 border border-gray-400 rounded-lg p-8 py-7 bg-white mx-2 sm:mx-0 mt-[-80px] sm:mt-0">
-          <p className="flex items-center gap-2 text-2xl font-medium text-gray-900">
+          <p className="flex items-center gap-2 text-2xl font-medium text-gray-900" style={{ lineHeight: "2.5" }}>
             {docInfo.user_id.name}
             <img className="w-5" src={assets.verified_icon} alt="Verified" />
           </p>
-          <div className="flex items-center gap-2 text-base mt-1 text-gray-600 pt-3">
+          <div className="flex items-center gap-2 text-sm mt-1 text-gray-600" style={{ lineHeight: "2.5" }}>
             <p>Giá: {docInfo.price ? formatPrice(docInfo.price) : "0"} VND</p>
           </div>
-          <div className="flex items-center gap-2 text-base mt-1 text-gray-600 pt-3">
+          <div className="flex items-center gap-2 text-sm mt-1 text-gray-600" style={{ lineHeight: "2.5" }}>
             <p>Chuyên Khoa: {docInfo.specialization_id.name}</p>
           </div>
           <div>
-            <p className="flex items-center gap-1 text-base font-medium text-gray-900 pt-3">
+            <div className="flex items-center gap-2 text-sm mt-1 text-gray-600" style={{ lineHeight: "2.5" }}>
+              <p>Số điện thoại: {docInfo.user_id.phone}</p>
+            </div>
+            <p className="flex items-center gap-1 text-sm font-medium text-gray-900" style={{ lineHeight: "2.5" }}>
               Giới thiệu <img src={assets.info_icon} alt="Info" />
             </p>
-            <p className="text-base text-gray-500 mt-1 max-w-full sm:max-w-[12000px] pt-3 text-justify">
+            <p className="text-sm text-gray-500 mt-1 max-w-full sm:max-w-[12000px]" style={{ lineHeight: "1.5", textAlign: "justify" }}>
               {docInfo.description}
             </p>
           </div>
@@ -245,41 +236,57 @@ const Appointment = () => {
 
       {/* ----- Booking slots ----- */}
       <div className="sm:ml-72 sm:pl-4 mt-4 font-medium text-gray-700">
-        <p>Đặt khám nhanh:</p>
+        <p className="flex justify-between items-center"> {/* Sử dụng flex để căn chỉnh */}
+          Đặt khám nhanh:
+          <div className="flex items-center gap-2"> {/* Đặt các nút trong một div flex */}
+            <button
+              onClick={() => {
+                const scrollContainer = document.querySelector(".overflow-x-auto");
+                scrollContainer.scrollBy({ left: -100, behavior: 'smooth' });
+              }}
+              className="bg-gray-300 text-black p-2 rounded-full transition-all duration-300 hover:bg-gray-400"
+            >
+              &#8592;
+            </button>
+            <button
+              onClick={() => {
+                const scrollContainer = document.querySelector(".overflow-x-auto");
+                scrollContainer.scrollBy({ left: 100, behavior: 'smooth' });
+              }}
+              className="bg-gray-300 text-black p-2 rounded-full transition-all duration-300 hover:bg-gray-400"
+            >
+              &#8594;
+            </button>
+          </div>
+        </p>
 
         {errorLoadingSchedule ? (
           <p className="text-red-500">Hiện tại bác sĩ chưa có lịch làm việc.</p>
         ) : (
-          <div className="flex gap-3 items-center w-full overflow-x-scroll mt-4 py-2">
-            {Object.keys(doctorSchedule).map((dateStr) => {
-              const date = new Date(dateStr);
-              const dayOfWeek = date.toLocaleDateString("vi-VN", { weekday: "long" });
-              const isSelected = selectedDate === dateStr;
+          <div className="relative">
+            <div className="flex gap-3 items-center w-full overflow-x-auto mt-4 py-2 whitespace-nowrap">
+              {Object.keys(doctorSchedule).map((dateStr) => {
+                const date = new Date(dateStr);
+                const dayOfWeek = date.toLocaleDateString("vi-VN", { weekday: "long" });
+                const isSelected = selectedDate === dateStr;
 
-              return (
-                <div
-                  key={dateStr}
-                  className={`text-center sm:p-10 p-5 w-auto h-auto sm:w-[100px] sm:h-[100px] flex flex-col justify-center items-center rounded-full border cursor-pointer transition-all duration-300
-                  ${isSelected ? "bg-[#00759c] text-white border-[#00759c]" : "border-gray-200 text-gray-600 hover:border-gray-300"}`}
-                  onClick={() => setSelectedDate(dateStr)}
-                >
-                  {/* Dòng chữ thứ ngày */}
-                  <p
-                    className={`text-sm font-bold whitespace-nowrap ${isSelected ? "text-white" : "text-gray-600"
-                      }`}
+                return (
+                  <div
+                    key={dateStr}
+                    className={`text-center w-[80px] h-[80px] flex flex-col justify-center items-center rounded-full border cursor-pointer transition-all duration-300
+            ${isSelected ? "bg-[#00759c] text-white border-[#00759c]" : "border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-100"}
+            m-4 p-4`}
+                    style={{ borderRadius: '50%' }}
+                    onClick={() => setSelectedDate(dateStr)}
                   >
-                    {dayOfWeek}
-                  </p>
-                  {/* Dòng ngày tháng */}
-                  <p
-                    className={`text-sm font-semibold mt-1 ${isSelected ? "text-white" : "text-gray-500"
-                      }`}
-                  >
-                    {`${date.getDate()}/${date.getMonth() + 1}`}
-                  </p>
-                </div>
-              );
-            })}
+                    <p className={`text-sm font-bold ${isSelected ? "text-white" : "text-gray-600"}`}>{dayOfWeek}</p>
+                    <p className={`text-sm font-semibold ${isSelected ? "text-white" : "text-gray-500"}`}>
+                      {`${date.getDate()}/${date.getMonth() + 1}`}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
 
@@ -290,17 +297,13 @@ const Appointment = () => {
               <p
                 key={schedule._id}
                 onClick={() => setSlotTime(schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều")}
-                className={`text-sm font-semibold px-6 py-3 rounded-full cursor-pointer transition-all duration-300 ${slotTime === (schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều")
-                  ? "bg-[#00759c] text-white"
-                  : "text-gray-500 border border-gray-300 hover:border-[#00759c] hover:text-[#00759c]"
-                  }`}
+                className={`text-sm font-semibold px-6 py-3 rounded-full cursor-pointer transition-all duration-300 ${slotTime === (schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều") ? "bg-[#00759c] text-white" : "text-gray-500 border border-gray-300 hover:border-[#00759c] hover:text-[#00759c]"}`}
               >
                 {schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều"}
               </p>
             ))}
           </div>
         )}
-
         {/* Nút đặt lịch chỉ hiển thị khi đã chọn ngày và ca */}
         {selectedDate && slotTime && (
           <button
@@ -311,7 +314,6 @@ const Appointment = () => {
           </button>
         )}
       </div>
-
       {/* ----- Related Doctors ----- */}
       <RelatedDoctors docId={docId} speciality={docInfo.specialization_id.name} />
     </div>

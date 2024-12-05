@@ -86,15 +86,15 @@ const AdminContextProvider = ({ children }) => {
   const getAllAppointments = async () => {
     try {
       const { data } = await api.get("/appointment/find-all");
-
+      console.log(data);
       if (data.success) {
         setAppointments(data.appointments);
       } else {
-        toast.error(data.message);
+        console.log(data.message);
       }
     } catch (error) {
       console.error("Error fetching appointments:", error);
-      toast.error(error.response?.data?.message || error.message);
+      // toast.error(error.response?.data?.message || error.message);
     }
   };
 

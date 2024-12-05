@@ -96,7 +96,6 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-
   useEffect(() => {
     // Vô hiệu hóa cuộn khi menu mở
     if (showMenu) {

@@ -4,16 +4,16 @@ const UserSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: [true, "Please enter user name"],
+      required: true,
     },
     email: {
       type: String,
-      required: [true, "Please enter user email"],
+      required: true,
       unique: true,
     },
     password: {
       type: String,
-      required: [true, "Please enter user password"],
+      required: true,
     },
     image: {
       type: String,
@@ -21,7 +21,15 @@ const UserSchema = new mongoose.Schema(
     },
     phone: {
       type: String,
-      required: [true, "Please enter user password"],
+      required: false,
+    },
+    resetPasswordToken: {
+      type: String,
+      required: false,
+    },
+    resetPasswordExpires: {
+      type: Date,
+      required: false,
     },
   },
   {

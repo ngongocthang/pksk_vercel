@@ -53,8 +53,8 @@ const AddDoctor = () => {
     }
 
     // Kiểm tra giá
-    const numericPrice = price.replace(/\./g, "");
-    const priceValue = Number(numericPrice);
+    const numericPrice = price.replace(/\./g, ""); 
+    const priceValue = Number(numericPrice); 
 
     if (isNaN(priceValue) || priceValue < 0) {
       return toast.error(
@@ -217,8 +217,8 @@ const AddDoctor = () => {
           </div>
         </div>
 
-        <div className="flex-1 flex flex-col gap-1">
-          <p className="mt-4 mb-2">Giới thiệu</p>
+        <div className="flex-1 flex flex-col gap-1 text-gray-500">
+          <p className="mt-4 mb-2 font-bold">Giới thiệu</p>
           <textarea
             onChange={(e) => setDescription(e.target.value)}
             value={description}
@@ -244,7 +244,6 @@ const AddDoctor = () => {
             )}
           </button>
         </div>
-
       </div>
     </form>
   );

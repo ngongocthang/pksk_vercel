@@ -7,7 +7,10 @@ const {
   filter,
   getHistoryAppointment,
   getdataMoneyDashboardAdmin,
-  getAllScheduleDoctor
+  getAllScheduleDoctor,
+  googleLogin,
+  forgotPassword,
+  resetPassword,
 } = require("../controllers/HomeController/index");
 const {
   patientCreateAppointment, 
@@ -24,7 +27,6 @@ const {
   getScheduleByDoctor
 } = require("../controllers/ScheduleController/index");
 const { getCurrentUserNotifications } = require("../controllers/NotificationController/index");
-// const {payment} = require("../helpers/momo-config");
 const {payment, callback, checkPaymentStatus} = require("../helpers/momo-config");
 
 
@@ -50,6 +52,8 @@ router.post("/callback", callback);
 router.get("/check-payment-status/:id", checkPaymentStatus); 
 router.get("/get-money-dashboard-admin", getdataMoneyDashboardAdmin); 
 router.get("/get-all-schedule-doctor", getAllScheduleDoctor); 
-
+router.post('/google-login', googleLogin);
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password/:token", resetPassword);
 
 module.exports = router;

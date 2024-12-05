@@ -185,7 +185,9 @@ const MyAppointments = () => {
     const appointment = appointments.find((appt) => appt._id === appointmentId);
 
     if (appointment.status !== "canceled") {
-      toast.error("Bạn chỉ có thể xóa cuộc hẹn đã được hủy.");
+      if (!toast.isActive(toastId.current)) {
+        toastId.current = toast.error("Bạn chỉ có thể xóa cuộc hẹn đã được hủy.");
+      }
       return;
     }
 

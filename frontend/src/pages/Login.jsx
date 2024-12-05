@@ -5,12 +5,16 @@ import EyeIcon from "../assets/eye.svg";
 import EyeOffIcon from "../assets/eye_off.svg";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { GoogleLogin } from "@react-oauth/google";
+import axios from "axios";
+import { useEffect } from "react";
 
 const Login = () => {
+  const VITE_META_CLIENT_ID = import.meta.env.VITE_META_CLIENT_ID;
   const navigate = useNavigate();
   const { setUser } = useContext(AppContext);
 
-  const [state, setState] = useState("Login"); // Set initial state to "Login"
+  const [state, setState] = useState("Login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -21,18 +25,16 @@ const Login = () => {
   const onSubmitHandler = async (event) => {
     event.preventDefault();
     setLoading(true);
-  
     const url =
       state === "Sign Up"
         ? "http://localhost:5000/register"
         : "http://localhost:5000/login";
-  
     const requestBody = {
       email,
       password,
       ...(state === "Sign Up" && { name, phone }),
     };
-  
+
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -43,7 +45,6 @@ const Login = () => {
       });
   
       const data = await response.json();
-  
       if (response.ok) {
         if (state === "Sign Up") {
           setState("Login");
@@ -77,17 +78,77 @@ const Login = () => {
       setLoading(false);
     }
   };
-  
+
+  const handleSuccessGoogleLogin = async (credentialResponse) => {
+    const { credential } = credentialResponse;
+
+    try {
+      const response = await axios.post("http://localhost:5000/google-login", {
+        credential,
+      });
+
+      const data = response.data;
+      if (data.user && data.user.token) {
+        setUser(data.user);
+        localStorage.setItem("token", data.user.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        navigate("/");
+      }
+    } catch (error) {
+      toast.error(`Đã xảy ra lỗi! Vui lòng thử lại sau.`);
+      console.log("Login Failed:", error);
+    }
+  };
+
+  const handleErrorGoogleLogin = (error) => {
+    toast.error(`Đã xảy ra lỗi! Vui lòng thử lại sau.`);
+    console.log("Login Failed:", error);
+  };
+
+  //forgot password
+  const handleForgotPassword = async () => {
+    const email = prompt("Vui lòng nhập email của bạn:");
+
+    if (!email) return;
+
+    try {
+        const response = await axios.post("http://localhost:5000/forgot-password", {
+            email,
+        }, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        const data = response.data;
+
+        // Kiểm tra mã trạng thái HTTP
+        if (response.status === 200) {
+            toast.success("Email khôi phục mật khẩu đã được gửi!");
+        } else {
+            toast.error(data.message);
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        toast.error("Đã xảy ra lỗi! Vui lòng thử lại sau.");
+    }
+};
+
+
   return (
     <>
-      <form className="min-h-[80vh] flex items-center" onSubmit={onSubmitHandler}>
+      <form
+        className="min-h-[80vh] flex items-center"
+        onSubmit={onSubmitHandler}
+      >
         <div className="flex flex-col gap-3 m-auto items-start p-8 min-w-[340px] sm:min-w-96 border rounded-xl text-zinc-600 text-sm shadow-lg">
           <div className="flex flex-col items-center w-full">
             <p className="text-2xl font-semibold text-center">
               {state === "Sign Up" ? "Tạo tài khoản" : "Đăng nhập"}
             </p>
             <p className="text-center">
-              Vui lòng {state === "Sign Up" ? "đăng ký" : "đăng nhập"} để đặt lịch hẹn
+              Vui lòng {state === "Sign Up" ? "đăng ký" : "đăng nhập"} để đặt
+              lịch hẹn
             </p>
           </div>
 
@@ -152,27 +213,52 @@ const Login = () => {
           </div>
 
           <button
-            className={`bg-[#00759c] text-white w-full py-2 rounded-md text-base ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+            className={`bg-[#00759c] text-white w-full py-2 rounded-md text-base ${
+              loading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
             disabled={loading}
           >
-            {loading ? "Đang xử lý..." : state === "Sign Up" ? "Tạo tài khoản" : "Đăng nhập"}
+            {loading
+              ? "Đang xử lý..."
+              : state === "Sign Up"
+              ? "Tạo tài khoản"
+              : "Đăng nhập"}
           </button>
+
+          <GoogleLogin
+            onSuccess={handleSuccessGoogleLogin}
+            onError={handleErrorGoogleLogin}
+          />
 
           {state === "Sign Up" ? (
             <p>
               Đã có tài khoản?{" "}
-              <span onClick={() => setState("Login")} className="text-[#00759c] underline cursor-pointer">
+              <span
+                onClick={() => setState("Login")}
+                className="text-[#00759c] underline cursor-pointer"
+              >
                 Đăng nhập tại đây
               </span>
             </p>
           ) : (
             <p>
               Tạo một tài khoản mới?{" "}
-              <span onClick={() => setState("Sign Up")} className="text-[#00759c] underline cursor-pointer">
+              <span
+                onClick={() => setState("Sign Up")}
+                className="text-[#00759c] underline cursor-pointer"
+              >
                 bấm vào đây
               </span>
             </p>
           )}
+
+          <button
+            type="button"
+            onClick={handleForgotPassword}
+            className="text-[#00759c] underline cursor-pointer"
+          >
+            Quên mật khẩu?
+          </button>
         </div>
       </form>
       <ToastContainer />

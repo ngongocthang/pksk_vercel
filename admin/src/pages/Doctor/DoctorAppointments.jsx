@@ -134,22 +134,23 @@ const DoctorAppointments = () => {
       <div className='bg-white border rounded-xl text-sm max-h-[80vh] min-h-[50vh] overflow-y-scroll'>
 
         {/* Header Row - Only for larger screens */}
-        <div className='grid-cols-[0.5fr_1.5fr_2fr_0.5fr_2fr_1fr] bg-gray-200 py-3 px-6 border-b sm:grid hidden'>
-          <p className='font-bold text-[16px] text-center'>#</p>
-          <p className='font-bold text-[16px] text-center'>Bệnh nhân</p>
-          <p className='font-bold text-[16px] text-center'>Ngày khám</p>
+        <div className='hidden sm:grid grid-cols-[0.5fr_1fr_1fr_0.5fr_0.7fr_auto] gap-4 py-4 px-6 bg-gray-200 border-b text-center'>
+          <p className='font-bold text-[16px]'>#</p>
+          <p className='font-bold text-[16px]'>Bệnh nhân</p>
+          <p className='font-bold text-[16px]'>Ngày khám</p>
           <p className='font-bold text-[16px]'>Ca khám</p>
-          <p className='font-bold text-[16px] ml-auto mr-7'>Trạng thái</p>
+          <p className='font-bold text-[16px] justify-self-end'>Trạng thái</p>
         </div>
 
         {currentAppointments.length > 0 ? (
           currentAppointments.reverse().map((item, index) => (
             <div
-              className='flex flex-col sm:grid sm:grid-cols-[0.5fr_1.5fr_2fr_0.5fr_2fr_1fr] text-gray-500 py-3 px-6 border-b hover:bg-gray-50'
+              className='grid sm:grid-cols-[0.5fr_1fr_1fr_0.5fr_0.7fr_auto] items-center gap-3 py-4 px-6 border-b hover:bg-gray-50'
               key={item._id}
             >
+              {/* Hiển thị thông tin theo hàng trên mobile */}
               <div className="sm:block text-center font-bold">
-                <p className='font-bold'>{index + 1 + (currentPage - 1) * appointmentsPerPage}</p>
+                <p className='font-bold'>{index + 1}</p>
               </div>
 
               <div className="text-left sm:text-center">
@@ -176,6 +177,7 @@ const DoctorAppointments = () => {
                 </p>
               </div>
 
+              {/* Center status buttons on mobile, align right on larger screens */}
               <div className='flex gap-3 justify-start sm:justify-self-end'>
                 <span className="md:hidden text-sm font-semibold">Trạng thái: </span>
                 {item.status === "pending" && (

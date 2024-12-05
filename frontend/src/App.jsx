@@ -13,8 +13,9 @@ import MedicalHistory from './pages/MedicalHistory'
 import MyAppointments from './pages/MyAppointments'
 import MyProfile from './pages/MyProfile'
 import Notifications from './pages/Notifications'
-import ScrollToTopButton from './components/ScrollToTopButton'
 import Marquee from "react-fast-marquee";
+import ScrollToTopButton from './components/ScrollToTopButton.jsx'
+import ResetPassword from './pages/ResetPassword.jsx'
 
 const App = () => {
   return (
@@ -32,11 +33,12 @@ const App = () => {
           <Route path='/abouts' element={<About />} />
           <Route path='/contact' element={<Contact />} />
           <Route path='/notifications' element={<Notifications />} />
-          <Route path='/my-profile' element={<MyProfile />} />
           <Route path='/my-appointments' element={<MyAppointments />} />
           <Route path='/appointment/:docId' element={<Appointment />} />
           <Route path='/medical-history' element={<MedicalHistory />} />
           <Route path='/all-schedule' element={<AllSchedule />} />
+          <Route path='/my-profile' element={<MyProfile />} />
+          <Route path='/reset-password/:token' element={<ResetPassword />} />
         </Routes>
       </div>
       <Footer />

@@ -1,7 +1,7 @@
-import React, { useState, useContext, useEffect } from "react";
-import { DoctorContext } from "../../context/DoctorContext";
 import axios from "axios";
+import React, { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { DoctorContext } from "../../context/DoctorContext";
 
 const DoctorProfile = () => {
   const { dToken, profileData, getProfileData, backendUrl } = useContext(DoctorContext);
@@ -179,10 +179,10 @@ const DoctorProfile = () => {
 
   return (
     profileData && (
-      <div className="w-full max-w-screen-lg mx-auto px-4 py-8">
-        <div className="bg-white rounded-lg shadow-lg md:pt-0 pt-4 flex flex-col md:flex-row md:items-center">
+      <div className="w-full max-w-4xl mx-auto p-5 bg-gray-50 shadow-md rounded-md mt-8">
+        <div className="flex flex-col sm:flex-row gap-5 mb-6">
           {/* Left section: Image, Name, and Specialization */}
-          <div className="flex flex-col items-center gap-4 sm:w-1/3">
+          <div className="flex flex-col items-center sm:items-start gap-4 sm:w-1/3">
             <div className="relative ml-6">
               <img
                 className="bg-primary/80 sm:max-w-64 h-64 rounded-lg object-cover shadow-lg"
@@ -223,6 +223,7 @@ const DoctorProfile = () => {
                     <span className="text-sm">Thay đổi ảnh</span>
                     <input
                       id="file-upload"
+                      name="image"
                       type="file"
                       onChange={handleImageChange}
                       className="hidden"
@@ -246,9 +247,35 @@ const DoctorProfile = () => {
                   {profileData.doctorProfile.name}
                 </h2>
               )}
-              <p className="text-gray-500 text-sm mt-2">
-                Khoa: {profileData.doctorProfile.specialization_id.name}
-              </p>
+              <div className="flex items-center justify-between mt-2 text-sm text-gray-500">
+                <div className="flex items-center justify-between mt-2 text-sm text-gray-500">
+                  <div className="flex items-center gap-4">
+                    <p>
+                      Khoa: {profileData.doctorProfile.specialization_id.name}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <input
+                        onChange={() => {
+                          if (isEdit) {
+                            setFormData((prev) => ({
+                              ...prev,
+                              available: !prev.available,
+                            }));
+                          }
+                        }}
+                        checked={formData.available}
+                        type="checkbox"
+                        name="available"
+                        id=""
+                      />
+                      <label htmlFor="available-checkbox" className="cursor-pointer">
+                        Available
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
             </div>
           </div>
 
@@ -257,7 +284,9 @@ const DoctorProfile = () => {
             <div className="mb-6">
               {isEdit ? (
                 <>
-                  <label className="block text-gray-700 font-bold mb-1">Email:</label>
+                  <label className="block text-gray-700 font-bold mb-1">
+                    Email:
+                  </label>
                   <input
                     type="email"
                     name="email"
@@ -268,8 +297,9 @@ const DoctorProfile = () => {
                   />
                 </>
               ) : (
-                <p className="text-gray-800 text-lg break-words">
-                  <span className="font-bold">Email:</span> {profileData.doctorProfile.email}
+                <p className="text-gray-800 text-lg">
+                  <span className="font-bold">Email:</span>{" "}
+                  {profileData.doctorProfile.email}
                 </p>
               )}
             </div>
@@ -277,7 +307,9 @@ const DoctorProfile = () => {
             <div className="mb-6">
               {isEdit ? (
                 <>
-                  <label className="block text-gray-700 font-bold mb-1">Phone:</label>
+                  <label className="block text-gray-700 font-bold mb-1">
+                    Số điện thoại:
+                  </label>
                   <input
                     type="tel"
                     name="phone"
@@ -289,7 +321,8 @@ const DoctorProfile = () => {
                 </>
               ) : (
                 <p className="text-gray-800 text-lg">
-                  <span className="font-bold">Số điện thoại:</span> {profileData.doctorProfile.phone}
+                  <span className="font-bold">Số điện thoại:</span>{" "}
+                  {profileData.doctorProfile.phone}
                 </p>
               )}
             </div>
@@ -297,37 +330,43 @@ const DoctorProfile = () => {
             <div className="mb-6">
               {isEdit ? (
                 <>
-                  <label className="block text-gray-700 font-bold mb-1">Giá:</label>
+                  <label className="block text-gray-700 font-bold mb-1">
+                    Giá:
+                  </label>
                   <input
                     type="text" // Sử dụng type="text" để cho phép dấu phân cách
                     name="price"
-                    value={formData.price ? formatPrice(formData.price) : ''}
-                    onChange={(e) => handleInputChange({
-                      target: {
-                        name: 'price',
-                        value: e.target.value.replace(/\./g, '') // Xóa dấu chấm trước khi lưu
-                      }
-                    })}
+                    value={formData.price ? formatPrice(formData.price) : ""}
+                    onChange={(e) =>
+                      handleInputChange({
+                        target: {
+                          name: "price",
+                          value: e.target.value.replace(/\./g, ""), // Xóa dấu chấm trước khi lưu
+                        },
+                      })
+                    }
                     className="w-full p-3 border-2 border-gray-300 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
                     placeholder="Giá"
                   />
                 </>
               ) : (
                 <p className="text-gray-800 text-lg">
-
-                  <span className="font-bold">Giá:</span> {formatPrice(profileData.doctorProfile.price)} VND
+                  <span className="font-bold">Giá:</span>{" "}
+                  {formatPrice(profileData.doctorProfile.price)} VND
                 </p>
               )}
             </div>
 
             <div className="mb-6">
-              <label className="block text-gray-700 font-bold mb-1">Giới thiệu:</label>
+              <label className="block text-gray-700 font-bold mb-1">
+                Giới thiệu:
+              </label>
               {isEdit ? (
                 <textarea
                   name="description"
                   value={formData.description}
                   onChange={handleInputChange}
-                  className="w-full p-3 border-2 border-gray-300 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
+                  className="w-full h-[90px] p-3 border-2 border-gray-300 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
                   placeholder="Description"
                 />
               ) : (
@@ -336,7 +375,7 @@ const DoctorProfile = () => {
                   value={profileData.doctorProfile.description}
                   onChange={handleInputChange}
                   readOnly={!isEdit}
-                  className="w-full p-3 border-2 border-gray-300 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
+                  className="w-full h-[90px] p-3 border-2 border-gray-300 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
                   placeholder="Description"
                 />
               )}
@@ -345,7 +384,9 @@ const DoctorProfile = () => {
             {isEdit && (
               <div className="mb-6">
                 {/* New Password Field */}
-                <label className="block text-gray-700 font-bold mb-1">Mật khẩu mới:</label>
+                <label className="block text-gray-700 font-bold mb-1">
+                  Mật khẩu mới:
+                </label>
                 <input
                   type="text"
                   value={newPassword}
@@ -357,7 +398,9 @@ const DoctorProfile = () => {
                 {/* Old Password Field */}
                 {newPassword && (
                   <>
-                    <label className="block text-gray-700 font-bold mb-1 mt-4">Mật khẩu cũ:</label>
+                    <label className="block text-gray-700 font-bold mb-1 mt-4">
+                      Mật khẩu cũ:
+                    </label>
                     <input
                       type="text"
                       value={oldPassword}
@@ -370,13 +413,13 @@ const DoctorProfile = () => {
               </div>
             )}
 
-            <div className="flex gap-1 pt-2">
+            {/* <div className="flex gap-1 pt-2">
               <input
                 onChange={() => {
                   if (isEdit) {
                     setFormData((prev) => ({
                       ...prev,
-                      available: !prev.available, // Cập nhật trạng thái available
+                      available: !prev.available, 
                     }));
                   }
                 }}
@@ -386,17 +429,20 @@ const DoctorProfile = () => {
                 id=""
               />
               <label htmlFor="">Available</label>
-            </div>
+            </div> */}
 
             <div className="flex justify-center space-x-2">
               {isEdit ? (
                 <>
                   <button
                     onClick={updateProfile}
-                    className={`px-4 py-2 rounded-md ${loading || isUpdateDisabled() ? "bg-gray-300 text-black disabled-button" : "bg-[#219c9e] text-white"}`}
+                    className={`px-4 py-2 rounded-md ${loading || isUpdateDisabled()
+                      ? "bg-gray-300 text-black disabled-button"
+                      : "bg-[#219c9e] text-white"
+                      }`}
                     disabled={loading || isUpdateDisabled()}
                   >
-                    {loading ? "Updating..." : "Cập nhật"}
+                    {loading ? "Cập nhật..." : "Cập nhật"}
                   </button>
                   <button
                     onClick={handleCancel}
