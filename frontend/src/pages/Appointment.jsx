@@ -32,6 +32,10 @@ const Appointment = () => {
     }
   };
 
+  useEffect(() => {
+    setSlotTime("");  // Reset lại slotTime khi ngày được chọn thay đổi
+  }, [selectedDate]);
+
   const fetchDoctorSchedule = async () => {
     try {
       const response = await axios.get(`${VITE_BACKEND_URI}/get-schedule-doctor/${docId}`);
@@ -119,6 +123,7 @@ const Appointment = () => {
       </div>,
       {
         position: "top-center",
+        autoClose: 5000,
         autoClose: false,
         closeOnClick: false,
         draggable: false,
@@ -276,15 +281,19 @@ const Appointment = () => {
                     key={dateStr}
                     className={`text-center w-[80px] h-[80px] flex flex-col justify-center items-center rounded-full border cursor-pointer transition-all duration-300
                     ${isSelected ? "bg-[#00759c] text-white border-[#00759c]" : "border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-100"}
-                    m-4 p-4`}
+                    m-5 p-5`} 
                     style={{ borderRadius: '50%' }}
-                    onClick={() => setSelectedDate(dateStr)}
+                    onClick={() => {
+                      setSelectedDate(dateStr);
+                      setSlotTime("");
+                    }}
                   >
                     <p className={`text-sm font-bold ${isSelected ? "text-white" : "text-gray-600"}`}>{dayOfWeek}</p>
                     <p className={`text-sm font-semibold ${isSelected ? "text-white" : "text-gray-500"}`}>
                       {`${date.getDate()}/${date.getMonth() + 1}`}
                     </p>
                   </div>
+
                 );
               })}
             </div>
@@ -293,7 +302,7 @@ const Appointment = () => {
 
         {/* Hiển thị các buổi sáng và chiều theo ngày đã chọn */}
         {selectedDate && !errorLoadingSchedule && (
-          <div className="flex items-center gap-3 w-full overflow-x-auto mt-4">
+          <div className="flex items-center gap-3 w-full overflow-x-auto mt-4 ml-5">
             {doctorSchedule[selectedDate]
               .sort((a, b) => (a.work_shift === "morning" ? -1 : 1)) // Sắp xếp buổi sáng trước
               .map((schedule) => (
@@ -301,8 +310,8 @@ const Appointment = () => {
                   key={schedule._id}
                   onClick={() => setSlotTime(schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều")}
                   className={`text-sm font-semibold px-6 py-3 rounded-full cursor-pointer transition-all duration-300 ${slotTime === (schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều")
-                      ? "bg-[#00759c] text-white"
-                      : "text-gray-500 border border-gray-300 hover:border-[#00759c] hover:text-[#00759c]"
+                    ? "bg-[#00759c] text-white"
+                    : "text-gray-500 border border-gray-300 hover:border-[#00759c] hover:text-[#00759c]"
                     }`}
                 >
                   {schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều"}
@@ -314,7 +323,7 @@ const Appointment = () => {
         {selectedDate && slotTime && (
           <button
             onClick={handleBooking}
-            className="bg-[#00759c] text-white text-sm font-bold px-14 py-3 rounded-full my-6"
+            className="bg-[#00759c] text-white text-sm font-bold px-14 py-3 rounded-full my-6 ml-5"
           >
             Đặt lịch hẹn
           </button>

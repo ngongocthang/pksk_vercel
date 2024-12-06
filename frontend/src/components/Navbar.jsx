@@ -72,7 +72,7 @@ const Navbar = () => {
 
   const handleNotificationClick = () => {
     setNotificationsCount(0);
-    navigate("/Notifications");
+    navigate("/notifications");
   };
 
   // Scroll event handler for hiding/showing navbar

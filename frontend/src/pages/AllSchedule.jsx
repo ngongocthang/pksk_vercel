@@ -15,7 +15,7 @@ const AllSchedule = () => {
   const [events, setEvents] = useState([]);
   const { user } = useContext(AppContext);
   const [isToastVisible, setIsToastVisible] = useState(false);
-  const [loading, setLoading] = useState(true); // Thêm trạng thái loading
+  const [loading, setLoading] = useState(true); 
   const patient_id = user?.id || null;
   const token = user?.token || localStorage.getItem("token");
   
