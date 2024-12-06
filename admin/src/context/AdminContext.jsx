@@ -86,9 +86,7 @@ const AdminContextProvider = ({ children }) => {
   const getAllAppointments = async () => {
     try {
       const { data } = await api.get("/appointment/find-all");
-
       console.log(data);
-
       if (data.success) {
         setAppointments(data.appointments);
       } else {

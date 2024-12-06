@@ -1,4 +1,4 @@
-import viLocale from '@fullcalendar/core/locales/vi';
+import viLocale from "@fullcalendar/core/locales/vi";
 import FullCalendar from "@fullcalendar/react";
 import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
 import axios from "axios";
@@ -15,7 +15,7 @@ const AllSchedule = () => {
   const [events, setEvents] = useState([]);
   const { user } = useContext(AppContext);
   const [isToastVisible, setIsToastVisible] = useState(false);
-  const [loading, setLoading] = useState(true); // Thêm trạng thái loading
+  const [loading, setLoading] = useState(true); 
   const patient_id = user?.id || null;
   const token = user?.token || localStorage.getItem("token");
   
@@ -167,17 +167,18 @@ const AllSchedule = () => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-500px">
+    <div className="bg-gray-100 min-h-max rounded-lg">
       <div className="container mx-auto p-4">
-        <header className="text-center py-6">
-          <h1 className="text-4xl font-bold text-[#0091a1]">
+        <header className="text-center py-4 text-[#0091a1]">
+          <h1 className="text-2xl md:text-3xl font-bold text-center mb-6">
             Lịch Làm Việc Của Bác Sĩ
           </h1>
         </header>
-        <div className="bg-white shadow-lg rounded-lg p-6 overflow-auto" style={{ maxHeight: "600px" }}>
+        <div className="calendar-container shadow-md rounded-lg overflow-hidden border border-gray-300 bg-white">
           {loading ? ( // Hiển thị thông báo loading
             <div className="text-center py-4">
-              <p className="text-gray-500">Đang tải lịch làm việc...</p>
+              <i className="fa-solid fa-spinner animate-spin text-4xl"></i>
+              <p className="text-gray-500 font-medium">Đang tải lịch làm việc...</p>
             </div>
           ) : (
             <FullCalendar
