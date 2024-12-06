@@ -48,8 +48,7 @@ const AllSchedule = () => {
               endDate.setHours(17, 30, 0, 0);
             }
 
-            const converWork_shift =
-              schedule.work_shift === "morning" ? "Sáng" : "Chiều";
+            const converWork_shift = schedule.work_shift === "morning" ? "Sáng" : "Chiều";
 
             return {
               id: schedule._id,
@@ -209,8 +208,8 @@ const AllSchedule = () => {
               eventContent={(args) => {
                 const workShift = args.event.title;
                 return (
-                  <div className="flex items-center justify-center">
-                    <span>{workShift}</span>
+                  <div className="flex justify-center items-center py-5">
+                    <span className="font-semibold">{workShift}</span>
                   </div>
                 );
               }}

@@ -14,7 +14,7 @@ import MyAppointments from './pages/MyAppointments'
 import MyProfile from './pages/MyProfile'
 import Notifications from './pages/Notifications'
 import Marquee from "react-fast-marquee";
-import ScrollToTopButton from './components/ScrollToTopButton.jsx'
+import ScrollToTopButton from './components/ScrollToTopButton'
 import ResetPassword from './pages/ResetPassword.jsx'
 
 const App = () => {
