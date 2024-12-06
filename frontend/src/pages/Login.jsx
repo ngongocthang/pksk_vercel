@@ -7,6 +7,8 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AppContext } from "../context/AppContext";
 
+const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
+
 const Login = () => {
   const VITE_META_CLIENT_ID = import.meta.env.VITE_META_CLIENT_ID;
   const navigate = useNavigate();
@@ -26,8 +28,8 @@ const Login = () => {
 
     const url =
       state === "Sign Up"
-        ? "http://localhost:5000/register"
-        : "http://localhost:5000/login";
+        ? `${VITE_BACKEND_URI}/register`
+        : `${VITE_BACKEND_URI}/login`;
 
     const requestBody = {
       email,
@@ -83,7 +85,7 @@ const Login = () => {
     const { credential } = credentialResponse;
 
     try {
-      const response = await axios.post("http://localhost:5000/google-login", {
+      const response = await axios.post(`${VITE_BACKEND_URI}/google-login`, {
         credential,
       });
 

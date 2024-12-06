@@ -6,6 +6,8 @@ import React, { memo, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 
+const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
+
 // Component hiển thị từng bản ghi lịch sử khám bệnh
 const MedicalRecordCard = memo(({ record }) => {
   const getStatusColor = (status) => {
@@ -122,7 +124,7 @@ const MedicalHistory = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/medical-history/${user.id}`, {
+      const response = await fetch(`${VITE_BACKEND_URI}/medical-history/${user.id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

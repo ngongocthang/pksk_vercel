@@ -2,6 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 
+const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
+
 const TopDoctors = () => {
   const navigate = useNavigate();
   const { doctors, setDoctors } = useContext(AppContext);
@@ -23,7 +25,7 @@ const TopDoctors = () => {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const response = await fetch("http://localhost:5000/doctor/find-top");
+        const response = await fetch(`${VITE_BACKEND_URI}/doctor/find-top`);
         if (!response.ok) {
           throw new Error("Failed to fetch doctors");
         }

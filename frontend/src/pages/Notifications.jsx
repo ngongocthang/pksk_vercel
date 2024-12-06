@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets";
 import { AppContext } from "../context/AppContext";
 
+const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
+
 // Chức năng tính thời gian trước đây
 const timeAgo = (date) => {
   const now = new Date();
@@ -41,7 +43,7 @@ const Notifications = () => {
       const fetchNotifications = async () => {
         try {
           setLoading(true);
-          const response = await fetch("http://localhost:5000/notification", {
+          const response = await fetch(`${VITE_BACKEND_URI}/notification`, {
             headers: { Authorization: `Bearer ${token}` },
           });
 
@@ -66,7 +68,7 @@ const Notifications = () => {
   // Đánh dấu thông báo là đã đọc
   const handleNotificationClick = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5000/notification/read/${id}`, {
+      const response = await fetch(`${VITE_BACKEND_URI}/notification/read/${id}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -102,7 +104,7 @@ const Notifications = () => {
       localStorage.setItem("unreadCount", unreadCount); // Lưu lại vào localStorage
     }
   
-    await fetch(`http://localhost:5000/notification/hide/${notificationId}`, {
+    await fetch(`${VITE_BACKEND_URI}/notification/hide/${notificationId}`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -113,7 +115,7 @@ const Notifications = () => {
   // Xóa thông báo
   const handleDelete = async (notificationId) => {
     try {
-      const response = await fetch(`http://localhost:5000/notification/delete/${notificationId}`, {
+      const response = await fetch(`${VITE_BACKEND_URI}/notification/delete/${notificationId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });

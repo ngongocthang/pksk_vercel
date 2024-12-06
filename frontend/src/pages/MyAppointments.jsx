@@ -5,6 +5,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AppContext } from "../context/AppContext";
 
+const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
+
 const MyAppointments = () => {
   const { user, setUser } = useContext(AppContext);
   const [appointments, setAppointments] = useState([]);
@@ -22,7 +24,7 @@ const MyAppointments = () => {
   const checkPaymentStatus = async (appointmentId) => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/check-payment-status/${appointmentId}`
+        `${VITE_BACKEND_URI}/check-payment-status/${appointmentId}`
       );
 
       if (response.data.success) {
@@ -45,7 +47,7 @@ const MyAppointments = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/user-appointment", {
+      const response = await fetch(`${VITE_BACKEND_URI}/user-appointment`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -104,7 +106,7 @@ const MyAppointments = () => {
       try {
         setIsLoadingCancel(appointmentId);
         const response = await axios.put(
-          `http://localhost:5000/cancel-appointment/${appointmentId}`,
+          `${VITE_BACKEND_URI}/cancel-appointment/${appointmentId}`,
           {},
           {
             headers: {
@@ -170,7 +172,7 @@ const MyAppointments = () => {
   const handlePayment = async (appointmentId, price) => {
     try {
       const response = await axios.post(
-        `http://localhost:5000/payment/${appointmentId}`,
+        `${VITE_BACKEND_URI}/payment/${appointmentId}`,
         { price },
         {
           headers: {

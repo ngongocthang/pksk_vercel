@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { convertToSlug } from "../utils/stringUtils";
 
+const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
+
 const Doctors = () => {
   const { speciality } = useParams();
   const [filterDoc, setFilterDoc] = useState([]);
@@ -19,7 +21,7 @@ const Doctors = () => {
   const fetchDoctors = async () => {
     try {
       setIsLoading(true); // Đặt trạng thái tải dữ liệu là true
-      const response = await axios.get("http://localhost:5000/doctor/find-all");
+      const response = await axios.get(`${VITE_BACKEND_URI}/doctor/find-all`);
       setDoctors(response.data.success ? response.data.doctors : []);
     } catch (error) {
       console.error("Error fetching doctors:", error);
@@ -32,7 +34,7 @@ const Doctors = () => {
     try {
       setIsLoading(true); // Đặt trạng thái tải dữ liệu là true
       const response = await axios.get(
-        "http://localhost:5000/specialization/find-all"
+        `${VITE_BACKEND_URI}/specialization/find-all`
       );
       setSpecializations(
         response.data.success ? response.data.specializations : []

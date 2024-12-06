@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets";
 import { AppContext } from "../context/AppContext";
 
+const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ const Navbar = () => {
 
   const fetchUnreadNotifications = async () => {
     try {
-      const response = await fetch("http://localhost:5000/notification", {
+      const response = await fetch(`${VITE_BACKEND_URI}/notification`, {
         headers: { Authorization: `Bearer ${user.token}` },
       });
       const data = await response.json();

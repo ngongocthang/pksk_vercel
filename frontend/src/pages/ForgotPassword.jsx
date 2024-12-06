@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
+
 const ForgotPassword = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
@@ -25,7 +27,7 @@ const ForgotPassword = () => {
         setLoading(true); // Bắt đầu loading khi gửi yêu cầu
 
         try {
-            const response = await axios.post("http://localhost:5000/forgot-password", { email });
+            const response = await axios.post(`${VITE_BACKEND_URI}/forgot-password`, { email });
 
             if (response.status === 200) {
                 toast.success("Email khôi phục mật khẩu đã được gửi!");

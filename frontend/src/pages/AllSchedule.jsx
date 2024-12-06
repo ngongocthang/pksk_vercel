@@ -8,6 +8,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { AppContext } from "../context/AppContext";
 import "../index.css";
 
+const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
+
 const AllSchedule = () => {
   const [doctors, setDoctors] = useState([]);
   const [events, setEvents] = useState([]);
@@ -21,7 +23,7 @@ const AllSchedule = () => {
     const fetchSchedules = async () => {
       setLoading(true); // Bắt đầu loading
       try {
-        const response = await fetch("http://localhost:5000/get-all-schedule-doctor");
+        const response = await fetch(`${VITE_BACKEND_URI}/get-all-schedule-doctor`);
         if (!response.ok) {
           throw new Error("Không thể tải dữ liệu");
         }
@@ -149,7 +151,7 @@ const AllSchedule = () => {
     console.log("appointmentData", appointmentData);
     try {
       const response = await axios.post(
-        `http://localhost:5000/create-appointment/${patient_id}`,
+        `${VITE_BACKEND_URI}/create-appointment/${patient_id}`,
         appointmentData,
         {
           headers: {
