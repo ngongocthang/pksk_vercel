@@ -88,7 +88,7 @@ const AllAppointments = () => {
                     Đã hủy
                   </button>
                 ) : item.status === "confirmed" ? (
-                  <button className="bg-blue-500 text-white text-xs font-semibold py-1 px-2 rounded-full shadow-lg transition-all duration-300 w-full w-[140px] h-[28px] text-center">
+                  <button className="bg-green-500 text-white text-xs font-semibold py-1 px-2 rounded-full shadow-lg transition-all duration-300 w-full w-[140px] h-[28px] text-center">
                     Đã xác nhận
                   </button>
                 ) : item.status === "pending" ? (
