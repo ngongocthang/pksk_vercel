@@ -61,6 +61,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
     setUser(null);
     navigate("/account");
   };
@@ -72,7 +73,7 @@ const Navbar = () => {
 
   const handleNotificationClick = () => {
     setNotificationsCount(0);
-    navigate("/Notifications");
+    navigate("/notifications");
   };
 
   // Scroll event handler for hiding/showing navbar
