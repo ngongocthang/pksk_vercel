@@ -13,6 +13,16 @@ const PatientList = () => {
     const [patientsPerPage] = useState(10);
 
     useEffect(() => {
+        toast.dismiss();
+    }, [currentPage]);
+
+    useEffect(() => {
+        return () => {
+            toast.dismiss(); // Đóng thông báo khi component bị hủy (trang đóng)
+        };
+    }, []);
+
+    useEffect(() => {
         getAllPatients();
     }, [getAllPatients]);
 
@@ -78,73 +88,55 @@ const PatientList = () => {
     };
 
     return (
-        <div className="container mx-auto p-6">
-            <div className="flex justify-between items-center mb-3">
-                <p className="text-3xl font-bold text-[#0091a1]">Tất Cả Bệnh Nhân</p>
+        <div className="container mx-auto p-4">
+            <div className="flex justify-between items-center mb-4">
+                <p className="text-2xl md:text-3xl font-bold text-[#0091a1]">Tất Cả Bệnh Nhân</p>
                 <button
                     onClick={() => navigate("/add-patient")}
-                    className="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-[#4CAF50] to-[#219B9D] text-white rounded-full shadow-md hover:from-[#45A049] hover:to-[#009688] transform hover:scale-110 transition-all duration-300"
+                    className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 bg-gradient-to-r from-[#4CAF50] to-[#219B9D] text-white rounded-full shadow-md hover:from-[#45A049] hover:to-[#009688] transform hover:scale-110 transition-all duration-300"
                 >
-                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" />
                     </svg>
                 </button>
             </div>
-            <div className="mt-4 overflow-x-auto bg-white p-4 rounded-md shadow-md">
-                <table className="min-w-full table-auto bg-white border-collapse">
-                    <thead className="bg-gray-100">
+
+            {/* Responsive Table */}
+            <div className="mt-4 overflow-x-auto bg-white rounded-md shadow-md">
+                <table className="min-w-full table-auto bg-white border-collapse hidden md:table">
+                    <thead className="bg-gray-200">
                         <tr>
-                            <th className="py-2 px-4 border-b text-left text-sm font-bold text-[16px]">
-                                #
-                            </th>
-                            <th className="py-2 px-4 border-b text-center text-sm font-bold text-[16px]">
-                                Tên Bệnh Nhân
-                            </th>
-                            <th className="py-2 px-4 border-b text-center text-sm font-bold text-[16px]">
-                                Email
-                            </th>
-                            <th className="py-2 px-4 border-b text-center text-sm font-bold text-[16px]">
-                                Số Điện Thoại
-                            </th>
-                            <th className="py-2 px-4 border-b text-left text-sm font-bold text-[16px]">
-                                Hành Động
-                            </th>
+                            <th className="py-2 px-4 border-b text-left text-sm font-bold">#</th>
+                            <th className="py-2 px-4 border-b text-center text-sm font-bold">Tên Bệnh Nhân</th>
+                            <th className="py-2 px-4 border-b text-center text-sm font-bold">Email</th>
+                            <th className="py-2 px-4 border-b text-center text-sm font-bold">Số Điện Thoại</th>
+                            <th className="py-2 px-4 border-b text-left text-sm font-bold">Hành Động</th>
                         </tr>
                     </thead>
                     <tbody>
                         {currentPatients.map((patient, index) => (
                             <tr key={patient._id} className="hover:bg-gray-50">
-                                <td className="py-2 px-4 border-b text-sm font-bold">
-                                    {index + 1}
-                                </td>
-                                <td className="py-2 px-4 border-b text-center">
-                                    {patient.user_id.name}
-                                </td>
-                                <td className="py-2 px-4 border-b text-center">
-                                    {patient.user_id.email}
-                                </td>
-                                <td className="py-2 px-4 border-b text-center">
-                                    {patient.user_id.phone ? patient.user_id.phone : "Chưa có"}
-                                </td>
+                                <td className="py-2 px-4 border-b text-sm font-semibold">{index + 1}</td>
+                                <td className="py-2 px-4 border-b text-center">{patient.user_id.name}</td>
+                                <td className="py-2 px-4 border-b text-center">{patient.user_id.email}</td>
+                                <td className="py-2 px-4 border-b text-center">{patient.user_id.phone}</td>
                                 <td className="py-2 px-4 border-b text-sm flex gap-2">
                                     <svg
                                         onClick={() => navigate(`/edit-patient/${patient._id}`)}
-                                        className="w-8 h-8 cursor-pointer text-blue-500 bg-blue-100 rounded-full p-2 transition-all shadow-lg"
+                                        className="w-6 h-6 md:w-8 md:h-8 cursor-pointer text-blue-500 bg-blue-100 rounded-full p-1 md:p-2 transition-all shadow-lg"
                                         xmlns="http://www.w3.org/2000/svg"
                                         viewBox="0 0 24 24"
                                         fill="currentColor"
                                     >
                                         <path
-                                            fillRule="evenodd"
-                                            clipRule="evenodd"
                                             d="M3.99 16.854l-1.314 3.504a.75.75 0 0 0 .966.965l3.503-1.314a3 3 0 0 0 1.068-.687L18.36 9.175s-.354-1.061-1.414-2.122c-1.06-1.06-2.122-1.414-2.122-1.414L4.677 15.786a3 3 0 0 0-.687 1.068zm12.249-12.63l1.383-1.383c.248-.248.579-.406.925-.348.487.08 1.232.322 1.934 1.025.703.703.945 1.447 1.025 1.934.058.346-.1.677-.348.925L19.774 7.76s-.353-1.06-1.414-2.12c-1.06-1.062-2.121-1.415-2.121-1.415z"
                                             fill="#000000"
                                         ></path>
                                     </svg>
 
                                     <svg
-                                        onClick={() => deletePatient(patient._id, patient.user_id.name)} // Gọi hàm xóa bệnh nhân
-                                        className="w-8 h-8 cursor-pointer text-red-500 bg-red-100 rounded-full p-2 transition-all shadow-lg"
+                                        onClick={() => deletePatient(patient._id, patient.user_id.name)}
+                                        className="w-6 h-6 md:w-8 md:h-8 cursor-pointer text-red-500 bg-red-100 rounded-full p-1 md:p-2 transition-all shadow-lg"
                                         xmlns="http://www.w3.org/2000/svg"
                                         viewBox="0 0 24 24"
                                         fill="currentColor"
@@ -159,17 +151,68 @@ const PatientList = () => {
                         ))}
                     </tbody>
                 </table>
+
+                {/* Mobile View: List Style */}
+                <div className="block md:hidden">
+                    {currentPatients.map((patient, index) => (
+                        <div
+                            key={patient._id}
+                            className="bg-gray-50 p-4 mb-2 rounded-md shadow-md flex flex-col gap-2"
+                        >
+                            <p className="text-sm font-bold text-center text-gray-700">{index + 1}</p>
+
+                            <div className="text-left sm:text-center">
+                                <p className='text-base md:text-center font-medium md:font-normal'>
+                                    <span className="md:hidden font-semibold">Tên bệnh nhân: </span>
+                                    {patient.user_id.name}
+                                </p>
+                            </div>
+
+                            <div className="text-left sm:text-center">
+                                <p className='text-sm md:text-center font-medium md:font-normal'>
+                                    <span className="md:hidden font-semibold">Email: </span>
+                                    {patient.user_id.email}
+                                </p>
+                            </div>
+
+                            <div className="text-left sm:text-center">
+                                <p className='text-sm md:text-center font-medium md:font-normal'>
+                                    <span className="md:hidden font-semibold">Số điện thoại: </span>
+                                    {patient.user_id.phone}
+                                </p>
+                            </div>
+
+                            <div className="flex justify-center gap-2 mt-2">
+                                <button
+                                    onClick={() => navigate(`/edit-patient/${patient._id}`)}
+                                    className="bg-blue-500 text-white py-1 px-3 rounded text-sm"
+                                >
+                                    Sửa
+                                    <i class="fa-solid fa-user-pen ml-2"></i>
+                                </button>
+                                <button
+                                    onClick={() => deletePatient(patient._id, patient.user_id.name)}
+                                    className="bg-red-500 text-white py-1 px-3 rounded text-sm"
+                                >
+                                    Xóa
+                                    <i class="fa-solid fa-trash ml-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </div>
 
+            {/* Pagination */}
             {patient.length > patientsPerPage && (
-                <div className="flex justify-center gap-4 mt-4">
+                <div className="flex justify-center gap-2 mt-4">
                     {Array.from({ length: totalPages }, (_, index) => (
                         <button
                             key={index}
                             onClick={() => paginate(index + 1)}
-                            className={`px-4 py-2 rounded-md ${currentPage === index + 1
+                            className={`px-3 py-1 rounded-md ${currentPage === index + 1
                                 ? "bg-blue-600 text-white"
-                                : "bg-gray-200"
+                                : "bg-gray-200 text-gray-700"
                                 }`}
                         >
                             {index + 1}
@@ -179,6 +222,7 @@ const PatientList = () => {
             )}
         </div>
     );
+
 };
 
 export default PatientList;

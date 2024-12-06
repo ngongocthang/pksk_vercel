@@ -66,11 +66,15 @@ const DoctorWorkSchedule = () => {
       <button
         key="prev"
         onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-        className={`py-1 px-3 border rounded w-[70px] ${currentPage === 1 ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "text-gray-600"
+        className={`py-1 px-3 border rounded w-[70px] flex items-center justify-center ${currentPage === 1
+            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+            : "text-gray-600"
           }`}
         disabled={currentPage === 1}
       >
-        Trước
+        {/* Hiển thị chữ "Trước" trên desktop và icon trên mobile */}
+        <span className="hidden md:block">Trước</span>
+        <i className="fa-solid fa-angle-left block md:hidden"></i>
       </button>
     );
 
@@ -96,7 +100,11 @@ const DoctorWorkSchedule = () => {
     }
 
     // Hiển thị các trang xung quanh trang hiện tại
-    for (let i = Math.max(2, currentPage - delta); i <= Math.min(totalPages - 1, currentPage + delta); i++) {
+    for (
+      let i = Math.max(2, currentPage - delta);
+      i <= Math.min(totalPages - 1, currentPage + delta);
+      i++
+    ) {
       paginationItems.push(
         <button
           key={i}
@@ -137,11 +145,15 @@ const DoctorWorkSchedule = () => {
       <button
         key="next"
         onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
-        className={`py-1 px-3 border rounded w-[70px] ${currentPage === totalPages ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "text-gray-600"
+        className={`py-1 px-3 border rounded w-[70px] flex items-center justify-center ${currentPage === totalPages
+            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+            : "text-gray-600"
           }`}
         disabled={currentPage === totalPages}
       >
-        Tiếp
+        {/* Hiển thị chữ "Tiếp" trên desktop và icon trên mobile */}
+        <span className="hidden md:block">Tiếp</span>
+        <i className="fa-solid fa-angle-right block md:hidden"></i>
       </button>
     );
 
@@ -153,9 +165,9 @@ const DoctorWorkSchedule = () => {
   };
 
   return (
-    <div className="w-full max-w-6xl m-5">
+    <div className="w-full max-w-6xl mx-auto p-4 overflow-x-hidden">
       <div className="flex justify-between items-center mb-4">
-        <p className="text-2xl md:text-3xl font-bold text-[#0091a1]">Tất Cả Lịch Làm Việc</p>
+        <p className="text-xl md:text-3xl font-bold text-[#0091a1]">Tất Cả Lịch Làm Việc</p>
         <button
           onClick={() => navigate("/doctor-create-schedule")}
           className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 bg-gradient-to-r from-[#4CAF50] to-[#219B9D] text-white rounded-full shadow-md hover:from-[#45A049] hover:to-[#009688] transform hover:scale-110 transition-all duration-300"
@@ -197,6 +209,7 @@ const DoctorWorkSchedule = () => {
                 </td>
               </div>
               <div className="flex sm:items-center sm:justify-center gap-2">
+                <span className="sm:hidden font-semibold mr-2">Ca làm việc: </span>
                 <p className={`py-0 md:py-1 rounded-full text-white text-sm text-center ${schedule.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg max-w-[100px] w-full`}>
                   {schedule.work_shift === "afternoon" ? "Chiều" : "Sáng"}
                 </p>
@@ -222,8 +235,8 @@ const DoctorWorkSchedule = () => {
         )}
       </div>
 
-      {/* Phân trang */}
-      {totalPages > 1 && renderPagination()}
+    {/* Phân trang */}
+    {totalPages > 1 && renderPagination()}
 
       {/* Modal xác nhận xóa */}
       {showModal && selectedSchedule && (
@@ -257,3 +270,4 @@ const DoctorWorkSchedule = () => {
 };
 
 export default DoctorWorkSchedule;
+
