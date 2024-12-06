@@ -50,6 +50,12 @@ const DoctorsList = () => {
       toast.error("Đã xảy ra lỗi khi lấy danh sách chuyên khoa.");
     }
   };
+  
+  useEffect(() => {
+    return () => {
+      toast.dismiss(); // Đóng thông báo khi component bị hủy (trang đóng)
+    };
+  }, []);
 
   const deleteDoctor = async (id, name) => {
     if (confirmToastId) {
@@ -254,8 +260,8 @@ const DoctorsList = () => {
               key={index}
               onClick={() => paginate(index + 1)}
               className={`px-4 py-2 rounded-md ${currentPage === index + 1
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200"
+                ? "bg-blue-500 text-white"
+                : "bg-gray-200"
                 }`}
             >
               {index + 1}

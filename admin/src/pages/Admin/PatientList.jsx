@@ -13,6 +13,16 @@ const PatientList = () => {
     const [patientsPerPage] = useState(10);
 
     useEffect(() => {
+        toast.dismiss();
+    }, [currentPage]);
+
+    useEffect(() => {
+        return () => {
+            toast.dismiss(); // Đóng thông báo khi component bị hủy (trang đóng)
+        };
+    }, []);
+
+    useEffect(() => {
         getAllPatients();
     }, [getAllPatients]);
 
