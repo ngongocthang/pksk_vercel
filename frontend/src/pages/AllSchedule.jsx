@@ -15,27 +15,19 @@ const AllSchedule = () => {
   const [events, setEvents] = useState([]);
   const { user } = useContext(AppContext);
   const [isToastVisible, setIsToastVisible] = useState(false);
-  const [loading, setLoading] = useState(true); 
   const patient_id = user?.id || null;
   const token = user?.token || localStorage.getItem("token");
-  
-  if (typeof console !== "undefined") {
-    console.error = function () {};
-  }
-  
+
   useEffect(() => {
     const fetchSchedules = async () => {
-      setLoading(true); // Bắt đầu loading
       try {
         const response = await axios.get(`${VITE_BACKEND_URI}/get-all-schedule-doctor`);
-        
         const resources = response.data.map((doctor) => ({
           id: doctor.doctorId,
           doctorName: doctor.doctorName,
           doctorImage: doctor.doctorImage,
           specialization: doctor.specialization,
         }));
-
         const mappedEvents = response.data.flatMap((doctor) =>
           doctor.schedules.map((schedule) => {
             const workDate = new Date(schedule.work_date);
@@ -50,8 +42,7 @@ const AllSchedule = () => {
               endDate.setHours(17, 30, 0, 0);
             }
 
-            const converWork_shift =
-              schedule.work_shift === "morning" ? "Sáng" : "Chiều";
+            const converWork_shift = schedule.work_shift === "morning" ? "Sáng" : "Chiều";
 
             return {
               id: schedule._id,
@@ -68,8 +59,6 @@ const AllSchedule = () => {
       } catch (error) {
         console.error("Lỗi khi tải dữ liệu:", error);
         toast.error("Có lỗi xảy ra khi tải lịch làm việc.");
-      } finally {
-        setLoading(false); // Kết thúc loading
       }
     };
 
@@ -78,7 +67,7 @@ const AllSchedule = () => {
 
   const handleEventClick = (info) => {
     if (isToastVisible) {
-      return; // Nếu đã có thông báo đang hiển thị, không làm gì cả
+      return;
     }
 
     const clickedEvent = info.event;
@@ -105,8 +94,7 @@ const AllSchedule = () => {
           <p className="font-bold text-lg">Xác nhận</p>
         </div>
         <p>
-          Bạn có chắc chắn muốn đặt lịch hẹn vào {formattedDate} ca{" "}
-          {clickedEvent.title}?
+          Bạn có chắc chắn muốn đặt lịch hẹn vào {formattedDate} ca {clickedEvent.title}?
         </p>
         <div className="flex justify-center gap-4 mt-4">
           <button
@@ -175,12 +163,8 @@ const AllSchedule = () => {
           </h1>
         </header>
         <div className="calendar-container shadow-md rounded-lg overflow-hidden border border-gray-300 bg-white">
-          {loading ? ( // Hiển thị thông báo loading
-            <div className="text-center py-4">
-              <i className="fa-solid fa-spinner animate-spin text-4xl"></i>
-              <p className="text-gray-500 font-medium">Đang tải lịch làm việc...</p>
-            </div>
-          ) : (
+          {/* Thanh cuộn nằm ngang cho lịch */}
+          <div className="overflow-x-auto" style={{ maxHeight: "640px", minWidth: "1200px" }}>
             <FullCalendar
               plugins={[resourceTimelinePlugin]}
               initialView="resourceTimelineWeek"
@@ -201,7 +185,9 @@ const AllSchedule = () => {
                           className="w-8 h-8 rounded-full mr-2"
                         />
                         {doctorName}
-                        <span className="text-sm ml-2 text-gray-500">(Chuyên khoa: {specialization})</span>
+                        <span className="text-sm ml-2 text-gray-500">
+                          (Chuyên khoa: {specialization})
+                        </span>
                       </div>
                     );
                   },
@@ -220,13 +206,14 @@ const AllSchedule = () => {
                 center: "title",
                 right: "resourceTimelineDay,resourceTimelineWeek",
               }}
-              eventClassNames="event-style" 
+              eventClassNames="event-style"
               slotMinTime="06:00:00"
               slotMaxTime="19:00:00"
               nowIndicator
               eventClick={handleEventClick}
+              scrollTime="06:00:00"
             />
-          )}
+          </div>
         </div>
       </div>
       <ToastContainer />

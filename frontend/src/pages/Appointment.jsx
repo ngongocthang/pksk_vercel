@@ -186,7 +186,6 @@ const Appointment = () => {
       {
         position: "top-center",
         autoClose: 5000,
-        autoClose: false,
         closeOnClick: false,
         draggable: false,
         onClose: () => setIsBookingDisabled(false),
