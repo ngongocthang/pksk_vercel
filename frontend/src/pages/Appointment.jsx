@@ -39,6 +39,10 @@ const Appointment = () => {
     }
   };
 
+  useEffect(() => {
+    setSlotTime("");  // Reset lại slotTime khi ngày được chọn thay đổi
+  }, [selectedDate]);
+
   const fetchDoctorSchedule = async () => {
     try {
       const response = await axios.get(
@@ -182,6 +186,7 @@ const Appointment = () => {
       {
         position: "top-center",
         autoClose: 5000,
+        autoClose: false,
         closeOnClick: false,
         draggable: false,
         onClose: () => setIsBookingDisabled(false),
@@ -379,6 +384,7 @@ const Appointment = () => {
                     m-4 p-4`}
                     style={{ borderRadius: "50%" }}
                     onClick={() => setSelectedDate(dateStr)}
+
                   >
                     <p
                       className={`text-sm font-bold ${
@@ -395,6 +401,7 @@ const Appointment = () => {
                       {`${date.getDate()}/${date.getMonth() + 1}`}
                     </p>
                   </div>
+
                 );
               })}
             </div>
@@ -403,7 +410,7 @@ const Appointment = () => {
 
         {/* Hiển thị các buổi sáng và chiều theo ngày đã chọn */}
         {selectedDate && !errorLoadingSchedule && (
-          <div className="flex items-center gap-3 w-full overflow-x-auto mt-4">
+          <div className="flex items-center gap-3 w-full overflow-x-auto mt-4 ml-5">
             {doctorSchedule[selectedDate]
               .sort((a, b) => (a.work_shift === "morning" ? -1 : 1)) // Sắp xếp buổi sáng trước
               .map((schedule) => (
