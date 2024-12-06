@@ -1,7 +1,10 @@
+import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets";
 import { AppContext } from "../context/AppContext";
+
+const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 
 // Chức năng tính thời gian trước đây
 const timeAgo = (date) => {
@@ -41,20 +44,17 @@ const Notifications = () => {
       const fetchNotifications = async () => {
         try {
           setLoading(true);
-          const response = await fetch("http://localhost:5000/notification", {
+          const response = await axios.get(`${VITE_BACKEND_URI}/notification`, {
             headers: { Authorization: `Bearer ${token}` },
           });
 
-          if (!response.ok) throw new Error("Failed to fetch notifications");
-
-          const data = await response.json();
-          setNotifications(data);
+          setNotifications(response.data);
 
           // Cập nhật số lượng thông báo chưa đọc trong Context
-          const unreadCount = data.filter((notification) => !notification.isRead).length;
+          const unreadCount = response.data.filter((notification) => !notification.isRead).length;
           setUnreadCount(unreadCount);
         } catch (error) {
-          // console.error("Error fetching notifications:", error);
+          console.error("Error fetching notifications:", error);
         } finally {
           setLoading(false);
         }
@@ -66,20 +66,17 @@ const Notifications = () => {
   // Đánh dấu thông báo là đã đọc
   const handleNotificationClick = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5000/notification/read/${id}`, {
-        method: "PUT",
+      const response = await axios.put(`${VITE_BACKEND_URI}/notification/read/${id}`, {}, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-  
-      if (!response.ok) throw new Error("Failed to mark notification as read");
-  
+
       const updatedNotifications = notifications.map((notification) =>
         notification._id === id ? { ...notification, isRead: true } : notification
       );
       setNotifications(updatedNotifications);
-  
+
       // Cập nhật số lượng thông báo chưa đọc
       const unreadCount = updatedNotifications.filter((notification) => !notification.isRead).length;
       setUnreadCount(unreadCount);
@@ -87,42 +84,44 @@ const Notifications = () => {
     } catch (error) {
       console.error("Error marking notification as read:", error);
     }
-  };  
+  };
 
   // Ẩn thông báo
   const handleHide = async (notificationId) => {
     const hiddenNotification = notifications.find((n) => n._id === notificationId);
     const updatedNotifications = notifications.filter((n) => n._id !== notificationId);
     setNotifications(updatedNotifications);
-  
+
     // Nếu thông báo bị ẩn chưa đọc, giảm số lượng chưa đọc
     if (!hiddenNotification.isRead) {
       const unreadCount = updatedNotifications.filter((notification) => !notification.isRead).length;
       setUnreadCount(unreadCount);
       localStorage.setItem("unreadCount", unreadCount); // Lưu lại vào localStorage
     }
-  
-    await fetch(`http://localhost:5000/notification/hide/${notificationId}`, {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-  };  
+
+    try {
+      await axios.patch(`${VITE_BACKEND_URI}/notification/hide/${notificationId}`, {}, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    } catch (error) {
+      console.error("Error hiding notification:", error);
+    }
+  };
 
   // Xóa thông báo
   const handleDelete = async (notificationId) => {
     try {
-      const response = await fetch(`http://localhost:5000/notification/delete/${notificationId}`, {
-        method: "DELETE",
+      const response = await axios.delete(`${VITE_BACKEND_URI}/notification/delete/${notificationId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-  
-      if (response.ok) {
+
+      if (response.status === 200) {
         const deletedNotification = notifications.find((n) => n._id === notificationId);
         const updatedNotifications = notifications.filter((n) => n._id !== notificationId);
         setNotifications(updatedNotifications);
-  
+
         // Nếu thông báo bị xóa chưa đọc, giảm số lượng chưa đọc
         if (!deletedNotification.isRead) {
           const unreadCount = updatedNotifications.filter((notification) => !notification.isRead).length;
@@ -135,7 +134,7 @@ const Notifications = () => {
     } catch (error) {
       console.error("Error deleting notification:", error);
     }
-  };  
+  };
 
   // Sắp xếp thông báo theo ngày tạo
   const sortedNotifications = notifications.sort(
@@ -150,7 +149,6 @@ const Notifications = () => {
     e.stopPropagation(); // Prevent event from propagating
     setActiveMenu((prevMenu) => (prevMenu === id ? null : id));
   };
-
 
   return (
     <div className="container mx-auto p-4 cursor-pointer">
@@ -200,7 +198,7 @@ const Notifications = () => {
                 <div className="absolute right-0 mt-2 border border-gray-300 bg-white shadow-lg rounded-md w-48 z-10">
                   <ul className="text-sm">
                     <li
-                      onClick={() => handleMarkAsRead(id)}
+                      onClick={() => handleNotificationClick(notification._id)}
                       className="cursor-pointer hover:bg-gray-100 px-4 py-2 transition-all duration-200 rounded-md"
                     >
                       <i className="fa-solid fa-envelope-circle-check mr-2"></i>

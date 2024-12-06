@@ -16,7 +16,7 @@ const AdminContextProvider = ({ children }) => {
   const [dashData, setDashData] = useState(null);
   const [dashUpApData, setDashUpApData] = useState(null);
 
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const backendUrl = import.meta.env.VITE_BACKEND_URI;
 
   // Thiết lập axios với cấu hình chung để không cần khai báo headers nhiều lần
   const api = axios.create({

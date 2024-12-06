@@ -9,6 +9,8 @@ import { AdminContext } from "../context/AdminContext";
 import { DoctorContext } from "../context/DoctorContext";
 import "../index.css";
 
+const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
+
 const Navbar = () => {
   const { aToken, setAToken } = useContext(AdminContext);
   const { dToken, setDToken } = useContext(DoctorContext);
@@ -49,7 +51,7 @@ const Navbar = () => {
       const doctorInfo = JSON.parse(sessionStorage.getItem("doctorInfo"));
       const doctorId = doctorInfo ? doctorInfo.id : null;
       const response = await axios.get(
-        `http://localhost:5000/notification/get-notification-doctor/${doctorId}`
+        `${VITE_BACKEND_URI}/notification/get-notification-doctor/${doctorId}`
       );
       setNotifications(response.data);
     } catch (error) {
@@ -65,7 +67,7 @@ const Navbar = () => {
 
   const markAsRead = async (notificationId) => {
     try {
-      await axios.put(`http://localhost:5000/notification/read/${notificationId}`);
+      await axios.put(`${VITE_BACKEND_URI}/notification/read/${notificationId}`);
       const updatedNotifications = notifications.map((notification) =>
         notification._id === notificationId
           ? { ...notification, isRead: true }

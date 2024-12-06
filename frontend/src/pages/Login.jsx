@@ -7,6 +7,8 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AppContext } from "../context/AppContext";
 
+const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
+
 const Login = () => {
   const VITE_META_CLIENT_ID = import.meta.env.VITE_META_CLIENT_ID;
   const navigate = useNavigate();
@@ -26,8 +28,8 @@ const Login = () => {
 
     const url =
       state === "Sign Up"
-        ? "http://localhost:5000/register"
-        : "http://localhost:5000/login";
+        ? `${VITE_BACKEND_URI}/register`
+        : `${VITE_BACKEND_URI}/login`;
 
     const requestBody = {
       email,
@@ -36,44 +38,38 @@ const Login = () => {
     };
 
     try {
-      const response = await fetch(url, {
-        method: "POST",
+      const response = await axios.post(url, requestBody, {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(requestBody),
       });
 
-      const data = await response.json();
+      const data = response.data;
 
-      if (response.ok) {
-        if (state === "Sign Up") {
-          setState("Login");
-          toast.success("Đăng ký thành công! Vui lòng đăng nhập.");
-        } else {
-          if (data.user && data.user.token) {
-            if (data.user.role === "doctor" || data.user.role === "admin") {
-              toast.error("Bạn không thể đăng nhập với quyền này!");
-            } else {
-              setUser(data.user);
-              localStorage.setItem("token", data.user.token);
-              localStorage.setItem("user", JSON.stringify(data.user));
-              navigate("/");
-            }
-          } else {
-            toast.error("Không tìm thấy thông tin đăng nhập hợp lệ!");
-          }
-        }
+      if (state === "Sign Up") {
+        setState("Login");
+        toast.success("Đăng ký thành công! Vui lòng đăng nhập.");
       } else {
-        if (state === "Login") {
-          toast.error("Đăng nhập thất bại!");
+        if (data.user && data.user.token) {
+          if (data.user.role === "doctor" || data.user.role === "admin") {
+            toast.error("Bạn không thể đăng nhập với quyền này!");
+          } else {
+            setUser(data.user);
+            localStorage.setItem("token", data.user.token);
+            localStorage.setItem("user", JSON.stringify(data.user));
+            navigate("/");
+          }
         } else {
-          toast.error(data.message);
+          toast.error("Không tìm thấy thông tin đăng nhập hợp lệ!");
         }
       }
     } catch (error) {
       console.error("Error:", error);
-      toast.error(`Đã xảy ra lỗi! Vui lòng thử lại sau.`);
+      if (state === "Login") {
+        toast.error("Đăng nhập thất bại!");
+      } else {
+        toast.error(error.response?.data?.message || "Có lỗi xảy ra!");
+      }
     } finally {
       setLoading(false);
     }
@@ -83,7 +79,7 @@ const Login = () => {
     const { credential } = credentialResponse;
 
     try {
-      const response = await axios.post("http://localhost:5000/google-login", {
+      const response = await axios.post(`${VITE_BACKEND_URI}/google-login`, {
         credential,
       });
 

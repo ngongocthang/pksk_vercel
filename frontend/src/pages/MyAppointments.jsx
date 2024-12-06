@@ -5,6 +5,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AppContext } from "../context/AppContext";
 
+const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
+
 const MyAppointments = () => {
   const { user, setUser } = useContext(AppContext);
   const [appointments, setAppointments] = useState([]);
@@ -22,7 +24,7 @@ const MyAppointments = () => {
   const checkPaymentStatus = async (appointmentId) => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/check-payment-status/${appointmentId}`
+        `${VITE_BACKEND_URI}/check-payment-status/${appointmentId}`
       );
 
       if (response.data.success) {
@@ -45,32 +47,29 @@ const MyAppointments = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/user-appointment", {
+      const response = await axios.get(`${VITE_BACKEND_URI}/user-appointment`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      if (!response.ok) {
-        if (response.status === 401) {
-          setError("User not authenticated. Please log in.");
-          navigate("/account");
-        } else {
-          throw new Error("Failed to fetch appointments");
-        }
-      } else {
-        const data = await response.json();
-        const updatedAppointments = await Promise.all(
-          data.map(async (appointment) => {
-            const paymentStatus = await checkPaymentStatus(appointment._id);
-            return { ...appointment, paymentStatus };
-          })
-        );
+      const data = response.data;
+      const updatedAppointments = await Promise.all(
+        data.map(async (appointment) => {
+          const paymentStatus = await checkPaymentStatus(appointment._id);
+          return { ...appointment, paymentStatus };
+        })
+      );
 
-        setAppointments(updatedAppointments);
-      }
+      setAppointments(updatedAppointments);
     } catch (error) {
       console.error("Error fetching appointments:", error);
+      if (error.response && error.response.status === 401) {
+        setError("User not authenticated. Please log in.");
+        navigate("/account");
+      } else {
+        setError("Failed to fetch appointments");
+      }
     } finally {
       setLoading(false);
     }
@@ -87,11 +86,8 @@ const MyAppointments = () => {
 
   const handleCancelAppointment = (appointmentId) => {
     const appointment = appointments.find((appt) => appt._id === appointmentId);
-    const appointmentDate = new Date(appointment.work_date).toLocaleDateString(
-      "vi-VN"
-    );
-    const appointmentShift =
-      appointment.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều";
+    const appointmentDate = new Date(appointment.work_date).toLocaleDateString("vi-VN");
+    const appointmentShift = appointment.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều";
 
     const confirmCancel = async () => {
       const token = localStorage.getItem("token");
@@ -104,7 +100,7 @@ const MyAppointments = () => {
       try {
         setIsLoadingCancel(appointmentId);
         const response = await axios.put(
-          `http://localhost:5000/cancel-appointment/${appointmentId}`,
+          `${VITE_BACKEND_URI}/cancel-appointment/${appointmentId}`,
           {},
           {
             headers: {
@@ -114,16 +110,14 @@ const MyAppointments = () => {
         );
 
         if (response.data.success) {
-          toast.error("Có lỗi xảy ra khi hủy cuộc hẹn.");
-        } else {
           toast.success("Cuộc hẹn đã được hủy thành công!");
           fetchAppointments();
+        } else {
+          toast.error("Có lỗi xảy ra khi hủy cuộc hẹn.");
         }
       } catch (error) {
         console.error("Error canceling appointment:", error);
-        toast.error(
-          "Bạn chỉ huỷ cuộc hẹn trước 24h." || error.response?.data?.message
-        );
+        toast.error("Bạn chỉ huỷ cuộc hẹn trước 24h." || error.response?.data?.message);
       } finally {
         setIsLoadingCancel(null);
       }
@@ -136,8 +130,7 @@ const MyAppointments = () => {
             <p className="font-bold text-lg">Thông báo</p>
           </div>
           <p>
-            Bạn có chắc chắn muốn hủy cuộc hẹn ngày {appointmentDate} vào{" "}
-            {appointmentShift} này không?
+            Bạn có chắc chắn muốn hủy cuộc hẹn ngày {appointmentDate} vào {appointmentShift} này không?
           </p>
           <div className="flex justify-center gap-4 mt-4">
             <button
@@ -170,7 +163,7 @@ const MyAppointments = () => {
   const handlePayment = async (appointmentId, price) => {
     try {
       const response = await axios.post(
-        `http://localhost:5000/payment/${appointmentId}`,
+        `${VITE_BACKEND_URI}/payment/${appointmentId}`,
         { price },
         {
           headers: {
@@ -250,9 +243,7 @@ const MyAppointments = () => {
                     <span className="text-sm text-neutral-700 font-medium">
                       Ngày khám:
                     </span>{" "}
-                    {new Date(appointment.work_date).toLocaleDateString(
-                      "vi-VN"
-                    )}
+                    {new Date(appointment.work_date).toLocaleDateString("vi-VN")}
                   </p>
                   <p className="text-xs mt-1">
                     <span className="text-sm text-neutral-700 font-medium">

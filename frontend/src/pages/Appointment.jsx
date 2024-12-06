@@ -8,6 +8,8 @@ import RelatedDoctors from "../components/RelatedDoctors";
 import { AppContext } from "../context/AppContext";
 import "../index.css";
 
+const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
+
 const Appointment = () => {
   const { docId } = useParams();
   const { doctors, user } = useContext(AppContext);
@@ -22,7 +24,7 @@ const Appointment = () => {
 
   const fetchDocInfo = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/doctor/find/${docId}`);
+      const response = await axios.get(`${VITE_BACKEND_URI}/doctor/find/${docId}`);
       setDocInfo(response.data);
     } catch (error) {
       console.error("Error fetching doctor info:", error);
@@ -32,7 +34,7 @@ const Appointment = () => {
 
   const fetchDoctorSchedule = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/get-schedule-doctor/${docId}`);
+      const response = await axios.get(`${VITE_BACKEND_URI}/get-schedule-doctor/${docId}`);
       const groupedSchedule = response.data.reduce((acc, schedule) => {
         const dateStr = new Date(schedule.work_date).toISOString().split("T")[0];
         if (!acc[dateStr]) acc[dateStr] = [];
@@ -155,7 +157,7 @@ const Appointment = () => {
 
       const token = user?.token || "";
       const response = await axios.post(
-        `http://localhost:5000/create-appointment/${patientId}`,
+        `${VITE_BACKEND_URI}/create-appointment/${patientId}`,
         appointmentData,
         {
           headers: {

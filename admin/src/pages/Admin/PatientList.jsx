@@ -4,6 +4,8 @@ import { AdminContext } from "../../context/AdminContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 
+const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
+
 const PatientList = () => {
     const { patient, getAllPatients } = useContext(AdminContext);
     const navigate = useNavigate();
@@ -40,7 +42,7 @@ const PatientList = () => {
                             className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-700"
                             onClick={async () => {
                                 try {
-                                    await axios.delete(`http://localhost:5000/patient/delete/${id}`);
+                                    await axios.delete(`${VITE_BACKEND_URI}/patient/delete/${id}`);
                                     toast.success(`Bệnh nhân ${name} đã được xóa thành công!`, {
                                         position: "top-right",
                                     });

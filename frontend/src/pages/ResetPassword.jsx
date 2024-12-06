@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom"; // Import useNavigate
 import { toast } from "react-toastify";
 
+const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
+
 const ResetPassword = () => {
   const { token } = useParams();
   const navigate = useNavigate();
@@ -22,7 +24,7 @@ const ResetPassword = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:5000/reset-password/${token}`,
+        `${VITE_BACKEND_URI}/reset-password/${token}`,
         { password },
         {
           headers: {

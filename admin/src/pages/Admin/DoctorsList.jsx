@@ -5,6 +5,8 @@ import { toast } from "react-toastify";
 import { AdminContext } from "../../context/AdminContext";
 import { convertToSlug } from "../../utils/stringUtils";
 
+const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
+
 const DoctorsList = () => {
   const { doctors, aToken, getAllDoctors } = useContext(AdminContext);
   const [confirmToastId, setConfirmToastId] = useState(null);
@@ -34,7 +36,7 @@ const DoctorsList = () => {
   const fetchSpecializations = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/specialization/find-all"
+        `${VITE_BACKEND_URI}/specialization/find-all`
       );
       if (
         response.data.success &&
@@ -92,7 +94,7 @@ const DoctorsList = () => {
   const confirmDeleteDoctor = async (id) => {
     try {
       const response = await axios.delete(
-        `http://localhost:5000/doctor/delete/${id}`,
+        `${VITE_BACKEND_URI}/doctor/delete/${id}`,
         {
           headers: {
             Authorization: `Bearer ${aToken}`,
