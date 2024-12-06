@@ -164,7 +164,7 @@ const MedicalHistory = () => {
           ) : error ? (
             <ErrorAlert message={error} />
           ) : (
-            <div className="flex flex-wrap justify-start gap-4">
+            <div className="flex flex-wrap justify-evenly gap-16">
               {medicalRecords.length === 0 ? (
                 <div className="flex items-center justify-center text-center py-12 w-full">
                   <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">

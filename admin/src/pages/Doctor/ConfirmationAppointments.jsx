@@ -5,11 +5,11 @@ import 'react-toastify/dist/ReactToastify.css';
 import { DoctorContext } from '../../context/DoctorContext';
 
 const ConfirmationSchedule = () => {
-  const { dToken, appointments, getAppointments, completeAppointment, cancelAppointment } = useContext(DoctorContext);
+  const { appointments, getAppointments, completeAppointment, cancelAppointment } = useContext(DoctorContext);
   const navigate = useNavigate();
   const location = useLocation();
   const [currentPage, setCurrentPage] = useState(1);
-  const [loadingId, setLoadingId] = useState(null);
+  const [loadingId, setLoadingId] = useState(null); // State to track loading
   const appointmentsPerPage = 10;
 
   // Định dạng ngày
@@ -23,7 +23,6 @@ const ConfirmationSchedule = () => {
     setLoadingId(id);
     try {
       await completeAppointment(id);
-      // toast.success('Lịch hẹn đã được xác nhận.');
     } catch (error) {
       toast.error('Có lỗi xảy ra khi xác nhận lịch hẹn.');
     } finally {
@@ -36,7 +35,7 @@ const ConfirmationSchedule = () => {
     setLoadingId(id);
     try {
       await cancelAppointment(id);
-      toast.success('Lịch hẹn đã bị hủy.');
+      toast.success('Lịch hẹn đã được hủy.');
     } catch (error) {
       toast.error('Có lỗi xảy ra khi hủy lịch hẹn.');
     } finally {
@@ -56,14 +55,14 @@ const ConfirmationSchedule = () => {
 
   useEffect(() => {
     const fetchAppointments = async () => {
-      await getAppointments();
+      await getAppointments(); // Gọi lại danh sách lịch hẹn
     };
 
-    fetchAppointments();
+    fetchAppointments(); // Lần đầu tiên khi component mount
 
-    const interval = setInterval(fetchAppointments, 10000);
+    const interval = setInterval(fetchAppointments, 10000); // Lấy lịch hẹn mỗi 30 giây
 
-    return () => clearInterval(interval);
+    return () => clearInterval(interval); // Dọn dẹp interval khi component bị hủy
   }, [getAppointments]);
 
   const indexOfLastAppointment = currentPage * appointmentsPerPage;
@@ -76,121 +75,30 @@ const ConfirmationSchedule = () => {
     navigate(`/confirmation-schedule?page=${pageNumber}`);
   };
 
-  const renderPagination = () => {
-    const delta = 1; // Số trang hiển thị trước và sau trang hiện tại
-    const paginationItems = [];
-
-    // Nút "Trang trước"
-    paginationItems.push(
-      <button
-        key="prev"
-        onClick={() => paginate(Math.max(1, currentPage - 1))}
-        className={`py-1 px-3 border rounded w-[70px] ${currentPage === 1 ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "text-gray-600"
-          }`}
-        disabled={currentPage === 1}
-      >
-        Trước
-      </button>
-    );
-
-    // Hiển thị trang 1
-    paginationItems.push(
-      <button
-        key={1}
-        onClick={() => paginate(1)}
-        className={`py-1 px-3 border rounded ${currentPage === 1 ? "bg-indigo-500 text-white" : "text-gray-600"
-          }`}
-      >
-        1
-      </button>
-    );
-
-    // Hiển thị dấu ba chấm nếu cần, khi currentPage > 3
-    if (currentPage > 2) {
-      paginationItems.push(
-        <span key="start-dots" className="px-2">
-          ...
-        </span>
-      );
-    }
-
-    // Hiển thị các trang xung quanh trang hiện tại
-    for (let i = Math.max(2, currentPage - delta); i <= Math.min(totalPages - 1, currentPage + delta); i++) {
-      paginationItems.push(
-        <button
-          key={i}
-          onClick={() => paginate(i)}
-          className={`py-1 px-3 border rounded ${i === currentPage ? "bg-indigo-500 text-white" : "text-gray-600"
-            }`}
-        >
-          {i}
-        </button>
-      );
-    }
-
-    // Hiển thị dấu ba chấm nếu cần, khi currentPage < totalPages - 1
-    if (currentPage < totalPages - 1) {
-      paginationItems.push(
-        <span key="end-dots" className="px-2">
-          ...
-        </span>
-      );
-    }
-
-    // Hiển thị trang cuối
-    if (totalPages > 1) {
-      paginationItems.push(
-        <button
-          key={totalPages}
-          onClick={() => paginate(totalPages)}
-          className={`py-1 px-3 border rounded ${currentPage === totalPages ? "bg-indigo-500 text-white" : "text-gray-600"
-            }`}
-        >
-          {totalPages}
-        </button>
-      );
-    }
-
-    // Nút "Trang tiếp theo"
-    paginationItems.push(
-      <button
-        key="next"
-        onClick={() => paginate(Math.min(totalPages, currentPage + 1))}
-        className={`py-1 px-3 border rounded w-[70px] ${currentPage === totalPages ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "text-gray-600"
-          }`}
-        disabled={currentPage === totalPages}
-      >
-        Tiếp
-      </button>
-    );
-
-    return (
-      <div className="flex justify-center items-center mt-6 space-x-2">
-        {paginationItems}
-      </div>
-    );
-  };
-
   return (
     <div className='w-full max-w-6xl m-5'>
       <p className='mb-4 text-lg font-medium'>Các lịch hẹn chờ xác nhận:</p>
       <div className='bg-white border rounded-xl text-sm max-h-[80vh] min-h-[50vh] overflow-y-auto'>
 
         {/* Header Row */}
-        <div className='hidden md:grid grid-cols-[0.5fr_2fr_2fr_1fr_1fr] gap-4 py-4 px-6 bg-gray-200 border-b'>
+        <div className='hidden md:grid grid-cols-[0.5fr_2fr_2fr_2fr_1fr] gap-4 py-4 px-6 bg-gray-200 border-b text-center'>
           <p className='font-bold text-[16px]'>#</p>
-          <p className='font-bold text-center text-[16px]'>Bệnh nhân</p>
-          <p className='font-bold text-center text-[16px]'>Ngày khám</p>
-          <p className='font-bold text-center text-[16px]'>Ca khám</p>
-          <p className='font-bold text-center text-[16px] justify-self-end'>Hành động</p>
+          <p className='font-bold text-[16px]'>Bệnh nhân</p>
+          <p className='font-bold text-[16px]'>Ngày khám</p>
+          <p className='font-bold text-[16px]'>Ca khám</p>
+          <p className='font-bold text-[16px] justify-self-end'>Hành động</p>
         </div>
 
         {/* Appointment Rows */}
         {currentAppointments.length > 0 ? (
           currentAppointments.map((item, index) => (
-            <div className='border-b hover:bg-gray-50 p-4 md:p-1' key={item._id}>
-              <div className='md:grid md:grid-cols-[0.5fr_2fr_2fr_1fr_1fr] items-center gap-4'>
-                <p className='font-bold md:col-span-1 ml-5'>{index + 1 + (currentPage - 1) * appointmentsPerPage}</p>
+            <div
+              className='border-b hover:bg-gray-50 p-4 md:p-6'
+              key={item._id}
+            >
+              <div className='md:grid md:grid-cols-[0.5fr_2fr_2fr_2fr_1fr] items-center gap-4'>
+                <p className='text-center font-bold md:col-span-1'>{index + 1 + (currentPage - 1) * appointmentsPerPage}</p>
+
                 {/* Mobile-friendly stacking */}
                 <div className='flex flex-col gap-1 md:gap-0'>
                   <p className='text-base text-center md:text-center font-medium md:font-normal'>
@@ -202,71 +110,102 @@ const ConfirmationSchedule = () => {
                   </div>
                   <div className='md:hidden flex items-center'>
                     <p className='text-sm font-semibold'>Ca khám:</p>
-                    <p className={`py-0 ml-1 p-2 md:py-1 rounded-full text-white text-sm text-center max-w-[100px] 
-                  ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg max-w-[70px] w-full`}>
+                    <p
+                      className={`py-0 ml-1 p-2 md:py-1 rounded-full text-white text-sm text-center max-w-[100px] 
+                      ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg max-w-[70px] w-full`}
+                    >
                       {item.work_shift === "morning" ? "Sáng" : "Chiều"}
                     </p>
                   </div>
                 </div>
 
                 {/* Desktop-specific layout */}
-                <p className='text-base text-center hidden md:block'>{formatDate(item.work_date)}</p>
+                <p className='text-base text-center hidden md:block'>
+                  {formatDate(item.work_date)}
+                </p>
 
                 {/* Updated 'Ca khám' with centered text */}
                 <div className='flex justify-center items-center'>
-                  <p className={`py-1 rounded-full text-white text-sm text-center max-w-[100px] hidden md:block 
-                ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg max-w-[100px] w-full`}>
+                  <p
+                    className={`py-1 rounded-full text-white text-sm text-center max-w-[100px] hidden md:block 
+                    ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-300"} shadow-lg max-w-[100px] w-full`}
+                  >
                     {item.work_shift === "morning" ? "Sáng" : "Chiều"}
                   </p>
                 </div>
 
-                {/* Desktop SVG icons */}
-                <div className="py-3 px-4 text-center pr-2">
-                  <div className="flex justify-center gap-3">
-                    {loadingId === item._id ? (
-                      <div className="w-8 h-8 border-4 border-blue-500 border-dashed rounded-full animate-spin"></div>
-                    ) : (
-                      <>
-                        <svg
-                          onClick={() => handleCompleteAppointment(item._id)}
-                          className="w-[30px] h-[30px] cursor-pointer bg-green-500 p-2 rounded-full shadow-lg"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="white"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M5 13l4 4L19 7" />
-                        </svg>
 
-                        <svg
-                          onClick={() => handleCancelAppointment(item._id)}
-                          className="w-[30px] h-[30px] cursor-pointer bg-red-500 p-2 rounded-full shadow-lg"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="white"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M18 6L6 18" />
-                          <path d="M6 6l12 12" />
-                        </svg>
-                      </>
-                    )}
+                {/* Action Buttons */}
+                <div className='flex flex-row gap-2 md:gap-3 justify-center md:justify-end mr-2'>
+                  {/* Mobile-friendly text buttons */}
+                  <div className="md:hidden flex gap-2 mt-5">
+                    <button
+                      onClick={() => completeAppointment(item._id)}
+                      className='bg-green-500 text-white px-3 py-1 rounded-md shadow-md'
+                    >
+                      Xác nhận
+                    </button>
+                    <button
+                      onClick={() => cancelAppointment(item._id)}
+                      className='bg-red-500 text-white px-3 py-1 rounded-md shadow-md'
+                    >
+                      Hủy
+                    </button>
                   </div>
+
+                  {/* Desktop SVG icons */}
+                  <svg
+                    onClick={() => completeAppointment(item._id)}
+                    className='hidden md:block w-[30px] h-[30px] cursor-pointer bg-green-500 p-2 rounded-full shadow-lg'
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="white"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M5 13l4 4L19 7" />
+                  </svg>
+
+                  <svg
+                    onClick={() => cancelAppointment(item._id)}
+                    className='hidden md:block w-[30px] h-[30px] cursor-pointer bg-red-500 p-2 rounded-full shadow-lg'
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="white"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M18 6L6 18" />
+                    <path d="M6 6l12 12" />
+                  </svg>
                 </div>
               </div>
             </div>
           ))
         ) : (
-          <p className='text-center py-4'>Không có lịch hẹn nào.</p>
+          <p className='text-gray-500 py-3 px-1 text-center'>Không có lịch hẹn nào chờ được xác nhận.</p>
         )}
       </div>
-    </div >
+
+      {/* Pagination */}
+      {pendingAppointments.length > appointmentsPerPage && (
+        <div className="flex justify-center mt-4">
+          {Array.from({ length: totalPages }, (_, index) => (
+            <button
+              key={index + 1}
+              onClick={() => paginate(index + 1)}
+              className={`px-4 py-2 ${currentPage === index + 1 ? 'bg-[#219c9e] text-white' : 'bg-gray-200'} rounded-md mx-1 hover:bg-[#0091a1]`}
+            >
+              {index + 1}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
   );
 };
 

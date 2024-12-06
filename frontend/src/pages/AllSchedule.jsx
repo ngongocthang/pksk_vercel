@@ -18,7 +18,11 @@ const AllSchedule = () => {
   const [loading, setLoading] = useState(true); // Thêm trạng thái loading
   const patient_id = user?.id || null;
   const token = user?.token || localStorage.getItem("token");
-
+  
+  if (typeof console !== "undefined") {
+    console.error = function () {};
+  }
+  
   useEffect(() => {
     const fetchSchedules = async () => {
       setLoading(true); // Bắt đầu loading
@@ -195,7 +199,8 @@ const AllSchedule = () => {
                           alt={doctorName}
                           className="w-8 h-8 rounded-full mr-2"
                         />
-                        {doctorName}  {" "} ({specialization})
+                        {doctorName}
+                        <span className="text-sm ml-2 text-gray-500">(Chuyên khoa: {specialization})</span>
                       </div>
                     );
                   },
@@ -204,7 +209,7 @@ const AllSchedule = () => {
               eventContent={(args) => {
                 const workShift = args.event.title;
                 return (
-                  <div className="flex items-center justify-center w-full h-full">
+                  <div className="flex items-center justify-center w-full h-full event-style">
                     <span>{workShift}</span>
                   </div>
                 );
@@ -214,6 +219,7 @@ const AllSchedule = () => {
                 center: "title",
                 right: "resourceTimelineDay,resourceTimelineWeek",
               }}
+              eventClassNames="event-style" 
               slotMinTime="06:00:00"
               slotMaxTime="19:00:00"
               nowIndicator
