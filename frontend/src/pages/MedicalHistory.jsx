@@ -37,14 +37,14 @@ const MedicalRecordCard = memo(({ record }) => {
   };
 
   return (
-    <Card className="hover:shadow-lg transition-shadow w-[300px]">
+    <Card className="hover:shadow-lg transition-shadow w-[280px]">
       <CardContent className="p-6">
         {/* Phần hiển thị hình ảnh bác sĩ */}
         <div className="flex justify-center mb-4">
           <img
             src={record.history.doctor_image}
             alt={record.history.doctor_name}
-            className="w-60 h-70 shadow-lg"
+            className="w-50 h-60 shadow-lg"
           />
         </div>
 
@@ -164,9 +164,9 @@ const MedicalHistory = () => {
           ) : error ? (
             <ErrorAlert message={error} />
           ) : (
-            <div className="flex flex-wrap justify-evenly gap-16">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-2 row-gap-4">
               {medicalRecords.length === 0 ? (
-                <div className="flex items-center justify-center text-center py-12 w-full">
+                <div className="col-span-full flex items-center justify-center text-center py-12">
                   <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                     <Calendar className="w-12 h-12 text-gray-400" />
                   </div>
@@ -174,7 +174,9 @@ const MedicalHistory = () => {
                 </div>
               ) : (
                 medicalRecords.map((record, index) => (
-                  <MedicalRecordCard key={index} record={record} />
+                  <div key={index}>
+                    <MedicalRecordCard record={record} />
+                  </div>
                 ))
               )}
             </div>

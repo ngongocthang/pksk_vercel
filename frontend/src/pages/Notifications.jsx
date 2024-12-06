@@ -32,36 +32,32 @@ const Notifications = () => {
   const token = user?.token || localStorage.getItem("token");
 
   // Lấy thông báo từ server
-  useEffect(() => {
-    if (!user && token) {
-      const storedUser = JSON.parse(localStorage.getItem("user"));
-      if (storedUser) setUser(storedUser);
-    }
+  const fetchNotifications = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${VITE_BACKEND_URI}/notification`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-    if (!token) {
+      setNotifications(response.data);
+
+      // Cập nhật số lượng thông báo chưa đọc trong Context
+      const unreadCount = response.data.filter((notification) => !notification.isRead).length;
+      setUnreadCount(unreadCount);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!user && !token) {
       navigate("/account");
     } else {
-      const fetchNotifications = async () => {
-        try {
-          setLoading(true);
-          const response = await axios.get(`${VITE_BACKEND_URI}/notification`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-
-          setNotifications(response.data);
-
-          // Cập nhật số lượng thông báo chưa đọc trong Context
-          const unreadCount = response.data.filter((notification) => !notification.isRead).length;
-          setUnreadCount(unreadCount);
-        } catch (error) {
-          console.error("Error fetching notifications:", error);
-        } finally {
-          setLoading(false);
-        }
-      };
       fetchNotifications();
     }
-  }, [token, navigate, setUser, user, setUnreadCount]);
+  }, [token, navigate, user]);
 
   // Đánh dấu thông báo là đã đọc
   const handleNotificationClick = async (id) => {

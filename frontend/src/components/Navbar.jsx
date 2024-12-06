@@ -1,8 +1,8 @@
+import axios from 'axios'; // Nhập axios
 import React, { useContext, useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets";
 import { AppContext } from "../context/AppContext";
-import axios from 'axios'; // Nhập axios
 
 const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 
@@ -15,6 +15,7 @@ const Navbar = () => {
   const [notificationsCount, setNotificationsCount] = useState(0);
   const [rotateIcon, setRotateIcon] = useState(false);
   const [isVisible, setIsVisible] = useState(true); // State for navbar visibility
+  const [notifications, setNotifications] = useState([]);
 
   const getDisplayName = (fullName) => {
     const nameParts = fullName.split(" ");
@@ -28,28 +29,36 @@ const Navbar = () => {
       });
       const data = response.data; // Lấy dữ liệu từ response
 
-      // Kiểm tra xem dữ liệu có phải là mảng không
+      // Kiểm tra nếu dữ liệu là mảng
       if (Array.isArray(data)) {
-        // Lọc thông báo chưa đọc
         const unreadNotifications = data.filter(notification => !notification.isRead);
-        const unreadCount = unreadNotifications.length;
-        setUnreadCount(unreadCount);
+        setUnreadCount(unreadNotifications.length);
+        setNotifications(data); // Cập nhật thông báo vào state
       } else {
         setUnreadCount(0); // Nếu không phải mảng, không có thông báo chưa đọc
+        setNotifications([]);
       }
     } catch (error) {
-      console.error("Error fetching unread notifications:", error);
+      // console.error("Error fetching notifications:", error);
     }
   };
 
   useEffect(() => {
     if (user?.token) {
       fetchUnreadNotifications(); // Lần đầu tiên khi có user
-      const interval = setInterval(fetchUnreadNotifications, 1000); // Lấy thông báo mỗi 1 giây
+      const interval = setInterval(fetchUnreadNotifications, 1000); // Cập nhật thông báo mỗi 1 giây
 
       return () => clearInterval(interval); // Dọn dẹp interval khi component bị hủy
     }
-  }, [user, setUnreadCount]);
+  }, [user]);
+
+  // useEffect này giúp theo dõi sự thay đổi trong notifications và cập nhật unreadCount
+  useEffect(() => {
+    if (notifications.length > 0) {
+      const unreadNotifications = notifications.filter(notification => !notification.isRead);
+      setUnreadCount(unreadNotifications.length);
+    }
+  }, [notifications]); // Duy trì cập nhật số lượng thông báo chưa đọc
 
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
