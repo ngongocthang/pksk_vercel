@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets";
 import { AppContext } from "../context/AppContext";
+import axios from 'axios'; // Nhập axios
 
 const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 
@@ -22,10 +23,11 @@ const Navbar = () => {
 
   const fetchUnreadNotifications = async () => {
     try {
-      const response = await fetch(`${VITE_BACKEND_URI}/notification`, {
+      const response = await axios.get(`${VITE_BACKEND_URI}/notification`, {
         headers: { Authorization: `Bearer ${user.token}` },
       });
-      const data = await response.json();
+      const data = response.data; // Lấy dữ liệu từ response
+
       // Kiểm tra xem dữ liệu có phải là mảng không
       if (Array.isArray(data)) {
         // Lọc thông báo chưa đọc
@@ -43,7 +45,7 @@ const Navbar = () => {
   useEffect(() => {
     if (user?.token) {
       fetchUnreadNotifications(); // Lần đầu tiên khi có user
-      const interval = setInterval(fetchUnreadNotifications, 1000); // Lấy thông báo mỗi 30 giây
+      const interval = setInterval(fetchUnreadNotifications, 1000); // Lấy thông báo mỗi 1 giây
 
       return () => clearInterval(interval); // Dọn dẹp interval khi component bị hủy
     }
@@ -236,7 +238,7 @@ const Navbar = () => {
             </NavLink>
             {!user && (
               <NavLink onClick={() => setShowMenu(false)} to="/account">
-                <p className="bg-[#00759c] text-white px-4 py-2 rounded font-light text-center w-full">Đăng nhập</p>
+                <p className="px-4 py-2 rounded inline-block">Đăng nhập</p>
               </NavLink>
             )}
           </ul>

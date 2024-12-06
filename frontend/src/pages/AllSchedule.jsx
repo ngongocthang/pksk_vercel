@@ -23,20 +23,16 @@ const AllSchedule = () => {
     const fetchSchedules = async () => {
       setLoading(true); // Bắt đầu loading
       try {
-        const response = await fetch(`${VITE_BACKEND_URI}/get-all-schedule-doctor`);
-        if (!response.ok) {
-          throw new Error("Không thể tải dữ liệu");
-        }
-        const data = await response.json();
-
-        const resources = data.map((doctor) => ({
+        const response = await axios.get(`${VITE_BACKEND_URI}/get-all-schedule-doctor`);
+        
+        const resources = response.data.map((doctor) => ({
           id: doctor.doctorId,
           doctorName: doctor.doctorName,
           doctorImage: doctor.doctorImage,
           specialization: doctor.specialization,
         }));
 
-        const mappedEvents = data.flatMap((doctor) =>
+        const mappedEvents = response.data.flatMap((doctor) =>
           doctor.schedules.map((schedule) => {
             const workDate = new Date(schedule.work_date);
             const startDate = new Date(workDate);

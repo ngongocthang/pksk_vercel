@@ -11,6 +11,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { assets } from "../../assets/assets";
 import { AdminContext } from "../../context/AdminContext";
+import axios from 'axios'; // Nhập axios
 
 const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 
@@ -56,12 +57,12 @@ const Dashboard = () => {
     const fetchRevenueData = async () => {
       if (aToken) {
         try {
-          const response = await fetch(`${VITE_BACKEND_URI}/get-money-dashboard-admin`, {
+          const response = await axios.get(`${VITE_BACKEND_URI}/get-money-dashboard-admin`, {
             headers: {
               Authorization: `Bearer ${aToken}`,
             },
           });
-          const data = await response.json();
+          const data = response.data; // Lấy dữ liệu từ response
 
           // Cập nhật doanh thu vào tháng tương ứng
           const updatedRevenueData = revenueData.map((item) => {

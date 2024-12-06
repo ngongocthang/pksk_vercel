@@ -13,20 +13,20 @@ const Doctors = () => {
   const [doctors, setDoctors] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [doctorsPerPage] = useState(8);
-  const [selectedDate, setSelectedDate] = useState(""); // Thêm trạng thái cho ngày làm việc
-  const [isLoading, setIsLoading] = useState(false); // Thêm trạng thái tải dữ liệu
+  const [selectedDate, setSelectedDate] = useState(""); 
+  const [isLoading, setIsLoading] = useState(false); 
   const navigate = useNavigate();
   const location = useLocation();
 
   const fetchDoctors = async () => {
     try {
-      setIsLoading(true); // Đặt trạng thái tải dữ liệu là true
+      setIsLoading(true); 
       const response = await axios.get(`${VITE_BACKEND_URI}/doctor/find-all`);
       setDoctors(response.data.success ? response.data.doctors : []);
     } catch (error) {
       console.error("Error fetching doctors:", error);
     } finally {
-      setIsLoading(false); // Đặt trạng thái tải dữ liệu là false
+      setIsLoading(false); 
     }
   };
 
