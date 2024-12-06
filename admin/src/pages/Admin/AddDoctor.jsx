@@ -114,7 +114,7 @@ const AddDoctor = () => {
   return (
     <form onSubmit={onSubmitHandler} className="m-5 w-full">
       <div className="flex justify-between items-center mb-4">
-        <p className="md:text-3xl text-xl font-bold text-[#0091a1]">Thêm bác sĩ</p>
+        <p className="text-3xl font-bold text-[#0091a1]">Thêm bác sĩ</p>
       </div>
       <div className="overflow-x-auto bg-white p-4 rounded-md shadow-md">
         <div className="flex items-center gap-4 mb-8 text-gray-500">
@@ -228,21 +228,22 @@ const AddDoctor = () => {
           />
         </div>
 
-        <button
-          type="submit"
-          className={`bg-primary px-10 py-3 mt-4 text-white rounded-full ${
-            loading ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-          disabled={loading}
-        >
-          {loading ? (
-            <div className="flex items-center justify-center">
-              <div className="w-5 h-5 border-t-2 border-white border-solid rounded-full animate-spin"></div>
-            </div>
-          ) : (
-            "Thêm bác sĩ"
-          )}
-        </button>
+        <div className="flex justify-center items-center md:justify-start">
+          <button
+            type="submit"
+            className={`bg-primary px-10 py-3 mt-4 text-white rounded-full ${loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            disabled={loading}
+          >
+            {loading ? (
+              <div className="flex items-center justify-center">
+                <div className="w-5 h-5 border-t-2 border-white border-solid rounded-full animate-spin"></div>
+              </div>
+            ) : (
+              "Thêm bác sĩ"
+            )}
+          </button>
+        </div>
       </div>
     </form>
   );

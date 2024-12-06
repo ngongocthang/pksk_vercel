@@ -81,24 +81,20 @@ const ConfirmationSchedule = () => {
       <div className='bg-white border rounded-xl text-sm max-h-[80vh] min-h-[50vh] overflow-y-auto'>
 
         {/* Header Row */}
-        <div className='hidden md:grid grid-cols-[0.5fr_2fr_2fr_2fr_1fr] gap-4 py-4 px-6 bg-gray-200 border-b text-center'>
-          <p className='font-bold text-[16px]'>#</p>
-          <p className='font-bold text-[16px]'>Bệnh nhân</p>
-          <p className='font-bold text-[16px]'>Ngày khám</p>
-          <p className='font-bold text-[16px]'>Ca khám</p>
-          <p className='font-bold text-[16px] justify-self-end'>Hành động</p>
+        <div className='hidden md:grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr] gap-4 py-4 bg-gray-200 border-b'>
+          <p className='font-bold text-center text-[16px]'>#</p>
+          <p className='font-bold text-center text-[16px]'>Bệnh nhân</p>
+          <p className='font-bold text-center text-[16px]'>Ngày khám</p>
+          <p className='font-bold text-center text-[16px]'>Ca khám</p>
+          <p className='font-bold text-center text-[16px] justify-self-center'>Hành động</p>
         </div>
 
         {/* Appointment Rows */}
         {currentAppointments.length > 0 ? (
           currentAppointments.map((item, index) => (
-            <div
-              className='border-b hover:bg-gray-50 p-4 md:p-6'
-              key={item._id}
-            >
-              <div className='md:grid md:grid-cols-[0.5fr_2fr_2fr_2fr_1fr] items-center gap-4'>
-                <p className='text-center font-bold md:col-span-1'>{index + 1 + (currentPage - 1) * appointmentsPerPage}</p>
-
+            <div className='border-b hover:bg-gray-50 p-4 md:p-1' key={item._id}>
+              <div className='md:grid md:grid-cols-[0.5fr_1fr_1fr_1fr_1fr] items-center gap-4'>
+                <p className='font-bold md:col-span-1 text-center'>{index + 1 + (currentPage - 1) * appointmentsPerPage}</p>
                 {/* Mobile-friendly stacking */}
                 <div className='flex flex-col gap-1 md:gap-0'>
                   <p className='text-base text-center md:text-center font-medium md:font-normal'>
@@ -134,6 +130,59 @@ const ConfirmationSchedule = () => {
                   </p>
                 </div>
 
+                {/* Desktop SVG icons */}
+                <div className="py-3 px-4 text-center pr-2">
+                  <div className="flex justify-center gap-3">
+                    {loadingId === item._id ? (
+                      <div className="w-8 h-8 border-4 border-blue-500 border-dashed rounded-full animate-spin"></div>
+                    ) : (
+                      <>
+                        {/* Desktop: Icon xác nhận và hủy */}
+                        <svg
+                          onClick={() => handleCompleteAppointment(item._id)}
+                          className="w-[30px] h-[30px] cursor-pointer bg-green-500 p-2 rounded-full shadow-lg hidden sm:block"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="white"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M5 13l4 4L19 7" />
+                        </svg>
+
+                        <svg
+                          onClick={() => handleCancelAppointment(item._id)}
+                          className="w-[30px] h-[30px] cursor-pointer bg-red-500 p-2 rounded-full shadow-lg hidden sm:block"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="white"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M18 6L6 18" />
+                          <path d="M6 6l12 12" />
+                        </svg>
+
+                        {/* Mobile: Chữ xác nhận và hủy */}
+                        <button
+                          onClick={() => handleCompleteAppointment(item._id)}
+                          className="bg-green-500 text-white font-semibold py-2 px-4 rounded-md shadow-md text-sm sm:hidden"
+                        >
+                          Xác nhận
+                        </button>
+
+                        <button
+                          onClick={() => handleCancelAppointment(item._id)}
+                          className="bg-red-500 text-white font-semibold py-2 px-4 rounded-md shadow-md text-sm sm:hidden"
+                        >
+                          Hủy
+                        </button>
+                      </>
+                    )}
 
                 {/* Action Buttons */}
                 <div className='flex flex-row gap-2 md:gap-3 justify-center md:justify-end mr-2'>

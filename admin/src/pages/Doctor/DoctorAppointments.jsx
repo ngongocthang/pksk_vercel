@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DoctorContext } from '../../context/DoctorContext';
+import { assets } from '../../assets/assets';
 
 const DoctorAppointments = () => {
   const { dToken, appointments, getAllAppointments } = useContext(DoctorContext);
@@ -96,6 +97,29 @@ const DoctorAppointments = () => {
                   {formatDate(item.work_date)}
                 </p>
 
+              {/* Center status buttons on mobile, align right on larger screens */}
+              <div className='flex gap-3 justify-start sm:justify-self-end'>
+                <span className="md:hidden text-sm font-semibold">Trạng thái: </span>
+                {item.status === "pending" && (
+                  <button className='bg-yellow-400 text-white font-semibold py-1 px-4 rounded-full text-xs shadow-lg sm:text-sm w-[140px]'>
+                    Đang chờ
+                  </button>
+                )}
+                {item.status === "confirmed" && (
+                  <button className='bg-green-500 text-white font-semibold py-1 px-4 rounded-full text-xs shadow-lg sm:text-sm w-[140px]'>
+                    Đã xác nhận
+                  </button>
+                )}
+                {item.status === "canceled" && (
+                  <button className='bg-red-500 text-white font-semibold py-1 px-4 rounded-full text-xs shadow-lg sm:text-sm w-[140px]'>
+                    Đã từ chối
+                  </button>
+                )}
+                {item.status === "completed" && (
+                  <button className='bg-blue-500 text-white font-semibold py-1 px-4 rounded-full text-xs shadow-lg sm:text-sm w-[140px]'>
+                    Đã hoàn thành
+                  </button>
+                )}
                 <div className='flex justify-center items-center'>
                   <p
                     className={`py-1 rounded-full text-white text-sm text-center max-w-[100px] hidden md:block 
@@ -150,6 +174,7 @@ const DoctorAppointments = () => {
           ))}
         </div>
       )}
+      {appointments.length > appointmentsPerPage && renderPagination()}
     </div>
   );
 };

@@ -158,7 +158,10 @@ const DoctorsList = () => {
             onChange={(e) => {
               setSelectedSpecialization(e.target.value);
               // Cập nhật URL khi người dùng chọn chuyên khoa, nhưng không có tham số page
-              navigate(`/doctor-list${e.target.value ? `/${convertToSlug(e.target.value)}` : ''}`);
+              navigate(
+                `/doctor-list${e.target.value ? `/${convertToSlug(e.target.value)}` : ""
+                }`
+              );
             }}
             className="px-5 py-3 rounded-lg bg-white text-gray-800 border border-gray-300 transition-all duration-300 shadow-non focus:outline-none hover:border-blue-400 w-full md:w-auto"
           >

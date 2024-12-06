@@ -99,6 +99,20 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    // Vô hiệu hóa cuộn khi menu mở
+    if (showMenu) {
+      document.body.classList.add("overflow-hidden");
+    } else {
+      document.body.classList.remove("overflow-hidden");
+    }
+
+    // Cleanup khi component bị unmount
+    return () => {
+      document.body.classList.remove("overflow-hidden");
+    };
+  }, [showMenu]);
+
   if (loading) {
     return (
       <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
@@ -203,12 +217,12 @@ const Navbar = () => {
           </div>
         )}
 
-        <img
-          onClick={toggleMenu}
-          className="w-6 md:hidden"
-          src={assets.menu_icon}
-          alt="Menu"
-        />
+      <img
+        onClick={toggleMenu}
+        className="w-6 md:hidden"
+        src={assets.menu_icon}
+        alt="Menu"
+      />
 
         <div className={`transition-all duration-500 ${showMenu ? "fixed w-full top-0 right-0 bottom-0 z-20 bg-white" : "h-0 w-0 overflow-hidden"}`}>
           <div className="flex items-center justify-between px-5 py-6">
@@ -243,6 +257,31 @@ const Navbar = () => {
             )}
           </ul>
         </div>
+        <ul className="flex flex-col items-center gap-2 mt-5 px-5 text-lg font-medium">
+          <NavLink onClick={() => setShowMenu(false)} to="/">
+            <p className="px-4 py-2 rounded inline-block">Trang chủ</p>
+          </NavLink>
+          <NavLink onClick={() => setShowMenu(false)} to="/doctors">
+            <p className="px-4 py-2 rounded inline-block">Tất cả bác sĩ</p>
+          </NavLink>
+          <NavLink onClick={() => setShowMenu(false)} to="/abouts">
+            <p className="px-4 py-2 rounded inline-block">Về chúng tôi</p>
+          </NavLink>
+          <NavLink onClick={() => setShowMenu(false)} to="/contact">
+            <p className="px-4 py-2 rounded inline-block">Liên hệ</p>
+          </NavLink>
+          <NavLink onClick={() => setShowMenu(false)} to="/all-schedule">
+            <p className="px-4 py-2 rounded inline-block">Lịch làm việc</p>
+          </NavLink>
+          {!user && (
+            <NavLink onClick={() => setShowMenu(false)} to="/account">
+              <p className="bg-[#00759c] text-white px-4 py-2 rounded font-light text-center w-full">
+                Đăng nhập
+              </p>
+            </NavLink>
+          )}
+        </ul>
+      </div>
       </div>
     </div>
   );

@@ -12,6 +12,7 @@ const Appointment = require("../../models/Appointment");
 const Payment = require("../../models/Payment");
 const History_appointment = require("../../models/Appointment_history");
 JWT_SECRET = process.env.JWT_SECRET;
+
 const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(process.env.GG_CLIENT_ID);
 const transporter = require("../../helpers/mailer-config");

@@ -69,7 +69,7 @@ const MedicalRecordCard = memo(({ record }) => {
           </div>
         </div>
 
-        <div className="mt-4 pt-4 border-t border-gray-100 text-sm text-gray-500">
+        <div className="mt-4 pt-4 border-t border-gray-100 text-sm text-gray-500 text-center">
           Ngày xác nhận: {new Date(record.history.createdAt).toLocaleDateString("vi-VN")}
         </div>
       </CardContent>
@@ -156,7 +156,7 @@ const MedicalHistory = () => {
     <div className="container mx-auto px-4 py-8">
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle className="sm:text-4xl text-3xl font-semibold text-center">Lịch sử lịch hẹn</CardTitle>
+          <CardTitle className="sm:text-4xl font-semibold text-center text-[#00759c]">Lịch sử lịch hẹn</CardTitle>
         </CardHeader>
         <CardContent>
           {loading ? (

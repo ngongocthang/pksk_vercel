@@ -25,12 +25,10 @@ const Login = () => {
   const onSubmitHandler = async (event) => {
     event.preventDefault();
     setLoading(true);
-
     const url =
       state === "Sign Up"
         ? `${VITE_BACKEND_URI}/register`
         : `${VITE_BACKEND_URI}/login`;
-
     const requestBody = {
       email,
       password,
@@ -172,6 +170,7 @@ const Login = () => {
               </button>
             )}
           </div>
+
           <button
             className={`bg-[#00759c] text-white w-full py-2 rounded-md text-base ${loading ? "opacity-50 cursor-not-allowed" : ""
               }`}

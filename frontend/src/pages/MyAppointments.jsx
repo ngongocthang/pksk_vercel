@@ -200,12 +200,23 @@ const MyAppointments = () => {
       </p>
       <div className="appointments-container">
         {loading ? (
-          <p className="text-center text-gray-500 mt-5">Đang tải dữ liệu...</p>
+          <div className="flex flex-col items-center justify-center mt-10 text-gray-500">
+            <i className="fa-solid fa-spinner animate-spin text-4xl"></i>
+            <p className="text-center text-2xl mt-4">Đang tải thông tin...</p>
+          </div>
         ) : appointments.length === 0 ? (
           <p className="text-center text-gray-500 mt-5">
             Hiện tại bạn không có lịch hẹn.
           </p>
         ) : (
+          appointments.map((appointment) => (
+            <div
+              className="relative grid gap-4 sm:flex sm:gap-6 py-2 border-b"
+              key={appointment._id}
+            >
+              <button
+                onClick={() => handleDeleteAppointment(appointment._id)}
+                className={`absolute top-2 right-2 p-1 text-gray-500 rounded-full transition-all duration-300 hover:bg-red-600 hover:text-white`}
           appointments
             .filter(
               (appointment) => showCanceled || appointment.status !== "canceled"
