@@ -55,7 +55,7 @@ const ResetPassword = () => {
 
   return (
     <div className="flex items-start justify-center min-h-screen bg-white">
-      <div className="bg-white p-8 rounded-xl shadow-lg text-center max-w-sm w-full mt-60">
+      <div className="bg-white p-8 rounded-xl shadow-lg text-center max-w-sm w-full mt-32">
         <h2 className="text-xl font-semibold mb-4">Đặt lại mật khẩu</h2>
         <form onSubmit={handleResetPassword}>
           <div className="relative">
@@ -67,13 +67,15 @@ const ResetPassword = () => {
               required
               className="border border-zinc-300 rounded w-full p-2"
             />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)} // Đổi trạng thái hiển thị mật khẩu
-              className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500"
-            >
-              {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-            </button>
+            {password && (
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500"
+              >
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
+            )}
           </div>
           <button
             type="submit"
