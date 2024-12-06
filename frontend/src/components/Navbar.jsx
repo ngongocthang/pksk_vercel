@@ -1,19 +1,21 @@
-import React, { useState, useEffect, useContext } from "react";
-import { AppContext } from "../context/AppContext";
-import { assets } from "../assets/assets";
+import React, { useContext, useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { assets } from "../assets/assets";
+import { AppContext } from "../context/AppContext";
+import axios from 'axios'; // Nhập axios
 
+const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { user, setUser, unreadCount, setUnreadCount, isNavbarVisible } = useContext(AppContext);
+  const { user, setUser, unreadCount, setUnreadCount } = useContext(AppContext);
   const [showMenu, setShowMenu] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [loading, setLoading] = useState(true);
   const [notificationsCount, setNotificationsCount] = useState(0);
   const [rotateIcon, setRotateIcon] = useState(false);
-  const [isVisible, setIsVisible] = useState(true); 
-  
+  const [isVisible, setIsVisible] = useState(true); // State for navbar visibility
+
   const getDisplayName = (fullName) => {
     const nameParts = fullName.split(" ");
     return nameParts.slice(-2).join(" ");
@@ -21,10 +23,11 @@ const Navbar = () => {
 
   const fetchUnreadNotifications = async () => {
     try {
-      const response = await fetch("http://localhost:5000/notification", {
+      const response = await axios.get(`${VITE_BACKEND_URI}/notification`, {
         headers: { Authorization: `Bearer ${user.token}` },
       });
-      const data = await response.json();
+      const data = response.data; // Lấy dữ liệu từ response
+
       // Kiểm tra xem dữ liệu có phải là mảng không
       if (Array.isArray(data)) {
         // Lọc thông báo chưa đọc
@@ -42,7 +45,7 @@ const Navbar = () => {
   useEffect(() => {
     if (user?.token) {
       fetchUnreadNotifications(); // Lần đầu tiên khi có user
-      const interval = setInterval(fetchUnreadNotifications, 1000); // Lấy thông báo mỗi 30 giây
+      const interval = setInterval(fetchUnreadNotifications, 1000); // Lấy thông báo mỗi 1 giây
 
       return () => clearInterval(interval); // Dọn dẹp interval khi component bị hủy
     }
@@ -69,7 +72,7 @@ const Navbar = () => {
 
   const handleNotificationClick = () => {
     setNotificationsCount(0);
-    navigate("/notifications");
+    navigate("/Notifications");
   };
 
   // Scroll event handler for hiding/showing navbar
@@ -122,7 +125,7 @@ const Navbar = () => {
   }
 
   return (
-    <div className={`flex items-center justify-between text-sm py-4 mb-5 border-b border-b-gray-400 bg-white sticky top-0 z-50 transition-transform duration-300 ${isNavbarVisible ? "transform-none" : "-translate-y-full"}`}>
+    <div className={`flex items-center justify-between text-sm py-4 mb-5 border-b border-b-gray-400 bg-white sticky top-0 z-50 transition-transform duration-300 ${isVisible ? "transform-none" : "-translate-y-full"}`}>
       <img
         onClick={() => navigate('/')}
         className="w-20 sm:w-24 cursor-pointer"
@@ -221,23 +224,38 @@ const Navbar = () => {
         alt="Menu"
       />
 
-      <div
-        className={`transition-all duration-500 ${
-          showMenu
-            ? "fixed w-full top-0 right-0 bottom-0 z-20 bg-white"
-            : "h-0 w-0 overflow-hidden"
-        }`}
-      >
-        <div className="flex items-center justify-between px-5 py-6">
-          <img className="w-20" src={assets.logo} alt="Logo" />
-          <img
-            className={`w-7 duration-300 ease-in-out ${
-              showMenu ? "rotate-180" : ""
-            }`}
-            onClick={toggleMenu}
-            src={assets.cross_icon}
-            alt="Close"
-          />
+        <div className={`transition-all duration-500 ${showMenu ? "fixed w-full top-0 right-0 bottom-0 z-20 bg-white" : "h-0 w-0 overflow-hidden"}`}>
+          <div className="flex items-center justify-between px-5 py-6">
+            <img className="w-20" src={assets.logo} alt="Logo" />
+            <img
+              className={`w-7 duration-300 ease-in-out ${rotateIcon ? "rotate-180" : ""}`}
+              onClick={toggleMenu}
+              src={assets.cross_icon}
+              alt="Close"
+            />
+          </div>
+          <ul className="flex flex-col items-center gap-2 mt-5 px-5 text-lg font-medium">
+            <NavLink onClick={() => setShowMenu(false)} to="/">
+              <p className="px-4 py-2 rounded inline-block">Trang chủ</p>
+            </NavLink>
+            <NavLink onClick={() => setShowMenu(false)} to="/doctors">
+              <p className="px-4 py-2 rounded inline-block">Tất cả bác sĩ</p>
+            </NavLink>
+            <NavLink onClick={() => setShowMenu(false)} to="/abouts">
+              <p className="px-4 py-2 rounded inline-block">Về chúng tôi</p>
+            </NavLink>
+            <NavLink onClick={() => setShowMenu(false)} to="/contact">
+              <p className="px-4 py-2 rounded inline-block">Liên hệ</p>
+            </NavLink>
+            <NavLink onClick={() => setShowMenu(false)} to="/all-schedule">
+              <p className="px-4 py-2 rounded inline-block">Lịch làm việc</p>
+            </NavLink>
+            {!user && (
+              <NavLink onClick={() => setShowMenu(false)} to="/account">
+                <p className="px-4 py-2 rounded inline-block">Đăng nhập</p>
+              </NavLink>
+            )}
+          </ul>
         </div>
         <ul className="flex flex-col items-center gap-2 mt-5 px-5 text-lg font-medium">
           <NavLink onClick={() => setShowMenu(false)} to="/">

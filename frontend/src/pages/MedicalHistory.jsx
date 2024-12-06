@@ -6,6 +6,8 @@ import React, { memo, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 
+const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
+
 // Component hiển thị từng bản ghi lịch sử khám bệnh
 const MedicalRecordCard = memo(({ record }) => {
   const getStatusColor = (status) => {
@@ -122,7 +124,7 @@ const MedicalHistory = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/medical-history/${user.id}`, {
+      const response = await fetch(`${VITE_BACKEND_URI}/medical-history/${user.id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -162,7 +164,7 @@ const MedicalHistory = () => {
           ) : error ? (
             <ErrorAlert message={error} />
           ) : (
-            <div className="flex flex-wrap justify-start gap-4">
+            <div className="flex flex-wrap justify-evenly gap-16">
               {medicalRecords.length === 0 ? (
                 <div className="flex items-center justify-center text-center py-12 w-full">
                   <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">

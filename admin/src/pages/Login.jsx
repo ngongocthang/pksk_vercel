@@ -1,12 +1,11 @@
 // export default Login
-import React, { useContext, useState } from 'react'
-import { AdminContext } from '../context/AdminContext'
-import axios from 'axios'
-import { toast } from 'react-toastify'
-import { DoctorContext } from '../context/DoctorContext'
-import { useNavigate } from 'react-router-dom'
-import EyeIcon from "../assets/eye.svg"
-import EyeOffIcon from "../assets/eye_off.svg"
+import axios from 'axios';
+import { Eye, EyeOff } from "lucide-react"; // Import Eye and EyeOff icons
+import React, { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { AdminContext } from '../context/AdminContext';
+import { DoctorContext } from '../context/DoctorContext';
 
 const Login = () => {
     const [state, setState] = useState('Admin')
@@ -74,12 +73,13 @@ const Login = () => {
                         required
                     />
                     {password && (
-                        <img
-                            src={showPassword ? EyeIcon : EyeOffIcon}
-                            alt="Toggle Password Visibility"
+                        <button
+                            type="button"
                             onClick={() => setShowPassword(!showPassword)}
-                            className='absolute top-1/2 right-3 transform -translate-y-1/2 w-6 h-6 cursor-pointer w-4 h-4 mt-3'
-                        />
+                            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-transparent border-none cursor-pointer flex items-center justify-center pt-6"
+                        >
+                            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                        </button>
                     )}
                 </div>
                 <button className='bg-[#0091a1] text-white w-full py-2 rounded-md text-base'>Đăng nhập</button>

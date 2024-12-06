@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import axios from "axios";
 
+const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
+
 const RelatedDoctors = ({ speciality, docId }) => {
   const navigate = useNavigate();
   const [relDoc, setRelDocs] = useState([]);
@@ -11,7 +13,7 @@ const RelatedDoctors = ({ speciality, docId }) => {
     const fetchDoctors = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/doctor/find-all"
+          `${VITE_BACKEND_URI}/doctor/find-all`
         );
 
         // Kiểm tra xem dữ liệu có thành công và có mảng doctors không
