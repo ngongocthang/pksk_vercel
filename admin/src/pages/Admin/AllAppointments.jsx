@@ -1,11 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AdminContext } from "../../context/AdminContext";
-import { AppContext } from "../../context/AppContext";
 
 const AllAppointments = () => {
   const { aToken, appointments, getAllAppointments } = useContext(AdminContext);
-  const { calculateAge, slotDateFormat, currency } = useContext(AppContext);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [appointmentsPerPage] = useState(10);
@@ -72,11 +70,11 @@ const AllAppointments = () => {
                 {formatDate(item.work_date)}
               </div>
 
-              <div className="flex items-center mb-2 md:mb-0 justify-start md:justify-center gap-2">
+              <div className="flex items-center mb-2 md:mb-0 justify-start md:justify-center gap-2 -mt-0.5">
                 <span className="sm:hidden font-semibold">Ca: </span>
                 <span
                   className={`py-1 px-2 rounded-full text-white text-sm text-center font-semibold
-                    ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-400"} shadow-lg max-w-[100px] w-full h-[30px]`}
+                    ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-400"} shadow-lg max-w-[100px] w-full h-[28px]`}
                 >
                   {item.work_shift === "morning" ? "Sáng" : "Chiều"}
                 </span>
@@ -86,19 +84,19 @@ const AllAppointments = () => {
               {/* Appointment Status Button */}
               <div className="flex justify-center">
                 {item.status === "canceled" ? (
-                  <button className="bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-md hover:shadow-lg transition-all duration-300 w-full sm:w-[140px] text-center">
+                  <button className="bg-red-500 text-white text-xs font-semibold py-1 px-2 rounded-full shadow-lg transition-all duration-300 w-full w-[140px] h-[28px] text-center">
                     Đã hủy
                   </button>
                 ) : item.status === "confirmed" ? (
-                  <button className="bg-blue-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-md hover:shadow-lg transition-all duration-300 w-full sm:w-[140px] text-center">
+                  <button className="bg-blue-500 text-white text-xs font-semibold py-1 px-2 rounded-full shadow-lg transition-all duration-300 w-full w-[140px] h-[28px] text-center">
                     Đã xác nhận
                   </button>
                 ) : item.status === "pending" ? (
-                  <button className="bg-yellow-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-md hover:shadow-lg transition-all duration-300 w-full sm:w-[140px] text-center">
+                  <button className="bg-yellow-500 text-white text-xs font-semibold py-1 px-2 rounded-full shadow-lg transition-all duration-300 w-full w-[140px] h-[28px] text-center">
                     Đang chờ xác nhận
                   </button>
                 ) : (
-                  <button className="bg-blue-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-md hover:shadow-lg transition-all duration-300 w-full sm:w-[140px] text-center">
+                  <button className="bg-blue-500 text-white text-xs font-semibold py-1 px-2 rounded-full shadow-lg transition-all duration-300 w-full w-[140px] h-[28px] text-center">
                     Hoàn thành
                   </button>
                 )}
@@ -106,7 +104,7 @@ const AllAppointments = () => {
             </div>
           ))
         ) : (
-          <p className="text-gray-500 py-3 px-4">Không tìm thấy cuộc hẹn nào.</p>
+          <p className="text-gray-500 py-3 px-4 text-center">Không tìm thấy cuộc hẹn nào.</p>
         )}
       </div>
 
