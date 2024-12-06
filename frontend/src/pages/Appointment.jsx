@@ -15,16 +15,23 @@ const Appointment = () => {
   const { doctors, user } = useContext(AppContext);
   const navigate = useNavigate();
 
+  const phone = localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user")).phone
+    : "";
+
   const [docInfo, setDocInfo] = useState(null);
   const [slotTime, setSlotTime] = useState("");
   const [doctorSchedule, setDoctorSchedule] = useState({});
   const [selectedDate, setSelectedDate] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errorLoadingSchedule, setErrorLoadingSchedule] = useState(false);
+  const [isBookingDisabled, setIsBookingDisabled] = useState(false);
 
   const fetchDocInfo = async () => {
     try {
-      const response = await axios.get(`${VITE_BACKEND_URI}/doctor/find/${docId}`);
+      const response = await axios.get(
+        `${VITE_BACKEND_URI}/doctor/find/${docId}`
+      );
       setDocInfo(response.data);
     } catch (error) {
       console.error("Error fetching doctor info:", error);
@@ -38,9 +45,13 @@ const Appointment = () => {
 
   const fetchDoctorSchedule = async () => {
     try {
-      const response = await axios.get(`${VITE_BACKEND_URI}/get-schedule-doctor/${docId}`);
+      const response = await axios.get(
+        `${VITE_BACKEND_URI}/get-schedule-doctor/${docId}`
+      );
       const groupedSchedule = response.data.reduce((acc, schedule) => {
-        const dateStr = new Date(schedule.work_date).toISOString().split("T")[0];
+        const dateStr = new Date(schedule.work_date)
+          .toISOString()
+          .split("T")[0];
         if (!acc[dateStr]) acc[dateStr] = [];
         acc[dateStr].push(schedule);
         return acc;
@@ -68,22 +79,70 @@ const Appointment = () => {
   }, [docId]);
 
   const handleBooking = () => {
+    setIsBookingDisabled(true);
     const loggedInUser = user || JSON.parse(localStorage.getItem("user"));
     if (!loggedInUser) {
       toast.warn("Vui lòng đăng nhập để đặt lịch hẹn.", {
-        onClose: () => navigate("/account"),
+        onClose: () => {
+          setIsBookingDisabled(false);
+          navigate("/account");
+        },
         autoClose: 3000,
       });
       return;
     }
 
+    if (!phone) {
+      toast.warn(
+        <div className="flex flex-col items-center justify-center">
+          <div className="flex items-center mb-2">
+            <p className="font-bold text-lg">Cảnh báo</p>
+          </div>
+          <p>Bạn chưa cập nhật số điện thoại.</p>
+          <div className="flex justify-center gap-4 mt-4">
+            <button
+              onClick={() => {
+                navigate("/my-profile");
+                setIsBookingDisabled(false);
+                toast.dismiss();
+              }}
+              className="bg-green-500 text-white px-4 py-2 rounded transition duration-300 hover:bg-green-600"
+            >
+              Cập nhật
+            </button>
+            <button
+              onClick={() => {
+                setIsBookingDisabled(false);
+                toast.dismiss();
+              }}
+              className="bg-gray-300 text-black px-4 py-2 rounded transition duration-300 hover:bg-gray-400"
+            >
+              Hủy
+            </button>
+          </div>
+        </div>,
+        {
+          position: "top-center",
+          autoClose: 5000,
+          closeOnClick: false,
+          draggable: false,
+          onClose: () => setIsBookingDisabled(false),
+        }
+      );
+      return;
+    }
+
     if (docInfo && docInfo.available === false) {
-      toast.warn("Hiện tại bác sĩ không nhận đặt lịch hẹn.");
+      toast.warn("Hiện tại bác sĩ không nhận đặt lịch hẹn.", {
+        onClose: () => setIsBookingDisabled(false),
+      });
       return;
     }
 
     if (!selectedDate || !slotTime) {
-      toast.warn("Vui lòng chọn ngày và ca làm việc.");
+      toast.warn("Vui lòng chọn ngày và ca làm việc.", {
+        onClose: () => setIsBookingDisabled(false),
+      });
       return;
     }
 
@@ -93,20 +152,20 @@ const Appointment = () => {
       year: "numeric",
     });
 
-    toast.dismiss();
     toast.info(
       <div className="flex flex-col items-center justify-center">
         <div className="flex items-center mb-2">
           <p className="font-bold text-lg">Xác nhận</p>
         </div>
         <p>
-          Bạn có chắc chắn muốn đặt lịch hẹn vào {formattedDate} ca{" "}
-          {slotTime} không?
+          Bạn có chắc chắn muốn đặt lịch hẹn vào {formattedDate} ca {slotTime}{" "}
+          không?
         </p>
         <div className="flex justify-center gap-4">
           <button
             onClick={() => {
               confirmBooking();
+              setIsBookingDisabled(false);
               toast.dismiss();
             }}
             className="bg-green-500 text-white px-4 py-2 rounded transition duration-300 hover:bg-green-600"
@@ -114,7 +173,10 @@ const Appointment = () => {
             Xác nhận
           </button>
           <button
-            onClick={() => toast.dismiss()}
+            onClick={() => {
+              setIsBookingDisabled(false);
+              toast.dismiss();
+            }}
             className="bg-gray-300 text-black px-4 py-2 rounded transition duration-300 hover:bg-gray-400"
           >
             Hủy
@@ -127,14 +189,15 @@ const Appointment = () => {
         autoClose: false,
         closeOnClick: false,
         draggable: false,
-        progress: undefined,
+        onClose: () => setIsBookingDisabled(false),
       }
     );
   };
 
   const confirmBooking = async () => {
     try {
-      const patientId = user?.id || JSON.parse(localStorage.getItem("user"))?.id;
+      const patientId =
+        user?.id || JSON.parse(localStorage.getItem("user"))?.id;
       if (!patientId) {
         console.error("Không tìm thấy thông tin bệnh nhân.");
         toast.error("Thông tin bệnh nhân không hợp lệ.");
@@ -172,12 +235,19 @@ const Appointment = () => {
         }
       );
 
+      // toast.success("Đặt lịch hẹn thành công!");
+      // setSelectedDate(null);
+      // setSlotTime("");
       toast.success("Đặt lịch hẹn thành công!");
       setSelectedDate(null);
       setSlotTime("");
+      setIsBookingDisabled(false);
     } catch (error) {
+      // console.error("Error creating appointment:", error);
+      // toast.error(error.response?.data?.message || "Lỗi không xác định.");
       console.error("Error creating appointment:", error);
       toast.error(error.response?.data?.message || "Lỗi không xác định.");
+      setIsBookingDisabled(false);
     }
   };
 
@@ -216,24 +286,42 @@ const Appointment = () => {
         </div>
 
         <div className="flex-1 border border-gray-400 rounded-lg p-8 py-7 bg-white mx-2 sm:mx-0 mt-[-80px] sm:mt-0">
-          <p className="flex items-center gap-2 text-2xl font-medium text-gray-900" style={{ lineHeight: "2.5" }}>
+          <p
+            className="flex items-center gap-2 text-2xl font-medium text-gray-900"
+            style={{ lineHeight: "2.5" }}
+          >
             {docInfo.user_id.name}
             <img className="w-5" src={assets.verified_icon} alt="Verified" />
           </p>
-          <div className="flex items-center gap-2 text-sm mt-1 text-gray-600" style={{ lineHeight: "2.5" }}>
+          <div
+            className="flex items-center gap-2 text-sm mt-1 text-gray-600"
+            style={{ lineHeight: "2.5" }}
+          >
             <p>Giá: {docInfo.price ? formatPrice(docInfo.price) : "0"} VND</p>
           </div>
-          <div className="flex items-center gap-2 text-sm mt-1 text-gray-600" style={{ lineHeight: "2.5" }}>
+          <div
+            className="flex items-center gap-2 text-sm mt-1 text-gray-600"
+            style={{ lineHeight: "2.5" }}
+          >
             <p>Chuyên Khoa: {docInfo.specialization_id.name}</p>
           </div>
           <div>
-            <div className="flex items-center gap-2 text-sm mt-1 text-gray-600" style={{ lineHeight: "2.5" }}>
+            <div
+              className="flex items-center gap-2 text-sm mt-1 text-gray-600"
+              style={{ lineHeight: "2.5" }}
+            >
               <p>Số điện thoại: {docInfo.user_id.phone}</p>
             </div>
-            <p className="flex items-center gap-1 text-sm font-medium text-gray-900" style={{ lineHeight: "2.5" }}>
+            <p
+              className="flex items-center gap-1 text-sm font-medium text-gray-900"
+              style={{ lineHeight: "2.5" }}
+            >
               Giới thiệu <img src={assets.info_icon} alt="Info" />
             </p>
-            <p className="text-sm text-gray-500 mt-1 max-w-full sm:max-w-[12000px]" style={{ lineHeight: "1.5", textAlign: "justify" }}>
+            <p
+              className="text-sm text-gray-500 mt-1 max-w-full sm:max-w-[12000px]"
+              style={{ lineHeight: "1.5", textAlign: "justify" }}
+            >
               {docInfo.description}
             </p>
           </div>
@@ -242,13 +330,18 @@ const Appointment = () => {
 
       {/* ----- Booking slots ----- */}
       <div className="sm:ml-72 sm:pl-4 mt-4 font-medium text-gray-700">
-        <p className="flex justify-between items-center"> {/* Sử dụng flex để căn chỉnh */}
+        <p className="flex justify-between items-center">
+          {" "}
+          {/* Sử dụng flex để căn chỉnh */}
           Đặt khám nhanh:
-          <div className="flex items-center gap-2"> {/* Đặt các nút trong một div flex */}
+          <div className="flex items-center gap-2">
+            {" "}
+            {/* Đặt các nút trong một div flex */}
             <button
               onClick={() => {
-                const scrollContainer = document.querySelector(".overflow-x-auto");
-                scrollContainer.scrollBy({ left: -100, behavior: 'smooth' });
+                const scrollContainer =
+                  document.querySelector(".overflow-x-auto");
+                scrollContainer.scrollBy({ left: -100, behavior: "smooth" });
               }}
               className="bg-gray-300 text-black p-2 rounded-full transition-all duration-300 hover:bg-gray-400"
             >
@@ -256,8 +349,9 @@ const Appointment = () => {
             </button>
             <button
               onClick={() => {
-                const scrollContainer = document.querySelector(".overflow-x-auto");
-                scrollContainer.scrollBy({ left: 100, behavior: 'smooth' });
+                const scrollContainer =
+                  document.querySelector(".overflow-x-auto");
+                scrollContainer.scrollBy({ left: 100, behavior: "smooth" });
               }}
               className="bg-gray-300 text-black p-2 rounded-full transition-all duration-300 hover:bg-gray-400"
             >
@@ -273,23 +367,37 @@ const Appointment = () => {
             <div className="flex gap-3 items-center w-full overflow-x-auto mt-4 py-2 whitespace-nowrap">
               {Object.keys(doctorSchedule).map((dateStr) => {
                 const date = new Date(dateStr);
-                const dayOfWeek = date.toLocaleDateString("vi-VN", { weekday: "long" });
+                const dayOfWeek = date.toLocaleDateString("vi-VN", {
+                  weekday: "long",
+                });
                 const isSelected = selectedDate === dateStr;
 
                 return (
                   <div
                     key={dateStr}
                     className={`text-center w-[80px] h-[80px] flex flex-col justify-center items-center rounded-full border cursor-pointer transition-all duration-300
-                    ${isSelected ? "bg-[#00759c] text-white border-[#00759c]" : "border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-100"}
-                    m-5 p-5`} 
-                    style={{ borderRadius: '50%' }}
-                    onClick={() => {
-                      setSelectedDate(dateStr);
-                      setSlotTime("");
-                    }}
+                    ${
+                      isSelected
+                        ? "bg-[#00759c] text-white border-[#00759c]"
+                        : "border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-100"
+                    }
+                    m-4 p-4`}
+                    style={{ borderRadius: "50%" }}
+                    onClick={() => setSelectedDate(dateStr)}
+
                   >
-                    <p className={`text-sm font-bold ${isSelected ? "text-white" : "text-gray-600"}`}>{dayOfWeek}</p>
-                    <p className={`text-sm font-semibold ${isSelected ? "text-white" : "text-gray-500"}`}>
+                    <p
+                      className={`text-sm font-bold ${
+                        isSelected ? "text-white" : "text-gray-600"
+                      }`}
+                    >
+                      {dayOfWeek}
+                    </p>
+                    <p
+                      className={`text-sm font-semibold ${
+                        isSelected ? "text-white" : "text-gray-500"
+                      }`}
+                    >
                       {`${date.getDate()}/${date.getMonth() + 1}`}
                     </p>
                   </div>
@@ -308,29 +416,53 @@ const Appointment = () => {
               .map((schedule) => (
                 <p
                   key={schedule._id}
-                  onClick={() => setSlotTime(schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều")}
-                  className={`text-sm font-semibold px-6 py-3 rounded-full cursor-pointer transition-all duration-300 ${slotTime === (schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều")
-                    ? "bg-[#00759c] text-white"
-                    : "text-gray-500 border border-gray-300 hover:border-[#00759c] hover:text-[#00759c]"
-                    }`}
+                  onClick={() =>
+                    setSlotTime(
+                      schedule.work_shift === "morning"
+                        ? "Buổi sáng"
+                        : "Buổi chiều"
+                    )
+                  }
+                  className={`text-sm font-semibold px-6 py-3 rounded-full cursor-pointer transition-all duration-300 ${
+                    slotTime ===
+                    (schedule.work_shift === "morning"
+                      ? "Buổi sáng"
+                      : "Buổi chiều")
+                      ? "bg-[#00759c] text-white"
+                      : "text-gray-500 border border-gray-300 hover:border-[#00759c] hover:text-[#00759c]"
+                  }`}
                 >
-                  {schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều"}
+                  {schedule.work_shift === "morning"
+                    ? "Buổi sáng"
+                    : "Buổi chiều"}
                 </p>
               ))}
           </div>
         )}
         {/* Nút đặt lịch chỉ hiển thị khi đã chọn ngày và ca */}
         {selectedDate && slotTime && (
+          // <button
+          //   onClick={handleBooking}
+          //   className="bg-[#00759c] text-white text-sm font-bold px-14 py-3 rounded-full my-6"
+          // >
+          //   Đặt lịch hẹn
+          // </button>
           <button
-            onClick={handleBooking}
-            className="bg-[#00759c] text-white text-sm font-bold px-14 py-3 rounded-full my-6 ml-5"
-          >
-            Đặt lịch hẹn
-          </button>
+          onClick={handleBooking}
+          disabled={isBookingDisabled}
+          className={`bg-[#00759c] text-white text-sm font-bold px-14 py-3 rounded-full my-6 ${
+            isBookingDisabled ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+        >
+          Đặt lịch hẹn
+        </button>
         )}
       </div>
       {/* ----- Related Doctors ----- */}
-      <RelatedDoctors docId={docId} speciality={docInfo.specialization_id.name} />
+      <RelatedDoctors
+        docId={docId}
+        speciality={docInfo.specialization_id.name}
+      />
     </div>
   );
 };

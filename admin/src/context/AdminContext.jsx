@@ -18,7 +18,6 @@ const AdminContextProvider = ({ children }) => {
 
   const backendUrl = import.meta.env.VITE_BACKEND_URI;
 
-  // Thiết lập axios với cấu hình chung để không cần khai báo headers nhiều lần
   const api = axios.create({
     baseURL: backendUrl,
     headers: { Authorization: `Bearer ${aToken}` },
@@ -94,7 +93,6 @@ const AdminContextProvider = ({ children }) => {
       }
     } catch (error) {
       console.error("Error fetching appointments:", error);
-      // toast.error(error.response?.data?.message || error.message);
     }
   };
 

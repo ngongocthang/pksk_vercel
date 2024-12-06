@@ -19,6 +19,8 @@ import Notifications from './pages/Notifications';
 import ResetPassword from './pages/ResetPassword.jsx';
 
 const App = () => {
+  const token = localStorage.getItem('token');
+  console.log(token);
   return (
     <div className="min-h-screen flex flex-col">
       <div className="flex-grow mx-4 sm:mx-[10%]">
@@ -34,12 +36,12 @@ const App = () => {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path='/abouts' element={<About />} />
           <Route path='/contact' element={<Contact />} />
-          <Route path='/notifications' element={<Notifications />} />
-          <Route path='/my-appointments' element={<MyAppointments />} />
+          <Route path='/notifications' element={token ? <Notifications /> : <Home />} />
+          <Route path='/my-appointments' element={token ? <MyAppointments /> : <Home />} />
           <Route path='/appointment/:docId' element={<Appointment />} />
-          <Route path='/medical-history' element={<MedicalHistory />} />
+          <Route path='/medical-history' element={token ? <MedicalHistory /> : <Home />} />
           <Route path='/all-schedule' element={<AllSchedule />} />
-          <Route path='/my-profile' element={<MyProfile />} />
+          <Route path='/my-profile' element={token ? <MyProfile /> : <Home />} />
           <Route path='/reset-password/:token' element={<ResetPassword />} />
         </Routes>
       </div>

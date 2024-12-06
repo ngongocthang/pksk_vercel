@@ -106,13 +106,11 @@ const DoctorContextProvider = (props) => {
       });
       if (data.success) {
         setDashData(data.dashData);
-        console.log(data.dashData);
       } else {
-        toast.error(data.message);
+        console.log(data.message);
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.message);
     }
   };
 
