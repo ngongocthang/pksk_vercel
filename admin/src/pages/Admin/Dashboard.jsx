@@ -1,3 +1,4 @@
+import axios from 'axios'; // Nhập axios
 import {
   BarElement,
   CategoryScale,
@@ -11,7 +12,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { assets } from "../../assets/assets";
 import { AdminContext } from "../../context/AdminContext";
-import axios from 'axios'; // Nhập axios
 
 const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 
@@ -208,13 +208,17 @@ const Dashboard = () => {
 
         {/* Cột phải: Hiển thị lịch hẹn sắp tới */}
         <div className="flex-1 bg-white p-4 rounded-lg border-2 border-gray-100 shadow-lg">
+          {/* Tiêu đề */}
           <div className="flex items-center gap-3 px-4 py-2 bg-blue-100 rounded-t">
             <img src={assets.list_icon} alt="icon" className="w-6 h-6" />
             <p className="font-semibold text-gray-800 text-lg">Lịch hẹn sắp tới</p>
           </div>
-          <div className="overflow-x-auto">
+
+          {/* Bảng */}
+          <div className="max-h-[400px] overflow-y-auto border border-gray-200 rounded-lg">
             <table className="w-full bg-white rounded-lg shadow-md">
-              <thead className="bg-gray-100">
+              {/* Header */}
+              <thead className="bg-gray-100 sticky top-0 z-10">
                 <tr>
                   <th className="py-3 px-4 text-center text-gray-700 font-semibold">Bệnh nhân</th>
                   <th className="py-3 px-4 text-center text-gray-700 font-semibold">Bác sĩ</th>
@@ -222,10 +226,17 @@ const Dashboard = () => {
                   <th className="py-3 px-4 text-center text-gray-700 font-semibold">Trạng thái</th>
                 </tr>
               </thead>
+
+              {/* Nội dung */}
               <tbody>
                 {dashUpApData &&
                   dashUpApData.map((item, index) => (
-                    <tr key={index} className={`hover:bg-gray-50 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"}`}>
+                    <tr
+                      key={index}
+                      className={`hover:bg-gray-50 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"
+                        }`}
+                    >
+                      {/* Bệnh nhân */}
                       <td className="py-4 px-4 text-center">
                         <p className="font-medium text-gray-800">
                           {item.patient_id ? item.patient_id.user_id.name : "Không có tên"}
@@ -234,11 +245,15 @@ const Dashboard = () => {
                           Ngày khám: {new Date(item.work_date).toLocaleDateString("vi-VN")}
                         </p>
                       </td>
+
+                      {/* Bác sĩ */}
                       <td className="py-4 px-4 text-center">
                         <p className="font-medium text-gray-800">
                           {item.doctor_id ? item.doctor_id.user_id.name : "Không có tên"}
                         </p>
                       </td>
+
+                      {/* Ca làm việc */}
                       <td className="py-4 px-5 text-center">
                         <p
                           className={`py-1 px-4 rounded-full text-white text-base font-semibold ${item.work_shift === "afternoon" ? "bg-orange-400" : "bg-blue-400"
@@ -247,6 +262,8 @@ const Dashboard = () => {
                           {item.work_shift === "morning" ? "Sáng" : "Chiều"}
                         </p>
                       </td>
+
+                      {/* Trạng thái */}
                       <td className="py-4 px-4 text-center">
                         <button
                           className={`py-1 px-4 rounded-full text-sm font-medium text-white shadow-md w-[120px] h-[32px] ${item.status === "confirmed" ? "bg-green-500" : "bg-red-500"
