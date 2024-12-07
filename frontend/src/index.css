@@ -290,3 +290,33 @@
 .fc-license-message {
   display: none !important;
 }
+.calendar-container {
+  position: relative;
+  overflow-x: auto; /* Cho phép cuộn ngang */
+  -webkit-overflow-scrolling: touch; /* Tăng trải nghiệm cuộn trên thiết bị di động */
+}
+
+.calendar-container .overflow-x-auto {
+  scrollbar-width: thin; /* Firefox: Đặt độ rộng thanh cuộn */
+}
+
+/* Kích thước và kiểu thanh cuộn cho Chrome, Safari và Edge */
+.calendar-container .overflow-x-auto::-webkit-scrollbar {
+  height: 8px; /* Chiều cao thanh cuộn dọc */
+}
+
+.calendar-container .overflow-x-auto::-webkit-scrollbar-thumb {
+  background: #888; /* Màu của thanh cuộn */
+  border-radius: 4px; /* Bo góc cho thanh cuộn */
+}
+
+.calendar-container .overflow-x-auto::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Màu khi hover */
+}
+
+.calendar-container .overflow-x-auto::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Màu nền cho track của thanh cuộn */
+  border-radius: 4px; /* Bo góc cho track */
+}
+
+

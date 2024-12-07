@@ -10,7 +10,6 @@ const EditWorkSchedule = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { getScheduleById, updateSchedule } = useContext(DoctorContext);
-  const [schedule, setSchedule] = useState(null);
   const [scheduleForm, setScheduleForm] = useState({
     workDate: null,
     timeSlot: "",
@@ -22,7 +21,6 @@ const EditWorkSchedule = () => {
       if (id) {
         const scheduleData = await getScheduleById(id);
         if (scheduleData) {
-          setSchedule(scheduleData);
           setScheduleForm({
             workDate: new Date(scheduleData.work_date),
             timeSlot: scheduleData.work_shift,
@@ -63,17 +61,6 @@ const EditWorkSchedule = () => {
     }
   };
 
-  if (!schedule) {
-    return (
-      <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
-        <p className="text-white text-xl text-center">
-          <i className="fa-solid fa-spinner animate-spin text-4xl"></i>
-          <p className="text-base">Đang tải...</p>
-        </p>
-      </div>
-    );
-  }
-
   return (
     <div className="max-w-full md:max-w-2xl mx-auto p-5">
       <div className="bg-white p-8 rounded-lg shadow-lg">
@@ -89,7 +76,7 @@ const EditWorkSchedule = () => {
               onChange={handleDateChange}
               dateFormat="dd/MM/yyyy"
               minDate={new Date()}
-              className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+              className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500 w-[340px]"
             />
           </div>
 
