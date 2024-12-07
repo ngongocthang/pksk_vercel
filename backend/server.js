@@ -4,7 +4,6 @@ const mongoose = require("mongoose");
 const cloudinary = require("cloudinary").v2;
 const upload = require("./helpers/multer-config");
 const session = require("express-session");
-const cors = require("cors");
 const cron = require("node-cron");
 const sendAppointmentReminders = require("./services/index");
 
@@ -23,6 +22,9 @@ const userRouterSchedule = require("./routers/Schedule");
 const userRouterHome = require("./routers/Home");
 
 //middleware
+const cors = require("cors");
+// app.use(cors());
+
 // Middleware
 const app = express();
 

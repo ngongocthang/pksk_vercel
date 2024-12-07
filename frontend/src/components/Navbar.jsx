@@ -1,8 +1,10 @@
+import axios from 'axios'; // Nhập axios
 import React, { useContext, useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets";
 import { AppContext } from "../context/AppContext";
 import axios from 'axios';
+
 
 const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 
@@ -14,7 +16,9 @@ const Navbar = () => {
   const [loading, setLoading] = useState(true);
   const [notificationsCount, setNotificationsCount] = useState(0);
   const [rotateIcon, setRotateIcon] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
+
+  const [isVisible, setIsVisible] = useState(true); // State for navbar visibility
+  const [notifications, setNotifications] = useState([]);
 
   const getDisplayName = (fullName) => {
     const nameParts = fullName.split(" ");
@@ -28,26 +32,38 @@ const Navbar = () => {
       });
       const data = response.data;
 
+
+      // Kiểm tra nếu dữ liệu là mảng
       if (Array.isArray(data)) {
         const unreadNotifications = data.filter(notification => !notification.isRead);
-        const unreadCount = unreadNotifications.length;
-        setUnreadCount(unreadCount);
+        setUnreadCount(unreadNotifications.length);
+        setNotifications(data);
       } else {
+
         setUnreadCount(0);
+        setNotifications([]);
       }
     } catch (error) {
-      console.error("Error fetching unread notifications:", error);
+      // console.error("Error fetching notifications:", error);
     }
   };
 
-  // useEffect(() => {
-  //   if (user?.token) {
-  //     fetchUnreadNotifications();
-  //     const interval = setInterval(fetchUnreadNotifications, 1000);
 
-  //     return () => clearInterval(interval);
-  //   }
-  // }, [user, setUnreadCount]);
+  useEffect(() => {
+    if (user?.token) {
+      fetchUnreadNotifications(); 
+      const interval = setInterval(fetchUnreadNotifications, 1000); 
+      return () => clearInterval(interval); 
+    }
+  }, [user]);
+
+  // useEffect này giúp theo dõi sự thay đổi trong notifications và cập nhật unreadCount
+  useEffect(() => {
+    if (notifications.length > 0) {
+      const unreadNotifications = notifications.filter(notification => !notification.isRead);
+      setUnreadCount(unreadNotifications.length);
+    }
+  }, [notifications]);
 
   useEffect(() => {
     const savedUser = localStorage.getItem("user");

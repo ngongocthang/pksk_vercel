@@ -136,7 +136,7 @@ const getCurrentUserNotifications = async (req, res) => {
         return res.status(200).json(notifications);
       }
     }
-    return res.status(404).json({ message: "Notifications not found" });
+    // return res.status(404).json({ message: "Notifications not found" });
   } catch (error) {
     console.error("Error fetching notifications:", error);
     return res.status(500).json({ message: error.message });

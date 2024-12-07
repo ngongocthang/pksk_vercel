@@ -186,7 +186,6 @@ const Appointment = () => {
       {
         position: "top-center",
         autoClose: 5000,
-        autoClose: false,
         closeOnClick: false,
         draggable: false,
         onClose: () => setIsBookingDisabled(false),
@@ -441,16 +440,10 @@ const Appointment = () => {
         )}
         {/* Nút đặt lịch chỉ hiển thị khi đã chọn ngày và ca */}
         {selectedDate && slotTime && (
-          // <button
-          //   onClick={handleBooking}
-          //   className="bg-[#00759c] text-white text-sm font-bold px-14 py-3 rounded-full my-6"
-          // >
-          //   Đặt lịch hẹn
-          // </button>
           <button
           onClick={handleBooking}
           disabled={isBookingDisabled}
-          className={`bg-[#00759c] text-white text-sm font-bold px-14 py-3 rounded-full my-6 ${
+          className={`bg-[#00759c] text-white text-sm font-bold px-14 py-3 rounded-full my-6 ml-5 ${
             isBookingDisabled ? "opacity-50 cursor-not-allowed" : ""
           }`}
         >
