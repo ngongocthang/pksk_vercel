@@ -186,8 +186,7 @@ const DoctorContextProvider = (props) => {
       }
     } catch (error) {
       console.log(error);
-      toast.error("Lịch làm việc đã tồn tại!");
-
+      toast.error( error.response?.data?.message ||" Lịch làm việc đã tồn tại!");
     }
   };
 
@@ -231,7 +230,7 @@ const DoctorContextProvider = (props) => {
       }
     } catch (error) {
       console.log(error);
-      toast.error("Không thể cập nhật lịch làm việc trước 24 giờ!");
+      toast.error("Không thể cập nhật lịch làm việc trong vòng 24 giờ diễn ra!");
     }
   };
 

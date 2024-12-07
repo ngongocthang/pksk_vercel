@@ -11,6 +11,7 @@ const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 const MyProfile = () => {
   const navigate = useNavigate();
   const { user, setUser } = useContext(AppContext);
+  console.log("user", user);
   const [userData, setUserData] = useState({
     name: "",
     image: assets.profile_pic,
@@ -70,7 +71,7 @@ const MyProfile = () => {
     const token = localStorage.getItem("token");
     const userIdString = localStorage.getItem("user");
     const userIdObj = JSON.parse(userIdString);
-    const userId = userIdObj.id;
+    const userId = userIdObj.id ? userIdObj.id : user._id;
 
     if (!token) {
       toast.error("Bạn chưa đăng nhập. Vui lòng đăng nhập để tiếp tục.");
@@ -105,12 +106,14 @@ const MyProfile = () => {
 
       toast.success(response.data.message);
       
-      // Cập nhật lại thông tin người dùng trong context
-      setUser((prevUser) => ({
-        ...prevUser,
+      const updatedUser = {
+        ...user,
         name: userData.name,
-        phone: userData.phone, // Cập nhật số điện thoại mới
-      }));
+        phone: userData.phone,
+      };
+      setUser(updatedUser);
+
+      localStorage.setItem("user", JSON.stringify(updatedUser));
 
       setErrorMessage("");
       setIsEdit(false);

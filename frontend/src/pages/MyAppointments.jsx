@@ -110,10 +110,10 @@ const MyAppointments = () => {
         );
 
         if (response.data.success) {
+          toast.error("Có lỗi xảy ra khi hủy cuộc hẹn.");
+        } else {
           toast.success("Cuộc hẹn đã được hủy thành công!");
           fetchAppointments();
-        } else {
-          toast.error("Có lỗi xảy ra khi hủy cuộc hẹn.");
         }
       } catch (error) {
         console.error("Error canceling appointment:", error);
@@ -339,14 +339,6 @@ const MyAppointments = () => {
                 </div>
               </div>
             ))
-        )}
-        {error && (
-          <div
-            className="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg"
-            role="alert"
-          >
-            <span className="font-medium">Lỗi:</span> {error}
-          </div>
         )}
       </div>
     </div>
