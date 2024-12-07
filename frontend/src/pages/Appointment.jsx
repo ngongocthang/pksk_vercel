@@ -269,8 +269,8 @@ const Appointment = () => {
       <p className="text-sm text-gray-500 mt-1 max-w-full sm:max-w-[12000px]" style={{ lineHeight: "1.5", textAlign: "justify" }}>
         {isDescriptionExpanded ? description : `${description.substring(0, 100)}${isLongDescription ? '...' : ''}`}
         {isLongDescription && (
-          <span 
-            className="text-blue-500 cursor-pointer" 
+          <span
+            className="text-blue-500 cursor-pointer"
             onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
           >
             {isDescriptionExpanded ? " (Thu gọn)" : " (Xem thêm)"}
@@ -356,8 +356,11 @@ const Appointment = () => {
                   <div
                     key={dateStr}
                     className={`text-center w-[80px] h-[80px] flex flex-col justify-center items-center rounded-full border cursor-pointer transition-all duration-300
-                    ${isSelected ? "bg-[#00759c] text-white border-[#00759c]" : "border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-100"}
-                    m-4 p-4`}
+                    ${isSelected
+                        ? "bg-[#00759c] text-white border-[#00759c]"
+                        : "border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-100"
+                      }
+                    m-3 p-4`}
                     style={{ borderRadius: "50%" }}
                     onClick={() => setSelectedDate(dateStr)}
                   >
@@ -386,25 +389,23 @@ const Appointment = () => {
                       schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều"
                     )
                   }
-                  className={`text-sm font-semibold px-6 py-3 rounded-full cursor-pointer transition-all duration-300 ${
-                    slotTime === (schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều")
+                  className={`text-sm font-semibold px-6 py-3 rounded-full cursor-pointer transition-all duration-300 ${slotTime === (schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều")
                       ? "bg-[#00759c] text-white"
                       : "text-gray-500 border border-gray-300 hover:border-[#00759c] hover:text-[#00759c]"
-                  }`}
+                    }`}
                 >
                   {schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều"}
                 </p>
               ))}
           </div>
         )}
-        
+
         {selectedDate && slotTime && (
           <button
             onClick={handleBooking}
             disabled={isBookingDisabled}
-            className={`bg-[#00759c] text-white text-sm font-bold px-14 py-3 rounded-full my-6 ml-5 ${
-              isBookingDisabled ? "opacity-50 cursor-not-allowed" : ""
-            }`}
+            className={`bg-[#00759c] text-white text-sm font-bold px-14 py-3 rounded-full my-6 ml-5 ${isBookingDisabled ? "opacity-50 cursor-not-allowed" : ""
+              }`}
           >
             Đặt lịch hẹn
           </button>
