@@ -7,25 +7,30 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AppContext } from "../context/AppContext";
 import "../index.css";
+import { useNavigate } from "react-router-dom";
 
 const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 
 const AllSchedule = () => {
+  const navigate = useNavigate();
   const [doctors, setDoctors] = useState([]);
   const [events, setEvents] = useState([]);
   const { user } = useContext(AppContext);
   const [isToastVisible, setIsToastVisible] = useState(false);
   const [loading, setLoading] = useState(true); 
-  const patient_id = user?.id || null;
   const token = user?.token || localStorage.getItem("token");
-  
+  const phone = localStorage.getItem("user")
+  ? JSON.parse(localStorage.getItem("user")).phone
+  : "";
+  const patient_id = user?.id ? user?.id : JSON.parse(localStorage.getItem("user"))._id;
+
   if (typeof console !== "undefined") {
     console.error = function () {};
   }
   
   useEffect(() => {
     const fetchSchedules = async () => {
-      setLoading(true); // Bắt đầu loading
+      setLoading(true);
       try {
         const response = await axios.get(`${VITE_BACKEND_URI}/get-all-schedule-doctor`);
         
@@ -75,30 +80,80 @@ const AllSchedule = () => {
 
     fetchSchedules();
   }, []);
-
+  
   const handleEventClick = (info) => {
     if (isToastVisible) {
-      return; // Nếu đã có thông báo đang hiển thị, không làm gì cả
+      return;
     }
-
+  
     const clickedEvent = info.event;
     const convertTitle = clickedEvent.title === "Sáng" ? "morning" : "afternoon";
-
+  
+    // Lấy ngày làm việc từ sự kiện
+    const workDate = new Date(clickedEvent.start).toISOString().split("T")[0];
+    const currentDate = new Date().toISOString().split("T")[0];
+  
+    // Kiểm tra xem lịch làm việc đã ở quá khứ chưa
+    if (workDate < currentDate) {
+      toast.error("Không thể đặt lịch hẹn cho ngày đã qua!");
+      return;
+    }
+  
     const formatDate = (isoDate) => {
       const [year, month, day] = isoDate.split("-");
       return `${day}/${month}/${year}`;
     };
-
+  
     const appointmentData = {
       patient_id: patient_id,
       doctor_id: clickedEvent.getResources()[0]?.id || "",
       work_shift: convertTitle,
-      work_date: clickedEvent.start.toISOString().split("T")[0],
+      work_date: workDate,
     };
-
+  
     const formattedDate = formatDate(appointmentData.work_date);
     setIsToastVisible(true);
-
+  
+    // Kiểm tra số điện thoại
+    if (!phone) {
+      toast.warn(
+        <div className="flex flex-col items-center justify-center">
+          <div className="flex items-center mb-2">
+            <p className="font-bold text-lg">Cảnh báo</p>
+          </div>
+          <p>Bạn chưa cập nhật số điện thoại. Vui lòng cập nhật trước khi đặt lịch hẹn.</p>
+          <div className="flex justify-center gap-4 mt-4">
+            <button
+              onClick={() => {
+                navigate("/my-profile");
+                setIsToastVisible(false);
+              }}
+              className="bg-green-500 text-white px-4 py-2 rounded transition duration-300 hover:bg-green-600"
+            >
+              Cập nhật
+            </button>
+            <button
+              onClick={() => {
+                toast.dismiss();
+                setIsToastVisible(false);
+              }}
+              className="bg-gray-300 text-black px-4 py-2 rounded transition duration-300 hover:bg-gray-400"
+            >
+              Hủy
+            </button>
+          </div>
+        </div>,
+        {
+          position: "top-center",
+          autoClose: false,
+          closeOnClick: false,
+          draggable: false,
+        }
+      );
+      return;
+    }
+  
+    // Hiển thị thông báo xác nhận
     toast.info(
       <div className="flex flex-col items-center justify-center">
         <div className="flex items-center mb-2">
@@ -138,6 +193,7 @@ const AllSchedule = () => {
       }
     );
   };
+  
 
   const confirmBooking = async (appointmentData) => {
     const loggedInUser = user || JSON.parse(localStorage.getItem("user"));
@@ -148,7 +204,6 @@ const AllSchedule = () => {
       });
       return;
     }
-    console.log("appointmentData", appointmentData);
     try {
       const response = await axios.post(
         `${VITE_BACKEND_URI}/create-appointment/${patient_id}`,
@@ -201,7 +256,7 @@ const AllSchedule = () => {
                           className="w-8 h-8 rounded-full mr-2"
                         />
                         {doctorName}
-                        <span className="text-sm ml-2 text-gray-500">(Chuyên khoa: {specialization})</span>
+                        <span className="text-sm ml-2 text-gray-500">({specialization})</span>
                       </div>
                     );
                   },

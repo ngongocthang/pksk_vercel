@@ -88,8 +88,7 @@ const LoadingSpinner = () => (
 const ErrorAlert = ({ message }) => (
   <div className="container mx-auto px-4 py-8">
     <Alert variant="destructive">
-      <AlertCircle className="h-4 w-4" />
-      <AlertDescription>Có lỗi xảy ra khi tải dữ liệu: {message}</AlertDescription>
+      <AlertDescription>Hiện tại bạn không có lịch sử lịch hẹn</AlertDescription>
     </Alert>
   </div>
 );

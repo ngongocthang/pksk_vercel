@@ -197,7 +197,7 @@ const Appointment = () => {
   const confirmBooking = async () => {
     try {
       const patientId =
-        user?.id || JSON.parse(localStorage.getItem("user"))?.id;
+        user?._id || JSON.parse(localStorage.getItem("user"))?.id;
       if (!patientId) {
         console.error("Không tìm thấy thông tin bệnh nhân.");
         toast.error("Thông tin bệnh nhân không hợp lệ.");

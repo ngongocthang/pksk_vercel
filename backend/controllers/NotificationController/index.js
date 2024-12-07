@@ -103,7 +103,7 @@ const getCurrentUserNotifications = async (req, res) => {
     const user_id = req.user?.id;
     const user_role = req.user?.role;
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Set to start of the day
+    today.setHours(0, 0, 0, 0);
 
     let notifications;
 

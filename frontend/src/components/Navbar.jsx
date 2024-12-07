@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets";
 import { AppContext } from "../context/AppContext";
-import axios from 'axios'; // Nhập axios
+import axios from 'axios';
 
 const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 
@@ -14,7 +14,7 @@ const Navbar = () => {
   const [loading, setLoading] = useState(true);
   const [notificationsCount, setNotificationsCount] = useState(0);
   const [rotateIcon, setRotateIcon] = useState(false);
-  const [isVisible, setIsVisible] = useState(true); // State for navbar visibility
+  const [isVisible, setIsVisible] = useState(true);
 
   const getDisplayName = (fullName) => {
     const nameParts = fullName.split(" ");
@@ -26,30 +26,28 @@ const Navbar = () => {
       const response = await axios.get(`${VITE_BACKEND_URI}/notification`, {
         headers: { Authorization: `Bearer ${user.token}` },
       });
-      const data = response.data; // Lấy dữ liệu từ response
+      const data = response.data;
 
-      // Kiểm tra xem dữ liệu có phải là mảng không
       if (Array.isArray(data)) {
-        // Lọc thông báo chưa đọc
         const unreadNotifications = data.filter(notification => !notification.isRead);
         const unreadCount = unreadNotifications.length;
         setUnreadCount(unreadCount);
       } else {
-        setUnreadCount(0); // Nếu không phải mảng, không có thông báo chưa đọc
+        setUnreadCount(0);
       }
     } catch (error) {
       console.error("Error fetching unread notifications:", error);
     }
   };
 
-  useEffect(() => {
-    if (user?.token) {
-      fetchUnreadNotifications(); // Lần đầu tiên khi có user
-      const interval = setInterval(fetchUnreadNotifications, 1000); // Lấy thông báo mỗi 1 giây
+  // useEffect(() => {
+  //   if (user?.token) {
+  //     fetchUnreadNotifications();
+  //     const interval = setInterval(fetchUnreadNotifications, 1000);
 
-      return () => clearInterval(interval); // Dọn dẹp interval khi component bị hủy
-    }
-  }, [user, setUnreadCount]);
+  //     return () => clearInterval(interval);
+  //   }
+  // }, [user, setUnreadCount]);
 
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
@@ -76,27 +74,22 @@ const Navbar = () => {
     navigate("/notifications");
   };
 
-  // Scroll event handler for hiding/showing navbar
   useEffect(() => {
-    let lastScrollY = window.scrollY; // Keep track of the last scroll position
+    let lastScrollY = window.scrollY;
 
     const handleScroll = () => {
       if (window.scrollY === 0) {
-        // If at the top of the page, ensure the navbar is visible
         setIsVisible(true);
       } else if (window.scrollY > lastScrollY) {
-        // Scrolling down
         setIsVisible(false);
       } else if (window.scrollY < lastScrollY) {
-        // Scrolling up
         setIsVisible(true);
       }
-      lastScrollY = window.scrollY <= 0 ? 0 : window.scrollY; // Prevent negative values
+      lastScrollY = window.scrollY <= 0 ? 0 : window.scrollY;
     };
 
     window.addEventListener("scroll", handleScroll);
 
-    // Cleanup listener on component unmount
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 

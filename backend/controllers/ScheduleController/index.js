@@ -202,23 +202,78 @@ const getScheduleByDoctorDashboard = async (req, res) => {
   }
 };
 
+// const doctorCreateSchedule = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const { work_shift } = req.body;
+
+//     const doctor = await Doctor.findOne({ user_id: id });
+//     if (!doctor) {
+//       return res.status(400).json({ message: "Doctor not found" });
+//     }
+//     const checkSchedule = await Schedule.findOne({
+//       work_date: req.body.work_date,
+//       work_shift: req.body.work_shift,
+//       doctor_id: doctor._id,
+//     });
+//     if (checkSchedule) {
+//       return res.status(400).json({ message: "Schedule already exists" });
+//     }
+//     const schedule = await Schedule.create({
+//       ...req.body,
+//       doctor_id: doctor._id,
+//     });
+//     if (schedule) {
+//       return res.status(200).json({ success: true, schedule });
+//     }
+//     return res
+//       .status(400)
+//       .json({ success: false, message: "Schedule not found" });
+//   } catch (error) {
+//     return res.status(500).json({ success: false, message: error.message });
+//   }
+// };
 const doctorCreateSchedule = async (req, res) => {
   try {
     const { id } = req.params;
-    const { work_shift } = req.body;
+    const { work_shift, work_date } = req.body;
 
     const doctor = await Doctor.findOne({ user_id: id });
     if (!doctor) {
       return res.status(400).json({ message: "Doctor not found" });
     }
+
+    // Lấy thời gian hiện tại
+    const currentDateTime = new Date();
+    const scheduleDateTime = new Date(work_date);
+
+    // Thiết lập thời gian cho các ca làm việc
+    if (work_shift === "morning") {
+      scheduleDateTime.setHours(7, 30, 0, 0); // 7h30
+    } else if (work_shift === "afternoon") {
+      scheduleDateTime.setHours(13, 30, 0, 0); // 13h30
+    }
+
+    // Kiểm tra thời gian hiện tại với thời gian tạo lịch
+    if (work_shift === "morning" && currentDateTime > new Date(scheduleDateTime.getTime() - 30 * 60 * 1000)) {
+      return res.status(400).json({
+        message: "Không thể tạo lịch cho ca sáng sau 7h30!",
+      });
+    } else if (work_shift === "afternoon" && currentDateTime > new Date(scheduleDateTime.getTime() - 30 * 60 * 1000)) {
+      return res.status(400).json({
+        message: "Không thể tạo lịch cho ca chiều sau 13h30!",
+      });
+    }
+
     const checkSchedule = await Schedule.findOne({
       work_date: req.body.work_date,
       work_shift: req.body.work_shift,
       doctor_id: doctor._id,
     });
     if (checkSchedule) {
-      return res.status(400).json({ message: "Schedule already exists" });
+      return res.status(400).json({ message: "Lịch làm việc đã tồn tại." });
     }
+
     const schedule = await Schedule.create({
       ...req.body,
       doctor_id: doctor._id,
