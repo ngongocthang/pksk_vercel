@@ -1,8 +1,9 @@
-import axios from 'axios'; // Nhập axios
 import React, { useContext, useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets";
 import { AppContext } from "../context/AppContext";
+import axios from 'axios';
+
 
 const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 
@@ -13,6 +14,7 @@ const Navbar = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [notificationsCount, setNotificationsCount] = useState(0);
   const [rotateIcon, setRotateIcon] = useState(false);
+
   const [isVisible, setIsVisible] = useState(true); // State for navbar visibility
   const [notifications, setNotifications] = useState([]);
 
@@ -26,15 +28,17 @@ const Navbar = () => {
       const response = await axios.get(`${VITE_BACKEND_URI}/notification`, {
         headers: { Authorization: `Bearer ${user.token}` },
       });
-      const data = response.data; // Lấy dữ liệu từ response
+      const data = response.data;
+
 
       // Kiểm tra nếu dữ liệu là mảng
       if (Array.isArray(data)) {
         const unreadNotifications = data.filter(notification => !notification.isRead);
         setUnreadCount(unreadNotifications.length);
-        setNotifications(data); // Cập nhật thông báo vào state
+        setNotifications(data);
       } else {
-        setUnreadCount(0); // Nếu không phải mảng, không có thông báo chưa đọc
+
+        setUnreadCount(0);
         setNotifications([]);
       }
     } catch (error) {
@@ -42,12 +46,12 @@ const Navbar = () => {
     }
   };
 
+
   useEffect(() => {
     if (user?.token) {
-      fetchUnreadNotifications(); // Lần đầu tiên khi có user
-      const interval = setInterval(fetchUnreadNotifications, 1000); // Cập nhật thông báo mỗi 1 giây
-
-      return () => clearInterval(interval); // Dọn dẹp interval khi component bị hủy
+      fetchUnreadNotifications(); 
+      const interval = setInterval(fetchUnreadNotifications, 1000); 
+      return () => clearInterval(interval); 
     }
   }, [user]);
 
@@ -83,7 +87,6 @@ const Navbar = () => {
     navigate("/notifications");
   };
 
-  // Scroll event handler for hiding/showing navbar
   useEffect(() => {
     let lastScrollY = window.scrollY;
 

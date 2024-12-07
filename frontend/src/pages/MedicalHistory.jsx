@@ -88,8 +88,7 @@ const LoadingSpinner = () => (
 const ErrorAlert = ({ message }) => (
   <div className="container mx-auto px-4 py-8">
     <Alert variant="destructive">
-      <AlertCircle className="h-4 w-4" />
-      <AlertDescription>Có lỗi xảy ra khi tải dữ liệu: {message}</AlertDescription>
+      <AlertDescription>Hiện tại bạn không có lịch sử lịch hẹn</AlertDescription>
     </Alert>
   </div>
 );
@@ -164,7 +163,7 @@ const MedicalHistory = () => {
           ) : error ? (
             <ErrorAlert message={error} />
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-2 row-gap-4 max-h-[880px] overflow-y-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 row-gap-4 max-h-[880px] overflow-y-auto">
               {medicalRecords.length === 0 ? (
                 <div className="col-span-full flex items-center justify-center text-center py-12">
                   <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
