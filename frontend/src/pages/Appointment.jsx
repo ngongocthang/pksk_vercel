@@ -263,11 +263,11 @@ const Appointment = () => {
     if (!docInfo || !docInfo.description) return null;
 
     const description = docInfo.description;
-    const isLongDescription = description.length > 100;
+    const isLongDescription = description.length > 500;
 
     return (
       <p className="text-sm text-gray-500 mt-1 max-w-full sm:max-w-[12000px]" style={{ lineHeight: "1.5", textAlign: "justify" }}>
-        {isDescriptionExpanded ? description : `${description.substring(0, 100)}${isLongDescription ? '...' : ''}`}
+        {isDescriptionExpanded ? description : `${description.substring(0, 500)}${isLongDescription ? '...' : ''}`}
         {isLongDescription && (
           <span
             className="text-blue-500 cursor-pointer"
@@ -390,8 +390,8 @@ const Appointment = () => {
                     )
                   }
                   className={`text-sm font-semibold px-6 py-3 rounded-full cursor-pointer transition-all duration-300 ${slotTime === (schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều")
-                      ? "bg-[#00759c] text-white"
-                      : "text-gray-500 border border-gray-300 hover:border-[#00759c] hover:text-[#00759c]"
+                    ? "bg-[#00759c] text-white"
+                    : "text-gray-500 border border-gray-300 hover:border-[#00759c] hover:text-[#00759c]"
                     }`}
                 >
                   {schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều"}
