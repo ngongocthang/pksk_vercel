@@ -11,7 +11,6 @@ const Navbar = () => {
   const { user, setUser, unreadCount, setUnreadCount } = useContext(AppContext);
   const [showMenu, setShowMenu] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [notificationsCount, setNotificationsCount] = useState(0);
   const [rotateIcon, setRotateIcon] = useState(false);
   const [isVisible, setIsVisible] = useState(true); // State for navbar visibility
@@ -58,14 +57,13 @@ const Navbar = () => {
       const unreadNotifications = notifications.filter(notification => !notification.isRead);
       setUnreadCount(unreadNotifications.length);
     }
-  }, [notifications]); // Duy trì cập nhật số lượng thông báo chưa đọc
+  }, [notifications]);
 
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
     if (savedUser) {
       setUser(JSON.parse(savedUser));
     }
-    setLoading(false);
   }, [setUser]);
 
   const handleLogout = () => {
@@ -87,38 +85,23 @@ const Navbar = () => {
 
   // Scroll event handler for hiding/showing navbar
   useEffect(() => {
-    let lastScrollY = window.scrollY; // Keep track of the last scroll position
+    let lastScrollY = window.scrollY;
 
     const handleScroll = () => {
       if (window.scrollY === 0) {
-        // If at the top of the page, ensure the navbar is visible
         setIsVisible(true);
       } else if (window.scrollY > lastScrollY) {
-        // Scrolling down
         setIsVisible(false);
       } else if (window.scrollY < lastScrollY) {
-        // Scrolling up
         setIsVisible(true);
       }
-      lastScrollY = window.scrollY <= 0 ? 0 : window.scrollY; // Prevent negative values
+      lastScrollY = window.scrollY <= 0 ? 0 : window.scrollY;
     };
 
     window.addEventListener("scroll", handleScroll);
 
-    // Cleanup listener on component unmount
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  if (loading) {
-    return (
-      <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
-        <div className="text-white text-xl text-center">
-          <i className="fa-solid fa-spinner animate-spin text-4xl"></i>
-          <p>Đang tải...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className={`flex items-center justify-between text-sm py-4 mb-5 border-b border-b-gray-400 bg-white sticky top-0 z-50 transition-transform duration-300 ${isVisible ? "transform-none" : "-translate-y-full"}`}>
@@ -155,8 +138,8 @@ const Navbar = () => {
         {user ? (
           <div
             className="flex items-center gap-2 cursor-pointer group relative"
-            onMouseEnter={() => setShowDropdown(true)} // Hiển thị menu khi di chuột vào
-            onMouseLeave={() => setShowDropdown(false)} // Ẩn menu khi rời chuột
+            onMouseEnter={() => setShowDropdown(true)}
+            onMouseLeave={() => setShowDropdown(false)}
           >
             <img className="w-8 rounded-full" src={assets.profile_pic} alt="Avatar" />
             <p className="font-medium text-gray-700">{getDisplayName(user.name)}</p>
@@ -246,11 +229,6 @@ const Navbar = () => {
             <NavLink onClick={() => setShowMenu(false)} to="/all-schedule">
               <p className="px-4 py-2 rounded inline-block">Lịch làm việc</p>
             </NavLink>
-            {!user && (
-              <NavLink onClick={() => setShowMenu(false)} to="/account">
-                <p className="px-4 py-2 rounded inline-block">Đăng nhập</p>
-              </NavLink>
-            )}
           </ul>
         </div>
       </div>
