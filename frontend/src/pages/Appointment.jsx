@@ -380,7 +380,7 @@ const Appointment = () => {
                         ? "bg-[#00759c] text-white border-[#00759c]"
                         : "border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-100"
                     }
-                    m-4 p-4`}
+                    m-3 p-4`}
                     style={{ borderRadius: "50%" }}
                     onClick={() => setSelectedDate(dateStr)}
 
