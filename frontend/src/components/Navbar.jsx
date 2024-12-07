@@ -1,4 +1,3 @@
-import axios from 'axios'; // Nhập axios
 import React, { useContext, useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets";

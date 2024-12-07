@@ -76,7 +76,7 @@ const EditWorkSchedule = () => {
               onChange={handleDateChange}
               dateFormat="dd/MM/yyyy"
               minDate={new Date()}
-              className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500 w-[340px]"
+              className="p-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500 w-[340px]"
             />
           </div>
 
