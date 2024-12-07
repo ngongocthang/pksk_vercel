@@ -3,11 +3,11 @@ import FullCalendar from "@fullcalendar/react";
 import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AppContext } from "../context/AppContext";
 import "../index.css";
-import { useNavigate } from "react-router-dom";
 
 const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 
@@ -22,7 +22,7 @@ const AllSchedule = () => {
   const phone = localStorage.getItem("user")
   ? JSON.parse(localStorage.getItem("user")).phone
   : "";
-  const patient_id = user?.id ? user?.id : JSON.parse(localStorage.getItem("user"))._id;
+  const patient_id = user?.id || (user ? JSON.parse(localStorage.getItem("user"))._id : null);
 
   if (typeof console !== "undefined") {
     console.error = function () {};
