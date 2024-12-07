@@ -263,11 +263,11 @@ const Appointment = () => {
     if (!docInfo || !docInfo.description) return null;
 
     const description = docInfo.description;
-    const isLongDescription = description.length > 500;
+    const isLongDescription = description.length > 300;
 
     return (
       <p className="text-sm text-gray-500 mt-1 max-w-full sm:max-w-[12000px]" style={{ lineHeight: "1.5", textAlign: "justify" }}>
-        {isDescriptionExpanded ? description : `${description.substring(0, 500)}${isLongDescription ? '...' : ''}`}
+        {isDescriptionExpanded ? description : `${description.substring(0, 300)}${isLongDescription ? '...' : ''}`}
         {isLongDescription && (
           <span
             className="text-blue-500 cursor-pointer"

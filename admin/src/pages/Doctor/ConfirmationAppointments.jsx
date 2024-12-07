@@ -23,6 +23,7 @@ const ConfirmationSchedule = () => {
     setLoadingId(id);
     try {
       await completeAppointment(id);
+      toast.success('Lịch hẹn đã được xác nhận.');
     } catch (error) {
       toast.error('Có lỗi xảy ra khi xác nhận lịch hẹn.');
     } finally {
@@ -60,7 +61,7 @@ const ConfirmationSchedule = () => {
 
     fetchAppointments(); // Lần đầu tiên khi component mount
 
-    const interval = setInterval(fetchAppointments, 10000); // Lấy lịch hẹn mỗi 30 giây
+    const interval = setInterval(fetchAppointments, 10000); // Lấy lịch hẹn mỗi 10 giây
 
     return () => clearInterval(interval); // Dọn dẹp interval khi component bị hủy
   }, [getAppointments]);
@@ -73,6 +74,108 @@ const ConfirmationSchedule = () => {
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
     navigate(`/confirmation-schedule?page=${pageNumber}`);
+  };
+
+  // Hàm render phân trang
+  const renderPagination = () => {
+    const delta = 1; // Số trang hiển thị trước và sau trang hiện tại
+    const paginationItems = [];
+
+    // Nút "Trang trước"
+    paginationItems.push(
+      <button
+        key="prev"
+        onClick={() => paginate(Math.max(1, currentPage - 1))}
+        className={`py-1 px-3 border rounded w-[70px] flex items-center justify-center ${currentPage === 1
+          ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+          : "text-gray-600"
+        }`}
+        disabled={currentPage === 1}
+      >
+        <span className="hidden md:block">Trước</span>
+        <i className="fa-solid fa-angle-left block md:hidden"></i>
+      </button>
+    );
+
+    // Hiển thị trang 1
+    paginationItems.push(
+      <button
+        key={1}
+        onClick={() => paginate(1)}
+        className={`py-1 px-3 border rounded ${currentPage === 1 ? "bg-indigo-500 text-white" : "text-gray-600"
+          }`}
+      >
+        1
+      </button>
+    );
+
+    // Hiển thị dấu ba chấm nếu cần, khi currentPage > 3
+    if (currentPage > 2) {
+      paginationItems.push(
+        <span key="start-dots" className="px-2">...</span>
+      );
+    }
+
+    // Hiển thị các trang xung quanh trang hiện tại
+    for (
+      let i = Math.max(2, currentPage - delta);
+      i <= Math.min(totalPages - 1, currentPage + delta);
+      i++
+    ) {
+      paginationItems.push(
+        <button
+          key={i}
+          onClick={() => paginate(i)}
+          className={`py-1 px-3 border rounded ${i === currentPage ? "bg-indigo-500 text-white" : "text-gray-600"
+            }`}
+        >
+          {i}
+        </button>
+      );
+    }
+
+    // Hiển thị dấu ba chấm nếu cần, khi currentPage < totalPages - 1
+    if (currentPage < totalPages - 1) {
+      paginationItems.push(
+        <span key="end-dots" className="px-2">...</span>
+      );
+    }
+
+    // Hiển thị trang cuối
+    if (totalPages > 1) {
+      paginationItems.push(
+        <button
+          key={totalPages}
+          onClick={() => paginate(totalPages)}
+          className={`py-1 px-3 border rounded ${currentPage === totalPages ? "bg-indigo-500 text-white" : "text-gray-600"
+            }`}
+        >
+          {totalPages}
+        </button>
+      );
+    }
+
+    // Nút "Trang tiếp theo"
+    paginationItems.push(
+      <button
+        key="next"
+        onClick={() => paginate(Math.min(totalPages, currentPage + 1))}
+        className={`py-1 px-3 border rounded w-[70px] flex items-center justify-center ${currentPage === totalPages
+          ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+          : "text-gray-600"
+        }`}
+        disabled={currentPage === totalPages}
+      >
+        <span className="hidden md:block">Tiếp</span>
+        <i className="fa-solid fa-angle-right block md:hidden"></i>
+      </button>
+    );
+
+    return (
+      <div className="flex justify-center items-center mt-6 space-x-2">
+        {paginationItems}
+      </div>
+    );
   };
 
   return (
@@ -134,19 +237,17 @@ const ConfirmationSchedule = () => {
                   </p>
                 </div>
 
-
                 {/* Action Buttons */}
                 <div className='flex flex-row gap-2 md:gap-3 justify-center md:justify-end mr-2'>
-                  {/* Mobile-friendly text buttons */}
                   <div className="md:hidden flex gap-2 mt-5">
                     <button
-                      onClick={() => completeAppointment(item._id)}
+                      onClick={() => handleCompleteAppointment(item._id)}
                       className='bg-green-500 text-white px-3 py-1 rounded-md shadow-md'
                     >
                       Xác nhận
                     </button>
                     <button
-                      onClick={() => cancelAppointment(item._id)}
+                      onClick={() => handleCancelAppointment(item._id)}
                       className='bg-red-500 text-white px-3 py-1 rounded-md shadow-md'
                     >
                       Hủy
@@ -155,7 +256,7 @@ const ConfirmationSchedule = () => {
 
                   {/* Desktop SVG icons */}
                   <svg
-                    onClick={() => completeAppointment(item._id)}
+                    onClick={() => handleCompleteAppointment(item._id)}
                     className='hidden md:block w-[30px] h-[30px] cursor-pointer bg-green-500 p-2 rounded-full shadow-lg'
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
@@ -169,7 +270,7 @@ const ConfirmationSchedule = () => {
                   </svg>
 
                   <svg
-                    onClick={() => cancelAppointment(item._id)}
+                    onClick={() => handleCancelAppointment(item._id)}
                     className='hidden md:block w-[30px] h-[30px] cursor-pointer bg-red-500 p-2 rounded-full shadow-lg'
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
@@ -191,20 +292,8 @@ const ConfirmationSchedule = () => {
         )}
       </div>
 
-      {/* Pagination */}
-      {pendingAppointments.length > appointmentsPerPage && (
-        <div className="flex justify-center mt-4">
-          {Array.from({ length: totalPages }, (_, index) => (
-            <button
-              key={index + 1}
-              onClick={() => paginate(index + 1)}
-              className={`px-4 py-2 ${currentPage === index + 1 ? 'bg-[#219c9e] text-white' : 'bg-gray-200'} rounded-md mx-1 hover:bg-[#0091a1]`}
-            >
-              {index + 1}
-            </button>
-          ))}
-        </div>
-      )}
+      {/* Phân trang */}
+      {totalPages > 1 && renderPagination()}
     </div>
   );
 };
