@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 
@@ -106,29 +106,49 @@ const SpecialtyList = () => {
                         <tr>
                             <th className="py-2 px-4 border-b text-left text-sm font-bold">#</th>
                             <th className="py-2 px-4 border-b text-center text-sm font-bold">Tên Chuyên Khoa</th>
-                            <th className="py-2 px-4 border-b text-left text-sm font-bold">Mô Tả</th>
+                            <th className="py-2 px-4 border-b text-center text-sm font-bold">Mô Tả</th>
                             <th className="py-2 px-4 border-b text-left text-sm font-bold">Hành Động</th>
                         </tr>
                     </thead>
                     <tbody>
                         {currentSpecialties.map((specialty, index) => (
                             <tr key={specialty.id} className="hover:bg-gray-50">
-                                <td className="py-2 px-4 border-b text-sm font-semibold">{index + 1}</td>
-                                <td className="py-2 px-4 border-b text-center"><img src={specialty.image} alt="" />{specialty.name}</td>
-                                <td className="py-2 px-4 border-b">{specialty.description}</td>
-                                <td className="py-2 px-4 border-b text-sm flex gap-2">
-                                    <button
+                                <td className="py-2 px-4 border-b text-sm font-semibold border-t ">{index + 1}</td>
+                                <td className="py-2 px-4 border-b text-center border-t ">
+                                    <div className="flex flex-col items-center">
+                                        <img src={specialty.image} alt="" className="w-12 h-12 inline-block mr-2 rounded-full" />
+                                        <span>{specialty.name}</span>
+                                    </div>
+                                </td>
+                                <td className="py-2 px-4 border-b border-t ">
+                                    {specialty.description.length > 180 ? specialty.description.substring(0, 180) + "..." : specialty.description}
+                                </td>
+                                <td className="py-2 px-4 border-b text-sm flex gap-2 h-[105px] justify-center items-center mr-4 border-t ">
+                                    <svg
                                         onClick={() => navigate(`/edit-specialty/${specialty.id}`)}
-                                        className="bg-blue-500 text-white py-1 px-3 rounded text-sm"
+                                        className="w-6 h-6 md:w-8 md:h-8 cursor-pointer text-blue-500 bg-blue-100 rounded-full p-1 md:p-2 transition-all shadow-lg"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 24 24"
+                                        fill="currentColor"
                                     >
-                                        Sửa
-                                    </button>
-                                    <button
+                                        <path
+                                            d="M3.99 16.854l-1.314 3.504a.75.75 0 0 0 .966.965l3.503-1.314a3 3 0 0 0 1.068-.687L18.36 9.175s-.354-1.061-1.414-2.122c-1.06-1.06-2.122-1.414-2.122-1.414L4.677 15.786a3 3 0 0 0-.687 1.068zm12.249-12.63l1.383-1.383c.248-.248.579-.406.925-.348.487.08 1.232.322 1.934 1.025.703.703.945 1.447 1.025 1.934.058.346-.1.677-.348.925L19.774 7.76s-.353-1.06-1.414-2.12c-1.06-1.062-2.121-1.415-2.121-1.415z"
+                                            fill="#000000"
+                                        ></path>
+                                    </svg>
+
+                                    <svg
                                         onClick={() => deleteSpecialty(specialty.id)}
-                                        className="bg-red-500 text-white py-1 px-3 rounded text-sm"
+                                        className="w-6 h-6 md:w-8 md:h-8 cursor-pointer text-red-500 bg-red-100 rounded-full p-1 md:p-2 transition-all shadow-lg"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 24 24"
+                                        fill="currentColor"
                                     >
-                                        Xóa
-                                    </button>
+                                        <path
+                                            d="M5.755,20.283,4,8H20L18.245,20.283A2,2,0,0,1,16.265,22H7.735A2,2,0,0,1,5.755,20.283ZM21,4H16V3a1,1,0,0,0-1-1H9A1,1,0,0,0,8,3V4H3A1,1,0,0,0,3,6H21a1,1,0,0,0,0-2Z"
+                                            fill="#c42121"
+                                        ></path>
+                                    </svg>
                                 </td>
                             </tr>
                         ))}

@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
-import { AdminContext } from '../context/AdminContext';
 import { NavLink } from 'react-router-dom';
 import { assets } from '../assets/assets';
+import { AdminContext } from '../context/AdminContext';
 import { DoctorContext } from '../context/DoctorContext';
 
 const Sidebar = () => {
@@ -16,7 +16,7 @@ const Sidebar = () => {
 
     return (
         <div className="flex justify-between">
-            <div className="min-h-screen bg-[#3f4d67] border-r relative">
+            <div className="min-h-screen bg-[#3f4d67] border-r relative md:w-[300px] w-[47px]"> {/* Đặt độ rộng cố định trên desktop */}
                 {/* Mobile Menu Button */}
                 <button
                     className="block md:hidden px-4 py-2 text-gray-600 bg-gray-200"
@@ -35,8 +35,7 @@ const Sidebar = () => {
                 {/* Admin Sidebar */}
                 {aToken && (
                     <ul
-                        className={`text-white mt-5 transition-all duration-500 ease-in-out ${isMobileMenuOpen ? 'block' : 'hidden md:block'
-                            }`}
+                        className={`text-white mt-5 transition-all duration-500 ease-in-out ${isMobileMenuOpen ? 'block' : 'hidden md:block'}`}
                     >
                         <NavLink
                             className={({ isActive }) =>
@@ -87,14 +86,23 @@ const Sidebar = () => {
                             <img className='filter brightness-0 invert' src={assets.people_icon} alt="" />
                             <p className='hidden md:block'>Danh sách bệnh nhân</p>
                         </NavLink>
+
+                        <NavLink
+                            className={({ isActive }) =>
+                                `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 hover:bg-[#4fc2] cursor-pointer ${isActive ? 'bg-[#4fc2f8] border-r-4 border-primary' : ''}`
+                            }
+                            to={'/specialty-list'}
+                        >
+                            <img className='filter brightness-0 invert w-8 h-8' src={assets.specialty_icon} alt="" />
+                            <p className='hidden md:block whitespace-nowrap'>Danh sách chuyên khoa</p>
+                        </NavLink>
                     </ul>
                 )}
 
                 {/* Doctor Sidebar */}
                 {dToken && (
                     <ul
-                        className={`text-white mt-5 transition-all duration-500 ease-in-out ${isMobileMenuOpen ? 'block' : 'hidden md:block'
-                            }`}
+                        className={`text-white mt-5 transition-all duration-500 ease-in-out ${isMobileMenuOpen ? 'block' : 'hidden md:block'}`}
                     >
                         <NavLink
                             className={({ isActive }) =>
