@@ -124,6 +124,7 @@ const DoctorAppointments = () => {
         className={`py-1 px-3 border rounded w-[70px] flex items-center justify-center ${currentPage === totalPages
           ? "bg-gray-200 text-gray-400 cursor-not-allowed"
           : "text-gray-600"
+        }`}
         disabled={currentPage === totalPages}
       >
         <span className="hidden md:block">Tiếp</span>
