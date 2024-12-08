@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Forbidden from "./components/Forbidden";
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import { AdminContext } from './context/AdminContext';
@@ -13,6 +14,7 @@ import Dashboard from './pages/Admin/Dashboard';
 import DoctorsList from './pages/Admin/DoctorsList';
 import EditPatient from './pages/Admin/EditPatient';
 import PatientList from './pages/Admin/PatientList';
+import SpecialtyList from './pages/Admin/SpecialtyList';
 import ConfirmationAppointments from './pages/Doctor/ConfirmationAppointments';
 import ConfirmCompletedAppointments from './pages/Doctor/ConfirmCompletedAppointments';
 import DoctorAppointments from './pages/Doctor/DoctorAppointments';
@@ -22,7 +24,6 @@ import DoctorProfile from './pages/Doctor/DoctorProfile';
 import DoctorWorkSchedule from './pages/Doctor/DoctorWorkSchedule';
 import EditWorkSchedule from './pages/Doctor/EditWorkSchedule';
 import Login from './pages/Login';
-import Forbidden from "./components/Forbidden";
 
 const App = () => {
   const { aToken } = useContext(AdminContext);
@@ -55,6 +56,7 @@ const App = () => {
               <Route path="/patient-list" element={aToken ? <PatientList /> : <Forbidden />} />
               <Route path="/add-patient" element={aToken ? <AddPatient /> : <Forbidden />} />
               <Route path="/edit-patient/:id" element={aToken ? <EditPatient /> : <Forbidden />} />
+              <Route path="/specialty-list" element={aToken ? <SpecialtyList /> : <Forbidden />} />
 
               {/* Doctor Route */}
               <Route path="/doctor-dashboard" element={dToken ? <DoctorDashboard /> : <Forbidden />} />
