@@ -17,22 +17,26 @@ const AllSchedule = () => {
   const [events, setEvents] = useState([]);
   const { user } = useContext(AppContext);
   const [isToastVisible, setIsToastVisible] = useState(false);
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
   const token = user?.token || localStorage.getItem("token");
+  const userLocalStorage = localStorage.getItem("user");
   const phone = localStorage.getItem("user")
-  ? JSON.parse(localStorage.getItem("user")).phone
-  : "";
-  const patient_id = user?.id || (user ? JSON.parse(localStorage.getItem("user"))._id : null);
+    ? JSON.parse(localStorage.getItem("user")).phone
+    : "";
+  const patient_id =
+    user?.id || (user ? JSON.parse(localStorage.getItem("user"))._id : null);
 
   if (typeof console !== "undefined") {
     console.error = function () {};
   }
-  
+
   useEffect(() => {
     const fetchSchedules = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`${VITE_BACKEND_URI}/get-all-schedule-doctor`);
+        const response = await axios.get(
+          `${VITE_BACKEND_URI}/get-all-schedule-doctor`
+        );
         const resources = response.data.map((doctor) => ({
           id: doctor.doctorId,
           doctorName: doctor.doctorName,
@@ -53,7 +57,8 @@ const AllSchedule = () => {
               endDate.setHours(17, 30, 0, 0);
             }
 
-            const converWork_shift = schedule.work_shift === "morning" ? "Sáng" : "Chiều";
+            const converWork_shift =
+              schedule.work_shift === "morning" ? "Sáng" : "Chiều";
 
             return {
               id: schedule._id,
@@ -75,40 +80,55 @@ const AllSchedule = () => {
 
     fetchSchedules();
   }, []);
-  
+
   const handleEventClick = (info) => {
     if (isToastVisible) {
       return;
     }
-  
+
     const clickedEvent = info.event;
-    const convertTitle = clickedEvent.title === "Sáng" ? "morning" : "afternoon";
-  
+    const convertTitle =
+      clickedEvent.title === "Sáng" ? "morning" : "afternoon";
+
     // Lấy ngày làm việc từ sự kiện
     const workDate = new Date(clickedEvent.start).toISOString().split("T")[0];
     const currentDate = new Date().toISOString().split("T")[0];
-  
+
     // Kiểm tra xem lịch làm việc đã ở quá khứ chưa
     if (workDate < currentDate) {
       toast.error("Không thể đặt lịch hẹn cho ngày đã qua!");
       return;
     }
-  
+
     const formatDate = (isoDate) => {
       const [year, month, day] = isoDate.split("-");
       return `${day}/${month}/${year}`;
     };
-  
+
     const appointmentData = {
       patient_id: patient_id,
       doctor_id: clickedEvent.getResources()[0]?.id || "",
       work_shift: convertTitle,
       work_date: workDate,
     };
-  
+
     const formattedDate = formatDate(appointmentData.work_date);
     setIsToastVisible(true);
-  
+
+    // Kiểm tra số điện thoại
+    if (!userLocalStorage) {
+      toast.warn(
+            "Bạn chưa chưa đăng nhập. Vui lòng đăng nhập trước khi đặt lịch hẹn.",
+        {
+          position: "top-center",
+          autoClose: true,
+          closeOnClick: false,
+          draggable: false,
+        }
+      );
+      return;
+    }
+
     // Kiểm tra số điện thoại
     if (!phone) {
       toast.warn(
@@ -116,7 +136,10 @@ const AllSchedule = () => {
           <div className="flex items-center mb-2">
             <p className="font-bold text-lg">Cảnh báo</p>
           </div>
-          <p>Bạn chưa cập nhật số điện thoại. Vui lòng cập nhật trước khi đặt lịch hẹn.</p>
+          <p>
+            Bạn chưa cập nhật số điện thoại. Vui lòng cập nhật trước khi đặt
+            lịch hẹn.
+          </p>
           <div className="flex justify-center gap-4 mt-4">
             <button
               onClick={() => {
@@ -147,7 +170,7 @@ const AllSchedule = () => {
       );
       return;
     }
-  
+
     // Hiển thị thông báo xác nhận
     toast.info(
       <div className="flex flex-col items-center justify-center">
@@ -155,7 +178,8 @@ const AllSchedule = () => {
           <p className="font-bold text-lg">Xác nhận</p>
         </div>
         <p>
-          Bạn có chắc chắn muốn đặt lịch hẹn vào {formattedDate} ca {clickedEvent.title}?
+          Bạn có chắc chắn muốn đặt lịch hẹn vào {formattedDate} ca{" "}
+          {clickedEvent.title}?
         </p>
         <div className="flex justify-center gap-4 mt-4">
           <button
@@ -187,7 +211,6 @@ const AllSchedule = () => {
       }
     );
   };
-  
 
   const confirmBooking = async (appointmentData) => {
     const loggedInUser = user || JSON.parse(localStorage.getItem("user"));
@@ -211,7 +234,9 @@ const AllSchedule = () => {
       toast.success("Đặt lịch hẹn thành công!");
     } catch (error) {
       console.error("Lỗi khi đặt lịch hẹn:", error.response?.data?.message);
-      toast.error(error.response?.data?.message || "Có lỗi xảy ra khi đặt lịch hẹn.");
+      toast.error(
+        error.response?.data?.message || "Có lỗi xảy ra khi đặt lịch hẹn."
+      );
     }
   };
 
@@ -225,7 +250,10 @@ const AllSchedule = () => {
         </header>
         <div className="calendar-container shadow-md rounded-lg overflow-hidden border border-gray-300 bg-white">
           {/* Thanh cuộn nằm ngang cho lịch */}
-          <div className="overflow-x-auto" style={{ maxHeight: "640px", minWidth: "1200px" }}>
+          <div
+            className="overflow-x-auto"
+            style={{ maxHeight: "640px", minWidth: "1200px" }}
+          >
             <FullCalendar
               plugins={[resourceTimelinePlugin]}
               initialView="resourceTimelineWeek"
@@ -237,7 +265,8 @@ const AllSchedule = () => {
                   headerContent: "Bác sĩ",
                   field: "doctorName",
                   cellContent: (args) => {
-                    const { doctorImage, doctorName, specialization } = args.resource.extendedProps;
+                    const { doctorImage, doctorName, specialization } =
+                      args.resource.extendedProps;
                     return (
                       <div className="flex items-center">
                         <img
@@ -246,7 +275,9 @@ const AllSchedule = () => {
                           className="w-8 h-8 rounded-full mr-2"
                         />
                         {doctorName}
-                        <span className="text-sm ml-2 text-gray-500">({specialization})</span>
+                        <span className="text-sm ml-2 text-gray-500">
+                          ({specialization})
+                        </span>
                       </div>
                     );
                   },
