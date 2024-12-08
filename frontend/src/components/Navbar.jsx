@@ -1,8 +1,8 @@
+import axios from 'axios';
 import React, { useContext, useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets";
 import { AppContext } from "../context/AppContext";
-import axios from 'axios';
 
 
 const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
