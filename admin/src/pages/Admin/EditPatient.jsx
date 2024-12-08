@@ -1,8 +1,8 @@
-import React, { useState, useContext, useEffect } from "react";
-import { AdminContext } from "../../context/AdminContext";
-import { toast } from "react-toastify";
 import axios from "axios";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import { AdminContext } from "../../context/AdminContext";
 
 const EditPatient = () => {
   const [name, setName] = useState("");
@@ -87,73 +87,6 @@ const EditPatient = () => {
   };
 
   return (
-    // <form onSubmit={onSubmitHandler} className="m-5 w-full">
-    //   <p className="mb-3 text-lg font-medium">Chỉnh sửa thông tin bệnh nhân</p>
-    //   <div className="bg-white px-8 py-8 border rounded w-full max-w-4xl max-h-[80vh] overflow-y-scroll">
-    //     <div className="flex flex-col lg:flex-row items-start gap-10 text-gray-500">
-    //       <div className="w-full lg:flex-1 flex flex-col gap-4">
-    //         <div className="flex-1 flex flex-col gap-1">
-    //           <p className="font-bold">Tên:</p>
-    //           <input
-    //             onChange={(e) => setName(e.target.value)}
-    //             value={name}
-    //             className="border rounded px-3 py-2"
-    //             type="text"
-    //             placeholder="Tên"
-    //           />
-    //         </div>
-    //         <div className="flex-1 flex flex-col gap-1">
-    //           <p className="font-bold">Số điện thoại:</p>
-    //           <input
-    //             onChange={(e) => setPhone(e.target.value)}
-    //             value={phone}
-    //             className="border rounded px-3 py-2"
-    //             type="tel"
-    //             placeholder="Số điện thoại"
-    //           />
-    //         </div>
-    //       </div>
-
-    //       <div className="w-full lg:flex-1 flex flex-col gap-4">
-    //         <div className="flex-1 flex flex-col gap-1">
-    //           <p className="font-bold">Email:</p>
-    //           <input
-    //             onChange={(e) => setEmail(e.target.value)}
-    //             value={email}
-    //             className="border rounded px-3 py-2"
-    //             type="email"
-    //             placeholder="Email"
-    //           />
-    //         </div>
-    //       </div>
-    //     </div>
-
-    //     <div className="flex gap-4 mt-4">
-    //       <button
-    //         type="submit"
-    //         className={`bg-primary px-10 py-3 text-white rounded-full ${
-    //           loading ? "opacity-50 cursor-not-allowed" : ""
-    //         }`}
-    //         disabled={loading}
-    //       >
-    //         {loading ? (
-    //           <div className="flex items-center justify-center">
-    //             <div className="w-5 h-5 border-t-2 border-white border-solid rounded-full animate-spin"></div>
-    //           </div>
-    //         ) : (
-    //           "Lưu"
-    //         )}
-    //       </button>
-    //       <button
-    //         type="button"
-    //         onClick={onCancelHandler}
-    //         className="bg-gray-300 px-10 py-3 text-black rounded-full"
-    //       >
-    //         Hủy
-    //       </button>
-    //     </div>
-    //   </div>
-    // </form>
     <form onSubmit={onSubmitHandler} className="m-5 w-full">
       <p className="mb-3 text-lg font-medium">Chỉnh sửa thông tin bệnh nhân</p>
       <div className="bg-white px-8 py-8 border rounded w-full max-w-7xl max-h-[80vh] overflow-y-scroll">
@@ -198,9 +131,8 @@ const EditPatient = () => {
         <div className="flex gap-4 mt-4 justify-start">
           <button
             type="submit"
-            className={`bg-primary px-10 py-3 text-white rounded-full ${
-              loading ? "opacity-50 cursor-not-allowed" : ""
-            }`}
+            className={`bg-primary px-10 py-3 text-white rounded-full ${loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
             disabled={loading}
           >
             {loading ? (
