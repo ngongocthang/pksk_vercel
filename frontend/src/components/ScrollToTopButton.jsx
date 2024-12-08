@@ -1,6 +1,6 @@
+import React, { useState, useEffect } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css'; // Import AOS styles
-import React, { useEffect, useState } from 'react';
 
 const ScrollToTopButton = () => {
   const [isVisible, setIsVisible] = useState(false);
