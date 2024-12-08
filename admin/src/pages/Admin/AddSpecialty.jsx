@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { assets } from "../../assets/assets";
@@ -58,7 +58,7 @@ const AddSpecialty = () => {
       if (data.success) {
         toast.success("Thêm chuyên khoa thành công!");
         resetForm();
-        navigate("/specialty-list"); // Điều hướng đến danh sách chuyên khoa
+        navigate("/specialty-list"); 
       } else {
         toast.error("Thêm chuyên khoa thất bại!");
       }
