@@ -23,7 +23,6 @@ const ConfirmationSchedule = () => {
     setLoadingId(id);
     try {
       await completeAppointment(id);
-      toast.success('Lịch hẹn đã được xác nhận.');
     } catch (error) {
       toast.error('Có lỗi xảy ra khi xác nhận lịch hẹn.');
     } finally {

@@ -2,6 +2,8 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { convertToSlug } from "../utils/stringUtils";
+import AOS from 'aos';
+import 'aos/dist/aos.css'; // Import AOS styles
 
 const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 
@@ -17,6 +19,10 @@ const Doctors = () => {
   const [isLoading, setIsLoading] = useState(false); 
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    AOS.init({ duration: 900, once: true }); // Init AOS with 1s duration and only animate once
+  }, []);
 
   const fetchDoctors = async () => {
     try {
@@ -49,8 +55,8 @@ const Doctors = () => {
   const applyFilter = () => {
     let filtered = speciality
       ? doctors.filter(
-          (doc) => convertToSlug(doc.specialization_id?.name) === speciality
-        )
+        (doc) => convertToSlug(doc.specialization_id?.name) === speciality
+      )
       : doctors;
 
     // Lọc theo ngày làm việc
@@ -258,7 +264,7 @@ const Doctors = () => {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6" data-aos="fade-up">
               {currentDoctors.map((item, index) => (
                 <div
                   onClick={() => navigate(`/appointment/${item._id}`)}

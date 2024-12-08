@@ -148,27 +148,32 @@ const Navbar = () => {
             <p className="font-medium text-gray-700">{getDisplayName(user.name)}</p>
             <img className="w-2.5" src={assets.dropdown_icon} alt="Dropdown Icon" />
             {showDropdown && (
-              <div className="absolute top-0 right-0 pt-14 text-base font-medium text-gray-600 z-20">
-                <div className="min-w-48 bg-stone-100 rounded flex flex-col gap-4 p-4">
+              <div className="absolute top-0 -left-6 pt-14 text-base font-medium text-gray-600 z-20">
+                <div className="min-w-52 bg-stone-100 rounded flex flex-col gap-4 p-4">
                   <p
                     onClick={() => navigate('my-profile')}
                     className="hover:text-black cursor-pointer"
                   >
+                    <i class="fa-regular fa-user mr-3"></i>
                     Hồ sơ của tôi
                   </p>
                   <p
                     onClick={() => navigate('my-appointments')}
                     className="hover:text-black cursor-pointer"
                   >
+                    {/* <i class="fa-solid fa-calendar-plus mr-3"></i> */}
+                    <i class="fa-regular fa-calendar-check 3 mr-3"></i>
                     Lịch hẹn của tôi
                   </p>
                   <p
                     onClick={() => navigate('medical-history')}
-                    className="hover:text-black cursor-pointer"
+                    className="hover:text-black cursor-pointer -ml-0.5"
                   >
+                    <i class="fa-solid fa-laptop-medical mr-2"></i>
                     Lịch sử khám bệnh
                   </p>
                   <p onClick={handleLogout} className="hover:text-black cursor-pointer">
+                    <i class="fa-solid fa-arrow-right-from-bracket mr-3"></i>
                     Đăng xuất
                   </p>
                 </div>
@@ -206,11 +211,17 @@ const Navbar = () => {
           alt="Menu"
         />
 
-        <div className={`transition-all duration-500 ${showMenu ? "fixed w-full top-0 right-0 bottom-0 z-20 bg-white" : "h-0 w-0 overflow-hidden"}`}>
+        <div
+          className={`transition-all duration-500 ${showMenu
+              ? "fixed w-full top-0 right-0 bottom-0 z-20 bg-white"
+              : "h-0 w-0 overflow-hidden"
+            }`}
+        >
           <div className="flex items-center justify-between px-5 py-6">
             <img className="w-20" src={assets.logo} alt="Logo" />
             <img
-              className={`w-7 duration-300 ease-in-out ${rotateIcon ? "rotate-180" : ""}`}
+              className={`w-7 duration-300 ease-in-out ${showMenu ? "rotate-180" : ""
+                }`}
               onClick={toggleMenu}
               src={assets.cross_icon}
               alt="Close"
@@ -232,6 +243,13 @@ const Navbar = () => {
             <NavLink onClick={() => setShowMenu(false)} to="/all-schedule">
               <p className="px-4 py-2 rounded inline-block">Lịch làm việc</p>
             </NavLink>
+            {!user && (
+              <NavLink onClick={() => setShowMenu(false)} to="/account">
+                <p className="bg-[#00759c] text-white px-4 py-2 rounded font-light text-center w-full">
+                  Đăng nhập
+                </p>
+              </NavLink>
+            )}
           </ul>
         </div>
       </div>

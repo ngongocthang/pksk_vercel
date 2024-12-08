@@ -1,9 +1,9 @@
 import React from 'react';
 import Marquee from "react-fast-marquee";
+import ScrollToTopButton from './components/ScrollToTopButton'
 import { Route, Routes } from 'react-router-dom';
 import Footer from './components/Footer';
 import Navbar from './components/Navbar';
-import ScrollToTopButton from './components/ScrollToTopButton.jsx';
 import About from './pages/About';
 import AllSchedule from './pages/AllSchedule';
 import Appointment from './pages/Appointment';
