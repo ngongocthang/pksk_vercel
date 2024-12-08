@@ -53,7 +53,7 @@ const About = () => {
           ].map((feature, index) => (
             <div
               key={index}
-              className="border border-gray-200 p-6 rounded-lg shadow-lg hover:bg-[#00759c] hover:text-white transition-all duration-300 group"
+              className="border border-gray-200 p-6 rounded-lg shadow-lg hover:bg-[#219c9e] hover:text-white transition-all duration-300 group"
               data-aos={index % 2 === 0 ? "fade-right" : "fade-left"} // Alternate animations for each feature
             >
               <FaRegCheckCircle className="text-[#219c9e] text-3xl mb-4 group-hover:text-white" />

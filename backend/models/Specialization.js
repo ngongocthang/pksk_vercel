@@ -4,11 +4,15 @@ const SpecializationSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: [true, "Please enter specialization name"],
+      required: true,
+    },
+    image: {
+      type: String,
+      required: true,
     },
     description: {
       type: String,
-      required: [true, "Please enter specialization description"],
+      required: false,
     }
   },
   {

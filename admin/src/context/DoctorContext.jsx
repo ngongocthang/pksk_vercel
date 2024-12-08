@@ -59,8 +59,6 @@ const DoctorContextProvider = (props) => {
         { headers: { Authorization: `Bearer ${dToken}` } }
       );
       if (data.appointment.status === "confirmed") {
-        toast.success("Xác nhận lịch hẹn thành công!");
-
         // Cập nhật trạng thái trực tiếp trong danh sách appointments
         setAppointments((prevAppointments) =>
           prevAppointments.filter(
@@ -68,7 +66,7 @@ const DoctorContextProvider = (props) => {
           )
         );
       } else {
-        return toast.error("Xác nhận lịch hẹn thất bại!");
+        return;
       }
     } catch (error) {
       console.log(error);

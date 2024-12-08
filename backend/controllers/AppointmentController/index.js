@@ -245,11 +245,9 @@ const patientCreateAppointment = async (req, res) => {
       status: "canceled",
     });
     if (canceledCount >= 2) {
-      return res
-        .status(400)
-        .json({
-          message: "Bạn đã hủy lịch hẹn này hai lần, không thể đặt lại!",
-        });
+      return res.status(400).json({
+        message: "Bạn đã hủy lịch hẹn này hai lần, không thể đặt lại!",
+      });
     }
 
     // Kiểm tra số lượng lịch hẹn trong ngày
@@ -279,24 +277,22 @@ const patientCreateAppointment = async (req, res) => {
 
     // Kiểm tra nếu là buổi sáng
     if (appointmentDate >= morningTime && appointmentDate < afternoonTime) {
-      const minAppointmentTime = new Date(
-        morningTime.getTime() - 30 * 60 * 1000
-      ); // Trước 30 phút
-      if (currentTime > minAppointmentTime) {
+      // Loại bỏ điều kiện kiểm tra 30 phút
+      if (currentTime > morningTime) {
         return res.status(400).json({
-          message: "Bạn chỉ có thể đặt lịch hẹn trước 30 phút cho buổi sáng!",
+          message:
+            "Bạn chỉ có thể đặt lịch hẹn cho buổi sáng trước giờ diễn ra!",
         });
       }
     }
 
     // Kiểm tra nếu là buổi chiều
     if (appointmentDate >= afternoonTime) {
-      const minAppointmentTime = new Date(
-        afternoonTime.getTime() - 30 * 60 * 1000
-      ); // Trước 30 phút
-      if (currentTime > minAppointmentTime) {
+      // Loại bỏ điều kiện kiểm tra 30 phút
+      if (currentTime > afternoonTime) {
         return res.status(400).json({
-          message: "Bạn chỉ có thể đặt lịch hẹn trước 30 phút cho buổi chiều!",
+          message:
+            "Bạn chỉ có thể đặt lịch hẹn cho buổi chiều trước giờ diễn ra!",
         });
       }
     }
