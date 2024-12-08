@@ -1,11 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
+const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 
 const SpecialtyList = () => {
     const navigate = useNavigate();
-    const [specialties] = useState(mockSpecialties); // Dữ liệu ảo
+    const [specialties, setSpecialties] = useState([]); // Khởi tạo danh sách chuyên khoa
     const [currentPage, setCurrentPage] = useState(1);
-    const [specialtiesPerPage] = useState(5); // Số lượng chuyên khoa trên mỗi trang
+    const [specialtiesPerPage] = useState(10); // Số lượng chuyên khoa trên mỗi trang
+
+    useEffect(() => {
+        const fetchSpecialties = async () => {
+            try {
+                const response = await axios.get(`${VITE_BACKEND_URI}/specialization/find-all`);
+                setSpecialties(response.data.specializations); // Cập nhật danh sách chuyên khoa từ API
+            } catch (error) {
+                console.error("Error fetching specialties:", error);
+            }
+        };
+
+        fetchSpecialties();
+    }, []);
 
     // Phân trang
     const totalPages = Math.ceil(specialties.length / specialtiesPerPage);
@@ -14,6 +30,16 @@ const SpecialtyList = () => {
     const currentSpecialties = specialties.slice(indexOfFirstSpecialty, indexOfLastSpecialty);
 
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+    // Hàm xóa chuyên khoa
+    const deleteSpecialty = async (id) => {
+        try {
+            await axios.delete(`http://localhost:5000/specialization/${id}`);
+            setSpecialties(specialties.filter(specialty => specialty.id !== id)); // Cập nhật danh sách sau khi xóa
+        } catch (error) {
+            console.error("Error deleting specialty:", error);
+        }
+    };
 
     // Hàm render phân trang
     const renderPagination = () => {
@@ -88,7 +114,7 @@ const SpecialtyList = () => {
                         {currentSpecialties.map((specialty, index) => (
                             <tr key={specialty.id} className="hover:bg-gray-50">
                                 <td className="py-2 px-4 border-b text-sm font-semibold">{index + 1}</td>
-                                <td className="py-2 px-4 border-b text-center">{specialty.name}</td>
+                                <td className="py-2 px-4 border-b text-center"><img src={specialty.image} alt="" />{specialty.name}</td>
                                 <td className="py-2 px-4 border-b">{specialty.description}</td>
                                 <td className="py-2 px-4 border-b text-sm flex gap-2">
                                     <button
@@ -98,6 +124,7 @@ const SpecialtyList = () => {
                                         Sửa
                                     </button>
                                     <button
+                                        onClick={() => deleteSpecialty(specialty.id)}
                                         className="bg-red-500 text-white py-1 px-3 rounded text-sm"
                                     >
                                         Xóa
@@ -171,14 +198,3 @@ const SpecialtyList = () => {
 };
 
 export default SpecialtyList;
-
-// Dữ liệu ảo
-const mockSpecialties = [
-    { id: 1, name: "Tim mạch", description: "Chuyên khoa điều trị các bệnh lý về tim mạch." },
-    { id: 2, name: "Nội tiết", description: "Chuyên khoa về các bệnh lý nội tiết và chuyển hóa." },
-    { id: 3, name: "Thần kinh", description: "Chuyên khoa điều trị các bệnh lý về hệ thần kinh." },
-    { id: 4, name: "Nhi khoa", description: "Chuyên khoa dành cho trẻ em." },
-    { id: 5, name: "Chấn thương chỉnh hình", description: "Điều trị các bệnh lý cơ, xương, khớp." },
-    { id: 6, name: "Da liễu", description: "Điều trị các vấn đề về da liễu." },
-    { id: 7, name: "Mắt", description: "Chuyên khoa điều trị các bệnh lý về mắt." },
-];
