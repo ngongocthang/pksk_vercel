@@ -9,10 +9,12 @@ import { AdminContext } from './context/AdminContext';
 import { DoctorContext } from './context/DoctorContext';
 import AddDoctor from './pages/Admin/AddDoctor';
 import AddPatient from './pages/Admin/AddPatient';
+import AddSpecialty from './pages/Admin/AddSpecialty';
 import AllAppointments from './pages/Admin/AllAppointments';
 import Dashboard from './pages/Admin/Dashboard';
 import DoctorsList from './pages/Admin/DoctorsList';
 import EditPatient from './pages/Admin/EditPatient';
+import EditSpecialty from './pages/Admin/EditSpecialty';
 import PatientList from './pages/Admin/PatientList';
 import SpecialtyList from './pages/Admin/SpecialtyList';
 import ConfirmationAppointments from './pages/Doctor/ConfirmationAppointments';
@@ -57,6 +59,8 @@ const App = () => {
               <Route path="/add-patient" element={aToken ? <AddPatient /> : <Forbidden />} />
               <Route path="/edit-patient/:id" element={aToken ? <EditPatient /> : <Forbidden />} />
               <Route path="/specialty-list" element={aToken ? <SpecialtyList /> : <Forbidden />} />
+              <Route path="/add-specialty" element={aToken ? <AddSpecialty /> : <Forbidden />} />
+              <Route path="/edit-specialty" element={aToken ? <EditSpecialty /> : <Forbidden />} />
 
               {/* Doctor Route */}
               <Route path="/doctor-dashboard" element={dToken ? <DoctorDashboard /> : <Forbidden />} />

@@ -63,6 +63,7 @@ const Dashboard = () => {
             },
           });
           const data = response.data; // Lấy dữ liệu từ response
+          console.log("data", data);
 
           // Cập nhật doanh thu vào tháng tương ứng
           const updatedRevenueData = revenueData.map((item) => {
@@ -100,6 +101,7 @@ const Dashboard = () => {
       },
     ],
   };
+  console.log("revenueData", revenueData);
 
   const options = {
     responsive: true,
