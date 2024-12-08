@@ -60,7 +60,7 @@ const App = () => {
               <Route path="/edit-patient/:id" element={aToken ? <EditPatient /> : <Forbidden />} />
               <Route path="/specialty-list" element={aToken ? <SpecialtyList /> : <Forbidden />} />
               <Route path="/add-specialty" element={aToken ? <AddSpecialty /> : <Forbidden />} />
-              <Route path="/edit-specialty" element={aToken ? <EditSpecialty /> : <Forbidden />} />
+              <Route path="/edit-specialty/:id" element={aToken ? <EditSpecialty /> : <Forbidden />} />
 
               {/* Doctor Route */}
               <Route path="/doctor-dashboard" element={dToken ? <DoctorDashboard /> : <Forbidden />} />

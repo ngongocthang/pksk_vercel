@@ -1,25 +1,9 @@
 const Specialization = require("../../models/Specialization");
 const Doctor = require("../../models/Doctor");
 const validateSpecialization = require("../../requests/validateSpecialization");
+const validateUpdateSpecialization = require("../../requests/validateUpdateSpecialization");
 const cloudinary = require("cloudinary").v2;
 
-// const createSpecialization = async (req, res) => {
-//   try {
-//     // Validate dữ liệu từ client
-//     const { error } = validateSpecialization(req.body);
-//     if (error) {
-//       return res.status(400).json({ message: error.details[0].message });
-//     }
-
-//     const specialization = await Specialization.create(req.body);
-//     if (specialization) {
-//       return res.status(200).json(specialization);
-//     }
-//     return res.status(400).json({ message: "Specialization not found" });
-//   } catch (error) {
-//     return res.status(500).json({ message: error.message });
-//   }
-// };
 const createSpecialization = async (req, res) => {
   try {
     // Validate dữ liệu từ client
@@ -73,37 +57,69 @@ const findSpecialization = async (req, res) => {
     const { id } = req.params;
     const specialization = await Specialization.findById(id);
     if (specialization) {
-      return res.status(200).json(specialization);
+      return res.status(200).json({success: true, specialization});
     }
-    return res.status(400).json({ message: "Specialization not found" });
+    return res.status(400).json({success: false, message: "Specialization not found" });
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({success: false, message: error.message });
   }
 };
 
 // const updateSpecialization = async (req, res) => {
 //   try {
 //     // Validate dữ liệu từ client
-//     const { error } = validateSpecialization(req.body);
+//     const { error } = validateUpdateSpecialization(req.body);
 //     if (error) {
 //       return res.status(400).json({ message: error.details[0].message });
 //     }
 
 //     const { id } = req.params;
-//     const specialization = await Specialization.findByIdAndUpdate(id, req.body);
+//     const specialization = await Specialization.findById(id);
+
 //     if (!specialization) {
-//       return res.status(400).json({ message: "Specialization not found" });
+//       return res.status(404).json({ message: "Specialization not found" });
 //     }
-//     const specializationUpdate = await Specialization.findById(id);
-//     return res.status(200).json(specializationUpdate);
+
+//     let imageUrl = specialization.image; // Lưu URL hình ảnh hiện tại
+
+//     // Xử lý upload hình ảnh mới nếu có
+//     if (req.file) {
+//       const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
+
+//       // Xóa hình ảnh cũ trên Cloudinary nếu có
+//       if (imageUrl) {
+//         const publicId = imageUrl.split("/").slice(-1)[0].split(".")[0];
+//         await cloudinary.uploader.destroy(`specialization/${publicId}`); // Thay đổi thư mục nếu cần
+//       }
+
+//       // Upload hình ảnh mới lên Cloudinary
+//       const result = await cloudinary.uploader.upload(base64Image, {
+//         folder: "specialization", // Thay đổi tên thư mục nếu cần
+//       });
+
+//       imageUrl = result.secure_url; // Cập nhật URL hình ảnh mới
+//     }
+
+//     // Cập nhật chuyên khoa với các trường mới
+//     const updatedSpecialization = await Specialization.findByIdAndUpdate(
+//       id,
+//       {
+//         name: req.body.name,
+//         image: imageUrl,
+//         description: req.body.description,
+//       },
+//       { new: true } // Trả về tài nguyên đã cập nhật
+//     );
+
+//     return res.status(200).json({success: true, data: updatedSpecialization});
 //   } catch (error) {
-//     return res.status(500).json({ message: error.message });
+//     return res.status(500).json({success: false, message: error.message });
 //   }
 // };
 const updateSpecialization = async (req, res) => {
   try {
-    // Validate dữ liệu từ client
-    const { error } = validateSpecialization(req.body);
+    // Validate các trường không phải file
+    const { error } = validateUpdateSpecialization(req.body);
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
     }
@@ -115,79 +131,65 @@ const updateSpecialization = async (req, res) => {
       return res.status(404).json({ message: "Specialization not found" });
     }
 
-    let imageUrl = specialization.image; // Lưu URL hình ảnh hiện tại
+    let imageUrl = specialization.image;
 
-    // Xử lý upload hình ảnh mới nếu có
+    // Kiểm tra file ảnh nếu có
     if (req.file) {
-      const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
-
-      // Xóa hình ảnh cũ trên Cloudinary nếu có
-      if (imageUrl) {
-        const publicId = imageUrl.split("/").slice(-1)[0].split(".")[0];
-        await cloudinary.uploader.destroy(`specialization/${publicId}`); // Thay đổi thư mục nếu cần
+      const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
+      if (!validImageTypes.includes(req.file.mimetype)) {
+        return res.status(400).json({
+          success: false,
+          message: "Tệp tải lên phải là một ảnh (JPEG, PNG, GIF).",
+        });
       }
 
-      // Upload hình ảnh mới lên Cloudinary
+      const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
+
+      // Xóa ảnh cũ
+      if (imageUrl) {
+        const publicId = imageUrl.split("/").slice(-1)[0].split(".")[0];
+        await cloudinary.uploader.destroy(`specialization/${publicId}`);
+      }
+
+      // Upload ảnh mới
       const result = await cloudinary.uploader.upload(base64Image, {
-        folder: "specialization", // Thay đổi tên thư mục nếu cần
+        folder: "specialization",
       });
 
-      imageUrl = result.secure_url; // Cập nhật URL hình ảnh mới
+      imageUrl = result.secure_url;
     }
 
-    // Cập nhật chuyên khoa với các trường mới
+    // Cập nhật dữ liệu
     const updatedSpecialization = await Specialization.findByIdAndUpdate(
       id,
       {
         name: req.body.name,
-        image: imageUrl,
         description: req.body.description,
+        image: imageUrl,
       },
-      { new: true } // Trả về tài nguyên đã cập nhật
+      { new: true }
     );
 
-    return res.status(200).json({success: true, data: updatedSpecialization});
+    return res.status(200).json({ success: true, data: updatedSpecialization });
   } catch (error) {
-    return res.status(500).json({success: false, message: error.message });
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
-
-
-// const deleteSpecialization = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const specialization = await Specialization.findById(id);
-//     if (!specialization) {
-//       return res.status(400).json({ message: "Specialization not found" });
-//     }
-//     await Specialization.findByIdAndDelete(id);
-//     await Doctor.updateMany(
-//       { specialization_id: id },
-//       { $set: { specialization_id: null } }
-//     );
-//     return res.status(200).json({ message: "Delete specialization success!" });
-//   } catch (error) {
-//     return res.status(500).json({ message: error.message });
-//   }
-// };
 const deleteSpecialization = async (req, res) => {
   try {
     const { id } = req.params;
+    console.log(id);
 
-    const findDoc = await Doctor.find({specialization_id: id});
-
-    if (findDoc.length > 0) {
-      return res.status(404).json({ message: "Không thể xoá khi chuyên khoa còn tồn tại bác sĩ!" });
-    }
-    
-    if (!specialization) {
-      return res.status(404).json({ message: "Specialization not found" });
-    }
-
+    // Kiểm tra xem chuyên khoa có tồn tại không
     const specialization = await Specialization.findById(id);
-    
     if (!specialization) {
-      return res.status(404).json({ message: "Specialization not found" });
+      return res.status(404).json({ message: "Chuyên khoa không tồn tại." });
+    }
+
+    // Kiểm tra xem có bác sĩ nào sử dụng chuyên khoa này không
+    const findDoc = await Doctor.find({ specialization_id: id });
+    if (findDoc.length > 0) {
+      return res.status(400).json({ message: "Không thể xóa khi chuyên khoa còn tồn tại bác sĩ!" });
     }
 
     // Xóa hình ảnh trên Cloudinary nếu có
@@ -200,19 +202,12 @@ const deleteSpecialization = async (req, res) => {
     // Xóa chuyên khoa
     await Specialization.findByIdAndDelete(id);
 
-    // // Cập nhật các bác sĩ có chuyên khoa này
-    // await Doctor.updateMany(
-    //   { specialization_id: id },
-    //   { $set: { specialization_id: null } }
-    // );
-
-    return res.status(200).json({success: true, message: "Delete specialization success!" });
+    return res.status(200).json({ success: true, message: "Xóa chuyên khoa thành công!" });
   } catch (error) {
-    return res.status(500).json({success: false, message: error.message });
+    console.error("Error deleting specialization:", error); // Ghi lại lỗi vào console
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
-
-module.exports = { deleteSpecialization };
 
 
 module.exports = {
