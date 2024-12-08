@@ -37,7 +37,7 @@ const ForgotPassword = () => {
             }
         } catch (error) {
             console.error("Lỗi:", error);
-            toast.error("Đã xảy ra lỗi! Vui lòng thử lại sau.");
+            toast.error("Email của bạn không tồn tại.");
         } finally {
             setLoading(false); // Dừng loading sau khi xử lý xong
         }
