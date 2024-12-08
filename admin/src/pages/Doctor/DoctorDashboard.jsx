@@ -1,3 +1,4 @@
+import axios from 'axios'; // Nhập axios
 import {
   BarElement,
   CategoryScale,
@@ -11,7 +12,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { assets } from "../../assets/assets";
 import { DoctorContext } from "../../context/DoctorContext";
-import axios from 'axios'; // Nhập axios
 
 const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 
@@ -277,57 +277,59 @@ const DoctorDashboard = () => {
 
           {/* Bảng */}
           <div className="pt-4">
-            <table className="w-full text-sm bg-white border border-gray-200 rounded-lg overflow-hidden">
-              {/* Header */}
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="py-3 px-4 text-center text-gray-700 font-semibold">Bệnh nhân</th>
-                  <th className="py-3 px-4 text-center text-gray-700 font-semibold">Ngày khám</th>
-                  <th className="py-3 px-4 text-center text-gray-700 font-semibold">Ca khám</th>
-                  <th className="py-3 px-4 text-center text-gray-700 font-semibold">Trạng thái</th>
-                </tr>
-              </thead>
-
-              {/* Nội dung cuộn */}
-              <tbody className="max-h-64 overflow-y-auto">
-                {appointments.slice(0, 5).map((item) => (
-                  <tr
-                    key={item._id}
-                    className="hover:bg-gray-50 transition-all duration-200 border-b border-gray-200"
-                  >
-                    {/* Bệnh nhân */}
-                    <td className="py-4 px-4 text-center font-medium text-gray-800">
-                      {item.patient_name}
-                    </td>
-                    {/* Ngày khám */}
-                    <td className="py-4 px-4 text-center text-gray-600">
-                      {new Date(item.work_date).toLocaleDateString("vi-VN")}
-                    </td>
-                    {/* Ca khám */}
-                    <td className="py-4 px-5 text-center">
-                      <p
-                        className={`py-1 px-4 rounded-full text-white text-base font-semibold ${item.work_shift === "afternoon" ? "bg-orange-400" : "bg-blue-400"
-                          } shadow-md`}
-                      >
-                        {item.work_shift === "morning" ? "Sáng" : "Chiều"}
-                      </p>
-                    </td>
-                    {/* Trạng thái */}
-                    <td className="py-4 px-5 text-center">
-                      {item.status === "canceled" ? (
-                        <button className="bg-red-500 text-white font-semibold py-1 px-4 rounded-full shadow-lg w-[120px] h-[32px]">
-                          Đã từ chối
-                        </button>
-                      ) : (
-                        <button className="bg-green-500 text-white font-semibold py-1 px-4 rounded-full shadow-lg w-[120px] h-[32px]">
-                          Đã xác nhận
-                        </button>
-                      )}
-                    </td>
+            <div className="max-h-80 overflow-y-auto rounded-lg border border-gray-200">
+              <table className="w-full text-sm bg-white">
+                {/* Header */}
+                <thead className="bg-gray-100 sticky top-0">
+                  <tr>
+                    <th className="py-3 px-4 text-center text-gray-700 font-semibold">Bệnh nhân</th>
+                    <th className="py-3 px-4 text-center text-gray-700 font-semibold">Ngày khám</th>
+                    <th className="py-3 px-4 text-center text-gray-700 font-semibold">Ca khám</th>
+                    <th className="py-3 px-4 text-center text-gray-700 font-semibold">Trạng thái</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+
+                {/* Nội dung cuộn */}
+                <tbody>
+                  {appointments.map((item) => (
+                    <tr
+                      key={item._id}
+                      className="hover:bg-gray-50 transition-all duration-200 border-b border-gray-200"
+                    >
+                      {/* Bệnh nhân */}
+                      <td className="py-4 px-4 text-center font-medium text-gray-800">
+                        {item.patient_name}
+                      </td>
+                      {/* Ngày khám */}
+                      <td className="py-4 px-4 text-center text-gray-600">
+                        {new Date(item.work_date).toLocaleDateString("vi-VN")}
+                      </td>
+                      {/* Ca khám */}
+                      <td className="py-4 px-5 text-center">
+                        <p
+                          className={`py-1 px-4 rounded-full text-white text-base font-semibold ${item.work_shift === "afternoon" ? "bg-orange-400" : "bg-blue-400"
+                            } shadow-md`}
+                        >
+                          {item.work_shift === "morning" ? "Sáng" : "Chiều"}
+                        </p>
+                      </td>
+                      {/* Trạng thái */}
+                      <td className="py-4 px-5 text-center">
+                        {item.status === "canceled" ? (
+                          <button className="bg-red-500 text-white font-semibold py-1 px-4 rounded-full shadow-lg w-[120px] h-[32px]">
+                            Đã từ chối
+                          </button>
+                        ) : (
+                          <button className="bg-green-500 text-white font-semibold py-1 px-4 rounded-full shadow-lg w-[120px] h-[32px]">
+                            Đã xác nhận
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
 
@@ -343,57 +345,59 @@ const DoctorDashboard = () => {
 
           {/* Bảng */}
           <div className="pt-4">
-            <table className="w-full text-sm bg-white border border-gray-200 rounded-lg overflow-hidden">
-              {/* Header */}
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="py-3 px-4 text-center text-gray-700 font-semibold">Bệnh nhân</th>
-                  <th className="py-3 px-4 text-center text-gray-700 font-semibold">Ngày khám</th>
-                  <th className="py-3 px-4 text-center text-gray-700 font-semibold">Ca khám</th>
-                  <th className="py-3 px-4 text-center text-gray-700 font-semibold">Trạng thái</th>
-                </tr>
-              </thead>
-
-              {/* Nội dung */}
-              <tbody className="max-h-64 overflow-y-auto">
-                {appointmentStatus.slice(0, 5).map((item) => (
-                  <tr
-                    key={item._id}
-                    className="hover:bg-gray-50 transition-all duration-200 border-b border-gray-200"
-                  >
-                    {/* Bệnh nhân */}
-                    <td className="py-4 px-4 text-center font-medium text-gray-800">
-                      {item.patient_name}
-                    </td>
-                    {/* Ngày khám */}
-                    <td className="py-4 px-4 text-center text-gray-600">
-                      {new Date(item.work_date).toLocaleDateString("vi-VN")}
-                    </td>
-                    {/* Ca khám */}
-                    <td className="py-4 px-5 text-center">
-                      <p
-                        className={`py-1 px-4 rounded-full text-white text-base font-semibold ${item.work_shift === "afternoon" ? "bg-orange-400" : "bg-blue-400"
-                          } shadow-md`}
-                      >
-                        {item.work_shift === "morning" ? "Sáng" : "Chiều"}
-                      </p>
-                    </td>
-                    {/* Trạng thái */}
-                    <td className="py-4 px-5 text-center">
-                      {item.status === "canceled" ? (
-                        <button className="bg-red-500 text-white font-semibold py-1 px-4 rounded-full shadow-lg w-[120px] h-[32px]">
-                          Đã từ chối
-                        </button>
-                      ) : (
-                        <button className="bg-green-500 text-white font-semibold py-1 px-4 rounded-full shadow-lg w-[120px] h-[32px]">
-                          Đã xác nhận
-                        </button>
-                      )}
-                    </td>
+            <div className="max-h-80 overflow-y-auto border border-gray-200 rounded-lg">
+              <table className="w-full text-sm bg-white">
+                {/* Header */}
+                <thead className="bg-gray-100 sticky top-0 z-10">
+                  <tr>
+                    <th className="py-3 px-4 text-center text-gray-700 font-semibold">Bệnh nhân</th>
+                    <th className="py-3 px-4 text-center text-gray-700 font-semibold">Ngày khám</th>
+                    <th className="py-3 px-4 text-center text-gray-700 font-semibold">Ca khám</th>
+                    <th className="py-3 px-4 text-center text-gray-700 font-semibold">Trạng thái</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+
+                {/* Nội dung */}
+                <tbody>
+                  {appointmentStatus.map((item) => (
+                    <tr
+                      key={item._id}
+                      className="hover:bg-gray-50 transition-all duration-200 border-b border-gray-200"
+                    >
+                      {/* Bệnh nhân */}
+                      <td className="py-4 px-4 text-center font-medium text-gray-800">
+                        {item.patient_name}
+                      </td>
+                      {/* Ngày khám */}
+                      <td className="py-4 px-4 text-center text-gray-600">
+                        {new Date(item.work_date).toLocaleDateString("vi-VN")}
+                      </td>
+                      {/* Ca khám */}
+                      <td className="py-4 px-5 text-center">
+                        <p
+                          className={`py-1 px-4 rounded-full text-white text-base font-semibold ${item.work_shift === "afternoon" ? "bg-orange-400" : "bg-blue-400"
+                            } shadow-md`}
+                        >
+                          {item.work_shift === "morning" ? "Sáng" : "Chiều"}
+                        </p>
+                      </td>
+                      {/* Trạng thái */}
+                      <td className="py-4 px-5 text-center">
+                        {item.status === "canceled" ? (
+                          <button className="bg-red-500 text-white font-semibold py-1 px-4 rounded-full shadow-lg w-[120px] h-[32px]">
+                            Đã từ chối
+                          </button>
+                        ) : (
+                          <button className="bg-green-500 text-white font-semibold py-1 px-4 rounded-full shadow-lg w-[120px] h-[32px]">
+                            Đã xác nhận
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
