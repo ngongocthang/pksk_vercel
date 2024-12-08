@@ -238,9 +238,6 @@ const Navbar = () => {
             <NavLink onClick={() => setShowMenu(false)} to="/contact">
               <p className="px-4 py-2 rounded inline-block">Liên hệ</p>
             </NavLink>
-            <NavLink onClick={() => setShowMenu(false)} to="/all-schedule">
-              <p className="px-4 py-2 rounded inline-block">Lịch làm việc</p>
-            </NavLink>
             {!user && (
               <NavLink onClick={() => setShowMenu(false)} to="/account">
                 <p className="bg-[#00759c] text-white px-4 py-2 rounded font-light text-center w-full">
