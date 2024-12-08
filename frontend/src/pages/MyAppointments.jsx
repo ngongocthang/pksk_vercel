@@ -198,7 +198,7 @@ const MyAppointments = () => {
           {showCanceled ? "Ẩn lịch hẹn đã hủy" : "Hiện lịch hẹn đã hủy"}
         </button>
       </p>
-      <div className="appointments-container">
+      <div className="appointments-container overflow-y-auto h-[550px]"> {/* Thêm lớp này */}
         {loading ? (
           <p className="text-center text-gray-500 mt-5">Đang tải dữ liệu...</p>
         ) : appointments.length === 0 ? (
@@ -207,9 +207,7 @@ const MyAppointments = () => {
           </p>
         ) : (
           appointments
-            .filter(
-              (appointment) => showCanceled || appointment.status !== "canceled"
-            )
+            .filter((appointment) => showCanceled || appointment.status !== "canceled")
             .map((appointment) => (
               <div
                 className="relative grid grid-cols-[1fr_2fr] gap-4 sm:flex sm:gap-6 py-2 border-b"
@@ -306,8 +304,7 @@ const MyAppointments = () => {
                         appointment.doctor_id.price
                       )
                     }
-                    className={`text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded transition-all duration-300 ${!appointment.paymentStatus &&
-                        appointment.status === "confirmed"
+                    className={`text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded transition-all duration-300 ${!appointment.paymentStatus && appointment.status === "confirmed"
                         ? "hover:bg-primary hover:text-white"
                         : "bg-gray-300 cursor-not-allowed"
                       }`}
@@ -321,8 +318,7 @@ const MyAppointments = () => {
                   {/* Nút hủy */}
                   <button
                     onClick={() => handleCancelAppointment(appointment._id)}
-                    className={`text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded transition-all duration-300 ${appointment.paymentStatus ||
-                        appointment.status === "canceled"
+                    className={`text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded transition-all duration-300 ${appointment.paymentStatus || appointment.status === "canceled"
                         ? "bg-gray-300 cursor-not-allowed"
                         : "hover:bg-red-600 hover:text-white"
                       }`}
@@ -332,9 +328,7 @@ const MyAppointments = () => {
                       isLoadingCancel === appointment._id
                     }
                   >
-                    {isLoadingCancel === appointment._id
-                      ? "Đang hủy..."
-                      : "Hủy cuộc hẹn"}
+                    {isLoadingCancel === appointment._id ? "Đang hủy..." : "Hủy"}
                   </button>
                 </div>
               </div>
