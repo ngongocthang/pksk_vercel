@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { AdminContext } from "../../context/AdminContext";
 import axios from "axios";
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { AdminContext } from "../../context/AdminContext";
 
 const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 
@@ -11,6 +11,16 @@ const PatientList = () => {
     const navigate = useNavigate();
     const [currentPage, setCurrentPage] = useState(1);
     const [patientsPerPage] = useState(10);
+
+    useEffect(() => {
+        toast.dismiss();
+    }, [currentPage]);
+
+    useEffect(() => {
+        return () => {
+            toast.dismiss(); // Đóng thông báo khi component bị hủy (trang đóng)
+        };
+    }, []);
 
     useEffect(() => {
         getAllPatients();
@@ -74,6 +84,88 @@ const PatientList = () => {
                 closeOnClick: false,
                 draggable: false,
             }
+        );
+    };
+
+    // Hàm render phân trang
+    const renderPagination = () => {
+        const paginationItems = [];
+
+        // Nút "Trang trước"
+        paginationItems.push(
+            <button
+                key="prev"
+                onClick={() => paginate(Math.max(1, currentPage - 1))}
+                className={`py-1 px-3 border rounded ${currentPage === 1 ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "text-gray-600"}`}
+                disabled={currentPage === 1}
+            >
+                Trước
+            </button>
+        );
+
+        // Hiển thị trang 1
+        paginationItems.push(
+            <button
+                key={1}
+                onClick={() => paginate(1)}
+                className={`py-1 px-3 border rounded ${currentPage === 1 ? "bg-blue-600 text-white" : "text-gray-600"}`}
+            >
+                1
+            </button>
+        );
+
+        // Hiển thị dấu ba chấm nếu cần
+        if (currentPage > 2) {
+            paginationItems.push(<span key="start-dots" className="px-2">...</span>);
+        }
+
+        // Hiển thị các trang xung quanh trang hiện tại
+        for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+            paginationItems.push(
+                <button
+                    key={i}
+                    onClick={() => paginate(i)}
+                    className={`py-1 px-3 border rounded ${i === currentPage ? "bg-blue-600 text-white" : "text-gray-600"}`}
+                >
+                    {i}
+                </button>
+            );
+        }
+
+        // Hiển thị dấu ba chấm nếu cần
+        if (currentPage < totalPages - 1) {
+            paginationItems.push(<span key="end-dots" className="px-2">...</span>);
+        }
+
+        // Hiển thị trang cuối
+        if (totalPages > 1) {
+            paginationItems.push(
+                <button
+                    key={totalPages}
+                    onClick={() => paginate(totalPages)}
+                    className={`py-1 px-3 border rounded ${currentPage === totalPages ? "bg-blue-600 text-white" : "text-gray-600"}`}
+                >
+                    {totalPages}
+                </button>
+            );
+        }
+
+        // Nút "Trang tiếp theo"
+        paginationItems.push(
+            <button
+                key="next"
+                onClick={() => paginate(Math.min(totalPages, currentPage + 1))}
+                className={`py-1 px-3 border rounded ${currentPage === totalPages ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "text-gray-600"}`}
+                disabled={currentPage === totalPages}
+            >
+                Tiếp
+            </button>
+        );
+
+        return (
+            <div className="flex justify-center gap-2 mt-4">
+                {paginationItems}
+            </div>
         );
     };
 
@@ -178,14 +270,14 @@ const PatientList = () => {
                                     className="bg-blue-500 text-white py-1 px-3 rounded text-sm"
                                 >
                                     Sửa
-                                    <i class="fa-solid fa-user-pen ml-2"></i>
+                                    <i className="fa-solid fa-user-pen ml-2"></i>
                                 </button>
                                 <button
                                     onClick={() => deletePatient(patient._id, patient.user_id.name)}
                                     className="bg-red-500 text-white py-1 px-3 rounded text-sm"
                                 >
                                     Xóa
-                                    <i class="fa-solid fa-trash ml-2"></i>
+                                    <i className="fa-solid fa-trash ml-2"></i>
                                 </button>
                             </div>
                         </div>
@@ -194,25 +286,9 @@ const PatientList = () => {
             </div>
 
             {/* Pagination */}
-            {patient.length > patientsPerPage && (
-                <div className="flex justify-center gap-2 mt-4">
-                    {Array.from({ length: totalPages }, (_, index) => (
-                        <button
-                            key={index}
-                            onClick={() => paginate(index + 1)}
-                            className={`px-3 py-1 rounded-md ${currentPage === index + 1
-                                ? "bg-blue-600 text-white"
-                                : "bg-gray-200 text-gray-700"
-                                }`}
-                        >
-                            {index + 1}
-                        </button>
-                    ))}
-                </div>
-            )}
+            {patient.length > patientsPerPage && renderPagination()}
         </div>
     );
-
 };
 
 export default PatientList;

@@ -60,7 +60,7 @@ const ConfirmationSchedule = () => {
 
     fetchAppointments(); // Lần đầu tiên khi component mount
 
-    const interval = setInterval(fetchAppointments, 10000); // Lấy lịch hẹn mỗi 30 giây
+    const interval = setInterval(fetchAppointments, 10000); // Lấy lịch hẹn mỗi 10 giây
 
     return () => clearInterval(interval); // Dọn dẹp interval khi component bị hủy
   }, [getAppointments]);
@@ -75,6 +75,7 @@ const ConfirmationSchedule = () => {
     navigate(`/confirmation-schedule?page=${pageNumber}`);
   };
 
+  // Hàm render phân trang
   const renderPagination = () => {
     const delta = 1; // Số trang hiển thị trước và sau trang hiện tại
     const paginationItems = [];
@@ -83,14 +84,13 @@ const ConfirmationSchedule = () => {
     paginationItems.push(
       <button
         key="prev"
-        onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+        onClick={() => paginate(Math.max(1, currentPage - 1))}
         className={`py-1 px-3 border rounded w-[70px] flex items-center justify-center ${currentPage === 1
           ? "bg-gray-200 text-gray-400 cursor-not-allowed"
           : "text-gray-600"
-          }`}
+        }`}
         disabled={currentPage === 1}
       >
-        {/* Hiển thị chữ "Trước" trên desktop và icon trên mobile */}
         <span className="hidden md:block">Trước</span>
         <i className="fa-solid fa-angle-left block md:hidden"></i>
       </button>
@@ -100,7 +100,7 @@ const ConfirmationSchedule = () => {
     paginationItems.push(
       <button
         key={1}
-        onClick={() => handlePageChange(1)}
+        onClick={() => paginate(1)}
         className={`py-1 px-3 border rounded ${currentPage === 1 ? "bg-indigo-500 text-white" : "text-gray-600"
           }`}
       >
@@ -111,9 +111,7 @@ const ConfirmationSchedule = () => {
     // Hiển thị dấu ba chấm nếu cần, khi currentPage > 3
     if (currentPage > 2) {
       paginationItems.push(
-        <span key="start-dots" className="px-2">
-          ...
-        </span>
+        <span key="start-dots" className="px-2">...</span>
       );
     }
 
@@ -126,7 +124,7 @@ const ConfirmationSchedule = () => {
       paginationItems.push(
         <button
           key={i}
-          onClick={() => handlePageChange(i)}
+          onClick={() => paginate(i)}
           className={`py-1 px-3 border rounded ${i === currentPage ? "bg-indigo-500 text-white" : "text-gray-600"
             }`}
         >
@@ -138,9 +136,7 @@ const ConfirmationSchedule = () => {
     // Hiển thị dấu ba chấm nếu cần, khi currentPage < totalPages - 1
     if (currentPage < totalPages - 1) {
       paginationItems.push(
-        <span key="end-dots" className="px-2">
-          ...
-        </span>
+        <span key="end-dots" className="px-2">...</span>
       );
     }
 
@@ -149,7 +145,7 @@ const ConfirmationSchedule = () => {
       paginationItems.push(
         <button
           key={totalPages}
-          onClick={() => handlePageChange(totalPages)}
+          onClick={() => paginate(totalPages)}
           className={`py-1 px-3 border rounded ${currentPage === totalPages ? "bg-indigo-500 text-white" : "text-gray-600"
             }`}
         >
@@ -162,14 +158,13 @@ const ConfirmationSchedule = () => {
     paginationItems.push(
       <button
         key="next"
-        onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+        onClick={() => paginate(Math.min(totalPages, currentPage + 1))}
         className={`py-1 px-3 border rounded w-[70px] flex items-center justify-center ${currentPage === totalPages
           ? "bg-gray-200 text-gray-400 cursor-not-allowed"
           : "text-gray-600"
-          }`}
+        }`}
         disabled={currentPage === totalPages}
       >
-        {/* Hiển thị chữ "Tiếp" trên desktop và icon trên mobile */}
         <span className="hidden md:block">Tiếp</span>
         <i className="fa-solid fa-angle-right block md:hidden"></i>
       </button>

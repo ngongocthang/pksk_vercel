@@ -103,7 +103,7 @@ const getCurrentUserNotifications = async (req, res) => {
     const user_id = req.user?.id;
     const user_role = req.user?.role;
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Set to start of the day
+    today.setHours(0, 0, 0, 0);
 
     let notifications;
 
@@ -136,7 +136,7 @@ const getCurrentUserNotifications = async (req, res) => {
         return res.status(200).json(notifications);
       }
     }
-    return res.status(404).json({ message: "Notifications not found" });
+    // return res.status(404).json({ message: "Notifications not found" });
   } catch (error) {
     console.error("Error fetching notifications:", error);
     return res.status(500).json({ message: error.message });

@@ -35,7 +35,7 @@ const Footer = () => {
             </li>
             <li>
               <span className="font-medium">Email:</span>
-              <a href="mailto:lequythien1@gmail.com" className="hover:text-blue-500 ml-1">lequythien1@gmail.com</a>
+              <a href="mailto:lequythien1@gmail.com" className="hover:text-blue-500 ml-1">TripleTCare@gmail.com</a>
             </li>
             <li>
               <span className="font-medium">Địa chỉ:</span>

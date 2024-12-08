@@ -1,20 +1,19 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DoctorContext } from '../../context/DoctorContext';
-import { assets } from '../../assets/assets';
 
 const DoctorAppointments = () => {
   const { dToken, appointments, getAllAppointments } = useContext(DoctorContext);
   const [currentPage, setCurrentPage] = useState(1);
-  const [loading, setLoading] = useState(false); // Thêm state loading
+  const [loading, setLoading] = useState(false);
   const appointmentsPerPage = 10;
   const navigate = useNavigate();
 
   useEffect(() => {
     if (dToken) {
-      setLoading(true); // Khi bắt đầu tải, set loading = true
+      setLoading(true);
       getAllAppointments().finally(() => {
-        setLoading(false); // Khi dữ liệu được tải xong, set loading = false
+        setLoading(false);
       });
     }
   }, [dToken]);
@@ -29,15 +28,16 @@ const DoctorAppointments = () => {
   const indexOfFirstAppointment = indexOfLastAppointment - appointmentsPerPage;
   const currentAppointments = appointments.slice(indexOfFirstAppointment, indexOfLastAppointment);
 
-  // Handle pagination
-  const paginate = (pageNumber) => {
-    setCurrentPage(pageNumber);
-    navigate(`/doctor-appointments?page=${pageNumber}`);
-  };
-
   // Calculate total pages
   const totalPages = Math.ceil(appointments.length / appointmentsPerPage);
 
+  // Handle page change
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    navigate(`/doctor-appointments?page=${page}`);
+  };
+
+  // Render pagination
   const renderPagination = () => {
     const delta = 1; // Số trang hiển thị trước và sau trang hiện tại
     const paginationItems = [];
@@ -50,10 +50,9 @@ const DoctorAppointments = () => {
         className={`py-1 px-3 border rounded w-[70px] flex items-center justify-center ${currentPage === 1
           ? "bg-gray-200 text-gray-400 cursor-not-allowed"
           : "text-gray-600"
-          }`}
+        }`}
         disabled={currentPage === 1}
       >
-        {/* Hiển thị chữ "Trước" trên desktop và icon trên mobile */}
         <span className="hidden md:block">Trước</span>
         <i className="fa-solid fa-angle-left block md:hidden"></i>
       </button>
@@ -74,9 +73,7 @@ const DoctorAppointments = () => {
     // Hiển thị dấu ba chấm nếu cần, khi currentPage > 3
     if (currentPage > 2) {
       paginationItems.push(
-        <span key="start-dots" className="px-2">
-          ...
-        </span>
+        <span key="start-dots" className="px-2">...</span>
       );
     }
 
@@ -101,9 +98,7 @@ const DoctorAppointments = () => {
     // Hiển thị dấu ba chấm nếu cần, khi currentPage < totalPages - 1
     if (currentPage < totalPages - 1) {
       paginationItems.push(
-        <span key="end-dots" className="px-2">
-          ...
-        </span>
+        <span key="end-dots" className="px-2">...</span>
       );
     }
 
@@ -129,10 +124,8 @@ const DoctorAppointments = () => {
         className={`py-1 px-3 border rounded w-[70px] flex items-center justify-center ${currentPage === totalPages
           ? "bg-gray-200 text-gray-400 cursor-not-allowed"
           : "text-gray-600"
-          }`}
         disabled={currentPage === totalPages}
       >
-        {/* Hiển thị chữ "Tiếp" trên desktop và icon trên mobile */}
         <span className="hidden md:block">Tiếp</span>
         <i className="fa-solid fa-angle-right block md:hidden"></i>
       </button>
@@ -235,7 +228,7 @@ const DoctorAppointments = () => {
           !loading && <p className='text-gray-500 py-3 text-center'>Không có lịch hẹn nào!</p>
         )}
       </div>
-      
+
       {/* Phân trang */}
       {totalPages > 1 && renderPagination()}
     </div>

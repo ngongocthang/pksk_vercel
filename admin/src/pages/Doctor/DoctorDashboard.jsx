@@ -1,3 +1,4 @@
+import axios from 'axios'; // Nhập axios
 import {
   BarElement,
   CategoryScale,
@@ -11,7 +12,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { assets } from "../../assets/assets";
 import { DoctorContext } from "../../context/DoctorContext";
-import axios from 'axios'; // Nhập axios
 
 const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 
@@ -270,20 +270,18 @@ const DoctorDashboard = () => {
         {/* Latest Bookings */}
         <div className="flex-1 bg-white p-4 rounded-lg shadow-md">
           {/* Tiêu đề */}
-          <div className="flex items-center gap-2 px-4 py-4 bg-blue-100 rounded-t border">
-            <img className="w-5 sm:w-6" src={assets.list_icon} alt="" />
-            <p className="font-semibold">Lịch hẹn sắp tới</p>
+          <div className="flex items-center gap-3 px-4 py-2 bg-blue-100 rounded-t">
+            <img src={assets.list_icon} alt="list-icon" className="w-6 h-6" />
+            <p className="font-semibold text-gray-800 text-lg">Lịch hẹn sắp tới</p>
           </div>
 
-          {/* Nội dung */}
-          <div className="overflow-x-auto sm:overflow-visible">
-            {/* Giao diện desktop */}
-            <div className="hidden sm:block">
-              <table className="w-full text-sm bg-white border border-gray-200 rounded-lg">
+          {/* Bảng */}
+          <div className="pt-4">
+            <div className="max-h-80 overflow-y-auto rounded-lg border border-gray-200">
+              <table className="w-full text-sm bg-white">
                 {/* Header */}
-                <thead className="bg-gray-300">
+                <thead className="bg-gray-100 sticky top-0">
                   <tr>
-                    <th className="py-3 px-4 text-center text-gray-700 font-semibold">#</th>
                     <th className="py-3 px-4 text-center text-gray-700 font-semibold">Bệnh nhân</th>
                     <th className="py-3 px-4 text-center text-gray-700 font-semibold">Ngày khám</th>
                     <th className="py-3 px-4 text-center text-gray-700 font-semibold">Ca khám</th>
@@ -302,23 +300,21 @@ const DoctorDashboard = () => {
                       <td className="py-4 px-4 text-center font-semibold text-gray-800">
                         {item.patient_name}
                       </td>
-
                       {/* Ngày khám */}
                       <td className="text-gray-600 font-medium text-center">
                         {new Date(item.work_date).toLocaleDateString("vi-VN")}
                       </td>
-
                       {/* Ca khám */}
                       <td className="py-4 px-4 text-center flex justify-center">
                         <p
-                          className={`py-1 px-2 rounded-full text-white text-base font-semibold ${item.work_shift === "afternoon" ? "bg-orange-400" : "bg-blue-400"} shadow-md max-w-[70px] w-full`}
+                          className={`py-1 px-4 rounded-full text-white text-base font-semibold ${item.work_shift === "afternoon" ? "bg-orange-400" : "bg-blue-400"
+                            } shadow-md`}
                         >
                           {item.work_shift === "morning" ? "Sáng" : "Chiều"}
                         </p>
                       </td>
-
                       {/* Trạng thái */}
-                      <td className="py-1 px-4 text-center">
+                      <td className="py-4 px-5 text-center">
                         {item.status === "canceled" ? (
                           <button className="bg-red-500 text-white font-semibold py-1 px-4 rounded-full shadow-lg w-[120px] h-[32px]">
                             Đã từ chối
@@ -385,14 +381,12 @@ const DoctorDashboard = () => {
           </div>
 
           {/* Bảng */}
-          <div className="overflow-x-auto sm:overflow-visible">
-            {/* Giao diện desktop */}
-            <div className="hidden sm:block">
-              <table className="w-full text-sm bg-white border border-gray-200 rounded-lg">
+          <div className="pt-4">
+            <div className="max-h-80 overflow-y-auto border border-gray-200 rounded-lg">
+              <table className="w-full text-sm bg-white">
                 {/* Header */}
-                <thead className="bg-gray-300">
+                <thead className="bg-gray-100 sticky top-0 z-10">
                   <tr>
-                    <th className="py-3 px-4 text-center text-gray-700 font-semibold">#</th>
                     <th className="py-3 px-4 text-center text-gray-700 font-semibold">Bệnh nhân</th>
                     <th className="py-3 px-4 text-center text-gray-700 font-semibold">Ngày khám</th>
                     <th className="py-3 px-4 text-center text-gray-700 font-semibold">Ca khám</th>
@@ -401,25 +395,22 @@ const DoctorDashboard = () => {
                 </thead>
 
                 {/* Nội dung */}
-                <tbody className="max-h-64 overflow-y-auto">
-                  {appointmentStatus.slice(0, 5).map((item, index) => (
+                <tbody>
+                  {appointmentStatus.map((item) => (
                     <tr
                       key={item._id}
                       className="hover:bg-gray-50 transition-all duration-200 border-b border-gray-200"
                     >
-                      {/* Số thứ tự */}
-                      <td className="font-bold text-sm text-center sm:text-center sm:mr-4 mb-2 sm:mb-0">{index + 1}</td>
                       {/* Bệnh nhân */}
-                      <td className="py-4 px-4 text-center font-semibold text-gray-800">{item.patient_name}</td>
                       {/* Ngày khám */}
                       <td className="py-4 px-4 text-center font-medium text-gray-600">
                         {new Date(item.work_date).toLocaleDateString("vi-VN")}
                       </td>
                       {/* Ca khám */}
-                      <td className="py-4 text-center flex justify-center">
+                      <td className="py-4 px-5 text-center">
                         <p
-                          className={`py-1 rounded-full text-white text-base text-center font-semibold ${item.work_shift === "afternoon" ? "bg-orange-400" : "bg-blue-400"
-                            } max-w-[70px] w-full shadow-md`}
+                          className={`py-1 px-4 rounded-full text-white text-base font-semibold ${item.work_shift === "afternoon" ? "bg-orange-400" : "bg-blue-400"
+                            } shadow-md`}
                         >
                           {item.work_shift === "morning" ? "Sáng" : "Chiều"}
                         </p>

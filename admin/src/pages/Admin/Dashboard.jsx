@@ -1,3 +1,4 @@
+import axios from 'axios'; // Nhập axios
 import {
   BarElement,
   CategoryScale,
@@ -11,7 +12,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { assets } from "../../assets/assets";
 import { AdminContext } from "../../context/AdminContext";
-import axios from 'axios'; // Nhập axios
 
 const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 

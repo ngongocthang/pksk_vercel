@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { DoctorContext } from '../../context/DoctorContext';
 import DatePicker from 'react-datepicker';
 import { useNavigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
+import { DoctorContext } from '../../context/DoctorContext';
 
 const CreateDoctorSchedule = () => {
   const { getDoctorSpecialization, createSchedule } = useContext(DoctorContext);
@@ -61,7 +61,7 @@ const CreateDoctorSchedule = () => {
               onChange={handleDateChange}
               dateFormat="dd/MM/yyyy"
               minDate={new Date()}
-              className='w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500'
+              className='w-[340px] p-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500'
             />
           </div>
 

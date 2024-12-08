@@ -22,6 +22,7 @@ import DoctorProfile from './pages/Doctor/DoctorProfile';
 import DoctorWorkSchedule from './pages/Doctor/DoctorWorkSchedule';
 import EditWorkSchedule from './pages/Doctor/EditWorkSchedule';
 import Login from './pages/Login';
+import Forbidden from "./components/Forbidden";
 
 const App = () => {
   const { aToken } = useContext(AdminContext);
@@ -45,25 +46,25 @@ const App = () => {
             <Sidebar />
             <Routes>
               {/* Admin Route */}
-              <Route path='/' element={<></>} />
-              <Route path='/admin-dashboard' element={<Dashboard />} />
-              <Route path='/all-appointments' element={<AllAppointments />} />
-              <Route path='/add-doctor' element={<AddDoctor />} />
-              <Route path='/doctor-list' element={<DoctorsList />} />
-              <Route path="/doctor-list/:speciality" element={<DoctorsList />} />
-              <Route path='/patient-list' element={<PatientList />} />
-              <Route path='/add-patient' element={<AddPatient />} />
-              <Route path='/edit-patient/:id' element={<EditPatient />} />
+              <Route path="/" element={aToken ? <Dashboard /> : <Forbidden />} />
+              <Route path="/admin-dashboard" element={aToken ? <Dashboard /> : <Forbidden />} />
+              <Route path="/all-appointments" element={aToken ? <AllAppointments /> : <Forbidden />} />
+              <Route path="/add-doctor" element={aToken ? <AddDoctor /> : <Forbidden />} />
+              <Route path="/doctor-list" element={aToken ? <DoctorsList /> : <Forbidden />} />
+              <Route path="/doctor-list/:speciality" element={aToken ? <DoctorsList /> : <Forbidden />} />
+              <Route path="/patient-list" element={aToken ? <PatientList /> : <Forbidden />} />
+              <Route path="/add-patient" element={aToken ? <AddPatient /> : <Forbidden />} />
+              <Route path="/edit-patient/:id" element={aToken ? <EditPatient /> : <Forbidden />} />
 
               {/* Doctor Route */}
-              <Route path='/doctor-dashboard' element={<DoctorDashboard />} />
-              <Route path='/doctor-appointments' element={<DoctorAppointments />} />
-              <Route path='/confirm-completed-appointments' element={<ConfirmCompletedAppointments />} />
-              <Route path='/doctor-profile' element={<DoctorProfile />} />
-              <Route path='/doctor-work-schedule' element={<DoctorWorkSchedule />} />
-              <Route path='/doctor-create-schedule' element={<DoctorCreateSchedule />} />
-              <Route path='/confirmation-appointments' element={<ConfirmationAppointments />} />
-              <Route path='/edit-work-schedule/:id' element={<EditWorkSchedule />} />
+              <Route path="/doctor-dashboard" element={dToken ? <DoctorDashboard /> : <Forbidden />} />
+              <Route path="/doctor-appointments" element={dToken ? <DoctorAppointments /> : <Forbidden />} />
+              <Route path="/confirm-completed-appointments" element={dToken ? <ConfirmCompletedAppointments /> : <Forbidden />} />
+              <Route path="/doctor-profile" element={dToken ? <DoctorProfile /> : <Forbidden />} />
+              <Route path="/doctor-work-schedule" element={dToken ? <DoctorWorkSchedule /> : <Forbidden />} />
+              <Route path="/doctor-create-schedule" element={dToken ? <DoctorCreateSchedule /> : <Forbidden />} />
+              <Route path="/confirmation-appointments" element={dToken ? <ConfirmationAppointments /> : <Forbidden />} />
+              <Route path="/edit-work-schedule/:id" element={dToken ? <EditWorkSchedule /> : <Forbidden />} />
             </Routes>
           </div>
         </>
@@ -75,3 +76,4 @@ const App = () => {
 };
 
 export default App;
+

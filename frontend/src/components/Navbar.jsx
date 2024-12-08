@@ -2,7 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets";
 import { AppContext } from "../context/AppContext";
-import axios from 'axios'; // Nhập axios
+import axios from 'axios';
+
 
 const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 
@@ -11,10 +12,11 @@ const Navbar = () => {
   const { user, setUser, unreadCount, setUnreadCount } = useContext(AppContext);
   const [showMenu, setShowMenu] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [notificationsCount, setNotificationsCount] = useState(0);
   const [rotateIcon, setRotateIcon] = useState(false);
+
   const [isVisible, setIsVisible] = useState(true); // State for navbar visibility
+  const [notifications, setNotifications] = useState([]);
 
   const getDisplayName = (fullName) => {
     const nameParts = fullName.split(" ");
@@ -26,41 +28,51 @@ const Navbar = () => {
       const response = await axios.get(`${VITE_BACKEND_URI}/notification`, {
         headers: { Authorization: `Bearer ${user.token}` },
       });
-      const data = response.data; // Lấy dữ liệu từ response
+      const data = response.data;
 
-      // Kiểm tra xem dữ liệu có phải là mảng không
+
+      // Kiểm tra nếu dữ liệu là mảng
       if (Array.isArray(data)) {
-        // Lọc thông báo chưa đọc
         const unreadNotifications = data.filter(notification => !notification.isRead);
-        const unreadCount = unreadNotifications.length;
-        setUnreadCount(unreadCount);
+        setUnreadCount(unreadNotifications.length);
+        setNotifications(data);
       } else {
-        setUnreadCount(0); // Nếu không phải mảng, không có thông báo chưa đọc
+
+        setUnreadCount(0);
+        setNotifications([]);
       }
     } catch (error) {
-      console.error("Error fetching unread notifications:", error);
+      // console.error("Error fetching notifications:", error);
     }
   };
 
+
   useEffect(() => {
     if (user?.token) {
-      fetchUnreadNotifications(); // Lần đầu tiên khi có user
-      const interval = setInterval(fetchUnreadNotifications, 1000); // Lấy thông báo mỗi 1 giây
-
-      return () => clearInterval(interval); // Dọn dẹp interval khi component bị hủy
+      fetchUnreadNotifications(); 
+      const interval = setInterval(fetchUnreadNotifications, 1000); 
+      return () => clearInterval(interval); 
     }
-  }, [user, setUnreadCount]);
+  }, [user]);
+
+  // useEffect này giúp theo dõi sự thay đổi trong notifications và cập nhật unreadCount
+  useEffect(() => {
+    if (notifications.length > 0) {
+      const unreadNotifications = notifications.filter(notification => !notification.isRead);
+      setUnreadCount(unreadNotifications.length);
+    }
+  }, [notifications]);
 
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
     if (savedUser) {
       setUser(JSON.parse(savedUser));
     }
-    setLoading(false);
   }, [setUser]);
 
   const handleLogout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
     setUser(null);
     navigate("/account");
   };
@@ -72,57 +84,27 @@ const Navbar = () => {
 
   const handleNotificationClick = () => {
     setNotificationsCount(0);
-    navigate("/Notifications");
+    navigate("/notifications");
   };
 
-  // Scroll event handler for hiding/showing navbar
   useEffect(() => {
-    let lastScrollY = window.scrollY; // Keep track of the last scroll position
+    let lastScrollY = window.scrollY;
 
     const handleScroll = () => {
       if (window.scrollY === 0) {
-        // If at the top of the page, ensure the navbar is visible
         setIsVisible(true);
       } else if (window.scrollY > lastScrollY) {
-        // Scrolling down
         setIsVisible(false);
       } else if (window.scrollY < lastScrollY) {
-        // Scrolling up
         setIsVisible(true);
       }
-      lastScrollY = window.scrollY <= 0 ? 0 : window.scrollY; // Prevent negative values
+      lastScrollY = window.scrollY <= 0 ? 0 : window.scrollY;
     };
 
     window.addEventListener("scroll", handleScroll);
 
-    // Cleanup listener on component unmount
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  useEffect(() => {
-    // Vô hiệu hóa cuộn khi menu mở
-    if (showMenu) {
-      document.body.classList.add("overflow-hidden");
-    } else {
-      document.body.classList.remove("overflow-hidden");
-    }
-
-    // Cleanup khi component bị unmount
-    return () => {
-      document.body.classList.remove("overflow-hidden");
-    };
-  }, [showMenu]);
-
-  if (loading) {
-    return (
-      <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
-        <div className="text-white text-xl text-center">
-          <i className="fa-solid fa-spinner animate-spin text-4xl"></i>
-          <p>Đang tải...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className={`flex items-center justify-between text-sm py-4 mb-5 border-b border-b-gray-400 bg-white sticky top-0 z-50 transition-transform duration-300 ${isVisible ? "transform-none" : "-translate-y-full"}`}>
@@ -159,8 +141,8 @@ const Navbar = () => {
         {user ? (
           <div
             className="flex items-center gap-2 cursor-pointer group relative"
-            onMouseEnter={() => setShowDropdown(true)} // Hiển thị menu khi di chuột vào
-            onMouseLeave={() => setShowDropdown(false)} // Ẩn menu khi rời chuột
+            onMouseEnter={() => setShowDropdown(true)}
+            onMouseLeave={() => setShowDropdown(false)}
           >
             <img className="w-8 rounded-full" src={assets.profile_pic} alt="Avatar" />
             <p className="font-medium text-gray-700">{getDisplayName(user.name)}</p>
