@@ -3,13 +3,15 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { convertToSlug } from "../utils/stringUtils";
 
+const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
+
 const SpecialityMenu = () => {
     const [specialityData, setSpecialityData] = useState([]);
 
     useEffect(() => {
         const fetchSpecialities = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/specialization/find-all');
+                const response = await axios.get(`${VITE_BACKEND_URI}/specialization/find-all`);
                 const data = response.data.specializations.map(item => ({
                     speciality: item.name,
                     image: item.image || './Dermatologist.svg' 

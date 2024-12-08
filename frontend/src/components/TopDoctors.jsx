@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import AOS from 'aos';
 import 'aos/dist/aos.css'; // Import AOS styles
-
+import axios from 'axios'; // Nhập axios
+const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 
 const TopDoctors = () => {
   const navigate = useNavigate();
@@ -30,15 +31,11 @@ const TopDoctors = () => {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const response = await fetch("http://localhost:5000/doctor/find-top");
-        if (!response.ok) {
-          throw new Error("Failed to fetch doctors");
-        }
-        const data = await response.json();
-
+        const response = await axios.get(`${VITE_BACKEND_URI}/doctor/find-top`);
+        
         // Giả sử dữ liệu trả về là { success: true, doctors: [...] }
-        if (data.doctors && Array.isArray(data.doctors)) {
-          setDoctors(data.doctors);
+        if (response.data.doctors && Array.isArray(response.data.doctors)) {
+          setDoctors(response.data.doctors);
         } else {
           throw new Error("Invalid data format");
         }
@@ -68,7 +65,7 @@ const TopDoctors = () => {
       </p>
       <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 gap-y-6" data-aos="fade-up">
         {Array.isArray(visibleDoctors) &&
-          visibleDoctors.slice(0, 10).map((item, index) => (
+          visibleDoctors.map((item, index) => (
             <div
               onClick={() => {
                 navigate(`/appointment/${item._id}`);

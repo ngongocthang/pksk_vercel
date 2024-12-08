@@ -279,12 +279,17 @@
 
 
 
+
+import axios from "axios";
+
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { assets } from "../assets/assets";
 import { AppContext } from "../context/AppContext";
+
+const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 
 const MyProfile = () => {
   const navigate = useNavigate();
@@ -313,39 +318,31 @@ const MyProfile = () => {
       }
 
       try {
-        const response = await fetch("http://localhost:5000/profilePatient", {
-          method: "GET",
+        const response = await axios.get(`${VITE_BACKEND_URI}/profilePatient`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         });
 
-        if (!response.ok) {
-          const errorText = await response.text();
-          toast.error("Có lỗi xảy ra: " + errorText);
-          if (response.status === 401) {  // token hết hạn hoặc không hợp lệ
-            toast.error("Token không hợp lệ, vui lòng đăng nhập lại.");
-            navigate("/account"); // Chuyển hướng đến trang đăng nhập
-          }
-          return;
-        }
-
-        const data = await response.json();
         setUserData({
-          name: data.user.name,
-          image: data.user.image || assets.profile_pic,
-          email: data.user.email,
-          phone: data.user.phone,
+          name: response.data.user.name,
+          image: response.data.user.image || assets.profile_pic,
+          email: response.data.user.email,
+          phone: response.data.user.phone,
         });
         setOriginalData({
-          name: data.user.name,
-          email: data.user.email,
-          phone: data.user.phone,
+          name: response.data.user.name,
+          email: response.data.user.email,
+          phone: response.data.user.phone,
         });
-        setUser({ ...data.user });
+        setUser({ ...response.data.user });
       } catch (error) {
-        toast.error("Có lỗi xảy ra: " + error.message);
+        toast.error("Có lỗi xảy ra: " + (error.response?.data?.message || error.message));
+        if (error.response && error.response.status === 401) {
+          toast.error("Token không hợp lệ, vui lòng đăng nhập lại.");
+          navigate("/account");
+        }
       }
     };
 
@@ -378,26 +375,19 @@ const MyProfile = () => {
     }
 
     try {
-      const response = await fetch(
-        `http://localhost:5000/updateProfilePatient/${userId}`,
+      const response = await axios.post(
+        `${VITE_BACKEND_URI}/updateProfilePatient/${userId}`,
+        bodyData,
         {
-          method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(bodyData),
         }
       );
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        toast.error(data.message);
-        return;
-      }
-
-      toast.success(data.message);
+      toast.success(response.data.message);
+      
       // Cập nhật lại thông tin người dùng trong context
       setUser((prevUser) => ({
         ...prevUser,
@@ -410,7 +400,7 @@ const MyProfile = () => {
       setOldPassword("");
       setNewPassword("");
     } catch (error) {
-      toast.error("Có lỗi xảy ra: " + error.message);
+      toast.error("Có lỗi xảy ra: " + (error.response?.data?.message || error.message));
       console.log(error.message);
     }
   };

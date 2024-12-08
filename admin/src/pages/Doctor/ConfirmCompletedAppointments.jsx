@@ -3,6 +3,8 @@ import moment from "moment-timezone";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
+const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
+
 const ConfirmCompletedAppointments = () => {
   const [confirmedAppointments, setConfirmedAppointments] = useState([]);
   const [loadingId, setLoadingId] = useState(null);
@@ -22,7 +24,7 @@ const ConfirmCompletedAppointments = () => {
     const fetchAppointments = async () => {
       try {
         const response = await axios.post(
-          `http://localhost:5000/doctor/appointment-confirm/${doctorId}`,
+          `${VITE_BACKEND_URI}/doctor/appointment-confirm/${doctorId}`,
           {
             work_date: workDate,
             work_shift: workShift,
@@ -50,7 +52,7 @@ const ConfirmCompletedAppointments = () => {
     setLoadingId(id);
     try {
       const response = await axios.put(
-        `http://localhost:5000/doctor/complete-appointment/${id}`
+        `${VITE_BACKEND_URI}/doctor/complete-appointment/${id}`
       );
       if (response.data.success) {
         setConfirmedAppointments((prev) =>

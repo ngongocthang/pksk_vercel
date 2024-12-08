@@ -8,6 +8,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { AppContext } from "../context/AppContext";
 import "../index.css";
 
+const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
+
 const AllSchedule = () => {
   const [doctors, setDoctors] = useState([]);
   const [events, setEvents] = useState([]);
@@ -16,25 +18,25 @@ const AllSchedule = () => {
   const [loading, setLoading] = useState(true); // Thêm trạng thái loading
   const patient_id = user?.id || null;
   const token = user?.token || localStorage.getItem("token");
-
+  
+  if (typeof console !== "undefined") {
+    console.error = function () {};
+  }
+  
   useEffect(() => {
     const fetchSchedules = async () => {
       setLoading(true); // Bắt đầu loading
       try {
-        const response = await fetch("http://localhost:5000/get-all-schedule-doctor");
-        if (!response.ok) {
-          throw new Error("Không thể tải dữ liệu");
-        }
-        const data = await response.json();
-
-        const resources = data.map((doctor) => ({
+        const response = await axios.get(`${VITE_BACKEND_URI}/get-all-schedule-doctor`);
+        
+        const resources = response.data.map((doctor) => ({
           id: doctor.doctorId,
           doctorName: doctor.doctorName,
           doctorImage: doctor.doctorImage,
           specialization: doctor.specialization,
         }));
 
-        const mappedEvents = data.flatMap((doctor) =>
+        const mappedEvents = response.data.flatMap((doctor) =>
           doctor.schedules.map((schedule) => {
             const workDate = new Date(schedule.work_date);
             const startDate = new Date(workDate);
@@ -148,7 +150,7 @@ const AllSchedule = () => {
     console.log("appointmentData", appointmentData);
     try {
       const response = await axios.post(
-        `http://localhost:5000/create-appointment/${patient_id}`,
+        `${VITE_BACKEND_URI}/create-appointment/${patient_id}`,
         appointmentData,
         {
           headers: {
@@ -197,9 +199,8 @@ const AllSchedule = () => {
                           alt={doctorName}
                           className="w-8 h-8 rounded-full mr-2"
                         />
-                        <span className="text-sm md:text-base font-medium truncate md:whitespace-normal md:overflow-visible md:max-w-none max-w-[150px] sm:max-w-[200px]">
-                          {doctorName}  {" "} (Chuyên khoa: {specialization})
-                        </span>
+                        {doctorName}
+                        <span className="text-sm ml-2 text-gray-500">(Chuyên khoa: {specialization})</span>
                       </div>
                     );
                   },
@@ -208,8 +209,8 @@ const AllSchedule = () => {
               eventContent={(args) => {
                 const workShift = args.event.title;
                 return (
-                  <div className="flex justify-center items-center py-5">
-                    <span className="font-semibold">{workShift}</span>
+                  <div className="flex items-center justify-center w-full h-full event-style">
+                    <span>{workShift}</span>
                   </div>
                 );
               }}
@@ -218,6 +219,7 @@ const AllSchedule = () => {
                 center: "title",
                 right: "resourceTimelineDay,resourceTimelineWeek",
               }}
+              eventClassNames="event-style" 
               slotMinTime="06:00:00"
               slotMaxTime="19:00:00"
               nowIndicator

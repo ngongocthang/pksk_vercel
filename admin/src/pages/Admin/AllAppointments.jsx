@@ -61,6 +61,7 @@ const AllAppointments = () => {
                 <span className="sm:hidden font-semibold">Bác sĩ: </span>
                 <p className="md:mb-0 text-gray-600 md:text-base">{item.doctorInfo.name}</p>
               </div>
+
               <div className="flex items-center mb-2 md:mb-0 justify-start md:justify-center gap-2">
                 <span className="sm:hidden font-semibold">Bệnh nhân:</span>
                 <p className="text-gray-700 md:text-base truncate md:whitespace-normal md:w-auto">{item.patientInfo.name}</p>
@@ -71,11 +72,11 @@ const AllAppointments = () => {
                 {formatDate(item.work_date)}
               </div>
 
-              <div className="flex items-center mb-2 md:mb-0 justify-start md:justify-center gap-2">
+              <div className="flex items-center mb-2 md:mb-0 justify-start md:justify-center gap-2 -mt-0.5">
                 <span className="sm:hidden font-semibold">Ca: </span>
                 <span
-                  className={`py-0 md:py-1 rounded-full text-white text-sm text-center font-semibold
-                  ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-400"} shadow-lg max-w-[100px] w-full`}
+                  className={`py-1 px-2 rounded-full text-white text-sm text-center font-semibold
+                    ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-400"} shadow-lg max-w-[100px] w-full h-[28px]`}
                 >
                   {item.work_shift === "morning" ? "Sáng" : "Chiều"}
                 </span>

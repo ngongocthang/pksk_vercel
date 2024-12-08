@@ -5,6 +5,8 @@ import { convertToSlug } from "../utils/stringUtils";
 import AOS from 'aos';
 import 'aos/dist/aos.css'; // Import AOS styles
 
+const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
+
 const Doctors = () => {
   const { speciality } = useParams();
   const [filterDoc, setFilterDoc] = useState([]);
@@ -13,8 +15,8 @@ const Doctors = () => {
   const [doctors, setDoctors] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [doctorsPerPage] = useState(8);
-  const [selectedDate, setSelectedDate] = useState(""); // Thêm trạng thái cho ngày làm việc
-  const [isLoading, setIsLoading] = useState(false); // Thêm trạng thái tải dữ liệu
+  const [selectedDate, setSelectedDate] = useState(""); 
+  const [isLoading, setIsLoading] = useState(false); 
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -24,13 +26,13 @@ const Doctors = () => {
 
   const fetchDoctors = async () => {
     try {
-      setIsLoading(true); // Đặt trạng thái tải dữ liệu là true
-      const response = await axios.get("http://localhost:5000/doctor/find-all");
+      setIsLoading(true); 
+      const response = await axios.get(`${VITE_BACKEND_URI}/doctor/find-all`);
       setDoctors(response.data.success ? response.data.doctors : []);
     } catch (error) {
       console.error("Error fetching doctors:", error);
     } finally {
-      setIsLoading(false); // Đặt trạng thái tải dữ liệu là false
+      setIsLoading(false); 
     }
   };
 
@@ -38,7 +40,7 @@ const Doctors = () => {
     try {
       setIsLoading(true); // Đặt trạng thái tải dữ liệu là true
       const response = await axios.get(
-        "http://localhost:5000/specialization/find-all"
+        `${VITE_BACKEND_URI}/specialization/find-all`
       );
       setSpecializations(
         response.data.success ? response.data.specializations : []

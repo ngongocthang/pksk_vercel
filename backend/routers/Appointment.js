@@ -8,7 +8,8 @@ const {
   findAppointment,
   updateAppointment,
   deleteAppointment,
-  getAllAppointmentAdmin
+  getAllAppointmentAdmin,
+  deleteAppointmentByStatus
 } = require("../controllers/AppointmentController/index");
 
 // Định nghĩa route
@@ -18,5 +19,6 @@ router.get("/find/:id", findAppointment);
 router.put("/update/:id", userMiddleware, updateAppointment);
 router.delete("/delete/:id", deleteAppointment);
 router.get("/get-all-admin", getAllAppointmentAdmin);
+router.delete("/delete-by-status/:id", deleteAppointmentByStatus);
 
 module.exports = router;

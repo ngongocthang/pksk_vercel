@@ -11,6 +11,9 @@ import React, { useContext, useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { assets } from "../../assets/assets";
 import { DoctorContext } from "../../context/DoctorContext";
+import axios from 'axios'; // Nhập axios
+
+const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 
 // Register chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -47,8 +50,8 @@ const DoctorDashboard = () => {
 
   const fetchAppointmentsData = async (userId) => {
     try {
-      const response = await fetch(`http://localhost:5000/get-data-doctor-dashboard/${userId}`);
-      const data = await response.json();
+      const response = await axios.get(`${VITE_BACKEND_URI}/get-data-doctor-dashboard/${userId}`);
+      const data = response.data; // Lấy dữ liệu từ response
 
       if (data.success) {
         const formattedData = formatMonthlyData(data.appointments);

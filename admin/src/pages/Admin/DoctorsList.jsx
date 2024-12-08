@@ -1,9 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
-import { AdminContext } from "../../context/AdminContext";
 import axios from "axios";
+import React, { useContext, useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useNavigate, useLocation } from "react-router-dom";
+import { AdminContext } from "../../context/AdminContext";
 import { convertToSlug } from "../../utils/stringUtils";
+
+const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 
 const DoctorsList = () => {
   const { doctors, aToken, getAllDoctors } = useContext(AdminContext);
@@ -34,7 +36,7 @@ const DoctorsList = () => {
   const fetchSpecializations = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/specialization/find-all"
+        `${VITE_BACKEND_URI}/specialization/find-all`
       );
       if (
         response.data.success &&
@@ -92,7 +94,7 @@ const DoctorsList = () => {
   const confirmDeleteDoctor = async (id) => {
     try {
       const response = await axios.delete(
-        `http://localhost:5000/doctor/delete/${id}`,
+        `${VITE_BACKEND_URI}/doctor/delete/${id}`,
         {
           headers: {
             Authorization: `Bearer ${aToken}`,
@@ -177,7 +179,7 @@ const DoctorsList = () => {
             className="border border-indigo-200 rounded-xl overflow-hidden cursor-pointer group relative"
             key={item.user_id._id}
           >
-            <div className="relative h-[360px]">
+            <div className="relative">
               <img
                 className="bg-indigo-50 group-hover:bg-primary transition-all duration-500"
                 src={item.user_id.image}
