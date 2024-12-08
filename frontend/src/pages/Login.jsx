@@ -99,6 +99,35 @@ const Login = () => {
     console.log("Login Failed:", error);
   };
 
+  //forgot password
+  const handleForgotPassword = async () => {
+    const email = prompt("Vui lòng nhập email của bạn:");
+
+    if (!email) return;
+
+    try {
+      const response = await axios.post("http://localhost:5000/forgot-password", {
+        email,
+      }, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = response.data;
+
+      // Kiểm tra mã trạng thái HTTP
+      if (response.status === 200) {
+        toast.success("Email khôi phục mật khẩu đã được gửi!");
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("Đã xảy ra lỗi! Vui lòng thử lại sau.");
+    }
+  };
+
   return (
     <>
       <form
@@ -183,44 +212,42 @@ const Login = () => {
                 : "Đăng nhập"}
           </button>
 
-          <div className="flex justify-center w-full">
+          <div className="w-full flex justify-center">
             <GoogleLogin
               onSuccess={handleSuccessGoogleLogin}
               onError={handleErrorGoogleLogin}
             />
           </div>
 
-          <div className="flex flex-col items-center text-center w-full mt-3">
-            {state === "Sign Up" ? (
-              <p>
-                Đã có tài khoản?{" "}
-                <span
-                  onClick={() => setState("Login")}
-                  className="text-[#00759c] underline cursor-pointer"
-                >
-                  Đăng nhập tại đây
-                </span>
-              </p>
-            ) : (
-              <p>
-                Tạo một tài khoản mới?{" "}
-                <span
-                  onClick={() => setState("Sign Up")}
-                  className="text-[#00759c] underline cursor-pointer"
-                >
-                  bấm vào đây
-                </span>
-              </p>
-            )}
+          {state === "Sign Up" ? (
+            <p className="w-full flex justify-center">
+              Đã có tài khoản? {" "}
+              <span
+                onClick={() => setState("Login")}
+                className="text-[#00759c] underline ml-1 cursor-pointer"
+              >
+                Đăng nhập tại đây
+              </span>
+            </p>
+          ) : (
+            <p className="w-full flex justify-center">
+              Tạo một tài khoản mới?{" "}
+              <span
+                onClick={() => setState("Sign Up")}
+                className="text-[#00759c] underline ml-1 cursor-pointer"
+              >
+                bấm vào đây
+              </span>
+            </p>
+          )}
 
-            <button
-              type="button"
-              onClick={() => navigate("/forgot-password")}
-              className="text-[#00759c] underline cursor-pointer mt-2"
-            >
-              Quên mật khẩu?
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={handleForgotPassword}
+            className="text-[#00759c] underline cursor-pointer w-full flex justify-center"
+          >
+            Quên mật khẩu?
+          </button>
         </div>
       </form>
       <ToastContainer />

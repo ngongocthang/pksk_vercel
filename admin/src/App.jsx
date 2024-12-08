@@ -42,7 +42,7 @@ const App = () => {
       {aToken || dToken ? (
         <>
           <Navbar />
-          <div className='flex items-start'>
+          <div className='flex'>
             <Sidebar />
             <Routes>
               {/* Admin Route */}
