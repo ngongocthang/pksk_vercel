@@ -42,12 +42,16 @@ const DoctorAppointments = () => {
     paginationItems.push(
       <button
         key="prev"
-        onClick={() => paginate(Math.max(1, currentPage - 1))}
-        className={`py-1 px-3 border rounded w-[70px] ${currentPage === 1 ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "text-gray-600"
+        onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+        className={`py-1 px-3 border rounded w-[70px] flex items-center justify-center ${currentPage === 1
+          ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+          : "text-gray-600"
           }`}
         disabled={currentPage === 1}
       >
-        Trước
+        {/* Hiển thị chữ "Trước" trên desktop và icon trên mobile */}
+        <span className="hidden md:block">Trước</span>
+        <i className="fa-solid fa-angle-left block md:hidden"></i>
       </button>
     );
 
@@ -55,7 +59,7 @@ const DoctorAppointments = () => {
     paginationItems.push(
       <button
         key={1}
-        onClick={() => paginate(1)}
+        onClick={() => handlePageChange(1)}
         className={`py-1 px-3 border rounded ${currentPage === 1 ? "bg-indigo-500 text-white" : "text-gray-600"
           }`}
       >
@@ -73,11 +77,15 @@ const DoctorAppointments = () => {
     }
 
     // Hiển thị các trang xung quanh trang hiện tại
-    for (let i = Math.max(2, currentPage - delta); i <= Math.min(totalPages - 1, currentPage + delta); i++) {
+    for (
+      let i = Math.max(2, currentPage - delta);
+      i <= Math.min(totalPages - 1, currentPage + delta);
+      i++
+    ) {
       paginationItems.push(
         <button
           key={i}
-          onClick={() => paginate(i)}
+          onClick={() => handlePageChange(i)}
           className={`py-1 px-3 border rounded ${i === currentPage ? "bg-indigo-500 text-white" : "text-gray-600"
             }`}
         >
@@ -100,7 +108,7 @@ const DoctorAppointments = () => {
       paginationItems.push(
         <button
           key={totalPages}
-          onClick={() => paginate(totalPages)}
+          onClick={() => handlePageChange(totalPages)}
           className={`py-1 px-3 border rounded ${currentPage === totalPages ? "bg-indigo-500 text-white" : "text-gray-600"
             }`}
         >
@@ -113,12 +121,16 @@ const DoctorAppointments = () => {
     paginationItems.push(
       <button
         key="next"
-        onClick={() => paginate(Math.min(totalPages, currentPage + 1))}
-        className={`py-1 px-3 border rounded w-[70px] ${currentPage === totalPages ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "text-gray-600"
+        onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+        className={`py-1 px-3 border rounded w-[70px] flex items-center justify-center ${currentPage === totalPages
+          ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+          : "text-gray-600"
           }`}
         disabled={currentPage === totalPages}
       >
-        Tiếp
+        {/* Hiển thị chữ "Tiếp" trên desktop và icon trên mobile */}
+        <span className="hidden md:block">Tiếp</span>
+        <i className="fa-solid fa-angle-right block md:hidden"></i>
       </button>
     );
 
@@ -128,6 +140,7 @@ const DoctorAppointments = () => {
       </div>
     );
   };
+
   return (
     <div className='w-full max-w-6xl m-5'>
       <p className='mb-4 text-lg font-medium'>Tất cả lịch hẹn:</p>
@@ -209,19 +222,7 @@ const DoctorAppointments = () => {
       </div>
 
       {/* Pagination - Centered and responsive */}
-      {appointments.length > appointmentsPerPage && (
-        <div className="flex justify-center mt-4">
-          {Array.from({ length: totalPages }, (_, index) => (
-            <button
-              key={index + 1}
-              onClick={() => paginate(index + 1)}
-              className={`px-4 py-2 ${currentPage === index + 1 ? 'bg-[#219c9e] text-white' : 'bg-gray-200'} rounded-md mx-1 hover:bg-[#0091a1] hover:text-white text-xs sm:text-sm`}
-            >
-              {index + 1}
-            </button>
-          ))}
-        </div>
-      )}
+
       {appointments.length > appointmentsPerPage && renderPagination()}
     </div>
   );
