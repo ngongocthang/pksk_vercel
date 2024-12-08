@@ -4,7 +4,6 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets";
 import { AppContext } from "../context/AppContext";
 
-
 const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 
 const Navbar = () => {
@@ -49,9 +48,9 @@ const Navbar = () => {
 
   useEffect(() => {
     if (user?.token) {
-      fetchUnreadNotifications(); 
-      const interval = setInterval(fetchUnreadNotifications, 1000); 
-      return () => clearInterval(interval); 
+      fetchUnreadNotifications();
+      const interval = setInterval(fetchUnreadNotifications, 1000);
+      return () => clearInterval(interval);
     }
   }, [user]);
 
@@ -94,7 +93,7 @@ const Navbar = () => {
       if (window.scrollY === 0) {
         setIsVisible(true);
       } else if (window.scrollY > lastScrollY) {
-        setIsVisible(false);
+        setIsVisible(true);
       } else if (window.scrollY < lastScrollY) {
         setIsVisible(true);
       }
@@ -213,10 +212,9 @@ const Navbar = () => {
 
         <div
           className={`transition-all duration-500 ${showMenu
-              ? "fixed w-full top-0 right-0 bottom-0 z-20 bg-white"
-              : "h-0 w-0 overflow-hidden"
-            }`}
-        >
+            ? "fixed w-full top-0 right-0 bottom-0 z-20 bg-white"
+            : "h-0 w-0 overflow-hidden"
+            }`}>
           <div className="flex items-center justify-between px-5 py-6">
             <img className="w-20" src={assets.logo} alt="Logo" />
             <img
