@@ -53,7 +53,7 @@ const Contact = () => {
             {/* Email Information */}
             <div className="flex items-center gap-2 text-gray-500 mt-2">
               <img className='h-5 w-5 text-gray-500' src={assets.Email} alt="Email" />
-              <p>Email: lequythien1@gmail.com</p>
+              <p>Email: tripletcare1@gmail.com</p>
             </div>
           </div>
           <div>
