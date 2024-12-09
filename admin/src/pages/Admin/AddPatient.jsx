@@ -94,8 +94,7 @@ const AddPatient = () => {
           <div className="w-full lg:flex-1 flex flex-col gap-4">
             <div className="flex-1 flex flex-col gap-1">
               <p className="font-bold">Email:</p>
-              <input
-                onChange={(e) => setEmail(e.target.value)}
+              <input onChange={(e) => setEmail(e.target.value)}
                 value={email}
                 className="border rounded px-3 py-2"
                 type="email"
@@ -120,9 +119,8 @@ const AddPatient = () => {
         <div className="flex gap-4 mt-4">
           <button
             type="submit"
-            className={`bg-primary px-10 py-3 text-white rounded-full ${
-              loading ? "opacity-50 cursor-not-allowed" : ""
-            }`}
+            className={`bg-primary px-10 py-3 text-white rounded-full ${loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
             disabled={loading}
           >
             {loading ? (

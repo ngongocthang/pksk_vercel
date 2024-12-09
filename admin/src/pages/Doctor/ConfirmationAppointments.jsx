@@ -11,6 +11,7 @@ const ConfirmationSchedule = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [loadingId, setLoadingId] = useState(null); // State to track loading
   const appointmentsPerPage = 10;
+  const [isLoading, setIsLoading] = useState(false); // Thêm trạng thái loading
 
   // Định dạng ngày
   const formatDate = (dateString) => {
@@ -21,25 +22,29 @@ const ConfirmationSchedule = () => {
   // Xử lý xác nhận lịch hẹn
   const handleCompleteAppointment = async (id) => {
     setLoadingId(id);
+    setIsLoading(true); // Bắt đầu quá trình xác nhận
     try {
       await completeAppointment(id);
+      toast.success('Lịch hẹn đã được xác nhận.');
     } catch (error) {
       toast.error('Có lỗi xảy ra khi xác nhận lịch hẹn.');
     } finally {
       setLoadingId(null);
+      setIsLoading(false); // Kết thúc quá trình xác nhận
     }
   };
 
   // Xử lý hủy lịch hẹn
   const handleCancelAppointment = async (id) => {
     setLoadingId(id);
+    setIsLoading(true); // Bắt đầu quá trình hủy
     try {
       await cancelAppointment(id);
-      toast.success('Lịch hẹn đã được hủy.');
     } catch (error) {
       toast.error('Có lỗi xảy ra khi hủy lịch hẹn.');
     } finally {
       setLoadingId(null);
+      setIsLoading(false); // Kết thúc quá trình hủy
     }
   };
 
@@ -179,6 +184,11 @@ const ConfirmationSchedule = () => {
 
   return (
     <div className='w-full max-w-6xl m-5'>
+      {isLoading && (
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
+          <div className="animate-spin border-t-4 border-blue-600 border-solid rounded-full w-16 h-16" />
+        </div>
+      )}
       <p className='mb-4 text-lg font-medium'>Các lịch hẹn chờ xác nhận:</p>
       <div className='bg-white border rounded-xl text-sm max-h-[80vh] min-h-[50vh] overflow-y-auto'>
 

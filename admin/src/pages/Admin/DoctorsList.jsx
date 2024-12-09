@@ -14,6 +14,7 @@ const DoctorsList = () => {
   const [specializations, setSpecializations] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSpecializationsLoading, setIsSpecializationsLoading] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -104,6 +105,7 @@ const DoctorsList = () => {
         <div className="flex justify-end gap-2 mt-2">
           <button
             onClick={() => {
+              setIsDeleting(true);  // Bắt đầu quá trình xóa
               confirmDeleteDoctor(id);
               toast.dismiss(newToastId);
             }}
@@ -149,6 +151,8 @@ const DoctorsList = () => {
       }
     } catch (error) {
       toast.error("Đã xảy ra lỗi khi xóa bác sĩ.");
+    } finally {
+      setIsDeleting(false); // Kết thúc quá trình xóa
     }
   };
 
@@ -268,6 +272,11 @@ const DoctorsList = () => {
 
   return (
     <div className="m-5 max-h-[90vh] overflow-y-scroll">
+      {isDeleting && (
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
+          <div className="animate-spin border-t-4 border-blue-600 border-solid rounded-full w-16 h-16" />
+        </div>
+      )}
       <div className="flex flex-col md:flex-row justify-between items-center mb-4">
         <h1 className='md:text-3xl text-xl font-bold text-[#0091a1] text-center md:text-left mb-4 md:mb-0'>
           Tất cả bác sĩ
