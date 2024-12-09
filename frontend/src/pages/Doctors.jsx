@@ -7,6 +7,32 @@ import 'aos/dist/aos.css'; // Import AOS styles
 
 const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 
+const DoctorCardSkeleton = () => {
+  return (
+    <div className="border border-indigo-200 rounded-xl overflow-hidden">
+      {/* Image placeholder */}
+      <div className="relative">
+        <div className="h-48 bg-gray-200 animate-pulse" />
+        <div className="absolute top-2 left-2 bg-gray-200 animate-pulse h-6 w-24 rounded-full" />
+      </div>
+
+      {/* Content placeholder */}
+      <div className="p-4 space-y-3">
+        <div className="h-7 bg-gray-200 animate-pulse rounded w-[100%]" />
+        <div className="h-4 bg-gray-200 animate-pulse rounded w-1/2" />
+        <div className="h-4 bg-gray-200 animate-pulse rounded w-2/3" />
+        <div className="flex justify-between items-center">
+          <div className="h-4 bg-gray-200 animate-pulse rounded w-1/3" />
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-gray-200 rounded-full animate-pulse" />
+            <div className="h-4 bg-gray-200 animate-pulse rounded w-16" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const Doctors = () => {
   const { speciality } = useParams();
   const [filterDoc, setFilterDoc] = useState([]);
@@ -15,8 +41,8 @@ const Doctors = () => {
   const [doctors, setDoctors] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [doctorsPerPage] = useState(8);
-  const [selectedDate, setSelectedDate] = useState(""); 
-  const [isLoading, setIsLoading] = useState(false); 
+  const [selectedDate, setSelectedDate] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -26,13 +52,13 @@ const Doctors = () => {
 
   const fetchDoctors = async () => {
     try {
-      setIsLoading(true); 
+      setIsLoading(true);
       const response = await axios.get(`${VITE_BACKEND_URI}/doctor/find-all`);
       setDoctors(response.data.success ? response.data.doctors : []);
     } catch (error) {
       console.error("Error fetching doctors:", error);
     } finally {
-      setIsLoading(false); 
+      setIsLoading(false);
     }
   };
 
@@ -220,7 +246,11 @@ const Doctors = () => {
     <div>
       {isLoading ? (
         <div className="flex justify-center items-center h-[80vh]">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+          <div className="flex flex-wrap gap-4">
+            {[...Array(8)].map((_, index) => (
+              <DoctorCardSkeleton key={index} />
+            ))}
+          </div>
         </div>
       ) : (
         <div>
@@ -238,7 +268,6 @@ const Doctors = () => {
                 }`}
             >
               <h3 className="sm:hidden">Chuyên khoa:</h3>
-              {/* <h3>Chuyên khoa:</h3> */}
               {specializations.map((spec) => (
                 <div
                   key={spec._id}

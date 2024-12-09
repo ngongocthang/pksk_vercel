@@ -26,6 +26,7 @@ const MyProfile = () => {
 
   // State lưu trữ thông tin ban đầu khi bắt đầu chỉnh sửa
   const [originalData, setOriginalData] = useState({});
+  const [loading, setLoading] = useState(false); // Thêm trạng thái loading
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -68,6 +69,7 @@ const MyProfile = () => {
   }, [setUser, navigate]);
 
   const handleSave = async () => {
+    setLoading(true); // Bắt đầu quá trình tải
     const token = localStorage.getItem("token");
     const userIdString = localStorage.getItem("user");
     const userIdObj = JSON.parse(userIdString);
@@ -75,6 +77,7 @@ const MyProfile = () => {
 
     if (!token) {
       toast.error("Bạn chưa đăng nhập. Vui lòng đăng nhập để tiếp tục.");
+      setLoading(false); // Kết thúc quá trình tải
       return;
     }
 
@@ -123,6 +126,8 @@ const MyProfile = () => {
     } catch (error) {
       toast.error("Có lỗi xảy ra: " + (error.response?.data?.message || error.message));
       console.log(error.message);
+    } finally {
+      setLoading(false); // Kết thúc quá trình tải
     }
   };
 
@@ -239,9 +244,9 @@ const MyProfile = () => {
                 onClick={handleSave}
                 className={`bg-blue-500 text-white py-2 px-4 rounded ${isSaveDisabled() ? "bg-gray-300 disabled-button" : ""
                   }`}
-                disabled={isSaveDisabled()}
+                disabled={isSaveDisabled() || loading} // Disable khi loading
               >
-                Lưu
+                {loading ? "Đang lưu..." : "Lưu"}
               </button>
               <button
                 onClick={handleCancel}

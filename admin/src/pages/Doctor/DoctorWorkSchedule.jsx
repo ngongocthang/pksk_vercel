@@ -8,13 +8,17 @@ const DoctorWorkSchedule = () => {
   const [selectedSchedule, setSelectedSchedule] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [schedulesPerPage] = useState(10);
+  const [loading, setLoading] = useState(false); // Thêm trạng thái loading
   const navigate = useNavigate();
 
   useEffect(() => {
     const doctorInfo = sessionStorage.getItem("doctorInfo");
     const doctorId = doctorInfo ? JSON.parse(doctorInfo).id : null;
     if (dToken && doctorId) {
-      getDoctorSchedule(doctorId);
+      setLoading(true); // Bắt đầu quá trình tải
+      getDoctorSchedule(doctorId).finally(() => {
+        setLoading(false); // Kết thúc quá trình tải
+      });
     }
   }, [dToken]);
 
@@ -67,8 +71,8 @@ const DoctorWorkSchedule = () => {
         key="prev"
         onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
         className={`py-1 px-3 border rounded w-[70px] flex items-center justify-center ${currentPage === 1
-            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-            : "text-gray-600"
+          ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+          : "text-gray-600"
           }`}
         disabled={currentPage === 1}
       >
@@ -146,8 +150,8 @@ const DoctorWorkSchedule = () => {
         key="next"
         onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
         className={`py-1 px-3 border rounded w-[70px] flex items-center justify-center ${currentPage === totalPages
-            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-            : "text-gray-600"
+          ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+          : "text-gray-600"
           }`}
         disabled={currentPage === totalPages}
       >
@@ -186,6 +190,14 @@ const DoctorWorkSchedule = () => {
           <p className="font-bold text-center text-[16px]">Ca làm việc</p>
           <p className="font-bold text-center text-[16px]">Hành động</p>
         </div>
+
+        {/* Hiển thị spinner khi đang tải */}
+        {loading && (
+          <div className="flex justify-center items-center py-6">
+            <div className="spinner-border animate-spin inline-block w-8 h-8 border-4 border-solid rounded-full border-[#219c9e] border-t-transparent" role="status">
+            </div>
+          </div>
+        )}
 
         {/* Dữ liệu lịch làm việc */}
         {currentSchedules && currentSchedules.length > 0 ? (
@@ -231,12 +243,14 @@ const DoctorWorkSchedule = () => {
             </div>
           ))
         ) : (
-          <p className="text-gray-500 text-center py-3">Không tìm thấy lịch làm việc nào.</p>
+          !loading && ( // Chỉ hiển thị thông báo nếu không đang tải
+            <p className="text-gray-500 text-center py-3">Không tìm thấy lịch làm việc nào.</p>
+          )
         )}
       </div>
 
-    {/* Phân trang */}
-    {totalPages > 1 && renderPagination()}
+      {/* Phân trang */}
+      {totalPages > 1 && renderPagination()}
 
       {/* Modal xác nhận xóa */}
       {showModal && selectedSchedule && (
@@ -270,4 +284,3 @@ const DoctorWorkSchedule = () => {
 };
 
 export default DoctorWorkSchedule;
-
