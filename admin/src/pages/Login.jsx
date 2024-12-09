@@ -1,6 +1,5 @@
-// export default Login
 import axios from 'axios';
-import { Eye, EyeOff } from "lucide-react"; // Import Eye and EyeOff icons
+import { Eye, EyeOff } from "lucide-react";
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -8,44 +7,47 @@ import { AdminContext } from '../context/AdminContext';
 import { DoctorContext } from '../context/DoctorContext';
 
 const Login = () => {
-    const [state, setState] = useState('Admin')
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [showPassword, setShowPassword] = useState(false)
+    const [state, setState] = useState('Admin');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [loading, setLoading] = useState(false); // Thêm state loading
 
-    const { setAToken, backendUrl } = useContext(AdminContext)
-    const { setDToken } = useContext(DoctorContext)
+    const { setAToken, backendUrl } = useContext(AdminContext);
+    const { setDToken } = useContext(DoctorContext);
 
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
     const onSubmitHandler = async (event) => {
-        event.preventDefault()
+        event.preventDefault();
+        setLoading(true); // Bắt đầu loading
 
         try {
-            const response = await axios.post(`${backendUrl}/login`, { email, password })
+            const response = await axios.post(`${backendUrl}/login`, { email, password });
 
             if (response.data.user) {
                 const { role, token, ...userInfo } = response.data.user;
 
                 if (role === 'admin' && state === 'Admin') {
-                    localStorage.setItem('aToken', token)
-                    setAToken(token)
-                    navigate('/admin-dashboard')
+                    localStorage.setItem('aToken', token);
+                    setAToken(token);
+                    navigate('/admin-dashboard');
                 } else if (role === 'doctor' && state === 'Doctor') {
-                    localStorage.setItem('dToken', token)
-                    setDToken(token)
+                    localStorage.setItem('dToken', token);
+                    setDToken(token);
                     sessionStorage.setItem('doctorInfo', JSON.stringify(userInfo));
-                    navigate('/doctor-dashboard')
+                    navigate('/doctor-dashboard');
                 } else {
-                    toast.error("Vai trò không phù hợp đối với loại đăng nhập đã chọn.",)
+                    toast.error("Vai trò không phù hợp đối với loại đăng nhập đã chọn.");
                 }
             } else {
-                toast.error("Login failed!")
+                toast.error("Login failed!");
             }
         } catch (error) {
-            console.error("Login error:", error)
-            toast.error("Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại.", {
-            });
+            console.error("Login error:", error);
+            toast.error("Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại.");
+        } finally {
+            setLoading(false); // Kết thúc loading
         }
     }
 
@@ -82,7 +84,12 @@ const Login = () => {
                         </button>
                     )}
                 </div>
-                <button className='bg-[#0091a1] text-white w-full py-2 rounded-md text-base'>Đăng nhập</button>
+                <button
+                    className={`bg-[#0091a1] text-white w-full py-2 rounded-md text-base ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    disabled={loading} // Vô hiệu hóa nút khi loading
+                >
+                    {loading ? 'Đang đăng nhập...' : 'Đăng nhập'} {/* Hiển thị nội dung tùy thuộc vào trạng thái loading */}
+                </button>
                 {state === 'Admin'
                     ? <p>Đăng nhập bác sĩ? <span className='text-[#0091a1] underline cursor-pointer' onClick={() => setState('Doctor')}>Nhấp vào đây</span></p>
                     : <p>Đăng nhập quản trị? <span className='text-[#0091a1] underline cursor-pointer' onClick={() => setState('Admin')}>Nhấp vào đây</span></p>

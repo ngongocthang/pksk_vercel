@@ -11,6 +11,7 @@ const PatientList = () => {
     const navigate = useNavigate();
     const [currentPage, setCurrentPage] = useState(1);
     const [patientsPerPage] = useState(10);
+    const [isDeleting, setIsDeleting] = useState(false); // Thêm trạng thái loading
 
     useEffect(() => {
         toast.dismiss();
@@ -51,6 +52,7 @@ const PatientList = () => {
                         <button
                             className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-700"
                             onClick={async () => {
+                                setIsDeleting(true); // Bắt đầu quá trình xóa
                                 try {
                                     await axios.delete(`${VITE_BACKEND_URI}/patient/delete/${id}`);
                                     toast.success(`Bệnh nhân ${name} đã được xóa thành công!`, {
@@ -63,6 +65,8 @@ const PatientList = () => {
                                     toast.error("Có lỗi xảy ra khi xóa bệnh nhân!", {
                                         position: "top-right",
                                     });
+                                } finally {
+                                    setIsDeleting(false); // Kết thúc quá trình xóa
                                     closeToast();
                                 }
                             }}
@@ -171,6 +175,11 @@ const PatientList = () => {
 
     return (
         <div className="container mx-auto p-4">
+            {isDeleting && (
+                <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
+                    <div className="animate-spin border-t-4 border-blue-600 border-solid rounded-full w-16 h-16" />
+                </div>
+            )}
             <div className="flex justify-between items-center mb-4">
                 <p className="text-2xl md:text-3xl font-bold text-[#0091a1]">Tất Cả Bệnh Nhân</p>
                 <button

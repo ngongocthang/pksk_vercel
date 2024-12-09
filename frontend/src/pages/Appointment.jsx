@@ -320,26 +320,28 @@ const Appointment = () => {
       <div className="sm:ml-72 sm:pl-4 mt-4 font-medium text-gray-700">
         <p className="flex justify-between items-center">
           Đặt khám nhanh:
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => {
-                const scrollContainer = document.querySelector(".overflow-x-auto");
-                scrollContainer.scrollBy({ left: -100, behavior: "smooth" });
-              }}
-              className="bg-gray-300 text-black p-2 rounded-full transition-all duration-300 hover:bg-gray-400"
-            >
-              &#8592;
-            </button>
-            <button
-              onClick={() => {
-                const scrollContainer = document.querySelector(".overflow-x-auto");
-                scrollContainer.scrollBy({ left: 100, behavior: "smooth" });
-              }}
-              className="bg-gray-300 text-black p-2 rounded-full transition-all duration-300 hover:bg-gray-400"
-            >
-              &#8594;
-            </button>
-          </div>
+          {Object.keys(doctorSchedule).length > 8 && ( // Kiểm tra số lượng lịch
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => {
+                  const scrollContainer = document.querySelector(".overflow-x-auto");
+                  scrollContainer.scrollBy({ left: -100, behavior: "smooth" });
+                }}
+                className="bg-gray-300 text-black p-2 rounded-full transition-all duration-300 hover:bg-gray-400"
+              >
+                &#8592;
+              </button>
+              <button
+                onClick={() => {
+                  const scrollContainer = document.querySelector(".overflow-x-auto");
+                  scrollContainer.scrollBy({ left: 100, behavior: "smooth" });
+                }}
+                className="bg-gray-300 text-black p-2 rounded-full transition-all duration-300 hover:bg-gray-400"
+              >
+                &#8594;
+              </button>
+            </div>
+          )}
         </p>
 
         {errorLoadingSchedule ? (
