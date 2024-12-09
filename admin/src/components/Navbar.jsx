@@ -207,39 +207,40 @@ const Navbar = () => {
               {Object.keys(groupedNotifications).length > 0 ? (
                 <div className="h-80 overflow-y-auto">
                   {Object.keys(groupedNotifications).map((time) => (
-                   <div key={time}>
-                   <h4 className="font-semibold text-sm text-gray-500 mt-4">
-                     {formatTime(time)}
-                   </h4>
-                   <ul className="space-y-4">
-                     {groupedNotifications[time].map((notification) => (
-                       <li
-                         key={notification._id}
-                         className={`py-3 px-4 border-b border-black-200 flex items-start justify-between gap-2 hover:bg-blue-50 cursor-pointer ${
-                           !notification.isRead ? "font-semibold bg-gray-100" : ""
-                         }`}
-                         onClick={() => markAsRead(notification._id)}
-                       >
-                         <div className="flex items-start gap-2">
-                           <i className="fa-regular fa-bell mt-1"></i>
-                           <p className="md:text-base text-sm text-gray-800">
-                             {notification.content}
-                           </p>
-                         </div>
-                         <li
-                           onClick={(e) => {
-                             e.stopPropagation(); // Ngăn chặn sự kiện click lan truyền
-                             handleDelete(notification._id);
-                           }}
-                           className="cursor-pointer hover:bg-red-100 text-red-500 px-4 py-2 transition-all duration-200 rounded-md"
-                         >
-                           <i className="fa-regular fa-trash-can"></i>
-                         </li>
-                       </li>
-                     ))}
-                   </ul>
-                 </div>
-                 
+                    <div key={time}>
+                      <h4 className="font-semibold text-sm text-gray-500 mt-4">
+                        {formatTime(time)}
+                      </h4>
+                      <ul className="space-y-4">
+                        {groupedNotifications[time].map((notification) => (
+                          <li
+                            key={notification._id}
+                            className={`py-3 px-4 border-b border-black-200 flex items-start justify-between gap-2 hover:bg-blue-50 cursor-pointer ${
+                              !notification.isRead
+                                ? "font-semibold bg-gray-100"
+                                : ""
+                            }`}
+                            onClick={() => markAsRead(notification._id)}
+                          >
+                            <div className="flex items-start gap-2">
+                              <i className="fa-regular fa-bell mt-1"></i>
+                              <p className="md:text-base text-sm text-gray-800">
+                                {notification.content}
+                              </p>
+                            </div>
+                            <li
+                              onClick={(e) => {
+                                e.stopPropagation(); // Ngăn chặn sự kiện click lan truyền
+                                handleDelete(notification._id);
+                              }}
+                              className="cursor-pointer hover:bg-red-100 text-red-500 px-4 py-2 transition-all duration-200 rounded-md"
+                            >
+                              <i className="fa-regular fa-trash-can"></i>
+                            </li>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   ))}
                 </div>
               ) : (

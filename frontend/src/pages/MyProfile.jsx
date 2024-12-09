@@ -110,6 +110,7 @@ const MyProfile = () => {
         ...user,
         name: userData.name,
         phone: userData.phone,
+        id: userIdObj.id || user._id,
       };
       setUser(updatedUser);
 
@@ -166,13 +167,13 @@ const MyProfile = () => {
 
         <hr className="bg-zinc-400 h-[1px] border-none" />
 
-        <div className="pl-4">
+        <div>
           <p className="text-neutral-500 underline mt-3 text-center">THÔNG TIN CHI TIẾT:</p>
           <div className="grid grid-cols-[1fr_3fr] gap-y-2.5 mt-3 text-neutral-700">
             <p className="font-medium text-gray-800 flex items-center">Email:</p>
             {isEdit ? (
               <input
-                className="bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 max-w-[280px]"
+                className="bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 max-w-[340px]"
                 type="email"
                 value={userData.email}
                 onChange={(e) =>
@@ -186,7 +187,7 @@ const MyProfile = () => {
             <p className="font-medium mr-4 text-gray-800 flex items-center">Số điện thoại:</p>
             {isEdit ? (
               <input
-                className="bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 max-w-[280px]"
+                className="bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 max-w-[340px]"
                 type="tel"
                 value={userData.phone}
                 onChange={(e) =>
@@ -202,7 +203,7 @@ const MyProfile = () => {
                 <p className="font-medium text-gray-800 flex items-center">Mật khẩu mới:</p>
                 <div className="relative flex items-center">
                   <input
-                    className="bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-[280px]"
+                    className="bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-[340px]"
                     type="text"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
@@ -214,7 +215,7 @@ const MyProfile = () => {
                     <p className="font-medium text-gray-800 flex items-center">Mật khẩu cũ:</p>
                     <div className="relative flex items-center">
                       <input
-                        className="bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-[280px]"
+                        className="bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-[340px]"
                         type="text"
                         value={oldPassword}
                         onChange={(e) => setOldPassword(e.target.value)}

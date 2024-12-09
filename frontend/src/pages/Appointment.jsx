@@ -12,7 +12,8 @@ const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 
 const Appointment = () => {
   const { docId } = useParams();
-  const { doctors, user } = useContext(AppContext);
+  const { user } = useContext(AppContext);
+  console.log("user", user);
   const navigate = useNavigate();
 
   const phone = localStorage.getItem("user")
@@ -190,6 +191,7 @@ const Appointment = () => {
   const confirmBooking = async () => {
     try {
       const patientId = user?.id || JSON.parse(localStorage.getItem("user"))?.id;
+      // const patientId = user?.id || JSON.parse(localStorage.getItem("user"))?.id;
       if (!patientId) {
         console.error("Không tìm thấy thông tin bệnh nhân.");
         toast.error("Thông tin bệnh nhân không hợp lệ.");
