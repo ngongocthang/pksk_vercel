@@ -1,7 +1,7 @@
 import { BellIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
-import { formatDistanceToNow } from 'date-fns';
-import { vi } from 'date-fns/locale';
+import { formatDistanceToNow } from "date-fns";
+import { vi } from "date-fns/locale";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets";
@@ -67,7 +67,9 @@ const Navbar = () => {
 
   const markAsRead = async (notificationId) => {
     try {
-      await axios.put(`${VITE_BACKEND_URI}/notification/read/${notificationId}`);
+      await axios.put(
+        `${VITE_BACKEND_URI}/notification/read/${notificationId}`
+      );
       const updatedNotifications = notifications.map((notification) =>
         notification._id === notificationId
           ? { ...notification, isRead: true }
@@ -92,6 +94,19 @@ const Navbar = () => {
 
     return () => clearInterval(interval);
   }, [dToken]);
+
+  const handleDelete = async (notificationId) => {
+    try {
+      await axios.delete(
+        `${VITE_BACKEND_URI}/notification/delete/${notificationId}`
+      );
+      setNotifications((prev) =>
+        prev.filter((notification) => notification._id !== notificationId)
+      );
+    } catch (error) {
+      console.error("Lỗi khi xóa thông báo:", error);
+    }
+  };
 
   const groupedNotifications = notifications
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
@@ -131,7 +146,11 @@ const Navbar = () => {
   return (
     <div className="flex justify-between items-center px-4 sm:px-10 py-3 border-b bg-white sticky top-0 z-50">
       <a
-        href={aToken ? "http://localhost:5174/admin-dashboard" : "http://localhost:5174/doctor-dashboard"}
+        href={
+          aToken
+            ? "http://localhost:5174/admin-dashboard"
+            : "http://localhost:5174/doctor-dashboard"
+        }
       >
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-xs">
           <img
@@ -140,7 +159,7 @@ const Navbar = () => {
             alt=""
           />
           <p className="border px-2.5 py-0.5 rounded-full border-gray-500 text-gray-600 text-center sm:text-left">
-            {aToken ? 'Quản trị viên' : 'Bác sĩ'}
+            {aToken ? "Quản trị viên" : "Bác sĩ"}
           </p>
         </div>
       </a>
@@ -166,7 +185,10 @@ const Navbar = () => {
           </div>
         )}
 
-        <button onClick={logout} className="bg-[#0091a1] text-white text-sm px-5 py-2 rounded-full">
+        <button
+          onClick={logout}
+          className="bg-[#0091a1] text-white text-sm px-5 py-2 rounded-full"
+        >
           <span className="hidden md:inline">Đăng xuất</span>
           <i className="fa-solid fa-right-from-bracket mx-2"></i>
         </button>
@@ -185,23 +207,39 @@ const Navbar = () => {
               {Object.keys(groupedNotifications).length > 0 ? (
                 <div className="h-80 overflow-y-auto">
                   {Object.keys(groupedNotifications).map((time) => (
-                    <div key={time}>
-                      <h4 className="font-semibold text-sm text-gray-500 mt-4">
-                        {formatTime(time)}
-                      </h4>
-                      <ul className="space-y-4">
-                        {groupedNotifications[time].map((notification) => (
-                          <li
-                            key={notification._id}
-                            className={`py-3 px-4 border-b border-black-200 flex items-start gap-2 hover:bg-blue-50 cursor-pointer ${!notification.isRead ? "font-semibold bg-gray-100" : ""}`}
-                            onClick={() => markAsRead(notification._id)}
-                          >
-                            <i className="fa-regular fa-bell mt-1"></i>
-                            <p className="md:text-base text-sm text-gray-800">{notification.content}</p>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                   <div key={time}>
+                   <h4 className="font-semibold text-sm text-gray-500 mt-4">
+                     {formatTime(time)}
+                   </h4>
+                   <ul className="space-y-4">
+                     {groupedNotifications[time].map((notification) => (
+                       <li
+                         key={notification._id}
+                         className={`py-3 px-4 border-b border-black-200 flex items-start justify-between gap-2 hover:bg-blue-50 cursor-pointer ${
+                           !notification.isRead ? "font-semibold bg-gray-100" : ""
+                         }`}
+                         onClick={() => markAsRead(notification._id)}
+                       >
+                         <div className="flex items-start gap-2">
+                           <i className="fa-regular fa-bell mt-1"></i>
+                           <p className="md:text-base text-sm text-gray-800">
+                             {notification.content}
+                           </p>
+                         </div>
+                         <li
+                           onClick={(e) => {
+                             e.stopPropagation(); // Ngăn chặn sự kiện click lan truyền
+                             handleDelete(notification._id);
+                           }}
+                           className="cursor-pointer hover:bg-red-100 text-red-500 px-4 py-2 transition-all duration-200 rounded-md"
+                         >
+                           <i className="fa-regular fa-trash-can"></i>
+                         </li>
+                       </li>
+                     ))}
+                   </ul>
+                 </div>
+                 
                   ))}
                 </div>
               ) : (

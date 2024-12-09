@@ -367,7 +367,7 @@ const DoctorsList = () => {
               </div>
             </div>
           ))
-        )};
+        )}
       </div>
 
       {/* Pagination Controls */}
