@@ -153,26 +153,25 @@ const Navbar = () => {
                     onClick={() => navigate('my-profile')}
                     className="hover:text-black cursor-pointer"
                   >
-                    <i class="fa-regular fa-user mr-3"></i>
+                    <i className="fa-regular fa-user mr-3"></i>
                     Hồ sơ của tôi
                   </p>
                   <p
                     onClick={() => navigate('my-appointments')}
                     className="hover:text-black cursor-pointer"
                   >
-                    {/* <i class="fa-solid fa-calendar-plus mr-3"></i> */}
-                    <i class="fa-regular fa-calendar-check 3 mr-3"></i>
+                    <i className="fa-regular fa-calendar-check 3 mr-3"></i>
                     Lịch hẹn của tôi
                   </p>
                   <p
                     onClick={() => navigate('medical-history')}
                     className="hover:text-black cursor-pointer -ml-0.5"
                   >
-                    <i class="fa-solid fa-laptop-medical mr-2"></i>
+                    <i className="fa-solid fa-laptop-medical mr-2"></i>
                     Lịch sử khám bệnh
                   </p>
                   <p onClick={handleLogout} className="hover:text-black cursor-pointer">
-                    <i class="fa-solid fa-arrow-right-from-bracket mr-3"></i>
+                    <i className="fa-solid fa-arrow-right-from-bracket mr-3"></i>
                     Đăng xuất
                   </p>
                 </div>

@@ -13,11 +13,10 @@ const Payment = require("../../models/Payment");
 const History_appointment = require("../../models/Appointment_history");
 JWT_SECRET = process.env.JWT_SECRET;
 
-const { OAuth2Client } = require('google-auth-library');
+const { OAuth2Client } = require("google-auth-library");
 const client = new OAuth2Client(process.env.GG_CLIENT_ID);
 const transporter = require("../../helpers/mailer-config");
-const FRONTEND_URI = process.env.FRONTEND_URI;
-
+const EMAIL_USER = process.env.EMAIL_USER;
 
 const register = async (req, res) => {
   try {
@@ -200,7 +199,9 @@ const getHistoryAppointment = async (req, res) => {
             work_date: appointment.work_date,
             status: appointment.status,
             doctor_name: nameDoctor ? nameDoctor.name : "Unknown Name Doctor",
-            doctor_image: imageDoctor ? imageDoctor.image : "Unknown Image Doctor",
+            doctor_image: imageDoctor
+              ? imageDoctor.image
+              : "Unknown Image Doctor",
             createdAt: history.createdAt,
             updatedAt: history.updatedAt,
           },
@@ -259,29 +260,33 @@ const getdataMoneyDashboardAdmin = async (req, res) => {
 const getAllScheduleDoctor = async (req, res) => {
   try {
     // Lấy danh sách bác sĩ
-    const doctors = await Doctor.find({}).populate("user_id", "name image").populate("specialization_id", "name"); ;
+    const doctors = await Doctor.find({})
+      .populate("user_id", "name image")
+      .populate("specialization_id", "name");
     if (!doctors || doctors.length === 0) {
       return res.status(404).json({ message: "Doctor not found" });
     }
 
     // Lấy lịch làm việc của các bác sĩ
-    const schedules = await Schedule.find({ doctor_id: { $in: doctors.map(doctor => doctor._id) } });
+    const schedules = await Schedule.find({
+      doctor_id: { $in: doctors.map((doctor) => doctor._id) },
+    });
     if (!schedules || schedules.length === 0) {
       return res.status(404).json({ message: "Schedule not found" });
     }
 
     // Kết hợp thông tin bác sĩ với lịch làm việc
-    const result = doctors.map(doctor => {
+    const result = doctors.map((doctor) => {
       const doctorSchedules = schedules
-        .filter(schedule => schedule.doctor_id.equals(doctor._id))
-        .map(schedule => ({
+        .filter((schedule) => schedule.doctor_id.equals(doctor._id))
+        .map((schedule) => ({
           _id: schedule._id,
           work_date: schedule.work_date,
           work_shift: schedule.work_shift,
           createdAt: schedule.createdAt,
           updatedAt: schedule.updatedAt,
           doctorName: doctor.user_id.name, // Thêm tên bác sĩ
-          doctorImage: doctor.user_id.image // Thêm ả bác sĩ
+          doctorImage: doctor.user_id.image, // Thêm ả bác sĩ
         }));
 
       return {
@@ -289,7 +294,7 @@ const getAllScheduleDoctor = async (req, res) => {
         doctorName: doctor.user_id.name,
         doctorImage: doctor.user_id.image,
         specialization: doctor.specialization_id.name,
-        schedules: doctorSchedules
+        schedules: doctorSchedules,
       };
     });
 
@@ -305,7 +310,7 @@ const googleLogin = async (req, res) => {
     const ticket = await client.verifyIdToken({
       idToken: credential,
       audience: process.env.GG_CLIENT_ID,
-  });
+    });
 
     const payload = ticket.getPayload();
     const email = payload.email;
@@ -317,7 +322,7 @@ const googleLogin = async (req, res) => {
       user = await User.create({
         email,
         name: payload.name,
-        password: "123456"
+        password: "123456",
       });
       const role = await Role.findOne({ name: "patient" });
 
@@ -339,7 +344,9 @@ const googleLogin = async (req, res) => {
     }
 
     // Tạo token JWT
-    const roleUsers = await RoleUser.find({ user_id: user._id }).populate("role_id");
+    const roleUsers = await RoleUser.find({ user_id: user._id }).populate(
+      "role_id"
+    );
     const userRole = roleUsers.length > 0 ? roleUsers[0].role_id.name : null;
 
     const token = jwt.sign({ id: user._id, role: userRole }, JWT_SECRET, {
@@ -405,7 +412,9 @@ const resetPassword = async (req, res) => {
     });
 
     if (!user) {
-      return res.status(400).json({ message: "Token không hợp lệ hoặc đã hết hạn!" });
+      return res
+        .status(400)
+        .json({ message: "Token không hợp lệ hoặc đã hết hạn!" });
     }
 
     // Băm mật khẩu mới
@@ -421,8 +430,36 @@ const resetPassword = async (req, res) => {
   }
 };
 
+const contact = async (req, res) => {
+  try {
+    const { name, email, message } = req.body;
+
+    if (!name || !email || !message) {
+      return res
+        .status(400)
+        .send({ message: "Vui lòng điền đầy đủ thông tin." });
+    }
+
+    const mailOptions = {
+      from: email,
+      to: EMAIL_USER,
+      subject: `Tin nhắn từ ${name}`,
+      text: message,
+    };
+    await transporter.sendMail(mailOptions);
+
+    return res
+      .status(200)
+      .send({ success: true, message: "Email đã được gửi thành công!" });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error." });
+  }
+};
+
 module.exports = {
-  register,   
+  register,
   login,
   logout,
   filter,
@@ -431,5 +468,6 @@ module.exports = {
   getAllScheduleDoctor,
   googleLogin,
   forgotPassword,
-  resetPassword
+  resetPassword,
+  contact,
 };
