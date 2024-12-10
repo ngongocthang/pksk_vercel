@@ -219,7 +219,7 @@ const Dashboard = () => {
           <div className="overflow-x-auto mt-4">
             {/* Giao diện desktop */}
             <div className="hidden sm:block">
-              <div className="max-h-[400px] overflow-y-auto border border-gray-200 rounded-lg">
+              <div className="max-h-[420px] overflow-y-auto border border-gray-200 rounded-lg">
                 <table className="w-full bg-white rounded-lg shadow-md">
                   {/* Header */}
                   <thead className="bg-gray-100 sticky top-0 z-10">

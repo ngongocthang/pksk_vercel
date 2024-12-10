@@ -325,7 +325,7 @@ const Appointment = () => {
                   const scrollContainer = document.querySelector(".overflow-x-auto");
                   scrollContainer.scrollBy({ left: -100, behavior: "smooth" });
                 }}
-                className="bg-gray-300 text-black p-2 rounded-full transition-all duration-300 hover:bg-gray-400"
+                className="w-10 h-10 bg-gray-300 text-black p-2 rounded-full transition-all duration-300 hover:bg-gray-400"
               >
                 &#8592;
               </button>
@@ -334,7 +334,7 @@ const Appointment = () => {
                   const scrollContainer = document.querySelector(".overflow-x-auto");
                   scrollContainer.scrollBy({ left: 100, behavior: "smooth" });
                 }}
-                className="bg-gray-300 text-black p-2 rounded-full transition-all duration-300 hover:bg-gray-400"
+                className="w-10 h-10 bg-gray-300 text-black p-2 rounded-full transition-all duration-300 hover:bg-gray-400"
               >
                 &#8594;
               </button>

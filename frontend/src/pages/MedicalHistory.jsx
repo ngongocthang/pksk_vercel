@@ -86,9 +86,9 @@ const LoadingSpinner = () => (
 
 // Component hiển thị thông báo lỗi
 const ErrorAlert = ({ message }) => (
-  <div className="container mx-auto px-4 py-8">
+  <div className="container mx-auto px-4 py-8 flex justify-center items-center">
     <Alert variant="destructive">
-      <AlertDescription>Hiện tại bạn không có lịch sử lịch hẹn</AlertDescription>
+      <AlertDescription className="text-center">{"Hiện tại bạn không có lịch sử lịch hẹn"}</AlertDescription>
     </Alert>
   </div>
 );

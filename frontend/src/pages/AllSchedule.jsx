@@ -286,7 +286,7 @@ const AllSchedule = () => {
               eventContent={(args) => {
                 const workShift = args.event.title;
                 return (
-                  <div className="flex items-center justify-center w-full h-full event-style">
+                  <div className="flex items-center justify-center w-full h-full">
                     <span>{workShift}</span>
                   </div>
                 );
