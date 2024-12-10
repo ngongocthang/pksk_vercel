@@ -65,57 +65,6 @@ const findSpecialization = async (req, res) => {
   }
 };
 
-// const updateSpecialization = async (req, res) => {
-//   try {
-//     // Validate dữ liệu từ client
-//     const { error } = validateUpdateSpecialization(req.body);
-//     if (error) {
-//       return res.status(400).json({ message: error.details[0].message });
-//     }
-
-//     const { id } = req.params;
-//     const specialization = await Specialization.findById(id);
-
-//     if (!specialization) {
-//       return res.status(404).json({ message: "Specialization not found" });
-//     }
-
-//     let imageUrl = specialization.image; // Lưu URL hình ảnh hiện tại
-
-//     // Xử lý upload hình ảnh mới nếu có
-//     if (req.file) {
-//       const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
-
-//       // Xóa hình ảnh cũ trên Cloudinary nếu có
-//       if (imageUrl) {
-//         const publicId = imageUrl.split("/").slice(-1)[0].split(".")[0];
-//         await cloudinary.uploader.destroy(`specialization/${publicId}`); // Thay đổi thư mục nếu cần
-//       }
-
-//       // Upload hình ảnh mới lên Cloudinary
-//       const result = await cloudinary.uploader.upload(base64Image, {
-//         folder: "specialization", // Thay đổi tên thư mục nếu cần
-//       });
-
-//       imageUrl = result.secure_url; // Cập nhật URL hình ảnh mới
-//     }
-
-//     // Cập nhật chuyên khoa với các trường mới
-//     const updatedSpecialization = await Specialization.findByIdAndUpdate(
-//       id,
-//       {
-//         name: req.body.name,
-//         image: imageUrl,
-//         description: req.body.description,
-//       },
-//       { new: true } // Trả về tài nguyên đã cập nhật
-//     );
-
-//     return res.status(200).json({success: true, data: updatedSpecialization});
-//   } catch (error) {
-//     return res.status(500).json({success: false, message: error.message });
-//   }
-// };
 const updateSpecialization = async (req, res) => {
   try {
     // Validate các trường không phải file

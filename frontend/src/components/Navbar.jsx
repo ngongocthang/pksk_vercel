@@ -160,7 +160,7 @@ const Navbar = () => {
                     onClick={() => navigate('my-appointments')}
                     className="hover:text-black cursor-pointer"
                   >
-                    {/* <i class="fa-solid fa-calendar-plus mr-3"></i> */}
+
                     <i className="fa-regular fa-calendar-check 3 mr-3"></i>
                     Lịch hẹn của tôi
                   </p>

@@ -12,7 +12,8 @@ const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 
 const Appointment = () => {
   const { docId } = useParams();
-  const { doctors, user } = useContext(AppContext);
+  const { user } = useContext(AppContext);
+  console.log("user", user);
   const navigate = useNavigate();
 
   const phone = localStorage.getItem("user")
