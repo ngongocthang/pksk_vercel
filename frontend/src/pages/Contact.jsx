@@ -1,16 +1,41 @@
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import React, { useEffect } from 'react';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import { assets } from '../assets/assets';
 
 const Contact = () => {
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [responseMessage, setResponseMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   useEffect(() => {
-    AOS.init({ duration: 1000, once: true }); 
+    AOS.init({ duration: 1000, once: true });
   }, []);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setResponseMessage('');
+
+    try {
+      const response = await axios.post('http://localhost:5000/send-email', formData);
+      setResponseMessage(response.data.message || 'Email đã được gửi thành công!');
+      setFormData({ name: '', email: '', message: '' }); // Reset form sau khi gửi thành công
+    } catch (error) {
+      setResponseMessage('Gửi email thất bại, vui lòng thử lại.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="px-4 py-10 md:px-20 lg:px-40">
-
       {/* Header */}
       <div className="text-center mb-10" data-aos="fade-up">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-700">
@@ -21,47 +46,36 @@ const Contact = () => {
 
       {/* Contact Info and Image */}
       <div className="flex flex-col md:flex-row gap-10 mb-16">
-
-        {/* Image */}
-        <img 
-          className="w-full md:max-w-md rounded-lg shadow-lg" 
-          src={assets.contact_image} 
-          alt="Contact Us" 
+        <img
+          className="w-full md:max-w-md rounded-lg shadow-lg"
+          src={assets.contact_image}
+          alt="Contact Us"
           data-aos="fade-right"
         />
 
-        {/* Contact Information */}
         <div className="flex flex-col gap-6" data-aos="fade-left">
           <div>
             <h2 className="font-semibold text-lg text-gray-600">VĂN PHÒNG CỦA CHÚNG TÔI</h2>
             <div className="flex items-center gap-2">
-              {/* Location SVG Icon */}
-              <img className='h-5 w-5 text-gray-500' src={assets.Address} alt="Address" />
-              {/* Address Text */}
+              <img className="h-5 w-5" src={assets.Address} alt="Address" />
               <p className="text-gray-500">70 Nguyễn Huệ, phường Vĩnh Ninh, Thành Phố Huế</p>
             </div>
           </div>
           <div>
             <h2 className="font-semibold text-lg text-gray-600">THÔNG TIN LIÊN HỆ</h2>
-
-            {/* Phone Information */}
             <div className="flex items-center gap-2 text-gray-500">
-              <img className='h-5 w-5 text-gray-500' src={assets.Phone} alt="Phone" />
+              <img className="h-5 w-5" src={assets.Phone} alt="Phone" />
               <p>SĐT: +84-365-142-649</p>
             </div>
-
-            {/* Email Information */}
             <div className="flex items-center gap-2 text-gray-500 mt-2">
-              <img className='h-5 w-5 text-gray-500' src={assets.Email} alt="Email" />
+              <img className="h-5 w-5" src={assets.Email} alt="Email" />
               <p>Email: tripletcare1@gmail.com</p>
             </div>
           </div>
           <div>
             <h2 className="font-semibold text-lg text-gray-600">GIỜ LÀM VIỆC</h2>
-
-            {/* Working Hours with Clock Icon */}
             <div className="flex items-center gap-2 text-gray-500">
-              <img className='h-5 w-5 text-gray-500' src={assets.Clock} alt="Clock" />
+              <img className="h-5 w-5" src={assets.Clock} alt="Clock" />
               <p>
                 Thứ Hai - Thứ Sáu: 8:00 - 18:00 <br />
                 Thứ Bảy: 8:00 - 12:00
@@ -71,21 +85,52 @@ const Contact = () => {
         </div>
       </div>
 
-      {/* Contact Form and Map Side by Side */}
+      {/* Contact Form and Map */}
       <div className="flex flex-col lg:flex-row gap-10">
-
         {/* Contact Form */}
         <div className="bg-gray-100 rounded-lg p-8 shadow-lg w-full lg:w-1/2 h-full" data-aos="fade-right">
           <h2 className="text-lg font-semibold text-gray-700 mb-6 text-center">GỬI TIN NHẮN CHO CHÚNG TÔI</h2>
-          <form className="flex flex-col gap-4">
-            <input type="text" placeholder="Tên của bạn" className="p-3 border rounded-md" required />
-            <input type="email" placeholder="Email của bạn" className="p-3 border rounded-md" required />
-            <textarea placeholder="Tin nhắn của bạn" className="p-3 border rounded-md h-32" required></textarea>
-            <button type="submit" className="p-3 bg-[#219c9e] text-white font-bold rounded-md hover:bg-[#1b8285] transition-colors">GỬI TIN NHẮN</button>
+          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+            <input
+              type="text"
+              name="name"
+              placeholder="Tên của bạn"
+              className="p-3 border rounded-md"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email của bạn"
+              className="p-3 border rounded-md"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+            <textarea
+              name="message"
+              placeholder="Tin nhắn của bạn"
+              className="p-3 border rounded-md h-32"
+              value={formData.message}
+              onChange={handleChange}
+              required
+            ></textarea>
+            <button
+              type="submit"
+              className={`p-3 font-bold rounded-md transition-colors ${
+                isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#219c9e] text-white hover:bg-[#1b8285]'
+              }`}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Đang gửi...' : 'GỬI TIN NHẮN'}
+            </button>
           </form>
+          {responseMessage && <p className="text-center mt-4 text-gray-600">{responseMessage}</p>}
         </div>
 
-        {/* Location Map */}
+        {/* Map */}
         <div className="bg-gray-100 rounded-lg p-8 shadow-lg w-full lg:w-1/2 h-full" data-aos="fade-left">
           <h2 className="text-lg font-semibold text-gray-700 mb-6 text-center">BẢN ĐỒ</h2>
           <iframe
