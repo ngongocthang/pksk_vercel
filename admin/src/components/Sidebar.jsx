@@ -73,7 +73,7 @@ const Sidebar = () => {
                             }
                             to={'/doctor-list'}
                         >
-                            <img className='filter brightness-0 invert' src={assets.people_icon} alt="" />
+                            <img className='filter brightness-0 invert w-8 h-8' src={assets.doctor1_icon} alt="" />
                             <p className='hidden md:block'>Danh sách bác sĩ</p>
                         </NavLink>
 
@@ -83,7 +83,7 @@ const Sidebar = () => {
                             }
                             to={'/patient-list'}
                         >
-                            <img className='filter brightness-0 invert' src={assets.people_icon} alt="" />
+                            <img className='filter brightness-0 invert w-8 h-8' src={assets.patient1_icon} alt="" />
                             <p className='hidden md:block'>Danh sách bệnh nhân</p>
                         </NavLink>
 

@@ -6,11 +6,32 @@ import 'aos/dist/aos.css'; // Import AOS styles
 import axios from 'axios'; // Nhập axios
 const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 
+const DoctorsSkeleton = () => {
+  return (
+    <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 gap-y-6">
+      {Array.from({ length: 10 }).map((_, index) => (
+        <div
+          key={index}
+          className="border border-gray-200 rounded-xl overflow-hidden animate-pulse"
+        >
+          <div className="relative bg-gray-200 h-40"></div>
+          <div className="p-4">
+            <div className="bg-gray-200 h-6 w-3/4 mb-2"></div>
+            <div className="bg-gray-200 h-4 w-full mb-1"></div>
+            <div className="bg-gray-200 h-4 w-1/2"></div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
 const TopDoctors = () => {
   const navigate = useNavigate();
   const { doctors, setDoctors } = useContext(AppContext);
   const [error, setError] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [loading, setLoading] = useState(true); // Thêm trạng thái loading
 
   useEffect(() => {
     AOS.init({ duration: 1000, once: true }); // Init AOS with 1s duration and only animate once
@@ -30,9 +51,10 @@ const TopDoctors = () => {
 
   useEffect(() => {
     const fetchDoctors = async () => {
+      setLoading(true);
       try {
         const response = await axios.get(`${VITE_BACKEND_URI}/doctor/find-top`);
-        
+
         // Giả sử dữ liệu trả về là { success: true, doctors: [...] }
         if (response.data.doctors && Array.isArray(response.data.doctors)) {
           setDoctors(response.data.doctors);
@@ -41,6 +63,8 @@ const TopDoctors = () => {
         }
       } catch (err) {
         setError(err.message);
+      } finally {
+        setLoading(false); // Kết thúc quá trình tải
       }
     };
 
@@ -63,47 +87,51 @@ const TopDoctors = () => {
         Khám phá danh sách phong phú các bác sĩ uy tín của chúng tôi để dễ dàng
         lên lịch hẹn.
       </p>
-      <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 gap-y-6" data-aos="fade-up">
-        {Array.isArray(visibleDoctors) &&
-          visibleDoctors.map((item, index) => (
-            <div
-              onClick={() => {
-                navigate(`/appointment/${item._id}`);
-                scrollTo(0, 0);
-              }}
-              className="border border-blue-200 rounded-xl overflow-hidden cursor-pointer hover:-translate-y-2 transition-all duration-500"
-              key={index}
-            >
-              <div className="relative">
-                <img
-                  className="bg-blue-50"
-                  src={item.user_id.image}
-                  alt={item.user_id.name}
-                />
+      {loading ? ( // Hiển thị Skeleton khi đang tải
+        <DoctorsSkeleton />
+      ) : (
+        <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 gap-y-6" data-aos="fade-up">
+          {Array.isArray(visibleDoctors) &&
+            visibleDoctors.map((item, index) => (
+              <div
+                onClick={() => {
+                  navigate(`/appointment/${item._id}`);
+                  scrollTo(0, 0);
+                }}
+                className="border border-blue-200 rounded-xl overflow-hidden cursor-pointer hover:-translate-y-2 transition-all duration-500"
+                key={index}
+              >
+                <div className="relative">
+                  <img
+                    className="bg-blue-50"
+                    src={item.user_id.image}
+                    alt={item.user_id.name}
+                  />
+                </div>
+                <div className="p-4">
+                  {item.available === true ? (
+                    <div className="flex items-center gap-2 text-sm text-center text-[#00759c]">
+                      <p className="w-2 h-2 bg-[#00759c] rounded-full"></p>
+                      <p>Lịch hẹn</p>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 text-sm text-center text-[#9c0000]">
+                      <p className="w-2 h-2 bg-[#9c0000] rounded-full"></p>
+                      <p>Lịch hẹn</p>
+                    </div>
+                  )}
+                  <p className="text-gray-900 text-lg font-medium">
+                    {item.user_id.name}
+                  </p>
+                  <p className="text-gray-600 text-sm truncate">
+                    {item.description}
+                  </p>
+                </div>
               </div>
-              <div className="p-4">
-                {item.available === true ? (
-                  <div className="flex items-center gap-2 text-sm text-center text-[#00759c]">
-                    <p className="w-2 h-2 bg-[#00759c] rounded-full"></p>
-                    <p>Lịch hẹn</p>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2 text-sm text-center text-[#9c0000]">
-                    <p className="w-2 h-2 bg-[#9c0000] rounded-full"></p>
-                    <p>Lịch hẹn</p>
-                  </div>
-                )}
-                <p className="text-gray-900 text-lg font-medium">
-                  {item.user_id.name}
-                </p>
-                <p className="text-gray-600 text-sm truncate">
-                  {item.description}
-                </p>
-              </div>
-            </div>
-          ))}
-      </div>
-
+            ))}
+        </div>
+      )}
+      
       <button
         onClick={() => {
           navigate("/doctors");

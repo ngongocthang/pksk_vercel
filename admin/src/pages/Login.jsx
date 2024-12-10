@@ -7,7 +7,7 @@ import { AdminContext } from '../context/AdminContext';
 import { DoctorContext } from '../context/DoctorContext';
 
 const Login = () => {
-    const [state, setState] = useState('Admin');
+    const [state, setState] = useState('Quản trị viên');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
@@ -28,11 +28,11 @@ const Login = () => {
             if (response.data.user) {
                 const { role, token, ...userInfo } = response.data.user;
 
-                if (role === 'admin' && state === 'Admin') {
+                if (role === 'admin' && state === 'Quản trị viên') {
                     localStorage.setItem('aToken', token);
                     setAToken(token);
                     navigate('/admin-dashboard');
-                } else if (role === 'doctor' && state === 'Doctor') {
+                } else if (role === 'doctor' && state === 'Bác sĩ') {
                     localStorage.setItem('dToken', token);
                     setDToken(token);
                     sessionStorage.setItem('doctorInfo', JSON.stringify(userInfo));
@@ -90,9 +90,9 @@ const Login = () => {
                 >
                     {loading ? 'Đang đăng nhập...' : 'Đăng nhập'} {/* Hiển thị nội dung tùy thuộc vào trạng thái loading */}
                 </button>
-                {state === 'Admin'
-                    ? <p>Đăng nhập bác sĩ? <span className='text-[#0091a1] underline cursor-pointer' onClick={() => setState('Doctor')}>Nhấp vào đây</span></p>
-                    : <p>Đăng nhập quản trị? <span className='text-[#0091a1] underline cursor-pointer' onClick={() => setState('Admin')}>Nhấp vào đây</span></p>
+                {state === 'Quản trị viên'
+                    ? <p>Đăng nhập bác sĩ? <span className='text-[#0091a1] underline cursor-pointer' onClick={() => setState('Bác sĩ')}>Nhấp vào đây</span></p>
+                    : <p>Đăng nhập quản trị? <span className='text-[#0091a1] underline cursor-pointer' onClick={() => setState('Quản trị viên')}>Nhấp vào đây</span></p>
                 }
             </div>
         </form>

@@ -12,7 +12,7 @@ const DoctorCardSkeleton = () => {
     <div className="border border-indigo-200 rounded-xl overflow-hidden">
       {/* Image placeholder */}
       <div className="relative">
-        <div className="h-48 bg-gray-200 animate-pulse" />
+        <div className="h-48 w-48 bg-gray-200 animate-pulse" />
         <div className="absolute top-2 left-2 bg-gray-200 animate-pulse h-6 w-24 rounded-full" />
       </div>
 

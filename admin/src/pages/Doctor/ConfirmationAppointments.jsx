@@ -9,9 +9,9 @@ const ConfirmationSchedule = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [currentPage, setCurrentPage] = useState(1);
-  const [loadingId, setLoadingId] = useState(null); // State to track loading
+  const [loadingId, setLoadingId] = useState(null);
+  const [loading, setLoading] = useState(true); // Thêm trạng thái loading
   const appointmentsPerPage = 10;
-  const [isLoading, setIsLoading] = useState(false); // Thêm trạng thái loading
 
   // Định dạng ngày
   const formatDate = (dateString) => {
@@ -22,29 +22,32 @@ const ConfirmationSchedule = () => {
   // Xử lý xác nhận lịch hẹn
   const handleCompleteAppointment = async (id) => {
     setLoadingId(id);
-    setIsLoading(true); // Bắt đầu quá trình xác nhận
+    setLoading(true); // Bắt đầu quá trình xác nhận
     try {
       await completeAppointment(id);
       toast.success('Lịch hẹn đã được xác nhận.');
+      await getAppointments(); // Cập nhật danh sách lịch hẹn sau khi xác nhận
     } catch (error) {
       toast.error('Có lỗi xảy ra khi xác nhận lịch hẹn.');
     } finally {
       setLoadingId(null);
-      setIsLoading(false); // Kết thúc quá trình xác nhận
+      setLoading(false); // Kết thúc quá trình xác nhận
     }
   };
 
   // Xử lý hủy lịch hẹn
   const handleCancelAppointment = async (id) => {
     setLoadingId(id);
-    setIsLoading(true); // Bắt đầu quá trình hủy
+    setLoading(true); // Bắt đầu quá trình hủy
     try {
       await cancelAppointment(id);
+      toast.success('Lịch hẹn đã được hủy.');
+      await getAppointments(); // Cập nhật danh sách lịch hẹn sau khi hủy
     } catch (error) {
       toast.error('Có lỗi xảy ra khi hủy lịch hẹn.');
     } finally {
       setLoadingId(null);
-      setIsLoading(false); // Kết thúc quá trình hủy
+      setLoading(false); // Kết thúc quá trình hủy
     }
   };
 
@@ -60,7 +63,9 @@ const ConfirmationSchedule = () => {
 
   useEffect(() => {
     const fetchAppointments = async () => {
+      setLoading(true); // Bắt đầu tải dữ liệu
       await getAppointments(); // Gọi lại danh sách lịch hẹn
+      setLoading(false); // Kết thúc tải dữ liệu
     };
 
     fetchAppointments(); // Lần đầu tiên khi component mount
@@ -93,7 +98,7 @@ const ConfirmationSchedule = () => {
         className={`py-1 px-3 border rounded w-[70px] flex items-center justify-center ${currentPage === 1
           ? "bg-gray-200 text-gray-400 cursor-not-allowed"
           : "text-gray-600"
-        }`}
+          }`}
         disabled={currentPage === 1}
       >
         <span className="hidden md:block">Trước</span>
@@ -167,7 +172,7 @@ const ConfirmationSchedule = () => {
         className={`py-1 px-3 border rounded w-[70px] flex items-center justify-center ${currentPage === totalPages
           ? "bg-gray-200 text-gray-400 cursor-not-allowed"
           : "text-gray-600"
-        }`}
+          }`}
         disabled={currentPage === totalPages}
       >
         <span className="hidden md:block">Tiếp</span>
@@ -184,11 +189,6 @@ const ConfirmationSchedule = () => {
 
   return (
     <div className='w-full max-w-6xl m-5'>
-      {isLoading && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
-          <div className="animate-spin border-t-4 border-blue-600 border-solid rounded-full w-16 h-16" />
-        </div>
-      )}
       <p className='mb-4 text-lg font-medium'>Các lịch hẹn chờ xác nhận:</p>
       <div className='bg-white border rounded-xl text-sm max-h-[80vh] min-h-[50vh] overflow-y-auto'>
 
@@ -200,9 +200,15 @@ const ConfirmationSchedule = () => {
           <p className='font-bold text-[16px]'>Ca khám</p>
           <p className='font-bold text-[16px] justify-self-end'>Hành động</p>
         </div>
-
+        
+        {loading && (
+          <div className="flex justify-center items-center py-6">
+            <div className="spinner-border animate-spin inline-block w-8 h-8 border-4 border-solid rounded-full border-[#219c9e] border-t-transparent" role="status">
+            </div>
+          </div>
+        )}
         {/* Appointment Rows */}
-        {currentAppointments.length > 0 ? (
+        {!loading && currentAppointments.length > 0 ? (
           currentAppointments.map((item, index) => (
             <div
               className='border-b hover:bg-gray-50 p-4 md:p-6'
@@ -297,7 +303,7 @@ const ConfirmationSchedule = () => {
             </div>
           ))
         ) : (
-          <p className='text-gray-500 py-3 px-1 text-center'>Không có lịch hẹn nào chờ được xác nhận.</p>
+          !loading && <p className='text-gray-500 py-3 px-1 text-center'>Không có lịch hẹn nào chờ được xác nhận.</p>
         )}
       </div>
 
