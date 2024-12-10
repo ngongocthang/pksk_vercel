@@ -17,6 +17,8 @@ import patients_icon from './patients_icon.svg'
 import people_icon from './people_icon.svg'
 import specialty_icon from './specialty_icon.svg'
 import upload_area from './upload_area.svg'
+import doctor1_icon from './doctor1_icon.svg'
+import patient1_icon from './patient1_icon.svg'
 
 export const assets = {
     add_icon,
@@ -37,5 +39,7 @@ export const assets = {
     list_icon,
     appointments_icon,
     earning_icon,
-    specialty_icon
+    specialty_icon,
+    patient1_icon,
+    doctor1_icon
 }
