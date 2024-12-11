@@ -10,18 +10,24 @@ const ConfirmCompletedAppointments = () => {
   const [loadingId, setLoadingId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [appointmentsPerPage] = useState(10); // Số lịch hẹn hiển thị trên mỗi trang
+  const [appointmentsPerPage] = useState(10);
+  const [loading, setLoading] = useState(false);
   const doctorInfo = JSON.parse(sessionStorage.getItem("doctorInfo"));
   const doctorId = doctorInfo ? doctorInfo.id : null;
   const location = useLocation();
 
-  // Lấy tham số từ URL
   const queryParams = new URLSearchParams(location.search);
   const workDate = queryParams.get("date");
   const workShift = queryParams.get("work-shift");
 
+  // Lấy ngày hiện tại
+  const currentDate = moment().tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD");
+
   useEffect(() => {
     const fetchAppointments = async () => {
+      if (!doctorId || !workDate || !workShift) return;
+
+      setLoading(true);
       try {
         const response = await axios.post(
           `${VITE_BACKEND_URI}/doctor/appointment-confirm/${doctorId}`,
@@ -40,13 +46,15 @@ const ConfirmCompletedAppointments = () => {
         }
       } catch (error) {
         console.error("Error fetching appointments:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
-    if (doctorId && workDate && workShift) {
+    if (confirmedAppointments.length === 0) {
       fetchAppointments();
     }
-  }, [doctorId, workDate, workShift]);
+  }, [doctorId, workDate, workShift, confirmedAppointments.length]);
 
   const completeAppointment = async (id) => {
     setLoadingId(id);
@@ -83,14 +91,9 @@ const ConfirmCompletedAppointments = () => {
 
   const formatVietnameseDate = (date) => {
     moment.locale("vi");
-    const formattedDate = moment
-      .utc(date)
-      .tz("Asia/Ho_Chi_Minh")
-      .format("DD/MM/YYYY");
-    return formattedDate;
+    return moment.utc(date).tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY");
   };
 
-  // Logic phân trang
   const totalPages = Math.ceil(filteredAppointments.length / appointmentsPerPage);
   const indexOfLastAppointment = currentPage * appointmentsPerPage;
   const indexOfFirstAppointment = indexOfLastAppointment - appointmentsPerPage;
@@ -103,7 +106,6 @@ const ConfirmCompletedAppointments = () => {
   const renderPagination = () => {
     const paginationItems = [];
 
-    // Nút "Trang trước"
     paginationItems.push(
       <button
         key="prev"
@@ -115,7 +117,6 @@ const ConfirmCompletedAppointments = () => {
       </button>
     );
 
-    // Hiển thị các trang
     for (let i = 1; i <= totalPages; i++) {
       paginationItems.push(
         <button
@@ -128,7 +129,6 @@ const ConfirmCompletedAppointments = () => {
       );
     }
 
-    // Nút "Trang tiếp theo"
     paginationItems.push(
       <button
         key="next"
@@ -166,24 +166,34 @@ const ConfirmCompletedAppointments = () => {
       </div>
 
       <div className="bg-white border rounded text-sm max-h-[80vh] min-h-[50vh] overflow-y-scroll">
-        {currentAppointments.length === 0 ? (
-          <p className="text-center py-4 text-gray-600">
-            Không có lịch hẹn nào trong lịch làm việc này.
-          </p>
-        ) : (
-          <table className="w-full border-collapse">
-            <thead className="bg-gray-200">
+        <table className="w-full border-collapse">
+          <thead className="bg-gray-200">
+            <tr>
+              <th className="py-2 px-4 font-bold text-[16px]">#</th>
+              <th className="py-2 px-4 font-bold text-center text-[16px]">Bệnh nhân</th>
+              <th className="py-2 px-4 font-bold text-center text-[16px]">SDT</th>
+              <th className="py-2 px-4 font-bold text-center text-[16px]">Trạng thái thanh toán</th>
+              <th className="py-2 px-4 font-bold text-center text-[16px]">Ca khám</th>
+              <th className="py-2 px-4 font-bold text-center text-[16px] cursor-pointer">Xác nhận</th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
               <tr>
-                <th className="py-2 px-4 font-bold text-[16px]">#</th>
-                <th className="py-2 px-4 font-bold text-center text-[16px]">Bệnh nhân</th>
-                <th className="py-2 px-4 font-bold text-center text-[16px]">SDT</th>
-                <th className="py-2 px-4 font-bold text-center text-[16px]">Trạng thái thanh toán</th>
-                <th className="py-2 px-4 font-bold text-center text-[16px]">Ca khám</th>
-                <th className="py-2 px-4 font-bold text-center text-[16px] cursor-pointer">Xác nhận</th>
+                <td colSpan={6} className="py-6 text-center">
+                  <div className="flex justify-center items-center">
+                    <div className="spinner-border animate-spin inline-block w-8 h-8 border-4 border-solid rounded-full border-[#219c9e] border-t-transparent" role="status"></div>
+                  </div>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {currentAppointments.map((appointment, index) => (
+            ) : currentAppointments.length === 0 ? (
+              <tr>
+                <td colSpan={6} className="py-6 text-center text-gray-500">
+                  Không có lịch xác nhận nào.
+                </td>
+              </tr>
+            ) : (
+              currentAppointments.map((appointment, index) => (
                 <tr key={appointment._id} className="hover:bg-gray-50 text-center text-[16px]">
                   <td className="py-3 px-4 text-gray-800 font-medium">{index + 1 + (currentPage - 1) * appointmentsPerPage}</td>
                   <td className="py-3 px-4 text-gray-800 font-medium">{appointment.patient_id.user_id.name}</td>
@@ -207,32 +217,35 @@ const ConfirmCompletedAppointments = () => {
                           {appointment.status === "completed" ? (
                             <span className="border border-blue-500 text-blue-500 bg-white py-1 px-3 rounded-full font-semibold">Hoàn thành</span>
                           ) : (
-                            <svg
-                              onClick={() => handleConfirm(appointment._id)}
-                              className="w-[30px] h-[30px] cursor-pointer bg-blue-500 p-2 rounded-full shadow-lg hover:bg-blue-600"
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="white"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <path d="M5 13l4 4L19 7" />
-                            </svg>
+                            // Kiểm tra nếu ngày hiện tại khác với workDate
+                            currentDate !== workDate ? (
+                              <span className="border border-gray-400 text-gray-400 bg-white py-1 px-3 rounded-full font-semibold cursor-not-allowed">Không xác nhận</span>
+                            ) : (
+                              <svg
+                                onClick={() => handleConfirm(appointment._id)}
+                                className="w-[30px] h-[30px] cursor-pointer bg-blue-500 p-2 rounded-full shadow-lg hover:bg-blue-600"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="white"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <path d="M5 13l4 4L19 7" />
+                              </svg>
+                            )
                           )}
                         </>
                       )}
                     </div>
                   </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
-
-      {/* Phân trang */}
       {totalPages > 1 && renderPagination()}
     </div>
   );
