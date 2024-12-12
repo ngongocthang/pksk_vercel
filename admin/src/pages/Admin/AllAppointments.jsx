@@ -42,9 +42,12 @@ const AllAppointments = () => {
   const handleDeleteAppointment = async (id, patientId) => {
     if (window.confirm("Bạn có chắc chắn muốn xoá cuộc hẹn này?")) {
       try {
-        const response = await axios.delete(`${VITE_BACKEND_URI}/appointment/delete/${id}`, {
-          data: { user_id: patientId }, // Sử dụng patient_id
-        });
+        const response = await axios.delete(
+          `${VITE_BACKEND_URI}/appointment/delete/${id}`,
+          {
+            data: { user_id: patientId }, // Sử dụng patient_id
+          }
+        );
 
         if (response.data.success) {
           alert("Xoá cuộc hẹn thành công!");
@@ -180,7 +183,7 @@ const AllAppointments = () => {
           <p className="font-bold text-[16px] ml-7">Trạng thái</p>
           <p className="font-bold text-[16px] ml-7">Hành động</p>
         </div>
-  
+
         {/* Appointments */}
         {isLoading ? (
           <div className="flex justify-center items-center py-4">
@@ -199,30 +202,34 @@ const AllAppointments = () => {
                   {item.doctorInfo.name}
                 </p>
               </div>
-  
+
               <div className="flex items-center mb-2 md:mb-0 justify-start md:justify-center gap-2">
                 <span className="sm:hidden font-semibold">Bệnh nhân:</span>
                 <p className="text-gray-700 md:text-base truncate md:whitespace-normal md:w-auto">
                   {item.patientInfo.name}
                 </p>
               </div>
-  
+
               <div className="flex items-center mb-2 md:mb-0 justify-start md:justify-center gap-2">
                 <span className="sm:hidden font-semibold">Ngày: </span>
                 {formatDate(item.work_date)}
               </div>
-  
+
               <div className="flex items-center mb-2 md:mb-0 justify-start md:justify-center gap-2 -mt-0.5">
                 <span className="sm:hidden font-semibold">Ca: </span>
                 <span
                   className={`py-1 px-2 rounded-full text-white text-sm text-center font-semibold
-                  ${item.work_shift === "afternoon" ? "bg-orange-300" : "bg-blue-400"}
+                  ${
+                    item.work_shift === "afternoon"
+                      ? "bg-orange-300"
+                      : "bg-blue-400"
+                  }
                   shadow-lg max-w-[100px] w-full h-[28px]`}
                 >
                   {item.work_shift === "morning" ? "Sáng" : "Chiều"}
                 </span>
               </div>
-  
+
               {/* Appointment Status Button */}
               <div className="flex justify-center items-center">
                 {item.status === "canceled" ? (
@@ -239,9 +246,9 @@ const AllAppointments = () => {
                   </button>
                 ) : null}
               </div>
-  
+
               {/* Action Buttons */}
-              <div className="flex justify-center items-center gap-2">
+              {/* <div className="flex justify-center items-center gap-2">
                 <button
                   onClick={() => navigate(`/edit-appointment/${item._id}`)}
                   className="bg-blue-500 text-white py-1 px-3 rounded text-sm"
@@ -250,6 +257,29 @@ const AllAppointments = () => {
                 </button>
                 <button
                   onClick={() => handleDeleteAppointment(item._id, item.patientInfo._id)} // Gửi patient_id
+                  className="bg-red-500 text-white py-1 px-3 rounded text-sm"
+                >
+                  <i className="fa-solid fa-trash"></i>
+                </button>
+              </div> */}
+              <div className="flex justify-center items-center gap-2">
+                {item.status === "pending" || item.status === "confirmed" ? (
+                  <button
+                    onClick={() => navigate(`/edit-appointment/${item._id}`)}
+                    className="bg-blue-500 text-white py-1 px-3 rounded text-sm"
+                  >
+                    <i className="fa-regular fa-pen-to-square"></i>
+                  </button>
+                ) : (
+                  <button
+                    className="bg-gray-300 text-gray-600 py-1 px-3 rounded text-sm cursor-not-allowed"
+                    disabled
+                  >
+                    <i className="fa-regular fa-pen-to-square"></i>
+                  </button>
+                )}
+                <button
+                  onClick={() => console.log("Xóa cuộc hẹn")}
                   className="bg-red-500 text-white py-1 px-3 rounded text-sm"
                 >
                   <i className="fa-solid fa-trash"></i>
