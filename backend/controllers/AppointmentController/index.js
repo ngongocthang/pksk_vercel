@@ -460,7 +460,6 @@ const getCurrentUserAppointments = async (req, res) => {
   }
 };
 
-
 const processPrematureCancellation = async (req, res) => {
   try {
     const { id } = req.params;
