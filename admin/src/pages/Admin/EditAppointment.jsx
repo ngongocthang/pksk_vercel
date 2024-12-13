@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import "../../index.css";
 
 const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 
@@ -12,6 +13,7 @@ const AppointmentDetails = () => {
   const [selectedDoctorId, setSelectedDoctorId] = useState(null);
   const [doctorSchedules, setDoctorSchedules] = useState([]); // Lịch làm việc của bác sĩ đã chọn
   const [loading, setLoading] = useState(true);
+  const [isLoadingUpdate, setIsLoadingUpdate] = useState(false); // Thêm state cho loading
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -46,7 +48,7 @@ const AppointmentDetails = () => {
       } catch (error) {
         toast.error(
           error.response?.data.message ||
-            "Đã xảy ra lỗi khi lấy danh sách bác sĩ!"
+          "Đã xảy ra lỗi khi lấy danh sách bác sĩ!"
         );
       }
     };
@@ -71,9 +73,9 @@ const AppointmentDetails = () => {
               const afternoonShiftStart = new Date(scheduleDate);
               afternoonShiftStart.setHours(13, 30); // 13h30
 
-              return scheduleDate > currentDateTime || 
-                     (schedule.work_shift === "morning" && morningShiftStart > currentDateTime) ||
-                     (schedule.work_shift === "afternoon" && afternoonShiftStart > currentDateTime);
+              return scheduleDate > currentDateTime ||
+                (schedule.work_shift === "morning" && morningShiftStart > currentDateTime) ||
+                (schedule.work_shift === "afternoon" && afternoonShiftStart > currentDateTime);
             });
 
             setDoctorSchedules(filteredSchedules); // Lưu lịch làm việc đã lọc
@@ -109,6 +111,7 @@ const AppointmentDetails = () => {
   };
 
   const handleUpdateAppointment = async () => {
+    setIsLoadingUpdate(true); // Bắt đầu loading
     try {
       const updatedData = {
         work_date: appointment.work_date,
@@ -133,6 +136,8 @@ const AppointmentDetails = () => {
       toast.error(
         error.response?.data.message || "Đã xảy ra lỗi khi cập nhật!"
       );
+    } finally {
+      setIsLoadingUpdate(false); // Kết thúc loading
     }
   };
 
@@ -141,8 +146,28 @@ const AppointmentDetails = () => {
   }
 
   if (!appointment) {
-    return <div>Không có thông tin cuộc hẹn.</div>; // Nếu không có thông tin
-  }
+    return (
+      <div className="flex flex-col items-center justify-center h-screen">
+        <div className="flex flex-col items-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-20 w-20 text-gray-500 mb-4"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fillRule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-13a1 1 0 112 0v2a1 1 0 11-2 0V5zm0 4a1 1 0 112 0v4a1 1 0 11-2 0V9z"
+              clipRule="evenodd"
+            />
+          </svg>
+          <p className="text-lg font-semibold text-gray-700">
+            Không có thông tin cuộc hẹn.
+          </p>
+        </div>
+      </div>
+    ); // Nếu không có thông tin
+  }  
 
   return (
     <form className="m-5 w-full">
@@ -205,10 +230,10 @@ const AppointmentDetails = () => {
                   appointment.status === "canceled"
                     ? "Đã huỷ"
                     : appointment.status === "confirmed"
-                    ? "Đã xác nhận"
-                    : appointment.status === "pending"
-                    ? "Đang chờ xác nhận"
-                    : "Đã xác nhận"
+                      ? "Đã xác nhận"
+                      : appointment.status === "pending"
+                        ? "Đang chờ xác nhận"
+                        : "Đã xác nhận"
                 }
                 readOnly
               />
@@ -220,9 +245,16 @@ const AppointmentDetails = () => {
           <button
             type="button"
             onClick={handleUpdateAppointment}
-            className="bg-blue-500 px-10 py-3 text-white rounded-full hover:bg-blue-600"
+            className={`bg-blue-500 px-10 py-3 text-white rounded-full hover:bg-blue-600 ${isLoadingUpdate ? "opacity-50 cursor-not-allowed" : ""}`}
+            disabled={isLoadingUpdate} // Vô hiệu hóa nút khi đang loading
           >
-            Cập nhật
+            {isLoadingUpdate ? (
+              <div className="flex items-center justify-center">
+                <div className="w-5 h-5 border-t-2 border-white border-solid rounded-full animate-spin"></div>
+              </div>
+            ) : (
+              "Cập nhật"
+            )}
           </button>
           <button
             type="button"
