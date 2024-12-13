@@ -1,8 +1,8 @@
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import { AdminContext } from "../../context/AdminContext";
+import "../../index.css";
 
 const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 
@@ -102,11 +102,10 @@ const AllAppointments = () => {
       <button
         key="prev"
         onClick={() => paginate(Math.max(1, currentPage - 1))}
-        className={`py-1 px-3 border rounded ${
-          currentPage === 1
-            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-            : "text-gray-600"
-        }`}
+        className={`py-1 px-3 border rounded ${currentPage === 1
+          ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+          : "text-gray-600"
+          }`}
         disabled={currentPage === 1}
       >
         Trước
@@ -117,9 +116,8 @@ const AllAppointments = () => {
       <button
         key={1}
         onClick={() => paginate(1)}
-        className={`py-1 px-3 border rounded ${
-          currentPage === 1 ? "bg-indigo-500 text-white" : "text-gray-600"
-        }`}
+        className={`py-1 px-3 border rounded ${currentPage === 1 ? "bg-indigo-500 text-white" : "text-gray-600"
+          }`}
       >
         1
       </button>
@@ -138,9 +136,8 @@ const AllAppointments = () => {
         <button
           key={i}
           onClick={() => paginate(i)}
-          className={`py-1 px-3 border rounded ${
-            i === currentPage ? "bg-indigo-500 text-white" : "text-gray-600"
-          }`}
+          className={`py-1 px-3 border rounded ${i === currentPage ? "bg-indigo-500 text-white" : "text-gray-600"
+            }`}
         >
           {i}
         </button>
@@ -156,11 +153,10 @@ const AllAppointments = () => {
         <button
           key={totalPages}
           onClick={() => paginate(totalPages)}
-          className={`py-1 px-3 border rounded ${
-            currentPage === totalPages
-              ? "bg-indigo-500 text-white"
-              : "text-gray-600"
-          }`}
+          className={`py-1 px-3 border rounded ${currentPage === totalPages
+            ? "bg-indigo-500 text-white"
+            : "text-gray-600"
+            }`}
         >
           {totalPages}
         </button>
@@ -171,11 +167,10 @@ const AllAppointments = () => {
       <button
         key="next"
         onClick={() => paginate(Math.min(totalPages, currentPage + 1))}
-        className={`py-1 px-3 border rounded ${
-          currentPage === totalPages
-            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-            : "text-gray-600"
-        }`}
+        className={`py-1 px-3 border rounded ${currentPage === totalPages
+          ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+          : "text-gray-600"
+          }`}
         disabled={currentPage === totalPages}
       >
         Tiếp
@@ -197,16 +192,16 @@ const AllAppointments = () => {
       <p className="mb-3 text-lg font-medium">Tất cả các cuộc hẹn</p>
       <div className="bg-white border rounded-2xl text-sm max-h-[90vh] min-h-[60vh] overflow-y-scroll">
         {/* Table header */}
-        <div className="grid grid-cols-[0.5fr_1.5fr_2fr_0.5fr_2fr_1fr_0.5fr] bg-gray-200 py-3 px-6 border-b gap-4">
+        <div className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr_0.5fr] bg-gray-200 py-3 px-6 border-b gap-4 header">
           <p className="font-bold text-[16px] text-center">#</p>
           <p className="font-bold text-[16px] text-center">Bác sĩ</p>
           <p className="font-bold text-[16px] text-center">Bệnh nhân</p>
           <p className="font-bold text-[16px] text-center">Ngày</p>
           <p className="font-bold text-[16px] text-center">Ca</p>
-          <p className="font-bold text-[16px] ml-7">Trạng thái</p>
-          <p className="font-bold text-[16px] ml-7">Hành động</p>
+          <p className="font-bold text-[16px] text-center">Trạng thái</p>
+          <p className="font-bold text-[16px] text-center">Hành động</p>
         </div>
-  
+
         {/* Appointments */}
         {isLoading ? (
           <div className="flex justify-center items-center py-4">
@@ -215,7 +210,7 @@ const AllAppointments = () => {
         ) : currentAppointments && currentAppointments.length > 0 ? (
           currentAppointments.map((item, index) => (
             <div
-              className="grid grid-cols-[0.5fr_1.5fr_2fr_0.5fr_2fr_1fr_0.5fr] text-gray-500 py-3 px-6 border-b hover:bg-gray-50 gap-4"
+              className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr_0.5fr] text-gray-500 py-3 px-6 border-b hover:bg-gray-50 gap-4"
               key={index}
             >
               <p className="font-bold text-center">{index + 1}</p>
@@ -225,19 +220,19 @@ const AllAppointments = () => {
                   {item.doctorInfo.name}
                 </p>
               </div>
-  
+
               <div className="flex items-center mb-2 md:mb-0 justify-start md:justify-center gap-2">
                 <span className="sm:hidden font-semibold">Bệnh nhân:</span>
                 <p className="text-gray-700 md:text-base truncate md:whitespace-normal md:w-auto">
                   {item.patientInfo.name}
                 </p>
               </div>
-  
+
               <div className="flex items-center mb-2 md:mb-0 justify-start md:justify-center gap-2">
                 <span className="sm:hidden font-semibold">Ngày: </span>
                 {formatDate(item.work_date)}
               </div>
-  
+
               <div className="flex items-center mb-2 md:mb-0 justify-start md:justify-center gap-2 -mt-0.5">
                 <span className="sm:hidden font-semibold">Ca: </span>
                 <span
@@ -248,7 +243,7 @@ const AllAppointments = () => {
                   {item.work_shift === "morning" ? "Sáng" : "Chiều"}
                 </span>
               </div>
-  
+
               {/* Appointment Status Button */}
               <div className="flex justify-center items-center">
                 {item.status === "canceled" ? (
@@ -265,7 +260,7 @@ const AllAppointments = () => {
                   </button>
                 ) : null}
               </div>
-  
+
               {/* Action Buttons */}
               <div className="flex justify-center items-center gap-2">
                 <button
@@ -275,7 +270,7 @@ const AllAppointments = () => {
                   <i className="fa-regular fa-pen-to-square"></i>
                 </button>
                 <button
-                  onClick={() => handleDeleteAppointment(item._id, item.patientInfo._id)} // Gửi patient_id
+                  onClick={() => handleDeleteAppointment(item._id, item.patientInfo._id)}
                   className="bg-red-500 text-white py-1 px-3 rounded text-sm"
                 >
                   <i className="fa-solid fa-trash"></i>

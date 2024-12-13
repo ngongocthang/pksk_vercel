@@ -40,3 +40,23 @@
         transform: rotate(360deg);
     }
 }
+@media (max-width: 640px) {
+    .grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .text-sm {
+        font-size: 12px;
+    }
+
+    .py-3 {
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+
+    .header {
+        display: none; 
+      }
+}
+
