@@ -63,7 +63,6 @@ const AppointmentDetails = () => {
         try {
           const doctor = doctors.find((doc) => doc._id === selectedDoctorId);
           if (doctor) {
-            // Lọc lịch làm việc chỉ hiển thị những ngày và ca khám sau giờ hiện tại
             const currentDateTime = new Date();
             const filteredSchedules = doctor.schedules.filter((schedule) => {
               const scheduleDate = new Date(schedule.work_date);
@@ -82,7 +81,7 @@ const AppointmentDetails = () => {
               );
             });
 
-            setDoctorSchedules(filteredSchedules); // Lưu lịch làm việc đã lọc
+            setDoctorSchedules(filteredSchedules);
           }
         } catch (error) {
           toast.error("Đã xảy ra lỗi khi lấy lịch làm việc của bác sĩ!");
