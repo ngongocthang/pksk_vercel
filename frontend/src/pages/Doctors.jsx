@@ -52,10 +52,9 @@ const Doctors = () => {
     try {
       setIsLoading(true);
       const response = await axios.get(`${VITE_BACKEND_URI}/doctor/find-all`);
-      console.log("Doctors fetched:", response.data.doctors); // Kiểm tra dữ liệu
       setDoctors(response.data.success ? response.data.doctors : []);
     } catch (error) {
-      console.error("Error fetching doctors:", error);
+      // console.error("Error fetching doctors:", error);
     } finally {
       setIsLoading(false);
     }
@@ -67,7 +66,7 @@ const Doctors = () => {
       const response = await axios.get(`${VITE_BACKEND_URI}/specialization/find-all`);
       setSpecializations(response.data.success ? response.data.specializations : []);
     } catch (error) {
-      console.error("Error fetching specializations:", error);
+      // console.error("Error fetching specializations:", error);
     } finally {
       setIsLoading(false);
     }
@@ -75,17 +74,12 @@ const Doctors = () => {
 
   const applyFilter = () => {
     let filtered = doctors;
-
-    console.log("Doctors before filtering:", doctors); // Kiểm tra danh sách bác sĩ trước khi lọc
-
     // Lọc theo chuyên khoa
     if (speciality) {
       filtered = filtered.filter(
         (doc) => convertToSlug(doc.specialization_id?.name) === speciality
       );
     }
-
-    console.log("Filtered Doctors:", filtered); // Kiểm tra danh sách bác sĩ sau khi lọc
 
     // Lọc theo ngày làm việc
     if (selectedDate) {
