@@ -577,8 +577,6 @@ const processPrematureCancellation = async (req, res) => {
       recipientType: "doctor",
     });
 
-    console.log("log email doctor", infoDoctor.email);
-
     const mailOptionsDoctor = {
       from: process.env.EMAIL_USER,
       to: infoDoctor.email,

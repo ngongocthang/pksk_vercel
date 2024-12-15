@@ -46,7 +46,6 @@ router.get("/get-appointments-status/:id", getAppointmentByStatus);
 router.get("/get-schedule-doctor/:id", getScheduleByDoctor);
 router.get("/filter/:id", filter);
 router.get("/notification/:id", getCurrentUserNotifications);
-// router.get("/notification", userMiddleware, getCurrentUserNotifications);
 router.get("/medical-history/:id", getHistoryAppointment);
 router.get("/get-data-doctor-dashboard/:id", countAppointmentDoctorDashboard);
 router.get("/upcoming-appointments-dashboard-admin", getUpcomingAppointmentsDashboardAdmin);

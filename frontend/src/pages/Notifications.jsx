@@ -116,7 +116,6 @@ const Notifications = () => {
         if (!deletedNotification.isRead) {
           const unreadCount = updatedNotifications.filter((notification) => !notification.isRead).length;
           setUnreadCount(unreadCount);
-          localStorage.setItem("unreadCount", unreadCount);
         }
       } else {
         console.error("Could not delete notification on the server");
@@ -162,9 +161,6 @@ const Notifications = () => {
             <div className="flex-1 ml-3 cursor-pointer">
               <p className="font-medium mr-2">
                 {notification.isRead ? notification.content : <strong>{notification.content}</strong>}
-              </p>
-              <p className="text-xs text-gray-400">
-                Ca khám: {notification.work_shift === "morning" ? "buổi sáng" : "buổi chiều"}
               </p>
               <p className="text-xs text-gray-400">{timeAgo(notification.createdAt)}</p>
             </div>
