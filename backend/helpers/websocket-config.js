@@ -10,10 +10,9 @@ const createWebSocketServer = (httpServer) => {
   const clients = new Map(); // Lưu trữ user_id tương ứng với WebSocket client
 
   wss.on("connection", (ws, req) => {
-    console.log("Client connected");
+    console.log("WebSocket client connected");
 
     ws.on("message", async (message) => {
-
       const parsedMessage = JSON.parse(message);
       const { user_id, action } = parsedMessage;
 
@@ -26,8 +25,8 @@ const createWebSocketServer = (httpServer) => {
       // Lưu client và user_id để gửi thông báo real-time
       clients.set(user_id, ws);
 
-      // Gửi thông báo chưa đọc cho client
-      const sendUnreadNotifications = async () => {
+      // Gửi thông báo cho client
+      const sendNotifications = async () => {
         try {
           const patient = await Patient.findOne({ user_id });
           if (!patient) {
@@ -46,7 +45,7 @@ const createWebSocketServer = (httpServer) => {
             JSON.stringify({
               success: true,
               unreadCount: unreadNotifications.length,
-              notifications: unreadNotifications,
+              notifications: notifications, // Gửi tất cả thông báo
             })
           );
         } catch (error) {
@@ -57,12 +56,12 @@ const createWebSocketServer = (httpServer) => {
 
       // Nếu client yêu cầu cập nhật thủ công
       if (action === "update") {
-        await sendUnreadNotifications();
+        await sendNotifications();
       }
     });
 
     ws.on("close", () => {
-      console.log("Client disconnected");
+      console.log("WebSocket client disconnected");
       clients.forEach((clientWs, userId) => {
         if (clientWs === ws) clients.delete(userId);
       });
@@ -85,11 +84,15 @@ const createWebSocketServer = (httpServer) => {
               isRead: false,
             }).sort({ createdAt: -1 });
 
+            const allNotifications = await Notification.find({
+              patient_id: patientId,
+            }).sort({ createdAt: -1 });
+
             clientWs.send(
               JSON.stringify({
                 success: true,
                 unreadCount: unreadNotifications.length,
-                notifications: unreadNotifications,
+                notifications: allNotifications,
               })
             );
           }

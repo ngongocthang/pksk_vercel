@@ -33,11 +33,8 @@ const sendAppointmentReminders = async () => {
 
       const workShiftText = appointment.work_shift === "morning" ? "Sáng" : "Chiều";
 
-      console.log(
-        appointment.patient_id._id, "-", appointment.doctor_id._id, "-", appointment._id,
-      )
       // Tạo thông báo cho bệnh nhân
-      const notificationPatient = await Notification.create({
+      await Notification.create({
         patient_id: appointment.patient_id._id,
         doctor_id: appointment.doctor_id._id,
         content: `Nhắc nhở: Cuộc hẹn của bạn vào ngày ${formattedVietnamTime} - Ca khám: ${workShiftText}.`,
@@ -45,11 +42,6 @@ const sendAppointmentReminders = async () => {
         isRead: false,
         recipientType: 'patient',
       });
-
-      if (!notificationPatient) {
-        console.log("Failed to create notification for patient");
-        return;
-      }
 
       // Tạo thông báo cho bác sĩ
       await Notification.create({

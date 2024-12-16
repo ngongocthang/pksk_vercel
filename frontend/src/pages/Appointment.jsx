@@ -325,113 +325,97 @@ const Appointment = () => {
 
       {/* ----- Booking slots ----- */}
       <div className="sm:ml-72 sm:pl-4 mt-4 font-medium text-gray-700">
-        <p className="flex justify-between items-center">
+        <p className="flex justify-between items-center font-semibold">
           Đặt khám nhanh:
-          {Object.keys(doctorSchedule).length > 8 && (
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => {
-                  const scrollContainer = document.querySelector(".overflow-x-auto");
-                  scrollContainer.scrollBy({ left: -100, behavior: "smooth" });
-                }}
-                className="w-10 h-10 bg-gray-300 text-black p-2 rounded-full transition-all duration-300 hover:bg-gray-400"
-              >
-                &#8592;
-              </button>
-              <button
-                onClick={() => {
-                  const scrollContainer = document.querySelector(".overflow-x-auto");
-                  scrollContainer.scrollBy({ left: 100, behavior: "smooth" });
-                }}
-                className="w-10 h-10 bg-gray-300 text-black p-2 rounded-full transition-all duration-300 hover:bg-gray-400"
-              >
-                &#8594;
-              </button>
-            </div>
-          )}
         </p>
 
-        {errorLoadingSchedule ? (
-          <p className="text-red-500">Hiện tại bác sĩ chưa có lịch làm việc.</p>
+        {docInfo.available === false ? (
+          <p className="text-red-500 mt-4 font-semibold">Hiện tại bác sĩ không làm việc.</p>
         ) : (
-          <div className="relative">
-            <div className="flex gap-3 items-center w-full overflow-x-auto mt-4 py-2 whitespace-nowrap">
-              {Object.keys(doctorSchedule).map((dateStr) => {
-                const date = new Date(dateStr);
-                const dayOfWeek = date.toLocaleDateString("vi-VN", { weekday: "long" });
-                const isSelected = selectedDate === dateStr;
-
-                return (
-                  <div
-                    key={dateStr}
-                    className={`text-center w-[80px] h-[80px] flex flex-col justify-center items-center rounded-full border cursor-pointer transition-all duration-300
-                    ${isSelected
-                        ? "bg-[#00759c] text-white border-[#00759c]"
-                        : "border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-100"
-                      }
-                    m-3 p-4`}
-                    style={{ borderRadius: "50%" }}
-                    onClick={() => {
-                      setSelectedDate(dateStr);
-                      setSlotTime(""); // Reset slot time
-                      setIsBookingDisabled(false); // Reset booking disabled state
-                    }}
-                  >
-                    <p className={`text-sm font-bold ${isSelected ? "text-white" : "text-gray-600"}`}>
-                      {dayOfWeek}
-                    </p>
-                    <p className={`text-sm font-semibold ${isSelected ? "text-white" : "text-gray-500"}`}>
-                      {`${date.getDate()}/${date.getMonth() + 1}`}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {selectedDate && !errorLoadingSchedule && (
-          <div className="flex items-center gap-3 w-full overflow-x-auto mt-4 ml-5">
-            {doctorSchedule[selectedDate]
-              .sort((a, b) => (a.work_shift === "morning" ? -1 : 1))
-              .map((schedule) => (
-                <p
-                  key={schedule._id}
-                  onClick={() =>
-                    setSlotTime(
-                      schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều"
-                    )
-                  }
-                  className={`text-sm font-semibold px-6 py-3 rounded-full cursor-pointer transition-all duration-300 ${slotTime === (schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều")
-                    ? "bg-[#00759c] text-white"
-                    : "text-gray-500 border border-gray-300 hover:border-[#00759c] hover:text-[#00759c]"
-                    }`}
-                >
-                  {schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều"}
-                </p>
-              ))}
-          </div>
-        )}
-
-        {selectedDate && slotTime && (
-          <button
-            onClick={handleBooking}
-            disabled={isBookingDisabled || isLoadingBooking}
-            className={`bg-[#00759c] text-white text-sm font-bold px-14 py-3 rounded-full my-6 ml-5 ${isBookingDisabled || isLoadingBooking ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-          >
-            {isLoadingBooking ? (
-              <div className="flex items-center">
-                <svg className="animate-spin h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 0116 0 8 8 0 01-16 0z" />
-                </svg>
-                Đang đặt lịch...
-              </div>
+          <>
+            {errorLoadingSchedule ? (
+              <p className="text-red-500 mt-4 font-semibold">Hiện tại bác sĩ không làm việc.</p>
             ) : (
-              "Đặt lịch hẹn"
+              <div className="relative">
+                <div className="flex gap-3 items-center w-full overflow-x-auto mt-4 py-2 whitespace-nowrap">
+                  {Object.keys(doctorSchedule).map((dateStr) => {
+                    const date = new Date(dateStr);
+                    const dayOfWeek = date.toLocaleDateString("vi-VN", { weekday: "long" });
+                    const isSelected = selectedDate === dateStr;
+
+                    return (
+                      <div
+                        key={dateStr}
+                        className={`text-center w-[80px] h-[80px] flex flex-col justify-center items-center rounded-full border cursor-pointer transition-all duration-300
+                        ${isSelected
+                            ? "bg-[#00759c] text-white border-[#00759c]"
+                            : "border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-100"
+                          }
+                        m-3 p-4`}
+                        style={{ borderRadius: "50%" }}
+                        onClick={() => {
+                          setSelectedDate(dateStr);
+                          setSlotTime(""); // Reset slot time
+                          setIsBookingDisabled(false); // Reset booking disabled state
+                        }}
+                      >
+                        <p className={`text-sm font-bold ${isSelected ? "text-white" : "text-gray-600"}`}>
+                          {dayOfWeek}
+                        </p>
+                        <p className={`text-sm font-semibold ${isSelected ? "text-white" : "text-gray-500"}`}>
+                          {`${date.getDate()}/${date.getMonth() + 1}`}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             )}
-          </button>
+
+            {selectedDate && !errorLoadingSchedule && (
+              <div className="flex items-center gap-3 w-full overflow-x-auto mt-4 ml-5">
+                {doctorSchedule[selectedDate]
+                  .sort((a, b) => (a.work_shift === "morning" ? -1 : 1))
+                  .map((schedule) => (
+                    <p
+                      key={schedule._id}
+                      onClick={() =>
+                        setSlotTime(
+                          schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều"
+                        )
+                      }
+                      className={`text-sm font-semibold px-6 py-3 rounded-full cursor-pointer transition-all duration-300 ${slotTime === (schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều")
+                        ? "bg-[#00759c] text-white"
+                        : "text-gray-500 border border-gray-300 hover:border-[#00759c] hover:text-[#00759c]"
+                        }`}
+                    >
+                      {schedule.work_shift === "morning" ? "Buổi sáng" : "Buổi chiều"}
+                    </p>
+                  ))}
+              </div>
+            )}
+
+            {selectedDate && slotTime && (
+              <button
+                onClick={handleBooking}
+                disabled={isBookingDisabled || isLoadingBooking}
+                className={`bg-[#00759c] text-white text-sm font-bold px-14 py-3 rounded-full my-6 ml-5 ${isBookingDisabled || isLoadingBooking ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+              >
+                {isLoadingBooking ? (
+                  <div className="flex items-center">
+                    <svg className="animate-spin h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 0116 0 8 8 0 01-16 0z" />
+                    </svg>
+                    Đang đặt lịch...
+                  </div>
+                ) : (
+                  "Đặt lịch hẹn"
+                )}
+              </button>
+            )}
+          </>
         )}
       </div>
       {/* ----- Related Doctors ----- */}

@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Marquee from "react-fast-marquee";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import ScrollToTopButton from "./components/ScrollToTopButton";
@@ -20,7 +20,28 @@ import ResetPassword from "./pages/ResetPassword.jsx";
 
 const App = () => {
   const token = localStorage.getItem("token");
-  console.log(token);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Nếu người dùng đã đăng nhập và truy cập /account, chuyển hướng về Home
+    if (token && window.location.pathname === "/account") {
+      navigate("/");
+    }
+
+    // Nếu chưa đăng nhập mà truy cập vào các trang cần đăng nhập, chuyển hướng về account
+    if (!token) {
+      const restrictedPaths = [
+        "/my-profile",
+        "/my-appointments",
+        "/medical-history",
+        "/notifications",
+      ];
+      if (restrictedPaths.includes(window.location.pathname)) {
+        navigate("/account");
+      }
+    }
+  }, [token, navigate]);
+
   return (
     <div className="min-h-screen flex flex-col">
       <div className="flex-grow mx-4 sm:mx-[10%]">
@@ -33,7 +54,7 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/doctors" element={<Doctors />} />
           <Route path="/doctors/:speciality" element={<Doctors />} />
-          <Route path="/account" element={<Login />} />
+          <Route path="/account" element={!token ? <Login /> : <Home />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/abouts" element={<About />} />
           <Route path="/contact" element={<Contact />} />

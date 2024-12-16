@@ -26,6 +26,13 @@ const register = async (req, res) => {
       return res.status(400).json({ message: error.details[0].message });
     }
 
+    const email = req.body.email;
+
+    const checkEmail = await User.findOne({ email: email });
+    if (checkEmail) {
+      return res.status(400).json({ message: "Email đã tồn tại!" });
+    }
+
     // Băm mật khẩu
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
 

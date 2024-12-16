@@ -333,7 +333,7 @@ const Doctors = () => {
                     </div>
                   </div>
                 ))}
-                {noDoctorsFound && (speciality || selectedDate) && (
+                {noDoctorsFound && (!speciality || selectedDate) && (
                   <div className="col-span-1 md:col-span-4 flex justify-center items-center w-full mt-4">
                     <div className="bg-gray p-4 rounded-lg mt-32">
                       <div className="text-red-500 text-center font-semibold">

@@ -1,13 +1,10 @@
-// notification
-import axios from "axios";
-import React, { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useContext, useRef, useState, useEffect } from "react";
+import axios from "axios"; // Import Axios
 import { assets } from "../assets/assets";
-import { AppContext } from "../context/AppContext";
+import { AppContext } from "../context/AppContext"; // Import AppContext
 
 const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 
-// Chức năng tính thời gian trước đây
 const timeAgo = (date) => {
   const now = new Date();
   const diffInSeconds = Math.floor((now - new Date(date)) / 1000);
@@ -23,110 +20,36 @@ const timeAgo = (date) => {
 };
 
 const Notifications = () => {
-  const [notifications, setNotifications] = useState([]);
+  const { notifications, setNotifications } = useContext(AppContext);
   const [showAll, setShowAll] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const { user, setUnreadCount } = useContext(AppContext);
-  const navigate = useNavigate();
   const [activeMenu, setActiveMenu] = useState(null);
+  const [loading, setLoading] = useState(true); // Trạng thái loading
+  const [hasLoaded, setHasLoaded] = useState(false); // Trạng thái đã tải xong
+  const menuRef = useRef(null);
 
-  const token = user?.token || localStorage.getItem("token");
-  const userId = JSON.parse(localStorage.getItem("user") || "{}").id;
+  // Đăng ký sự kiện click bên ngoài
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setActiveMenu(null); // Đóng menu khi nhấn bên ngoài
+      }
+    };
 
-  // Lấy thông báo từ server
-  const fetchNotifications = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get(
-        `${VITE_BACKEND_URI}/notification/${userId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      setNotifications(response.data.data);
-
-      const unreadCount = response.data.data.filter(
-        (notification) => !notification.isRead
-      ).length;
-      setUnreadCount(unreadCount);
-    } catch (error) {
-      console.error("Error fetching notifications:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
 
   useEffect(() => {
-    if (!user && !token) {
-      navigate("/account");
-    } else {
-      fetchNotifications();
-    }
-  }, [token, navigate, user]);
+    // Giả lập thời gian tải dữ liệu
+    const timer = setTimeout(() => {
+      setLoading(false); // Đặt loading thành false sau 1 giây
+      setHasLoaded(true); // Đặt hasLoaded thành true sau khi tải xong
+    }, 1000);
 
-  // Đánh dấu thông báo là đã đọc
-  const handleNotificationClick = async (id) => {
-    try {
-      await axios.put(
-        `${VITE_BACKEND_URI}/notification/read/${id}`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      setActiveMenu(null);
-
-      const updatedNotifications = notifications.map((notification) =>
-        notification._id === id
-          ? { ...notification, isRead: true }
-          : notification
-      );
-      setNotifications(updatedNotifications);
-
-      const unreadCount = updatedNotifications.filter(
-        (notification) => !notification.isRead
-      ).length;
-      setUnreadCount(unreadCount);
-      localStorage.setItem("unreadCount", unreadCount);
-    } catch (error) {
-      console.error("Error marking notification as read:", error);
-    }
-  };
-
-  // Xóa thông báo
-  const handleDelete = async (notificationId) => {
-    try {
-      const response = await axios.delete(
-        `${VITE_BACKEND_URI}/notification/delete/${notificationId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      if (response.status === 200) {
-        const deletedNotification = notifications.find(
-          (n) => n._id === notificationId
-        );
-        const updatedNotifications = notifications.filter(
-          (n) => n._id !== notificationId
-        );
-        setNotifications(updatedNotifications);
-
-        if (!deletedNotification.isRead) {
-          const unreadCount = updatedNotifications.filter(
-            (notification) => !notification.isRead
-          ).length;
-          setUnreadCount(unreadCount);
-        }
-      } else {
-        console.error("Could not delete notification on the server");
-      }
-    } catch (error) {
-      console.error("Error deleting notification:", error);
-    }
-  };
+    return () => clearTimeout(timer); // Dọn dẹp timer khi component unmount
+  }, []);
 
   const sortedNotifications = notifications.sort(
     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
@@ -141,13 +64,60 @@ const Notifications = () => {
     setActiveMenu((prevMenu) => (prevMenu === id ? null : id));
   };
 
+  const handleNotificationClick = async (id) => {
+    try {
+      const response = await axios.put(
+        `${VITE_BACKEND_URI}/notification/read/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        const updatedNotifications = notifications.map((notification) =>
+          notification._id === id
+            ? { ...notification, isRead: true }
+            : notification
+        );
+        setNotifications(updatedNotifications);
+        setActiveMenu(null); // Tắt menu sau khi đánh dấu đã đọc
+      } else {
+        console.error("Failed to update notification status");
+      }
+    } catch (error) {
+      console.error("Error updating notification status:", error);
+    }
+  };
+
+  const handleDelete = async (notificationId) => {
+    try {
+      const response = await axios.delete(`${VITE_BACKEND_URI}/notification/delete/${notificationId}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+
+      if (response.status === 200) {
+        const updatedNotifications = notifications.filter(notification => notification._id !== notificationId);
+        setNotifications(updatedNotifications);
+        setActiveMenu(null);
+      } else {
+        console.error("Failed to delete notification");
+      }
+    } catch (error) {
+      console.error("Error deleting notification:", error);
+    }
+  };
+
   return (
     <div className="container mx-auto p-4 cursor-pointer">
       <h1 className="text-2xl font-semibold mb-4">Thông báo của bạn</h1>
 
       {loading ? (
-        <div className="text-center text-gray-500">Đang tải thông báo...</div>
-      ) : notifications.length === 0 ? (
+        <p className="text-center text-gray-500">Đang tải...</p>
+      ) : hasLoaded && notifications.length === 0 ? (
         <p className="text-center text-gray-500">Không có thông báo nào.</p>
       ) : (
         displayedNotifications.map((notification) => (
@@ -156,14 +126,15 @@ const Notifications = () => {
             className={`flex items-start border-b border-gray-300 py-2 ${
               !notification.isRead ? "bg-transparent" : ""
             }`}
-            onClick={() => handleNotificationClick(notification._id)}
           >
             <img
               src={assets.notification_icon}
               alt="Notification Icon"
               className="w-6 h-6"
             />
-            <div className="flex-1 ml-3 cursor-pointer">
+            <div className="flex-1 ml-3 cursor-pointer"
+              onClick={() => handleNotificationClick(notification._id)}
+            >
               <p className="font-medium mr-2">
                 {notification.isRead ? (
                   notification.content
@@ -177,7 +148,7 @@ const Notifications = () => {
             </div>
 
             {/* 3 dots menu */}
-            <div className="relative menu-container">
+            <div className="relative menu-container" ref={menuRef}>
               <button
                 className="text-gray-500 hover:text-gray-700"
                 onClick={(e) => toggleMenu(notification._id, e)}
@@ -213,17 +184,6 @@ const Notifications = () => {
             </div>
           </div>
         ))
-      )}
-
-      {notifications.length > 10 && (
-        <div className="text-center mt-4">
-          <button
-            onClick={() => setShowAll(!showAll)}
-            className="bg-gray-400 text-white py-2 px-4 rounded-full"
-          >
-            {showAll ? "Thu gọn" : "Xem tất cả"}
-          </button>
-        </div>
       )}
     </div>
   );
