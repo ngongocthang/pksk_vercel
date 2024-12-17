@@ -1,7 +1,7 @@
 import React, { useContext, useRef, useState, useEffect } from "react";
-import axios from "axios"; // Import Axios
+import axios from "axios";
 import { assets } from "../assets/assets";
-import { AppContext } from "../context/AppContext"; // Import AppContext
+import { AppContext } from "../context/AppContext";
 
 const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 
@@ -23,32 +23,34 @@ const Notifications = () => {
   const { notifications, setNotifications } = useContext(AppContext);
   const [showAll, setShowAll] = useState(false);
   const [activeMenu, setActiveMenu] = useState(null);
-  const [loading, setLoading] = useState(true); // Trạng thái loading
-  const [hasLoaded, setHasLoaded] = useState(false); // Trạng thái đã tải xong
-  const menuRef = useRef(null);
+  const [loading, setLoading] = useState(true);
+  const [hasLoaded, setHasLoaded] = useState(false);
 
-  // Đăng ký sự kiện click bên ngoài
+  // Tham chiếu tới dropdown
+  const dropdownRefs = useRef({});
+
   useEffect(() => {
-    const handleOutsideClick = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) {
-        setActiveMenu(null); // Đóng menu khi nhấn bên ngoài
+    const handleClickOutside = (event) => {
+      // Đóng menu khi click bên ngoài
+      const isOutsideClick = Object.values(dropdownRefs.current).every(ref => ref && !ref.contains(event.target));
+      if (isOutsideClick) {
+        setActiveMenu(null);
       }
     };
 
-    document.addEventListener("mousedown", handleOutsideClick);
+    document.addEventListener("click", handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
+      document.removeEventListener("click", handleClickOutside);
     };
   }, []);
 
   useEffect(() => {
-    // Giả lập thời gian tải dữ liệu
     const timer = setTimeout(() => {
-      setLoading(false); // Đặt loading thành false sau 1 giây
-      setHasLoaded(true); // Đặt hasLoaded thành true sau khi tải xong
+      setLoading(false);
+      setHasLoaded(true);
     }, 1000);
 
-    return () => clearTimeout(timer); // Dọn dẹp timer khi component unmount
+    return () => clearTimeout(timer);
   }, []);
 
   const sortedNotifications = notifications.sort(
@@ -59,8 +61,7 @@ const Notifications = () => {
     ? sortedNotifications
     : sortedNotifications.slice(0, 10);
 
-  const toggleMenu = (id, e) => {
-    e.stopPropagation();
+  const toggleMenu = (id) => {
     setActiveMenu((prevMenu) => (prevMenu === id ? null : id));
   };
 
@@ -82,7 +83,7 @@ const Notifications = () => {
             : notification
         );
         setNotifications(updatedNotifications);
-        setActiveMenu(null); // Tắt menu sau khi đánh dấu đã đọc
+        setActiveMenu(null);
       } else {
         console.error("Failed to update notification status");
       }
@@ -93,14 +94,19 @@ const Notifications = () => {
 
   const handleDelete = async (notificationId) => {
     try {
-      const response = await axios.delete(`${VITE_BACKEND_URI}/notification/delete/${notificationId}`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
+      const response = await axios.delete(
+        `${VITE_BACKEND_URI}/notification/delete/${notificationId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
       if (response.status === 200) {
-        const updatedNotifications = notifications.filter(notification => notification._id !== notificationId);
+        const updatedNotifications = notifications.filter(
+          (notification) => notification._id !== notificationId
+        );
         setNotifications(updatedNotifications);
         setActiveMenu(null);
       } else {
@@ -132,14 +138,17 @@ const Notifications = () => {
               alt="Notification Icon"
               className="w-6 h-6"
             />
-            <div className="flex-1 ml-3 cursor-pointer"
+            <div
+              className="flex-1 ml-3 cursor-pointer"
               onClick={() => handleNotificationClick(notification._id)}
             >
               <p className="font-medium mr-2">
                 {notification.isRead ? (
                   notification.content
                 ) : (
-                  <strong>{notification.content}</strong>
+                  <strong>
+                    {notification.content} {notification._id}
+                  </strong>
                 )}
               </p>
               <p className="text-xs text-gray-400">
@@ -148,10 +157,13 @@ const Notifications = () => {
             </div>
 
             {/* 3 dots menu */}
-            <div className="relative menu-container" ref={menuRef}>
+            <div
+              className="relative menu-container"
+              ref={(el) => (dropdownRefs.current[notification._id] = el)}
+            >
               <button
                 className="text-gray-500 hover:text-gray-700"
-                onClick={(e) => toggleMenu(notification._id, e)}
+                onClick={() => toggleMenu(notification._id)}
               >
                 <span className="material-icons">
                   <i className="fa-solid fa-ellipsis hidden sm:inline"></i>
@@ -170,7 +182,6 @@ const Notifications = () => {
                       <i className="fa-solid fa-envelope-circle-check mr-2"></i>
                       Đánh dấu đã đọc
                     </li>
-
                     <li
                       onClick={() => handleDelete(notification._id)}
                       className="cursor-pointer hover:bg-red-100 text-red-500 px-4 py-2 transition-all duration-200 rounded-md"

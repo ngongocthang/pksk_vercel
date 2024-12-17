@@ -25,6 +25,10 @@ const Navbar = () => {
     requestNotificationUpdate();
   };
 
+  const handleDropdownItemClick = () => {
+    setShowDropdown(false); // Đóng dropdown khi chọn mục
+  };
+
   return (
     <div className="flex items-center justify-between text-sm py-4 mb-5 border-b border-gray-400 bg-white sticky top-0 z-50">
       <img
@@ -36,6 +40,7 @@ const Navbar = () => {
       <ul className="hidden md:flex items-center gap-5 font-medium">
         <NavLink to="/" className="py-1 text-base" activeClassName="underline">
           Trang chủ
+          <hr className='border-none outline-none h-0.5 bg-[#00759c] w-3/5 m-auto hidden' />
         </NavLink>
         <NavLink
           to="/doctors"
@@ -43,6 +48,7 @@ const Navbar = () => {
           activeClassName="underline"
         >
           Tất cả bác sĩ
+          <hr className='border-none outline-none h-0.5 bg-[#00759c] w-3/5 m-auto hidden' />
         </NavLink>
         <NavLink
           to="/abouts"
@@ -50,6 +56,7 @@ const Navbar = () => {
           activeClassName="underline"
         >
           Về chúng tôi
+          <hr className='border-none outline-none h-0.5 bg-[#00759c] w-3/5 m-auto hidden' />
         </NavLink>
         <NavLink
           to="/contact"
@@ -57,6 +64,7 @@ const Navbar = () => {
           activeClassName="underline"
         >
           Liên hệ
+          <hr className='border-none outline-none h-0.5 bg-[#00759c] w-3/5 m-auto hidden' />
         </NavLink>
         <NavLink
           to="/all-schedule"
@@ -64,6 +72,7 @@ const Navbar = () => {
           activeClassName="underline"
         >
           Lịch làm việc
+          <hr className='border-none outline-none h-0.5 bg-[#00759c] w-3/5 m-auto hidden' />
         </NavLink>
       </ul>
       <div className="flex items-center gap-4 relative">
@@ -88,28 +97,40 @@ const Navbar = () => {
               <div className="absolute top-0 -left-6 pt-14 text-base font-medium text-gray-600 z-20">
                 <div className="min-w-52 bg-stone-100 rounded flex flex-col gap-4 p-4">
                   <p
-                    onClick={() => navigate("my-profile")}
+                    onClick={() => {
+                      navigate("my-profile");
+                      handleDropdownItemClick();
+                    }}
                     className="hover:text-black cursor-pointer"
                   >
                     <i className="fa-regular fa-user mr-3"></i>
                     Hồ sơ của tôi
                   </p>
                   <p
-                    onClick={() => navigate("my-appointments")}
+                    onClick={() => {
+                      navigate("my-appointments");
+                      handleDropdownItemClick();
+                    }}
                     className="hover:text-black cursor-pointer"
                   >
                     <i className="fa-regular fa-calendar-check mr-3"></i>
                     Lịch hẹn của tôi
                   </p>
                   <p
-                    onClick={() => navigate("medical-history")}
+                    onClick={() => {
+                      navigate("medical-history");
+                      handleDropdownItemClick();
+                    }}
                     className="hover:text-black cursor-pointer"
                   >
                     <i className="fa-solid fa-laptop-medical mr-2"></i>
                     Lịch sử khám bệnh
                   </p>
                   <p
-                    onClick={handleLogout}
+                    onClick={() => {
+                      handleLogout();
+                      handleDropdownItemClick();
+                    }}
                     className="hover:text-black cursor-pointer"
                   >
                     <i className="fa-solid fa-arrow-right-from-bracket mr-3"></i>
