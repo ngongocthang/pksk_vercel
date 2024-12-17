@@ -26,6 +26,11 @@ const createPatient = async (req, res) => {
       return res.status(400).json({ message: error.details[0].message });
     }
 
+    const checkEmail = await User.findOne({ email: req.body.email });
+    if (checkEmail) {
+      return res.status(400).json({ message: "Email đã tồn tại!" });
+    }
+
     // Băm mật khẩu
     const hashedPassword = await bcrypt.hash(req.body.password, 10); // 10 là số vòng băm
 
@@ -124,6 +129,11 @@ const updatePatient = async (req, res) => {
       return res.status(400).json({ message: error.details[0].message });
     }
 
+    const checkEmail = await User.findOne({ email: req.body.email });
+    if (checkEmail) {
+      return res.status(400).json({ message: "Email đã tồn tại!" });
+    }
+
     // Cập nhật thông tin bệnh nhân
     const patientUpdate = await Patient.findByIdAndUpdate(id, req.body, { new: true });
 
@@ -193,7 +203,15 @@ const profilePatient = async (req, res) => {
 
     return res.status(200).json({
       message: "User information retrieved successfully",
-      user: userInfo, // Trả về thông tin người dùng
+      user: {
+        id: userInfo._id,
+        name: userInfo.name,
+        email: userInfo.email,
+        phone: userInfo.phone,
+        password: userInfo.password,
+        createdAt: userInfo.createdAt,
+        updatedAt: userInfo.updatedAt
+      }, // Trả về thông tin người dùng
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });

@@ -538,6 +538,11 @@ const updateProfileDoctor = async (req, res) => {
       return res.status(400).json({ message: error.details[0].message });
     }
 
+    const checkEmail = await User.findOne({ email: req.body.email });
+    if (checkEmail) {
+      return res.status(400).json({ message: "Email đã tồn tại!" });
+    }
+
     const { id } = req.params;
 
     const doctor = await Doctor.findOne({ user_id: id }).populate(
