@@ -101,25 +101,25 @@ const deleteSchedule = async (req, res) => {
         .json({ success: false, message: "Không thể xoá lịch làm việc khi có lịch hẹn!" });
     }
 
-    const now = new Date();
-    const workDate = new Date(schedule.work_date);
+    // const now = new Date();
+    // const workDate = new Date(schedule.work_date);
     // Tính toán thời gian còn lại đến lịch làm việc
-    const timeDifference = workDate - now;
+    // const timeDifference = workDate - now;
 
     // Kiểm tra nếu thời gian còn lại lớn hơn 24 giờ
-    if (timeDifference > 24 * 60 * 60 * 1000) {
+    // if (timeDifference > 24 * 60 * 60 * 1000) {
       // Xóa lịch làm việc
       await Schedule.findByIdAndDelete(id);
       return res
         .status(200)
         .json({ success: true, message: "Delete schedule success!" });
-    }
+    // }
 
-    return res.status(400).json({
-      success: false,
-      message:
-        "Bạn không thể xoá lịch làm việc trong vòng 24h trước khi diễn ra!",
-    });
+    // return res.status(400).json({
+    //   success: false,
+    //   message:
+    //     "Bạn không thể xoá lịch làm việc trong vòng 24h trước khi diễn ra!",
+    // });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }

@@ -218,7 +218,7 @@ const DoctorWorkSchedule = () => {
         <div className="flex items-center space-x-2 gap-4">
           <button
             onClick={() => setShowPastSchedules(!showPastSchedules)}
-            className="text-blue-500 font-medium text-zinc-400 text-sm"
+            className=" font-medium text-zinc-400 text-sm"
           >
             {showPastSchedules ? "Ẩn lịch đã qua" : "Hiện lịch đã qua"}
           </button>
@@ -246,8 +246,6 @@ const DoctorWorkSchedule = () => {
           <p className="font-bold text-center text-[16px]">Ca làm việc</p>
           <p className="font-bold text-center text-[16px]">Hành động</p>
         </div>
-
-
 
         {loading ? ( // Hiển thị spinner khi đang tải
           <div className="flex justify-center items-center py-6">
@@ -294,10 +292,9 @@ const DoctorWorkSchedule = () => {
               </div>
               <div className="flex gap-2 justify-center">
                 <button
-                  onClick={() =>
-                    navigate(`/edit-work-schedule/${schedule._id}`)
-                  }
-                  className="bg-blue-500 text-white px-3 py-1 rounded shadow-md hover:bg-blue-600"
+                  onClick={() => navigate(`/edit-work-schedule/${schedule._id}`)}
+                  className={`bg-blue-500 text-white px-3 py-1 rounded shadow-md hover:bg-blue-600 ${isPastSchedule(schedule.work_date) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  disabled={isPastSchedule(schedule.work_date)}
                 >
                   <i className="fa-solid fa-user-pen"></i>
                 </button>

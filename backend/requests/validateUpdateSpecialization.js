@@ -1,6 +1,7 @@
 const Joi = require("joi");
 
-// Sửa schema để chỉ kiểm tra trường "image" nếu có file
+const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
+
 const specializationSchema = Joi.object({
   name: Joi.string().min(1).required().messages({
     "string.base": "Tên chuyên khoa phải là một chuỗi.",
@@ -13,7 +14,14 @@ const specializationSchema = Joi.object({
     "string.empty": "Mô tả không được để trống.",
     "any.required": "Mô tả là bắt buộc.",
   }),
-  image: Joi.any().optional(), // Không kiểm tra file tại đây
+  image: Joi.any().optional(),
+  image: Joi.any().custom((value, helpers) => {
+    if (value && value.size > MAX_IMAGE_SIZE) {
+      return helpers.message('Kích thước tệp phải nhỏ hơn 10 MB.');
+    }
+
+    return value;
+  }).optional(), 
 });
 
 const validateUpdateSpecialization = (data) => {

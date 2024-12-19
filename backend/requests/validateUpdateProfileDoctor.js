@@ -1,5 +1,7 @@
 const Joi = require("joi");
 
+const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
+
 const updateDoctorSchema = Joi.object({
   name: Joi.string().min(1).max(50).required().messages({
     "string.base": "Tên bác sĩ phải là một chuỗi.",
@@ -20,8 +22,7 @@ const updateDoctorSchema = Joi.object({
     .messages({
       "string.base": "Số điện thoại phải là một chuỗi.",
       "string.empty": "Số điện thoại không được để trống.",
-      "string.pattern.base":
-        "Số điện thoại phải bắt đầu bằng 0 và có đúng 10 chữ số.",
+      "string.pattern.base":"Số điện thoại phải bắt đầu bằng 0 và có đúng 10 chữ số.",
       "any.required": "Số điện thoại là bắt buộc.",
     }),
   description: Joi.string().required().messages({
@@ -39,6 +40,11 @@ const updateDoctorSchema = Joi.object({
     ) {
       return helpers.message("Tệp tải lên phải là một ảnh (JPEG, PNG, GIF).");
     }
+
+    if (value.size > MAX_IMAGE_SIZE) {
+      return helpers.message("Kích thước tệp phải nhỏ hơn 10 MB.");
+    }
+
     return value;
   }),
 
@@ -48,7 +54,7 @@ const updateDoctorSchema = Joi.object({
     "string.min": "Mật khẩu phải có ít nhất {#limit} ký tự.",
   }),
   oldPassword: Joi.string().messages({
-    "string.base": "Mật khẩu phải là một chuỗi."
+    "string.base": "Mật khẩu phải là một chuỗi.",
   }),
   price: Joi.number().min(0).required().messages({
     "number.base": "Giá khám phải là một số.",

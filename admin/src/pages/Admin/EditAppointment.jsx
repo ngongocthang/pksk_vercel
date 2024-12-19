@@ -215,7 +215,7 @@ const AppointmentDetails = () => {
               >
                 {doctors.map((doctor) => (
                   <option key={doctor._id} value={doctor._id}>
-                    {doctor.user_id.name} ({doctor.specialization_id.name})
+                    {doctor.user_id ? doctor.user_id.name : "Bác sĩ"} ({doctor.specialization_id ? doctor.specialization_id.name : "Chuyên khoa"})
                   </option>
                 ))}
               </select>

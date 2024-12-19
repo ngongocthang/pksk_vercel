@@ -17,7 +17,6 @@ const MyProfile = () => {
     email: "",
     phone: "",
   });
-
   const [isEdit, setIsEdit] = useState(false);
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -31,7 +30,6 @@ const MyProfile = () => {
       toast.error("Bạn chưa đăng nhập. Vui lòng đăng nhập để tiếp tục.");
       return navigate("/account");
     }
-
     try {
       const response = await axios.get(`${VITE_BACKEND_URI}/profilePatient`, {
         headers: {
@@ -39,23 +37,20 @@ const MyProfile = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-
       setUserData({
         name: response.data.user.name,
         image: response.data.user.image || assets.profile_pic,
         email: response.data.user.email,
         phone: response.data.user.phone,
       });
-
       setOriginalData({
         name: response.data.user.name,
         email: response.data.user.email,
         phone: response.data.user.phone,
       });
-
       setUser({ ...response.data.user });
     } catch (error) {
-      toast.error("Có lỗi xảy ra: " + (error.response?.data?.message || error.message));
+      toast.error((error.response?.data?.message || error.message));
       if (error.response && error.response.status === 401) {
         toast.error("Token không hợp lệ, vui lòng đăng nhập lại.");
         navigate("/account");
@@ -67,7 +62,7 @@ const MyProfile = () => {
     if (!isEdit) {
       fetchUserProfile(); // Chỉ gọi khi không ở chế độ chỉnh sửa
     }
-  }, [isEdit, setUser, navigate]);
+  }, [isEdit]);
 
   const handleSave = async () => {
     setLoading(true);
@@ -86,14 +81,9 @@ const MyProfile = () => {
       name: userData.name,
       phone: userData.phone,
       email: userData.email,
+      ...(oldPassword && { oldPassword }),
+      ...(newPassword && { newPassword }),
     };
-
-    if (oldPassword) {
-      bodyData.oldPassword = oldPassword;
-    }
-    if (newPassword) {
-      bodyData.newPassword = newPassword;
-    }
 
     try {
       const response = await axios.post(
@@ -106,17 +96,13 @@ const MyProfile = () => {
           },
         }
       );
-
       toast.success(response.data.message);
-      
-      // Gọi lại fetchUserProfile sau khi cập nhật thành công
       await fetchUserProfile();
-
       setIsEdit(false);
       setOldPassword("");
       setNewPassword("");
     } catch (error) {
-      toast.error("Có lỗi xảy ra: " + (error.response?.data?.message || error.message));
+      toast.error((error.response?.data?.message || error.message));
     } finally {
       setLoading(false);
     }
@@ -140,7 +126,6 @@ const MyProfile = () => {
         <div className="flex items-center justify-center">
           <img className="w-36 rounded" src={userData.image} alt="Profile" />
         </div>
-
         {isEdit ? (
           <div className="flex justify-center mt-4">
             <input
@@ -155,9 +140,7 @@ const MyProfile = () => {
             {userData.name}
           </p>
         )}
-
         <hr className="bg-zinc-400 h-[1px] border-none" />
-
         <div>
           <p className="text-neutral-500 underline mt-3 text-center">THÔNG TIN CHI TIẾT:</p>
           <div className="grid grid-cols-[1fr_3fr] gap-y-2.5 mt-3 text-neutral-700">
@@ -172,7 +155,6 @@ const MyProfile = () => {
             ) : (
               <p className="text-gray-600">{userData.email}</p>
             )}
-
             <p className="font-medium mr-4 text-gray-800 flex items-center">Số điện thoại:</p>
             {isEdit ? (
               <input
@@ -184,9 +166,39 @@ const MyProfile = () => {
             ) : (
               <p className="text-gray-600">{userData.phone}</p>
             )}
+            {isEdit && (
+              <>
+                <p className="font-medium text-gray-800 flex items-center">Mật khẩu mới:</p>
+                <div className="relative flex items-center">
+                  <input
+                    className="bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-[340px]"
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Nhập mật khẩu mới"
+                  />
+                </div>
+                {newPassword && (
+                  <>
+                    <p className="font-medium text-gray-800 flex items-center">Mật khẩu cũ:</p>
+                    <div className="relative flex items-center">
+                      <input
+                        className="bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-[340px]"
+                        type="password"
+                        value={oldPassword}
+                        onChange={(e) => setOldPassword(e.target.value)}
+                        placeholder="Nhập mật khẩu cũ"
+                      />
+                    </div>
+                  </>
+                )}
+                <small className="text-neutral-500 italic">
+                  Nhập mật khẩu cũ chỉ khi muốn đổi mật khẩu.
+                </small>
+              </>
+            )}
           </div>
         </div>
-
         <div className="flex justify-center gap-4 mt-4">
           {isEdit ? (
             <>
@@ -207,7 +219,6 @@ const MyProfile = () => {
             </button>
           )}
         </div>
-
         <ToastContainer />
       </div>
     </div>

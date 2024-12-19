@@ -406,12 +406,17 @@ const googleLogin = async (req, res) => {
 
     // Kiểm tra xem người dùng đã tồn tại chưa
     let user = await User.findOne({ email });
+    
+    // Băm mật khẩu
+    const hashedPassword = await bcrypt.hash("123456", 10);
+
     if (!user) {
       // Nếu không tồn tại, tạo người dùng mới
       user = await User.create({
         email,
         name: payload.name,
-        password: "123456",
+        password: hashedPassword,
+        phone: "",
       });
       const role = await Role.findOne({ name: "patient" });
 

@@ -147,7 +147,7 @@ const Notifications = () => {
                   notification.content
                 ) : (
                   <strong>
-                    {notification.content} {notification._id}
+                    {notification.content}
                   </strong>
                 )}
               </p>

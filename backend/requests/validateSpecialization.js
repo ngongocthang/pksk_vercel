@@ -1,5 +1,7 @@
 const Joi = require("joi");
 
+const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
+
 const specializationSchema = Joi.object({
   name: Joi.string().min(1).required().messages({
     "string.base": "Tên chuyên khoa phải là một chuỗi.",
@@ -16,11 +18,14 @@ const specializationSchema = Joi.object({
   .custom((value, helpers) => {
     const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', "image/svg+xml",];
 
-    // Check if `mimetype` exists and is valid
     if (!value || !value.mimetype || !validImageTypes.includes(value.mimetype)) {
-      // Use helpers.message to ensure the custom message is always shown
       return helpers.message('Tệp tải lên phải là một ảnh (JPEG, PNG, GIF, SVG).');
     }
+    
+    if (value && value.size > MAX_IMAGE_SIZE) {
+      return helpers.message('Kích thước tệp phải nhỏ hơn 10 MB.');
+    }
+
     return value;
   }),
 });

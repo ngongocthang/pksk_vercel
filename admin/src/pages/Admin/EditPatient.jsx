@@ -56,12 +56,12 @@ const EditPatient = () => {
       };
 
       const response = await axios.put(
-        `${backendUrl}/patient/update/${id}`, // Thêm ID vào URL
-        data, // Gửi dữ liệu dưới dạng JSON
+        `${backendUrl}/patient/update/${id}`, 
+        data, 
         {
           headers: {
             Authorization: `Bearer ${aToken}`,
-            "Content-Type": "application/json", // Đảm bảo là application/json
+            "Content-Type": "application/json", 
           },
         }
       );

@@ -1,5 +1,7 @@
 const Joi = require("joi");
 
+const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
+
 const doctorSchema = Joi.object({
   name: Joi.string().min(1).max(50).required().messages({
     "string.base": "Tên bác sĩ phải là một chuỗi.",
@@ -14,26 +16,36 @@ const doctorSchema = Joi.object({
     "string.email": "Email không hợp lệ.",
     "any.required": "Email là bắt buộc.",
   }),
-  phone: Joi.string().pattern(/^0\d{9}$/).required().messages({
-    "string.base": "Số điện thoại phải là một chuỗi.",
-    "string.empty": "Số điện thoại không được để trống.",
-    "string.pattern.base": "Số điện thoại phải bắt đầu bằng 0 và có đúng 10 chữ số.",
-    "any.required": "Số điện thoại là bắt buộc.",
-  }),
+  phone: Joi.string()
+    .pattern(/^0\d{9}$/)
+    .required()
+    .messages({
+      "string.base": "Số điện thoại phải là một chuỗi.",
+      "string.empty": "Số điện thoại không được để trống.",
+      "string.pattern.base":
+        "Số điện thoại phải bắt đầu bằng 0 và có đúng 10 chữ số.",
+      "any.required": "Số điện thoại là bắt buộc.",
+    }),
   description: Joi.string().required().messages({
     "string.base": "Mô tả phải là một chuỗi.",
     "string.empty": "Mô tả không được để trống.",
     "any.required": "Mô tả là bắt buộc.",
   }),
-  image: Joi.any()
-  .custom((value, helpers) => {
-    const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
+  image: Joi.any().custom((value, helpers) => {
+    const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
 
-    // Check if `mimetype` exists and is valid
-    if (!value || !value.mimetype || !validImageTypes.includes(value.mimetype)) {
-      // Use helpers.message to ensure the custom message is always shown
-      return helpers.message('Tệp tải lên phải là một ảnh (JPEG, PNG, GIF).');
+    if (
+      !value ||
+      !value.mimetype ||
+      !validImageTypes.includes(value.mimetype)
+    ) {
+      return helpers.message("Tệp tải lên phải là một ảnh (JPEG, PNG, GIF).");
     }
+
+    if (value.size > MAX_IMAGE_SIZE) {
+      return helpers.message("Kích thước tệp phải nhỏ hơn 10 MB.");
+    }
+
     return value;
   }),
   password: Joi.string().min(6).required().messages({

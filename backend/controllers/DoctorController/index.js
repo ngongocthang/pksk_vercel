@@ -538,11 +538,6 @@ const updateProfileDoctor = async (req, res) => {
       return res.status(400).json({ message: error.details[0].message });
     }
 
-    const checkEmail = await User.findOne({ email: req.body.email });
-    if (checkEmail) {
-      return res.status(400).json({ message: "Email đã tồn tại!" });
-    }
-
     const { id } = req.params;
 
     const doctor = await Doctor.findOne({ user_id: id }).populate(
@@ -579,8 +574,15 @@ const updateProfileDoctor = async (req, res) => {
       hashedPassword = await bcrypt.hash(req.body.newPassword, 10);
     }
 
+    // Kiểm tra email chỉ khi nó khác với email hiện tại
+    if (req.body.email && req.body.email !== user.email) {
+     const checkEmail = await User.findOne({ email: req.body.email });
+     if (checkEmail) {
+       return res.status(400).json({ message: "Email đã tồn tại!" });
+     }
+   }
+
     let imageUrl = user.image;
-    // console.log("imageUrl", imageUrl);
 
     // Cập nhật ảnh nếu có file tải lên
     if (req.file) {

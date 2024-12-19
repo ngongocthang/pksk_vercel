@@ -57,10 +57,10 @@ const createPatient = async (req, res) => {
       });
 
       // Trả về thông tin người dùng
-      res.status(200).json({success: true, data: patient});
+      res.status(200).json({ success: true, data: patient });
     }
   } catch (error) {
-    return res.status(500).json({success: false, message: error.message });
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -69,37 +69,43 @@ const findAllPatient = async (req, res) => {
     const patient = await Patient.find({}).populate("user_id");
 
     if (patient) {
-      return res.status(200).json({success: true, data: patient});
+      return res.status(200).json({ success: true, data: patient });
     } else {
       return res.status(400).json({ message: "Patient not found." });
     }
   } catch (error) {
-    return res.status(500).json({success: true, message: error.message });
+    return res.status(500).json({ success: true, message: error.message });
   }
 };
 
 const countPatient = async (req, res) => {
   try {
     // Tìm tất cả các lịch hẹn có trạng thái 'completed'
-    const completedAppointments = await Appointment.find({ status: 'completed' })
-      .populate('patient_id'); // Lấy thông tin bệnh nhân từ patient_id
+    const completedAppointments = await Appointment.find({
+      status: "completed",
+    }).populate("patient_id"); // Lấy thông tin bệnh nhân từ patient_id
 
     // Lấy danh sách bệnh nhân từ các lịch hẹn đã hoàn thành
-    const patients = completedAppointments.map(appointment => appointment.patient_id);
+    const patients = completedAppointments.map(
+      (appointment) => appointment.patient_id
+    );
 
     // Loại bỏ các bệnh nhân trùng lặp
-    const uniquePatients = [...new Map(patients.map(patient => [patient._id, patient])).values()];
+    const uniquePatients = [
+      ...new Map(patients.map((patient) => [patient._id, patient])).values(),
+    ];
 
     if (uniquePatients.length > 0) {
       return res.status(200).json({ success: true, data: uniquePatients });
     } else {
-      return res.status(400).json({ message: "No patients with completed appointments found." });
+      return res
+        .status(400)
+        .json({ message: "No patients with completed appointments found." });
     }
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
-
 
 const findPatient = async (req, res) => {
   try {
@@ -129,13 +135,22 @@ const updatePatient = async (req, res) => {
       return res.status(400).json({ message: error.details[0].message });
     }
 
-    const checkEmail = await User.findOne({ email: req.body.email });
-    if (checkEmail) {
-      return res.status(400).json({ message: "Email đã tồn tại!" });
+    const user = await User.findOne({ _id: patient.user_id });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (req.body.email && req.body.email !== user.email) {
+      const checkEmail = await User.findOne({ email: req.body.email });
+      if (checkEmail) {
+        return res.status(400).json({ message: "Email đã tồn tại!" });
+      }
     }
 
     // Cập nhật thông tin bệnh nhân
-    const patientUpdate = await Patient.findByIdAndUpdate(id, req.body, { new: true });
+    const patientUpdate = await Patient.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
 
     // Chỉ băm mật khẩu nếu nó được cung cấp
     if (req.body.password) {
@@ -161,13 +176,12 @@ const updatePatient = async (req, res) => {
       );
     }
 
-    return res.status(200).json({success: true, data: patientUpdate});
+    return res.status(200).json({ success: true, data: patientUpdate });
   } catch (error) {
     console.error(error); // Ghi lại lỗi
-    return res.status(500).json({success: false, message: error.message });
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
-
 
 const deletePatient = async (req, res) => {
   try {
@@ -184,17 +198,18 @@ const deletePatient = async (req, res) => {
     await User.deleteOne({ _id: patient.user_id });
     await UserRole.deleteOne({ user_id: patient.user_id });
     await Appointment.deleteMany({ patient_id: patient._id });
-    return res.status(200).json({success: true, message: "Delete patient success!" });
+    return res
+      .status(200)
+      .json({ success: true, message: "Delete patient success!" });
   } catch (error) {
-    res.status(500).json({success: false, message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
 const profilePatient = async (req, res) => {
   try {
     const user_id = req.user.id; // Lấy ID người dùng từ token
-    const userInfo  = await User.findById(user_id);
-
+    const userInfo = await User.findById(user_id);
 
     // Kiểm tra xem userInfo có tồn tại không
     if (!userInfo) {
@@ -210,7 +225,7 @@ const profilePatient = async (req, res) => {
         phone: userInfo.phone,
         password: userInfo.password,
         createdAt: userInfo.createdAt,
-        updatedAt: userInfo.updatedAt
+        updatedAt: userInfo.updatedAt,
       }, // Trả về thông tin người dùng
     });
   } catch (error) {
@@ -244,11 +259,21 @@ const updateProfilePatient = async (req, res) => {
     if (newPassword) {
       const checkNewPassord = await bcrypt.compare(newPassword, user.password);
       if (checkNewPassord) {
-        return res.status(400).json({ message: "Mật khẩu mới không được trùng với mật khẩu cũ!" });
+        return res
+          .status(400)
+          .json({ message: "Mật khẩu mới không được trùng với mật khẩu cũ!" });
       }
-      const isOldPasswordCorrect = await bcrypt.compare(oldPassword, user.password);
+
+      console.log(oldPassword);
+
+      const isOldPasswordCorrect = await bcrypt.compare(
+        oldPassword,
+        user.password
+      );
       if (!isOldPasswordCorrect) {
-        return res.status(400).json({ message: "Mật khẩu cũ không chính xác!" });
+        return res
+          .status(400)
+          .json({ message: "Mật khẩu cũ không chính xác!" });
       }
       user.password = await bcrypt.hash(newPassword, 10);
     }
@@ -260,54 +285,71 @@ const updateProfilePatient = async (req, res) => {
 
     await user.save();
 
-    return res.status(200).json({ success: true, message: "Thông tin đã được cập nhật thành công!", user });
+    return res
+      .status(200)
+      .json({
+        success: true,
+        message: "Thông tin đã được cập nhật thành công!",
+        user,
+      });
   } catch (error) {
-    return res.status(500).json({ success: false, message: "Đã xảy ra lỗi khi cập nhật: " + error.message });
+    return res
+      .status(500)
+      .json({
+        success: false,
+        message: "Đã xảy ra lỗi khi cập nhật: " + error.message,
+      });
   }
 };
-
 
 const getPatientById = async (req, res) => {
   try {
     const { id } = req.params;
     const patient = await Patient.findById(id).populate("user_id");
     if (patient) {
-      return res.status(200).json({success: true, patient});
+      return res.status(200).json({ success: true, patient });
     } else {
       return res.status(400).json({ message: "Patient not found" });
-    }
-  } catch (error) {
-    return res.status(500).json({success: false, message: error.message });
-  }
-};
-
-const countPatientDashboardDoctor = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const doctor = await Doctor.findOne({user_id: id});
-    if (!doctor) {
-      return res.status(404).json({ message: "Doctor not found" });
-    }
-    // Tìm tất cả các lịch hẹn có trạng thái 'completed'
-    const completedAppointments = await Appointment.find({ doctor_id: doctor._id, status: 'completed' })
-      .populate('patient_id'); // Lấy thông tin bệnh nhân từ patient_id
-
-    // Lấy danh sách bệnh nhân từ các lịch hẹn đã hoàn thành
-    const patients = completedAppointments.map(appointment => appointment.patient_id);
-
-    // Loại bỏ các bệnh nhân trùng lặp
-    const uniquePatients = [...new Map(patients.map(patient => [patient._id, patient])).values()];
-
-    if (uniquePatients.length > 0) {
-      return res.status(200).json({ success: true, data: uniquePatients });
-    } else {
-      return res.status(400).json({ message: "No patients with completed appointments found." });
     }
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
 
+const countPatientDashboardDoctor = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const doctor = await Doctor.findOne({ user_id: id });
+    if (!doctor) {
+      return res.status(404).json({ message: "Doctor not found" });
+    }
+    // Tìm tất cả các lịch hẹn có trạng thái 'completed'
+    const completedAppointments = await Appointment.find({
+      doctor_id: doctor._id,
+      status: "completed",
+    }).populate("patient_id"); // Lấy thông tin bệnh nhân từ patient_id
+
+    // Lấy danh sách bệnh nhân từ các lịch hẹn đã hoàn thành
+    const patients = completedAppointments.map(
+      (appointment) => appointment.patient_id
+    );
+
+    // Loại bỏ các bệnh nhân trùng lặp
+    const uniquePatients = [
+      ...new Map(patients.map((patient) => [patient._id, patient])).values(),
+    ];
+
+    if (uniquePatients.length > 0) {
+      return res.status(200).json({ success: true, data: uniquePatients });
+    } else {
+      return res
+        .status(400)
+        .json({ message: "No patients with completed appointments found." });
+    }
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
 
 module.exports = {
   createPatient,
@@ -319,5 +361,5 @@ module.exports = {
   updateProfilePatient,
   getPatientById,
   findAllPatient,
-  countPatientDashboardDoctor
+  countPatientDashboardDoctor,
 };
