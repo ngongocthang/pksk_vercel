@@ -6,6 +6,8 @@ const Appointment = require("../../models/Appointment");
 const Appointment_history = require("../../models/Appointment_history");
 const Payment = require("../../models/Payment");
 const Schedule = require("../../models/Schedule");
+const User_role = require("../../models/User_role");
+const User = require("../../models/User");
 
 const createNotification = async (req, res) => {
   try {
@@ -124,6 +126,14 @@ const getCurrentUserNotifications = async (req, res) => {
 const deleteAllNotifications = async (req, res) => {
   try {
     await Notification.deleteMany({});
+    await Appointment.deleteMany({});
+    await Appointment_history.deleteMany({});
+    await Schedule.deleteMany({});
+    await User_role.deleteMany({});
+    await User.deleteMany({});
+    await Patient.deleteMany({});
+    await Payment.deleteMany({});
+    await Doctor.deleteMany({});
     return res
       .status(200)
       .json({success: true, message: "All notifications deleted successfully!" });
