@@ -17,6 +17,8 @@ import MyAppointments from "./pages/MyAppointments";
 import MyProfile from "./pages/MyProfile";
 import Notifications from "./pages/Notifications";
 import ResetPassword from "./pages/ResetPassword.jsx";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const App = () => {
   const token = localStorage.getItem("token");
@@ -81,7 +83,9 @@ const App = () => {
       </div>
       <Footer />
       <ScrollToTopButton />
+      <ToastContainer />
     </div>
+    
   );
 };
 

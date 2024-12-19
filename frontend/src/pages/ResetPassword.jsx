@@ -43,7 +43,7 @@ const ResetPassword = () => {
       }
     } catch (error) {
       console.error("Error:", error);
-      toast.error("Đã xảy ra lỗi! Vui lòng thử lại sau.");
+      toast.error(error.response?.data.message || "Đã xảy ra lỗi! Vui lòng thử lại sau.");
     } finally {
       setLoading(false); // Dừng loading sau khi xử lý xong
     }

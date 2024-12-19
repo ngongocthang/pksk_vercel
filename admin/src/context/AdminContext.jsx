@@ -81,6 +81,7 @@ const AdminContextProvider = ({ children }) => {
       console.error("Error fetching appointments:", error);
     }
   };
+  
   const getAllAppointments = async () => {
     try {
       const { data } = await api.get("/appointment/find-all");

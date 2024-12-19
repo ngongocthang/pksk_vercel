@@ -6,6 +6,7 @@ const RoleUser = require("../../models/User_role");
 const Role = require("../../models/Role");
 const Schedule = require("../../models/Schedule");
 const validatePatient = require("../../requests/validatePatient");
+const validateResetPassword = require("../../requests/validateResetPassword");
 const Patient = require("../../models/Patient");
 const Doctor = require("../../models/Doctor");
 const Appointment = require("../../models/Appointment");
@@ -501,6 +502,12 @@ const resetPassword = async (req, res) => {
   const { password } = req.body;
 
   try {
+
+    const { error } = validateResetPassword(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
+    }
+
     const user = await User.findOne({
       resetPasswordToken: token,
       resetPasswordExpires: { $gt: Date.now() },

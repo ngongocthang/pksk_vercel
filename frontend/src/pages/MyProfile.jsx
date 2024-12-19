@@ -172,7 +172,7 @@ const MyProfile = () => {
                 <div className="relative flex items-center">
                   <input
                     className="bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-[340px]"
-                    type="password"
+                    type="text"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="Nhập mật khẩu mới"
@@ -184,7 +184,7 @@ const MyProfile = () => {
                     <div className="relative flex items-center">
                       <input
                         className="bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-[340px]"
-                        type="password"
+                        type="text"
                         value={oldPassword}
                         onChange={(e) => setOldPassword(e.target.value)}
                         placeholder="Nhập mật khẩu cũ"

@@ -1,5 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { DoctorContext } from "../../context/DoctorContext";
 
 const DoctorWorkSchedule = () => {
@@ -50,17 +52,53 @@ const DoctorWorkSchedule = () => {
     return new Date(date).toLocaleDateString("vi-VN", options);
   };
 
+  useEffect(() => {
+    return () => {
+      toast.dismiss(); // Đóng thông báo khi component bị hủy (trang đóng)
+    };
+  }, []);
+
   const handleDeleteClick = (schedule) => {
-    setSelectedSchedule(schedule);
-    setShowModal(true);
+    const workDate = formatDate(schedule.work_date); // Lấy ngày làm việc đã định dạng
+    toast.dismiss();
+    toast(
+      ({ closeToast }) => (
+        <div>
+          <p className="mb-2 font-bold text-lg text-center">
+            Bạn có chắc chắn muốn xóa lịch <span className="text-red-600">{workDate}</span> này không?
+          </p>
+          <div className="flex justify-end gap-4">
+            <button
+              onClick={async () => {
+                await handleConfirmDelete(schedule);
+                closeToast();
+              }}
+              className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-700"
+            >
+              Xóa
+            </button>
+            <button
+              onClick={closeToast}
+              className="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400"
+            >
+              Hủy
+            </button>
+          </div>
+        </div>
+      ),
+      {
+        position: "top-center",
+        autoClose: true,
+        closeOnClick: false,
+        draggable: false,
+      }
+    );
   };
 
-  const handleConfirmDelete = async () => {
-    if (selectedSchedule) {
+  const handleConfirmDelete = async (schedule) => {
+    if (schedule) {
       try {
-        await deleteSchedule(selectedSchedule._id); // Xóa lịch
-        setShowModal(false);
-        setSelectedSchedule(null);
+        await deleteSchedule(schedule._id); // Xóa lịch
         await refreshSchedules(); // Gọi lại để cập nhật lịch làm việc
       } catch (error) {
         console.error("Lỗi khi xóa lịch:", error);
@@ -316,30 +354,6 @@ const DoctorWorkSchedule = () => {
 
       {/* Phân trang */}
       {totalPages > 1 && renderPagination()}
-
-      {/* Modal xác nhận xóa */}
-      {showModal && selectedSchedule && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg p-4 w-96 mx-auto">
-            <h2 className="text-lg font-bold">Xác nhận xóa</h2>
-            <p>Bạn có chắc chắn muốn xóa lịch này không?</p>
-            <div className="flex justify-end mt-4">
-              <button
-                onClick={() => setShowModal(false)}
-                className="mr-2 px-4 py-2 bg-gray-300 rounded"
-              >
-                Hủy
-              </button>
-              <button
-                onClick={handleConfirmDelete}
-                className="px-4 py-2 bg-red-500 text-white rounded"
-              >
-                Xóa
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

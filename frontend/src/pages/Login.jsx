@@ -3,7 +3,7 @@ import axios from "axios";
 import { Eye, EyeOff } from "lucide-react"; // Import Eye and EyeOff icons
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AppContext } from "../context/AppContext";
 
@@ -100,33 +100,33 @@ const Login = () => {
   };
 
   //forgot password
-  const handleForgotPassword = async () => {
-    const email = prompt("Vui lòng nhập email của bạn:");
+  // const handleForgotPassword = async () => {
+  //   const email = prompt("Vui lòng nhập email của bạn:");
 
-    if (!email) return;
+  //   if (!email) return;
 
-    try {
-      const response = await axios.post("http://localhost:5000/forgot-password", {
-        email,
-      }, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+  //   try {
+  //     const response = await axios.post("http://localhost:5000/forgot-password", {
+  //       email,
+  //     }, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
 
-      const data = response.data;
+  //     const data = response.data;
 
-      // Kiểm tra mã trạng thái HTTP
-      if (response.status === 200) {
-        toast.success("Email khôi phục mật khẩu đã được gửi!");
-      } else {
-        toast.error(data.message);
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      toast.error("Đã xảy ra lỗi! Vui lòng thử lại sau.");
-    }
-  };
+  //     // Kiểm tra mã trạng thái HTTP
+  //     if (response.status === 200) {
+  //       toast.success("Email khôi phục mật khẩu đã được gửi!");
+  //     } else {
+  //       toast.error(data.message);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //     toast.error("Đã xảy ra lỗi! Vui lòng thử lại sau.");
+  //   }
+  // };
 
   return (
     <>
@@ -245,14 +245,14 @@ const Login = () => {
 
           <button
             type="button"
-            onClick={handleForgotPassword}
+            onClick={() => navigate("/forgot-password")}
             className="text-[#00759c] underline cursor-pointer w-full flex justify-center"
           >
             Quên mật khẩu?
           </button>
         </div>
       </form>
-      <ToastContainer />
+      {/* <ToastContainer /> */}
     </>
   );
 };

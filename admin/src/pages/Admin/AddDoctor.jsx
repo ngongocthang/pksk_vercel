@@ -198,7 +198,7 @@ const AddDoctor = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 value={password}
                 className="border rounded px-3 py-2"
-                type="password"
+                type="text"
                 placeholder="Mật khẩu"
                 required
               />
@@ -209,7 +209,7 @@ const AddDoctor = () => {
                 onChange={(e) => setPrice(formatPrice(e.target.value))}
                 value={price}
                 className="border rounded px-3 py-2"
-                type="text" // Đổi thành text để có thể nhập dấu chấm
+                type="text"
                 placeholder="Giá khám"
                 required
               />
