@@ -1,6 +1,6 @@
 import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
-import { Eye, EyeOff } from "lucide-react"; // Import Eye and EyeOff icons
+import { Eye, EyeOff } from "lucide-react";
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -252,7 +252,6 @@ const Login = () => {
           </button>
         </div>
       </form>
-      {/* <ToastContainer /> */}
     </>
   );
 };

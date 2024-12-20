@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AppContext } from "../context/AppContext";
 
@@ -188,12 +188,11 @@ const MyAppointments = () => {
 
   return (
     <div className="mb-10">
-      <ToastContainer />
       <p className="pb-3 mt-12 font-medium text-zinc-700 border-b text-xl flex justify-between items-center">
         Lịch hẹn của tôi:
         <button
           onClick={() => setShowCanceled((prev) => !prev)}
-          className="text-blue-500 font-medium text-zinc-400 text-sm"
+          className="cursor-pointer font-medium text-zinc-400 text-sm"
         >
           {showCanceled ? "Ẩn lịch hẹn đã hủy" : "Hiện lịch hẹn đã hủy"}
         </button>

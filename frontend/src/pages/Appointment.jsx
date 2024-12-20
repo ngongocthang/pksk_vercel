@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { assets } from "../assets/assets";
 import RelatedDoctors from "../components/RelatedDoctors";
@@ -302,7 +302,6 @@ const Appointment = () => {
 
   return (
     <div>
-      <ToastContainer />
       {/* ----- Doctor Details ----- */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div>

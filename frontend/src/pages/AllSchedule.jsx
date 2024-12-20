@@ -4,7 +4,7 @@ import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AppContext } from "../context/AppContext";
 import "../index.css";
@@ -399,7 +399,6 @@ const AllSchedule = () => {
           </div>
         </div>
       </div>
-      <ToastContainer />
     </div>
   );
 };

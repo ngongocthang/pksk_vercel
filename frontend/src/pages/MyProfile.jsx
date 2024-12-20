@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { assets } from "../assets/assets";
 import { AppContext } from "../context/AppContext";
@@ -160,6 +160,7 @@ const MyProfile = () => {
               <input
                 className="bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 max-w-[340px]"
                 type="tel"
+                placeholder="Nhập số điện thoại..."
                 value={userData.phone}
                 onChange={(e) => setUserData((prev) => ({ ...prev, phone: e.target.value }))}
               />
@@ -219,7 +220,6 @@ const MyProfile = () => {
             </button>
           )}
         </div>
-        <ToastContainer />
       </div>
     </div>
   );

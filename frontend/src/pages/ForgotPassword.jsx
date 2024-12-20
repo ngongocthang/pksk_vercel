@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
@@ -76,7 +76,6 @@ const ForgotPassword = () => {
                     </button>
                 </form>
             </div>
-            <ToastContainer />
         </div>
     );
 };
