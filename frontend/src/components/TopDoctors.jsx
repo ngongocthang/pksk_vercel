@@ -76,7 +76,12 @@ const TopDoctors = () => {
   }
 
   // Giới hạn số bác sĩ hiển thị dựa trên kích thước màn hình
-  const visibleDoctors = isMobile ? doctors.slice(0, 5) : doctors.slice(0, 10);
+  const visibleDoctors = isMobile ? doctors.slice(0, 5) : doctors.slice(0, 8);
+
+  const formatPrice = (price) => {
+    if (isNaN(price)) return price;
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  };
 
   return (
     <div className="flex flex-col items-center gap-4 my-10 text-gray-900 md:mx-10">
@@ -90,7 +95,7 @@ const TopDoctors = () => {
       {loading ? ( // Hiển thị Skeleton khi đang tải
         <DoctorsSkeleton />
       ) : (
-        <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 gap-y-6" data-aos="fade-up">
+        <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6" data-aos="fade-up">
           {Array.isArray(visibleDoctors) &&
             visibleDoctors.map((item, index) => (
               <div
@@ -122,6 +127,9 @@ const TopDoctors = () => {
                   )}
                   <p className="text-gray-900 text-lg font-medium">
                     {item.user_id.name}
+                  </p>
+                  <p className="text-gray-600 text-sm truncate">
+                    Giá khám: {item.price ? formatPrice(item.price) : "0"} VND
                   </p>
                   <p className="text-gray-600 text-sm truncate">
                     {item.description}
