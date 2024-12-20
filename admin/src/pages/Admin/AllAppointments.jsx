@@ -237,7 +237,7 @@ const AllAppointments = () => {
               key={index}
             >
               <p className="font-bold text-center">{index + 1}</p>
-              <div className="flex md:justify-center gap-2 mb-2">
+              <div className="flex md:justify-start gap-2 mb-2">
                 <span className="sm:hidden font-semibold">Bác sĩ: </span>
                 <p className="md:mb-0 text-gray-600 md:text-base">
                   {item.doctorInfo.name}
