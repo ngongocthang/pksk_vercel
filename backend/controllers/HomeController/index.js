@@ -486,7 +486,7 @@ const forgotPassword = async (req, res) => {
     const mailOptions = {
       to: email,
       subject: "Khôi phục mật khẩu",
-      text: `Bạn đã yêu cầu khôi phục mật khẩu. Vui lòng nhấp vào liên kết sau để đặt lại mật khẩu: ${resetUrl}`,
+      text: `Bạn đã yêu cầu khôi phục mật khẩu. Vui lòng nhấp vào liên kết sau để đặt lại mật khẩu: ${resetUrl}. \n\nChú ý: Mã sẽ hết hạn trong vòng 1 giừo kể từ thời gian thông báo.`,
     };
 
     await transporter.sendMail(mailOptions);
