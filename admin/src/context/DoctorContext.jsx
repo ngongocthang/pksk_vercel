@@ -228,7 +228,7 @@ const DoctorContextProvider = (props) => {
       }
     } catch (error) {
       console.log(error);
-      toast.error("Không thể cập nhật lịch làm việc trong vòng 24 giờ diễn ra!");
+      toast.error(error.response?.data?.message || "Không thể cập nhật lịch làm việc trong vòng 24 giờ diễn ra!");
     }
   };
 

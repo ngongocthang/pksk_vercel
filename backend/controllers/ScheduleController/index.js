@@ -283,7 +283,7 @@ const doctorUpdateSchedule = async (req, res) => {
       return res.status(400).json({
         success: false,
         message:
-          "Cannot update schedule less than 24 hours before the appointment!",
+          "Không thể cập nhật lịch hẹn trước 24 giờ diễn ra!",
       });
     }
 
@@ -350,15 +350,16 @@ const doctorUpdateSchedule = async (req, res) => {
         text: `Xin chào ${userInfo.name},\n\nLịch hẹn của bạn vào ngày ${formattedOldDate} - Ca khám: ${oldShift} đã thay đổi thành ngày ${formattedNewDate} - Ca khám: ${newShift}.\n\nThời gian diễn ra: ${time}.\n\nTrân trọng!`,
       };
 
+      await Notification.create({
+        patient_id: appointment.patient_id,
+        doctor_id: appointment.doctor_id,
+        content: `Lịch hẹn của bản thay đổi từ ngày ${formattedOldDate} - Ca khám: ${oldShift} thành ngày ${formattedNewDate} - Ca khám: ${newShift}. gian diễn ra: ${time}.`,
+        appointment_id: appointment._id,
+        recipientType: "patient",
+      });
+
       try {
         await transporter.sendMail(mailOptions);
-        await Notification.create({
-          patient_id: appointment.patient_id,
-          doctor_id: appointment.doctor_id,
-          message: `Lịch hẹn của bản thay đổi từ ngày ${formattedOldDate} - Ca khám: ${oldShift} thành ngày ${formattedNewDate} - Ca khám: ${newShift}.Thời gian diễn ra: ${time}.`,
-          appointment_id: appointment._id,
-          recipientType: "patient",
-        });
       } catch (emailError) {
         console.error(`Failed to send email to ${userInfo.email}:`, emailError);
       }
