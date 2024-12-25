@@ -35,7 +35,7 @@ const Appointment = () => {
       const response = await axios.get(
         `${VITE_BACKEND_URI}/doctor/find/${docId}`
       );
-      setDocInfo(response.data);
+      setDocInfo(response.data.data);
     } catch (error) {
       console.error("Error fetching doctor info:", error);
       toast.error("Không thể lấy thông tin bác sĩ.");
