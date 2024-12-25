@@ -250,7 +250,7 @@ const DoctorDashboard = () => {
             <img className="w-14 mx-auto" src={assets.patients_icon} alt="" />
             <div>
               <p className="text-xl font-semibold text-white">{patients.length}</p>
-              <p className="text-white text-xl font-semibold">Bệnh nhân</p>
+              <p className="text-white text-xl font-semibold">Bệnh nhân đã khám</p>
             </div>
           </div>
         </div>

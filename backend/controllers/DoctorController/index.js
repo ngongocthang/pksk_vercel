@@ -6,12 +6,13 @@ const Doctor = require("../../models/Doctor");
 const Patient = require("../../models/Patient");
 const Payment = require("../../models/Payment");
 const cloudinary = require("cloudinary").v2;
-const validateDoctor = require("../../requests/validateDoctor");
+const validateDoctor = require("../../requests/validateDoctor");  
 const Appointment = require("../../models/Appointment");
 const History_Appointment = require("../../models/Appointment_history");
 const Notification = require("../../models/Notification");
 const Schedule = require("../../models/Schedule");
 const validateUpdateDoctor = require("../../requests/validateUpdateProfileDoctor");
+const validateAdminUpdateDoctor = require("../../requests/validateAdminUpdateProfileDoctor");
 const transporter = require("../../helpers/mailer-config");
 const moment = require("moment");
 require("moment/locale/vi");
@@ -140,12 +141,107 @@ const findDoctor = async (req, res) => {
       .populate("user_id")
       .populate("specialization_id");
     if (doctor) {
-      return res.status(200).json(doctor);
+      return res.status(200).json({ success: true, data: doctor });
     } else {
-      return res.status(404).json({ message: "Doctor not found" });
+      return res.status(404).json({ success: false, message: "Doctor not found" });
     }
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+const updateDoctorAdmin = async (req, res) => {
+  try {
+    // Validate dữ liệu từ client
+    const { error } = validateAdminUpdateDoctor(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
+    }
+
+    const { id } = req.params;
+
+    const doctor = await Doctor.findById(id).populate(
+      "specialization_id"
+    );
+    if (!doctor) {
+      return res.status(400).json({ message: "Doctor not found" });
+    }
+
+    const user = await User.findOne({ _id: doctor.user_id });
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    // Kiểm tra email chỉ khi nó khác với email hiện tại
+    if (req.body.email && req.body.email !== user.email) {
+     const checkEmail = await User.findOne({ email: req.body.email });
+     if (checkEmail) {
+       return res.status(400).json({ message: "Email đã tồn tại!" });
+     }
+   }
+
+    let imageUrl = user.image;
+
+    // Cập nhật ảnh nếu có file tải lên
+    if (req.file) {
+      const base64Image = `data:${
+        req.file.mimetype
+      };base64,${req.file.buffer.toString("base64")}`;
+
+      // Xóa ảnh cũ trên Cloudinary (nếu có)
+      if (imageUrl) {
+        const publicId = imageUrl.split("/").slice(-1)[0].split(".")[0];
+        // console.log("Xóa ảnh cũ với publicId:", publicId);
+        await cloudinary.uploader.destroy(`doctor/${publicId}`);
+      }
+
+      // Upload ảnh mới lên Cloudinary
+      const result = await cloudinary.uploader.upload(base64Image, {
+        folder: "doctor",
+      });
+      imageUrl = result.secure_url;
+    }
+
+    // Cập nhật thông tin User
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: doctor.user_id },
+      {
+        name: req.body.name,
+        email: req.body.email,
+        image: imageUrl,
+        phone: req.body.phone,
+      },
+      { new: true }
+    );
+    if (!updatedUser) {
+      return res
+        .status(400)
+        .json({ message: "Cập nhật hồ sơ không thành công" });
+    }
+
+    // Cập nhật thông tin Doctor
+    const updatedDoctor = await Doctor.findByIdAndUpdate(
+      { _id: id },
+      {
+        specialization_id: req.body.specialization_id,
+        description: req.body.description,
+        price: req.body.price,
+        available: req.body.available,
+      },
+      { new: true }
+    );
+    if (!updatedDoctor) {
+      return res
+        .status(400)
+        .json({ message: "Cập nhật hồ sơ không thành công" });
+    }
+
+    return res
+      .status(200)
+      .json({ success: true, message: "Cập nhật hồ sơ thành công!" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -865,5 +961,6 @@ module.exports = {
   getAppointmentConfirmByDoctor,
   completeApointment,
   searchPatient,
-  sumAmountMoney
+  sumAmountMoney,
+  updateDoctorAdmin
 };

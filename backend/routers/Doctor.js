@@ -15,7 +15,8 @@ const {
   getAppointmentConfirmByDoctor,
   completeApointment,
   searchPatient,
-  sumAmountMoney
+  sumAmountMoney,
+  updateDoctorAdmin
 } = require("../controllers/DoctorController/index");
 const upload = require('../helpers/multer-config');
 const {
@@ -45,6 +46,7 @@ router.get("/find-schedule/:id", getSchedule);
 router.put("/update-schedule/:id", doctorUpdateSchedule);
 router.get("/profile/:id", getProfileDoctor);
 router.put("/update-profile/:id",upload.single('image'), updateProfileDoctor);
+router.put("/admin-update-profile/:id",upload.single('image'), updateDoctorAdmin);
 router.post("/appointment-confirm/:id", getAppointmentConfirmByDoctor);
 router.put("/complete-appointment/:id", completeApointment);
 router.get("/search", searchPatient);

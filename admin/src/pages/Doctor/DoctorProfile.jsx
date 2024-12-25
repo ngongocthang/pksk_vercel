@@ -63,6 +63,7 @@ const DoctorProfile = () => {
         updatedData.append("oldPassword", oldPassword || "");
         updatedData.append("newPassword", newPassword);
       }
+      console.log(updatedData);
 
       const { data } = await axios.put(
         `${backendUrl}/doctor/update-profile/${doctorId}`,
