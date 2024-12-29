@@ -383,9 +383,9 @@ const DoctorDashboard = () => {
                       </td>
                       {/* Trạng thái */}
                       <td className="py-4 px-5 text-center">
-                        {item.status === "canceled" ? (
-                          <button className="bg-red-500 text-white font-semibold py-1 px-4 rounded-full shadow-lg w-[120px] h-[32px]">
-                            Đã từ chối
+                        {item.status === "completed" ? (
+                          <button className="bg-blue-500 text-white font-semibold py-1 px-4 rounded-full shadow-lg w-[120px] h-[32px]">
+                             Hoàn thành
                           </button>
                         ) : (
                           <button className="bg-green-500 text-white font-semibold py-1 px-4 rounded-full shadow-lg w-[120px] h-[32px]">

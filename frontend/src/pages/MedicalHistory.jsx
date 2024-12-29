@@ -52,7 +52,7 @@ const MedicalRecordCard = memo(({ record }) => {
         <div className="flex flex-col items-center">
           <div className="flex items-center mb-4">
             <User className="w-5 h-5 text-blue-500 mr-2" />
-            <span className="font-medium">Bs. {record.history.doctor_name}</span>
+            <span className="font-medium">{record.history.doctor_name}</span>
           </div>
           <Badge className={`${getStatusColor(record.history.status)} px-3 py-1 rounded-full text-sm font-medium mt-2`}>
             Trạng thái: {getStatusText(record.history.status)}

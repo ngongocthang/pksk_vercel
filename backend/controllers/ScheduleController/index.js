@@ -257,6 +257,15 @@ const doctorUpdateSchedule = async (req, res) => {
     const user_id = req.body.id;
     const doctor = await Doctor.findOne({ user_id });
 
+    const checkSchedule = await Schedule.findOne({
+      work_date: req.body.work_date,
+      work_shift: req.body.work_shift,
+      doctor_id: doctor._id,
+    });
+    if (checkSchedule) {
+      return res.status(400).json({ message: "Lịch làm việc đã tồn tại." });
+    }
+
     if (!doctor) {
       return res.status(400).json({ message: "Doctor not found" });
     }
@@ -305,11 +314,11 @@ const doctorUpdateSchedule = async (req, res) => {
       work_shift: findSchedule.work_shift,
     });
 
-    if (appointments.length === 0) {
-      return res
-        .status(400)
-        .json({ success: false, message: "No appointments found!" });
-    }
+    // if (appointments.length === 0) {
+    //   return res
+    //     .status(400)
+    //     .json({ success: false, message: "No appointments found!" });
+    // }
 
     await Appointment.updateMany(
       {

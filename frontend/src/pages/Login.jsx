@@ -99,35 +99,6 @@ const Login = () => {
     console.log("Login Failed:", error);
   };
 
-  //forgot password
-  // const handleForgotPassword = async () => {
-  //   const email = prompt("Vui lòng nhập email của bạn:");
-
-  //   if (!email) return;
-
-  //   try {
-  //     const response = await axios.post("http://localhost:5000/forgot-password", {
-  //       email,
-  //     }, {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
-
-  //     const data = response.data;
-
-  //     // Kiểm tra mã trạng thái HTTP
-  //     if (response.status === 200) {
-  //       toast.success("Email khôi phục mật khẩu đã được gửi!");
-  //     } else {
-  //       toast.error(data.message);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //     toast.error("Đã xảy ra lỗi! Vui lòng thử lại sau.");
-  //   }
-  // };
-
   return (
     <>
       <form
@@ -197,7 +168,7 @@ const Login = () => {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-transparent border-none cursor-pointer flex items-center justify-center pt-6"
               >
-                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                {showPassword ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
               </button>
             )}
           </div>

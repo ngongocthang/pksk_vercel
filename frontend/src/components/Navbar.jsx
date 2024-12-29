@@ -84,7 +84,10 @@ const Navbar = () => {
   // Kiểm tra token
   const isLoggedIn = !!localStorage.getItem("token");
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await axios.post(`${VITE_BACKEND_URI}/logout`, {
+      headers: { Authorization: `Bearer ${user.token}` },
+    });
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     localStorage.removeItem("unreadCount");
