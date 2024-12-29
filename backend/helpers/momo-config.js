@@ -17,7 +17,7 @@
   var orderInfo = "Pay with MoMo";
   var partnerCode = "MOMO";
   var redirectUrl = `${FRONTEND_URI}/my-appointments`;
-  var ipnUrl = `https://ee5b-2405-4802-a16c-5480-e116-9fa0-2a64-b21e.ngrok-free.app/callback`;
+  var ipnUrl = IPNURL_MOMO;
   var requestType = "payWithMethod";
   var amount = price;
   var orderId = partnerCode + new Date().getTime();
