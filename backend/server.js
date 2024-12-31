@@ -12,6 +12,8 @@ const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
 const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY;
 const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET;
 const SESSION_SECRET = process.env.SESSION_SECRET;
+const FRONTEND_URI = process.env.FRONTEND_URI;
+const ADMIN_URI = process.env.ADMIN_URI;
 
 const userRouterRole = require("./routers/Role");
 const userRouterDoctor = require("./routers/Doctor");
@@ -30,7 +32,7 @@ const app = express();
 
 // Cấu hình CORS
 const corsOptions = {
-  origin: ["http://localhost:5173", "http://localhost:5174"],
+  origin: [FRONTEND_URI, ADMIN_URI],
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 };
