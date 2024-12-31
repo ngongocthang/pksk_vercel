@@ -48,7 +48,6 @@ app.use((req, res, next) => {
 });
 
 // Cron job
-// cron.schedule("* * * * *", async () => {
 cron.schedule("* 7 * * *", async () => {
   try {
     await sendAppointmentReminders();
@@ -78,7 +77,7 @@ app.use(
 );
 
 // User routes
-app.use("/role", userRouterRole);
+// app.use("/role", userRouterRole);
 app.use("/doctor", userRouterDoctor);
 app.use("/patient", userRouterPatient);
 app.use("/specialization", userRouterSpecialization);
