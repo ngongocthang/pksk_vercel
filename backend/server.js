@@ -61,10 +61,14 @@ const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
 
 // Database connection
-mongoose
+try {
+await mongoose
   .connect(MONGO_URI)
   .then(() => console.log("Mongodb is connected."))
   .catch((e) => console.log(e));
+} catch (error) {
+  console.log(error);
+}
 
 // Session
 app.use(
