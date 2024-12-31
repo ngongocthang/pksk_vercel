@@ -1,4 +1,4 @@
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const Role = require("../../models/Role");
 const User = require("../../models/User");
 const UserRole = require("../../models/User_role");
