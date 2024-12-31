@@ -26,7 +26,7 @@ từ đối tượng hoặc mảng và gán chúng vào các biến riêng biệ
   populate dung de lấy dữ liệu từ các bảng (collections) khác trong MongoDB dựa trên các trường 
  tham chiếu (reference fields)
  */
-//...req.body: Đây là cú pháp spread operator
+//...req.body: đây là cú pháp spread operator
 
 const createDoctor = async (req, res) => {
   try {
