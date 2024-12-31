@@ -4,7 +4,7 @@ export const AppContext = createContext();
 const VITE_BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 const AppContextProvider = (props) => {
   const [user, setUser] = useState(() => {
-    // Khôi phục thông tin người dùng từ localStorages
+    // Khôi phục thông tin người dùng từ localStorage
     const savedUser = localStorage.getItem("user");
     return savedUser ? JSON.parse(savedUser) : null;
   });
