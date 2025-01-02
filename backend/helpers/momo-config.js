@@ -17,7 +17,7 @@
   var orderInfo = "Pay with MoMo";
   var partnerCode = "MOMO";
   var redirectUrl = `${FRONTEND_URI}/my-appointments`;
-  var ipnUrl = IPNURL_MOMO;
+  var ipnUrl = "https://api-pksk-vercel-ngongocthang.vercel.app/";
   var requestType = "payWithMethod";
   var amount = price;
   var orderId = partnerCode + new Date().getTime();
