@@ -53,7 +53,7 @@ const TopDoctors = () => {
     const fetchDoctors = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`${VITE_BACKEND_URI}/doctor/find-top`);
+        const response = await axios.get(`${VITE_BACKEND_URI}doctor/find-top`);
 
         // Giả sử dữ liệu trả về là { success: true, doctors: [...] }
         if (response.data.doctors && Array.isArray(response.data.doctors)) {
