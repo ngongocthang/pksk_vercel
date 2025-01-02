@@ -275,7 +275,7 @@ const Doctors = () => {
         </div>
       ) : (
         <div>
-          <p className="text-gray-600 font-semibold text-[20px]">Các bác sĩ chuyên khoa.</p>
+          <p className="text-gray-600 font-semibold text-[20px] mt-5">Các bác sĩ chuyên khoa.</p>
           <div className="flex flex-col sm:flex-row items-start gap-5 mt-5">
             <button
               className={`py-1 px-3 border rounded text-sm transition-all sm:hidden ${showFilter ? "bg-primary text-white" : ""}`}
