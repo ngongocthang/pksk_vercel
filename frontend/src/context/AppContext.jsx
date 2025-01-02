@@ -12,7 +12,7 @@ const AppContextProvider = (props) => {
   const [patient, setPatient] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
-  const wsRef = useRef(null);
+  const wsRef = useRef(null); 
   // WebSocket setup
   useEffect(() => {
     let intervalId;

@@ -32,8 +32,8 @@ const app = express();
 
 // Cấu hình CORS
 const corsOptions = {
-  origin: [FRONTEND_URI, ADMIN_URI],
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  origin: ["https://tripletcare.vercel.app/", ADMIN_URI],
+  methods: ["GET", "POST", "PUT", "DELETE"],  
   credentials: true,
 };
 
