@@ -34,7 +34,7 @@ const SpecialitySkeleton = () => {
         setLoading(true);
         try {
           const response = await axios.get(
-            `${VITE_BACKEND_URI}/specialization/find-all`
+            `${VITE_BACKEND_URI}specialization/find-all`
           );
           const data = response.data.specializations.map((item) => ({
             speciality: item.name,
