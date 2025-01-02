@@ -32,7 +32,7 @@ const app = express();
 
 // Cấu hình CORS
 const corsOptions = {
-  origin: ["https://tripletcare.vercel.app/", "https://dashboardtripbletcare.vercel.app/"],
+  origin: ["https://triple-t-care.vercel.app/", "https://dashboard-tripble-t-care.vercel.app/"],
   methods: ["GET", "POST", "PUT", "DELETE"],  
   credentials: true,
 };
