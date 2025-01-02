@@ -27,8 +27,8 @@ const Login = () => {
     setLoading(true);
     const url =
       state === "Sign Up"
-        ? `${VITE_BACKEND_URI}/register`
-        : `${VITE_BACKEND_URI}/login`;
+        ? `${VITE_BACKEND_URI}register`
+        : `${VITE_BACKEND_URI}login`;
     const requestBody = {
       email,
       password,
@@ -77,7 +77,7 @@ const Login = () => {
     const { credential } = credentialResponse;
 
     try {
-      const response = await axios.post(`${VITE_BACKEND_URI}/google-login`, {
+      const response = await axios.post(`${VITE_BACKEND_URI}google-login`, {
         credential,
       });
 

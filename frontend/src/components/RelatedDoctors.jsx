@@ -13,7 +13,7 @@ const RelatedDoctors = ({ speciality, docId }) => {
     const fetchDoctors = async () => {
       try {
         const response = await axios.get(
-          `${VITE_BACKEND_URI}/doctor/find-all`
+          `${VITE_BACKEND_URI}doctor/find-all`
         );
 
         // Kiểm tra xem dữ liệu có thành công và có mảng doctors không

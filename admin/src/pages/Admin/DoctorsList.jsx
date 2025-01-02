@@ -68,7 +68,7 @@ const DoctorsList = () => {
     setIsSpecializationsLoading(true);
     try {
       const response = await axios.get(
-        `${VITE_BACKEND_URI}/specialization/find-all`
+        `${VITE_BACKEND_URI}specialization/find-all`
       );
       if (
         response.data.success &&
@@ -135,7 +135,7 @@ const DoctorsList = () => {
   const confirmDeleteDoctor = async (id) => {
     try {
       const response = await axios.delete(
-        `${VITE_BACKEND_URI}/doctor/delete/${id}`,
+        `${VITE_BACKEND_URI}doctor/delete/${id}`,
         {
           headers: {
             Authorization: `Bearer ${aToken}`,

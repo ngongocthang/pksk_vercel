@@ -30,7 +30,7 @@ const Navbar = () => {
 
   const fetchUnreadNotifications = async () => {
     try {
-      const response = await axios.get(`${VITE_BACKEND_URI}/notification`, {
+      const response = await axios.get(`${VITE_BACKEND_URI}notification`, {
         headers: { Authorization: `Bearer ${user.token}` },
       });
       const data = response.data;
@@ -85,7 +85,7 @@ const Navbar = () => {
   const isLoggedIn = !!localStorage.getItem("token");
 
   const handleLogout = async () => {
-    await axios.post(`${VITE_BACKEND_URI}/logout`, {
+    await axios.post(`${VITE_BACKEND_URI}logout`, {
       headers: { Authorization: `Bearer ${user.token}` },
     });
     localStorage.removeItem("user");

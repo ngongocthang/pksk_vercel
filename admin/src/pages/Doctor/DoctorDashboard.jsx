@@ -50,7 +50,7 @@ const DoctorDashboard = () => {
 
   const fetchAppointmentsData = async (userId) => {
     try {
-      const response = await axios.get(`${VITE_BACKEND_URI}/get-data-doctor-dashboard/${userId}`);
+      const response = await axios.get(`${VITE_BACKEND_URI}get-data-doctor-dashboard/${userId}`);
       const data = response.data; // Lấy dữ liệu từ response
 
       if (data.success) {

@@ -52,7 +52,7 @@ const Doctors = () => {
   const fetchDoctors = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get(`${VITE_BACKEND_URI}/doctor/find-all`);
+      const response = await axios.get(`${VITE_BACKEND_URI}doctor/find-all`);
       setDoctors(response.data.success ? response.data.doctors : []);
     } catch (error) {
       console.error("Error fetching doctors:", error);
@@ -64,7 +64,7 @@ const Doctors = () => {
   const fetchSpecializations = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get(`${VITE_BACKEND_URI}/specialization/find-all`);
+      const response = await axios.get(`${VITE_BACKEND_URI}specialization/find-all`);
       setSpecializations(response.data.success ? response.data.specializations : []);
     } catch (error) {
       console.error("Error fetching specializations:", error);

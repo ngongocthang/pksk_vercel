@@ -21,7 +21,7 @@ const DoctorContextProvider = (props) => {
 
   const getAppointments = async () => {
     try {
-      const { data } = await axios.get(`${backendUrl}/user-appointment`, {
+      const { data } = await axios.get(`${backendUrl}user-appointment`, {
         headers: { Authorization: `Bearer ${dToken}` },
       });
 
@@ -37,7 +37,7 @@ const DoctorContextProvider = (props) => {
 
   const getAllAppointments = async () => {
     try {
-      const { data } = await axios.get(`${backendUrl}/doctor/appointment`, {
+      const { data } = await axios.get(`${backendUrl}doctor/appointment`, {
         headers: { Authorization: `Bearer ${dToken}` },
       });
 
@@ -54,7 +54,7 @@ const DoctorContextProvider = (props) => {
   const completeAppointment = async (appointmentId) => {
     try {
       const { data } = await axios.put(
-        `${backendUrl}/doctor/confirm-appointment/${appointmentId}`,
+        `${backendUrl}doctor/confirm-appointment/${appointmentId}`,
         { status: "confirmed" },
         { headers: { Authorization: `Bearer ${dToken}` } }
       );
@@ -76,7 +76,7 @@ const DoctorContextProvider = (props) => {
   const cancelAppointment = async (appointmentId) => {
     try {
       const { data } = await axios.put(
-        `${backendUrl}/doctor/confirm-appointment/${appointmentId}`,
+        `${backendUrl}doctor/confirm-appointment/${appointmentId}`,
         { status: "canceled" },
         { headers: { Authorization: `Bearer ${dToken}` } }
       );
@@ -99,7 +99,7 @@ const DoctorContextProvider = (props) => {
 
   const getDashData = async () => {
     try {
-      const { data } = await axios.get(`${backendUrl}/api/doctor/dashboard`, {
+      const { data } = await axios.get(`${backendUrl}api/doctor/dashboard`, {
         headers: { Authorization: `Bearer ${dToken}` },
       });
       if (data.success) {
@@ -117,7 +117,7 @@ const DoctorContextProvider = (props) => {
       const doctorInfo = JSON.parse(sessionStorage.getItem("doctorInfo"));
       const doctorId = doctorInfo ? doctorInfo.id : null;
       const { data } = await axios.get(
-        `${backendUrl}/doctor/profile/${doctorId}`,
+        `${backendUrl}doctor/profile/${doctorId}`,
         {
           headers: { Authorization: `Bearer ${dToken}` },
         }
@@ -134,7 +134,7 @@ const DoctorContextProvider = (props) => {
   const getDoctorSchedule = async (doctorId) => {
     try {
       const { data } = await axios.get(
-        `${backendUrl}/doctor/schedule/${doctorId}`,
+        `${backendUrl}doctor/schedule/${doctorId}`,
         {
           headers: { Authorization: `Bearer ${dToken}` },
         }
@@ -153,7 +153,7 @@ const DoctorContextProvider = (props) => {
   const getDoctorSpecialization = async (doctorId) => {
     try {
       const { data } = await axios.get(
-        `${backendUrl}/doctor/get-specializations/${doctorId}`,
+        `${backendUrl}doctor/get-specializations/${doctorId}`,
         {
           headers: { Authorization: `Bearer ${dToken}` },
         }
@@ -172,7 +172,7 @@ const DoctorContextProvider = (props) => {
   const createSchedule = async (doctorId, scheduleData) => {
     try {
       const { data } = await axios.post(
-        `${backendUrl}/doctor/create-schedule/${doctorId}`,
+        `${backendUrl}doctor/create-schedule/${doctorId}`,
         scheduleData,
         { headers: { Authorization: `Bearer ${dToken}` } }
       );
@@ -191,7 +191,7 @@ const DoctorContextProvider = (props) => {
   const getScheduleById = async (scheduleId) => {
     try {
       const { data } = await axios.get(
-        `${backendUrl}/doctor/find-schedule/${scheduleId}`,
+        `${backendUrl}doctor/find-schedule/${scheduleId}`,
         {
           headers: { Authorization: `Bearer ${dToken}` },
         }
@@ -216,7 +216,7 @@ const DoctorContextProvider = (props) => {
 
     try {
       const { data } = await axios.put(
-        `${backendUrl}/doctor/update-schedule/${scheduleId}`,
+        `${backendUrl}doctor/update-schedule/${scheduleId}`,
         { ...scheduleData, id: doctorId },
         { headers: { Authorization: `Bearer ${dToken}` } }
       );
@@ -235,7 +235,7 @@ const DoctorContextProvider = (props) => {
   const deleteSchedule = async (scheduleId) => {
     try {
       const { data } = await axios.delete(
-        `${backendUrl}/schedule/delete/${scheduleId}`,
+        `${backendUrl}schedule/delete/${scheduleId}`,
         {
           headers: { Authorization: `Bearer ${dToken}` },
         }
@@ -258,7 +258,7 @@ const DoctorContextProvider = (props) => {
   const showUpcomingAppointments = async (userId) => {
     try {
       const { data } = await axios.get(
-        `${backendUrl}/show-upcoming-appointments/${userId}`,
+        `${backendUrl}show-upcoming-appointments/${userId}`,
         { headers: { Authorization: `Bearer ${dToken}` } }
       );
       setAppointments(data.length > 0 ? data : []);
@@ -271,7 +271,7 @@ const DoctorContextProvider = (props) => {
   const getAppointmentsByStatus = async (doctorId) => {
     try {
       const { data } = await axios.get(
-        `${backendUrl}/get-appointments-status/${doctorId}`,
+        `${backendUrl}get-appointments-status/${doctorId}`,
         { headers: { Authorization: `Bearer ${dToken}` } }
       );
   
@@ -287,7 +287,7 @@ const DoctorContextProvider = (props) => {
 
   const amountPaymentDoctors = async (doctorId) => {
     try {
-      const { data } = await axios.get(`${backendUrl}/doctor/get-amount-dashboard-doctor/${doctorId}`, {});
+      const { data } = await axios.get(`${backendUrl}doctor/get-amount-dashboard-doctor/${doctorId}`, {});
 
       if (data.success) {
         setMoneys(data.data);
@@ -301,7 +301,7 @@ const DoctorContextProvider = (props) => {
 
   const countPatients = async (doctorId) => {
     try {
-      const { data } = await axios.get(`${backendUrl}/patient/get-patient-dashboard-doctor/${doctorId}`, {});
+      const { data } = await axios.get(`${backendUrl}patient/get-patient-dashboard-doctor/${doctorId}`, {});
 
       if (data.success) {
         setCountPatients(data.data);

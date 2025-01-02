@@ -33,7 +33,7 @@ const Appointment = () => {
   const fetchDocInfo = async () => {
     try {
       const response = await axios.get(
-        `${VITE_BACKEND_URI}/doctor/find/${docId}`
+        `${VITE_BACKEND_URI}doctor/find/${docId}`
       );
       setDocInfo(response.data.data);
     } catch (error) {
@@ -46,7 +46,7 @@ const Appointment = () => {
   const fetchDoctorSchedule = async () => {
     try {
       const response = await axios.get(
-        `${VITE_BACKEND_URI}/get-schedule-doctor/${docId}`
+        `${VITE_BACKEND_URI}get-schedule-doctor/${docId}`
       );
       const groupedSchedule = response.data.reduce((acc, schedule) => {
         const dateStr = new Date(schedule.work_date)
@@ -232,7 +232,7 @@ const Appointment = () => {
 
       const token = user?.token || "";
       await axios.post(
-        `${VITE_BACKEND_URI}/create-appointment/${patientId}`,
+        `${VITE_BACKEND_URI}create-appointment/${patientId}`,
         appointmentData,
         {
           headers: {

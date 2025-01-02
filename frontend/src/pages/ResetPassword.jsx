@@ -24,7 +24,7 @@ const ResetPassword = () => {
 
     try {
       const response = await axios.post(
-        `${VITE_BACKEND_URI}/reset-password/${token}`,
+        `${VITE_BACKEND_URI}reset-password/${token}`,
         { password },
         {
           headers: {

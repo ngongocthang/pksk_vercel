@@ -57,7 +57,7 @@ const AllAppointments = () => {
                 setIsDeleting(true); // Bắt đầu quá trình xoá
                 try {
                   const response = await axios.delete(
-                    `${VITE_BACKEND_URI}/appointment/delete/${id}`,
+                    `${VITE_BACKEND_URI}appointment/delete/${id}`,
                     {
                       data: { user_id: patientId },
                     }

@@ -31,7 +31,7 @@ const MyProfile = () => {
       return navigate("/account");
     }
     try {
-      const response = await axios.get(`${VITE_BACKEND_URI}/profilePatient`, {
+      const response = await axios.get(`${VITE_BACKEND_URI}profilePatient`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -87,7 +87,7 @@ const MyProfile = () => {
 
     try {
       const response = await axios.post(
-        `${VITE_BACKEND_URI}/updateProfilePatient/${userId}`,
+        `${VITE_BACKEND_URI}updateProfilePatient/${userId}`,
         bodyData,
         {
           headers: {

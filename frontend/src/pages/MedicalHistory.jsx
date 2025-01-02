@@ -120,7 +120,7 @@ const MedicalHistory = () => {
 
     try {
       const userId = user._id ? user._id : user.id;
-      const response = await fetch(`${VITE_BACKEND_URI}/medical-history/${userId}`, {
+      const response = await fetch(`${VITE_BACKEND_URI}medical-history/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

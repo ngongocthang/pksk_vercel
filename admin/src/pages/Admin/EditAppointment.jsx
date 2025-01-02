@@ -20,7 +20,7 @@ const AppointmentDetails = () => {
     const fetchAppointment = async () => {
       try {
         const response = await axios.get(
-          `${VITE_BACKEND_URI}/appointment/find/${id}`
+          `${VITE_BACKEND_URI}appointment/find/${id}`
         );
         if (response.data.success) {
           setAppointment(response.data.data);
@@ -39,7 +39,7 @@ const AppointmentDetails = () => {
 
     const fetchDoctors = async () => {
       try {
-        const response = await axios.get(`${VITE_BACKEND_URI}/doctor/find-all`);
+        const response = await axios.get(`${VITE_BACKEND_URI}doctor/find-all`);
         if (response.data.success) {
           setDoctors(response.data.doctors);
         } else {
@@ -149,7 +149,7 @@ const AppointmentDetails = () => {
       };
 
       const response = await axios.put(
-        `${VITE_BACKEND_URI}/appointment/admin-update/${id}`,
+        `${VITE_BACKEND_URI}appointment/admin-update/${id}`,
         updatedData
       );
 

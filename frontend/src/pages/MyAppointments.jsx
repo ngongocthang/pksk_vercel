@@ -24,7 +24,7 @@ const MyAppointments = () => {
   const checkPaymentStatus = async (appointmentId) => {
     try {
       const response = await axios.get(
-        `${VITE_BACKEND_URI}/check-payment-status/${appointmentId}`
+        `${VITE_BACKEND_URI}check-payment-status/${appointmentId}`
       );
 
       if (response.data.success) {
@@ -47,7 +47,7 @@ const MyAppointments = () => {
     }
 
     try {
-      const response = await axios.get(`${VITE_BACKEND_URI}/user-appointment`, {
+      const response = await axios.get(`${VITE_BACKEND_URI}user-appointment`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -100,7 +100,7 @@ const MyAppointments = () => {
       try {
         setIsLoadingCancel(appointmentId);
         const response = await axios.put(
-          `${VITE_BACKEND_URI}/cancel-appointment/${appointmentId}`,
+          `${VITE_BACKEND_URI}cancel-appointment/${appointmentId}`,
           {},
           {
             headers: {
@@ -163,7 +163,7 @@ const MyAppointments = () => {
   const handlePayment = async (appointmentId, price) => {
     try {
       const response = await axios.post(
-        `${VITE_BACKEND_URI}/payment/${appointmentId}`,
+        `${VITE_BACKEND_URI}payment/${appointmentId}`,
         { price },
         {
           headers: {

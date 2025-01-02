@@ -30,7 +30,7 @@ const ConfirmCompletedAppointments = () => {
       setLoading(true);
       try {
         const response = await axios.post(
-          `${VITE_BACKEND_URI}/doctor/appointment-confirm/${doctorId}`,
+          `${VITE_BACKEND_URI}doctor/appointment-confirm/${doctorId}`,
           {
             work_date: workDate,
             work_shift: workShift,
@@ -60,7 +60,7 @@ const ConfirmCompletedAppointments = () => {
     setLoadingId(id);
     try {
       const response = await axios.put(
-        `${VITE_BACKEND_URI}/doctor/complete-appointment/${id}`
+        `${VITE_BACKEND_URI}doctor/complete-appointment/${id}`
       );
       if (response.data.success) {
         setConfirmedAppointments((prev) =>

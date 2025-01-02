@@ -27,7 +27,7 @@ const AddPatient = () => {
       };
 
       const response = await axios.post(
-        `${VITE_BACKEND_URI}/patient/create`,
+        `${VITE_BACKEND_URI}patient/create`,
         data,
         {
           headers: { "Content-Type": "application/json" },

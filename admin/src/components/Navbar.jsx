@@ -51,7 +51,7 @@ const Navbar = () => {
       const doctorInfo = JSON.parse(sessionStorage.getItem("doctorInfo"));
       const doctorId = doctorInfo ? doctorInfo.id : null;
       const response = await axios.get(
-        `${VITE_BACKEND_URI}/notification/get-notification-doctor/${doctorId}`
+        `${VITE_BACKEND_URI}notification/get-notification-doctor/${doctorId}`
       );
       setNotifications(response.data);
     } catch (error) {
@@ -68,7 +68,7 @@ const Navbar = () => {
   const markAsRead = async (notificationId) => {
     try {
       await axios.put(
-        `${VITE_BACKEND_URI}/notification/read/${notificationId}`
+        `${VITE_BACKEND_URI}notification/read/${notificationId}`
       );
       const updatedNotifications = notifications.map((notification) =>
         notification._id === notificationId
@@ -98,7 +98,7 @@ const Navbar = () => {
   const handleDelete = async (notificationId) => {
     try {
       await axios.delete(
-        `${VITE_BACKEND_URI}/notification/delete/${notificationId}`
+        `${VITE_BACKEND_URI}notification/delete/${notificationId}`
       );
       setNotifications((prev) =>
         prev.filter((notification) => notification._id !== notificationId)

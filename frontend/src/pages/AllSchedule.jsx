@@ -70,7 +70,7 @@ const AllSchedule = () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          `${VITE_BACKEND_URI}/get-all-schedule-doctor`
+          `${VITE_BACKEND_URI}get-all-schedule-doctor`
         );
         const resources = response.data.map((doctor) => ({
           id: doctor.doctorId,
@@ -276,7 +276,7 @@ const AllSchedule = () => {
     }
     try {
       const response = await axios.post(
-        `${VITE_BACKEND_URI}/create-appointment/${patient_id}`,
+        `${VITE_BACKEND_URI}create-appointment/${patient_id}`,
         appointmentData,
         {
           headers: {

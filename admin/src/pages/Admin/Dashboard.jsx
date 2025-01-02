@@ -59,7 +59,7 @@ const Dashboard = () => {
     const fetchRevenueData = async () => {
       if (aToken) {
         try {
-          const response = await axios.get(`${VITE_BACKEND_URI}/get-money-dashboard-admin`, {
+          const response = await axios.get(`${VITE_BACKEND_URI}get-money-dashboard-admin`, {
             headers: {
               Authorization: `Bearer ${aToken}`,
             },

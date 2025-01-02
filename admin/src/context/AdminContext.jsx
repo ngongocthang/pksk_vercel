@@ -25,7 +25,7 @@ const AdminContextProvider = ({ children }) => {
 
   const getAllDoctors = async () => {
     try {
-      const { data } = await api.get("/doctor/find-all", {});
+      const { data } = await api.get("doctor/find-all", {});
 
       if (data.success) {
         toast.error(data.message);
@@ -40,7 +40,7 @@ const AdminContextProvider = ({ children }) => {
 
   const getAllSpecialists = async () => {
     try {
-      const { data } = await api.get("/specialization/find-all", {});
+      const { data } = await api.get("specialization/find-all", {});
       if (data.success) {
         setSpecs(data.specializations);
       } else {
@@ -70,7 +70,7 @@ const AdminContextProvider = ({ children }) => {
 
   const getCountAppointments = async () => {
     try {
-      const { data } = await api.get("/appointment/get-all-admin");
+      const { data } = await api.get("appointment/get-all-admin");
 
       if (data.success) {
         setCountAppointments(data.data);
@@ -84,7 +84,7 @@ const AdminContextProvider = ({ children }) => {
   
   const getAllAppointments = async () => {
     try {
-      const { data } = await api.get("/appointment/find-all");
+      const { data } = await api.get("appointment/find-all");
       if (data.success) {
         setAppointments(data.appointments);
       } else {
@@ -97,7 +97,7 @@ const AdminContextProvider = ({ children }) => {
 
   const getAllPatients = async () => {
     try {
-      const { data } = await api.get("/patient/find-all");
+      const { data } = await api.get("patient/find-all");
       if (data.success) {
         setPatients(data.data);
       } else {
@@ -109,7 +109,7 @@ const AdminContextProvider = ({ children }) => {
   };
   const countPatients = async () => {
     try {
-      const { data } = await api.get("/patient/count");
+      const { data } = await api.get("patient/count");
       if (data.success) {
         setCountPatients(data.data);
       } else {
@@ -122,7 +122,7 @@ const AdminContextProvider = ({ children }) => {
 
   const cancelAppointment = async (appointmentId) => {
     try {
-      const { data } = await api.post("/doctor/delete", { appointmentId });
+      const { data } = await api.post("doctor/delete", { appointmentId });
 
       if (data.success) {
         toast.success(data.message);
@@ -138,7 +138,7 @@ const AdminContextProvider = ({ children }) => {
 
   const getDashData = async () => {
     try {
-      const { data } = await api.get("/doctor/find-all");
+      const { data } = await api.get("doctor/find-all");
       if (data.success) {
         setDashData(data.doctors);
       } else {
@@ -150,7 +150,7 @@ const AdminContextProvider = ({ children }) => {
   };
   const getUpcomingApointmentsDashData = async () => {
     try {
-      const { data } = await api.get("/upcoming-appointments-dashboard-admin");
+      const { data } = await api.get("upcoming-appointments-dashboard-admin");
       if (data.success) {
         setDashUpApData(data.data);
       } else {

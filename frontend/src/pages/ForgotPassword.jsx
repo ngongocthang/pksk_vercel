@@ -27,7 +27,7 @@ const ForgotPassword = () => {
         setLoading(true); // Bắt đầu loading khi gửi yêu cầu
 
         try {
-            const response = await axios.post(`${VITE_BACKEND_URI}/forgot-password`, { email });
+            const response = await axios.post(`${VITE_BACKEND_URI}forgot-password`, { email });
 
             if (response.status === 200) {
                 toast.success("Email khôi phục mật khẩu đã được gửi!");

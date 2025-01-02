@@ -18,7 +18,7 @@ const SpecialtyList = () => {
     setIsLoading(true);
     try {
       const response = await axios.get(
-        `${VITE_BACKEND_URI}/specialization/find-all`
+        `${VITE_BACKEND_URI}specialization/find-all`
       );
       setSpecialties(response.data.specializations);
     } catch (error) {
@@ -57,7 +57,7 @@ const SpecialtyList = () => {
               setIsDeleting(true); // Bắt đầu quá trình xóa
               try {
                 const response = await axios.delete(
-                  `${VITE_BACKEND_URI}/specialization/delete/${id}`
+                  `${VITE_BACKEND_URI}specialization/delete/${id}`
                 );
                 if (response.data.success) {
                   toast.success("Xóa chuyên khoa thành công!");

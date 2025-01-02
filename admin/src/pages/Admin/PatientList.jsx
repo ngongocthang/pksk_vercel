@@ -60,7 +60,7 @@ const PatientList = () => {
                 setIsDeleting(true);
                 try {
                   await axios.delete(
-                    `${VITE_BACKEND_URI}/patient/delete/${id}`
+                    `${VITE_BACKEND_URI}patient/delete/${id}`
                   );
                   toast.success(`Bệnh nhân ${name} đã được xóa thành công!`, {
                     position: "top-right",

@@ -46,7 +46,7 @@ const Contact = () => {
   
     try {
       const response = await axios.post(
-        `${VITE_BACKEND_URI}/send-email`,
+        `${VITE_BACKEND_URI}send-email`,
         formData
       );
       setResponseMessage(

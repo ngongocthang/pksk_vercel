@@ -68,7 +68,7 @@ const Notifications = () => {
   const handleNotificationClick = async (id) => {
     try {
       const response = await axios.put(
-        `${VITE_BACKEND_URI}/notification/read/${id}`,
+        `${VITE_BACKEND_URI}notification/read/${id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -95,7 +95,7 @@ const Notifications = () => {
   const handleDelete = async (notificationId) => {
     try {
       const response = await axios.delete(
-        `${VITE_BACKEND_URI}/notification/delete/${notificationId}`,
+        `${VITE_BACKEND_URI}notification/delete/${notificationId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

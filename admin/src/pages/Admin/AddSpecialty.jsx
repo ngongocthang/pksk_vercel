@@ -43,7 +43,7 @@ const AddSpecialty = () => {
 
     try {
       const { data } = await axios.post(
-        `${VITE_BACKEND_URI}/specialization/create`,
+        `${VITE_BACKEND_URI}specialization/create`,
         formData,
         {
           headers: {
