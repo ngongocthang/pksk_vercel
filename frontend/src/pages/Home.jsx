@@ -9,8 +9,7 @@ const Home = () => {
     <div>
       <Header1 />
       <SpecialityMenu />
-      <TopDoct
-      ors />
+      <TopDoctors />
       <Banner />
     </div>
   )
